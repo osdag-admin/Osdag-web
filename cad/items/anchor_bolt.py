@@ -171,7 +171,7 @@ class AnchorBolt_Endplate(object):
     def __init__(self, l, r, ex, c=0, a=0):
         self.ex = ex
         self.l = l
-        self.c = c
+        self.c = a
         self.a = a
         self.r = r
         self.origin = None
@@ -193,7 +193,7 @@ class AnchorBolt_Endplate(object):
         self.cyl1_length = self.l
         self.endplate_thickness = 5
         self.head = self.endplate_thickness / 5
-        self.endplate_width = self.l / 2
+        self.endplate_width = self.a
 
         self.p1 = self.origin
         self.p2 = self.p1 - (self.l - self.endplate_thickness - self.head) * self.shaftDir
@@ -230,12 +230,12 @@ if __name__ == '__main__':
     uDir = numpy.array([1.,0.,0.])
     shaftDir = numpy.array([0.,0.,1.])
 
-    channel = AnchorBolt_A(l,c,a,r, ex)
-    # channel = AnchorBolt_B(l,c,a,r, ex)
-    # channel = AnchorBolt_Endplate(l,c,a,r, ex)
-    angles = channel.place(origin, uDir, shaftDir)
-    point = channel.compute_params()
-    prism = channel.create_model()
+    ABolt_A = AnchorBolt_A(l,c,a,r, ex)
+    # ABolt_B = AnchorBolt_B(l,c,a,r, ex)
+    # ABolt_E = AnchorBolt_Endplate(l,c,a,r, ex)
+    _place = ABolt_A.place(origin, uDir, shaftDir)
+    point = ABolt_A.compute_params()
+    prism = ABolt_A.create_model()
     display.DisplayShape(prism, update=True)
     display.DisableAntiAliasing()
     start_display()

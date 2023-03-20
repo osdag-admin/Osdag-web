@@ -81,8 +81,13 @@ The Rules/Steps to use the template are(OsdagMainWindow):
 '''
 
 import os
-import shutil
 from pathlib import Path
+import re
+from PyQt5.QtWidgets import QMessageBox,QApplication, QDialog, QMainWindow
+import urllib.request
+from update_version_check import Update
+#from Thread import timer
+from get_DPI_scale import scale
 
 ############################ Pre-Build Database Updation/Creation #################
 sqlpath = Path('ResourceFiles/Database/Intg_osdag.sql')
@@ -114,9 +119,10 @@ if sqlpath.exists():
             print('Error: ', e)
 #########################################################################################
 
-from PyQt5.QtCore import pyqtSlot,pyqtSignal, QObject, Qt,QSize
+from PyQt5.QtCore import pyqtSlot,pyqtSignal, QObject, Qt,QSize, QFile, QTextStream, QCoreApplication
 from PyQt5.QtWidgets import QMainWindow, QDialog,QMessageBox, QFileDialog, QApplication, QWidget, QLabel, QGridLayout, QVBoxLayout, QTabWidget, QRadioButton, QButtonGroup, QSizePolicy
 from PyQt5.QtGui import QIcon
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5 import uic
 import math
 import sys
@@ -127,6 +133,7 @@ from gui.ui_design_summary import Ui_DesignReport
 from gui.LeftPanel_Button import Ui_LPButton
 from gui.Submodule_Page import Ui_Submodule_Page
 from gui.ui_OsdagMainPage import Ui_MainWindow
+from gui.ExceptionDialog import CriticalExceptionDialog
 # from design_type.connection.fin_plate_connection import design_report_show
 # from design_type.connection.fin_plate_connection import DesignReportDialog
 from design_type.connection.fin_plate_connection import FinPlateConnection
@@ -138,22 +145,30 @@ from design_type.connection.base_plate_connection import BasePlateConnection
 from design_type.connection.beam_cover_plate import BeamCoverPlate
 from design_type.connection.beam_cover_plate_weld import BeamCoverPlateWeld
 from design_type.connection.column_cover_plate_weld import ColumnCoverPlateWeld
-
+from design_type.connection.beam_column_end_plate import BeamColumnEndPlate
 from design_type.tension_member.tension_bolted import Tension_bolted
 from design_type.tension_member.tension_welded import Tension_welded
-from design_type.connection.beam_end_plate import BeamEndPlate
+
+from design_type.connection.beam_beam_end_plate_splice import BeamBeamEndPlateSplice
+
 from design_type.connection.column_cover_plate import ColumnCoverPlate
 from design_type.connection.column_end_plate import ColumnEndPlate
 from design_type.compression_member.compression import Compression
 #from design_type.tension_member.tension import Tension
 # from cad.cad_common import call_3DBeam
-
+import APP_CRASH.Appcrash.api as appcrash
 import configparser
 import os.path
 import subprocess
-from gui.ui_template import Ui_ModuleWindow
-
-
+if sys.platform == 'darwin':
+    print('its mac')
+    from gui.ui_template_for_mac import Ui_ModuleWindow
+else:
+    from gui.ui_template import Ui_ModuleWindow
+# from gui.ui_template import Ui_ModuleWindow
+import io
+import traceback
+import time
 
 class MyTutorials(QDialog):
     def __init__(self, parent=None):
@@ -180,36 +195,8 @@ class MyAskQuestion(QDialog):
 class New_Tab_Widget(QTabWidget):           # Empty Custom Tab Widget
     def __init__(self):
         super().__init__()
-        self.setTabShape(QTabWidget.Triangular)
-        self.setStyleSheet(
-            '''
-            QTabBar::tab {
-                margin-right: 10;
-                border-top-left-radius: 2px ;
-                border-top-right-radius: 2px ;
-                border-bottom-left-radius: 0px ;
-                border-bottom-right-radius: 0px ;
-                height: 40px;
-                width: 200px;
-                background-color: #925a5b;
-                color:#ffffff;
-                font-family: "Arial", Helvetica, sans-serif;
-                font-size: 18px;
-                font-weight: bold;
-                        }
+        #self.setTabShape(QTabWidget.Triangular)
 
-            QTabBar::tab::selected{
-	            background-color: #d97f7f;
-                color:#000000 ;
-                        }
-
-            QTabBar::tab::hover{
-                background-color: #d97f7f;
-                color:#000000 ;
-                        }
-
-            '''
-                        )
 
 class Submodule_Page(QWidget):             # Module Varaints' page with a GridLayout and a Start Button
     def __init__(self):
@@ -225,41 +212,43 @@ class Submodule_Widget(QWidget):            # Module Variant widget with a Name,
         self.setLayout(layout)
         label=QLabel(Module_Name)
         layout.addWidget(label)
+        label.setObjectName('module_name_label')
         self.rdbtn=QRadioButton()
         self.rdbtn.setObjectName(Object_Name)
         self.rdbtn.setIcon(QIcon(Image_Path))
-        self.rdbtn.setIconSize(QSize(300,300))
+
+        self.rdbtn.setIconSize(QSize(scale*300, scale*300))
+
         layout.addWidget(self.rdbtn)
-        self.setStyleSheet(
-                    '''
-                        QLabel{
-                            font-family: "Arial", Helvetica, sans-serif;
-                            font-size: 20px;
-                            font-weight: bold;
-                              }
-                    '''
-                )
         self.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
 class ModulePage(QWidget):              # Empty Page with a layout
-    def __init__(self):
+    def __init__(self,margin=0):
         super().__init__()
         self.layout=QGridLayout()
         self.setLayout(self.layout)
-        self.layout.setContentsMargins(0,5,0,0)
+        self.layout.setContentsMargins(0,0,0,0)
 
 class LeftPanelButton(QWidget):          # Custom Button widget for the Left Panel
     def __init__(self,text):
         super().__init__()
         self.ui=Ui_LPButton()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self,scale)
         self.ui.LP_Button.setText(text)  #LP_Button is the QPushButton widget inside the LeftPanelButton Widget
+
+
 class OsdagMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        resolution = QtWidgets.QDesktopWidget().screenGeometry()
+        width = resolution.width()
+        height = resolution.height()
+
         self.ui=Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.switch.toggled.connect(self.change_theme)
         self.ui.comboBox_help.currentIndexChanged.connect(self.selection_change)
+        self.ui.myStackedWidget.currentChanged.connect(self.current_changed)
         self.Under_Development='UNDER DEVELOPMENT'
         self.Modules={
                 'Connection' : {
@@ -271,37 +260,36 @@ class OsdagMainWindow(QMainWindow):
                                     self.show_shear_connection,
                                                     ],
                                 'Moment Connection' :{
-                                                    'Beam to Beam' :[
-                                                                ('Cover Plate Bolted','ResourceFiles/images/coverplate.png','B2B_Cover_Plate_Bolted'),
-                                                                ('Cover Plate Welded','ResourceFiles/images/coverplate.png','B2B_Cover_Plate_Welded'),
-                                                                ('End Plate Connection','ResourceFiles/images/endplate.png','B2B_End_Plate_Connection'),
+                                                    'Beam-to-Beam Splice' :[
+                                                                ('Cover Plate Bolted','ResourceFiles/images/bbcoverplatebolted.png','B2B_Cover_Plate_Bolted'),
+                                                                ('Cover Plate Welded','ResourceFiles/images/bbcoverplatewelded.png','B2B_Cover_Plate_Welded'),
+                                                                ('End Plate', 'ResourceFiles/images/bb_splice.png', 'B2B_End_Plate_Splice'),
                                                                 self.show_moment_connection,
                                                                     ],
-                                                    'Beam to Column': self.Under_Development,
-                                                    'Column to Column' :[
-                                                                ('Cover Plate Bolted','ResourceFiles/images/coverplate.png','C2C_Cover_Plate_Bolted'),
-                                                                ('Cover Plate Welded','ResourceFiles/images/coverplate.png','C2C_Cover_Plate_Welded'),
-                                                                ('End Plate Connection','ResourceFiles/images/column_end_plate.jpg','C2C_End_Plate_Connection'),
+                                                    'Beam-to-Column': [
+                                                                ('End Plate', 'ResourceFiles/images/BC-EBW_GUI.png','BC_End_Plate'),
+                                                                self.show_moment_connection_bc
+                                                                    ],
+                                                    'Column-to-Column Splice' :[
+                                                                ('Cover Plate Bolted','ResourceFiles/images/cccoverplatebolted.png','C2C_Cover_Plate_Bolted'),
+                                                                ('Cover Plate Welded','ResourceFiles/images/cccoverplatewelded.png','C2C_Cover_Plate_Welded'),
+                                                                ('End Plate','ResourceFiles/images/ccep_flush.png','C2C_End_Plate_Connection'),
                                                                 self.show_moment_connection_cc,
                                                                     ],
                                                     'PEB' : self.Under_Development,
                                                     },
                                 'Base Plate':[
-                                        ('Base Plate', 'ResourceFiles/images/BasePlate.jpeg', 'Base_Plate'),
+                                        ('Base Plate Connection', 'ResourceFiles/images/base_plate.png', 'Base_Plate'),
                                         self.show_base_plate,
                                             ],
                                 'Truss Connection' : self.Under_Development,
                                 },
                 'Tension Member' : [
-                            ('Bolted','ResourceFiles/images/beam_column_endplate.png','Tension_Bolted'),
-                            ('Welded','ResourceFiles/images/finplate.png','Tension_Welded'),
+                            ('Bolted to End Gusset','ResourceFiles/images/bolted_ten.png','Tension_Bolted'),
+                            ('Welded to End Gusset','ResourceFiles/images/welded_ten.png','Tension_Welded'),
                             self.show_tension_module,
                                    ],
-                'Compression Member' : [
-                            ('Bolted','ResourceFiles/images/beam_column_endplate.png','Compression_Bolted'),
-                            ('Welded','ResourceFiles/images/finplate.png','Compression_Welded'),
-                            self.show_compression_module,
-                                       ],
+                'Compression Member' : self.Under_Development,
                 'Flexural Member' : self.Under_Development,
                 'Beam-Column' : self.Under_Development,
                 'Plate Girder' : self.Under_Development,
@@ -312,7 +300,6 @@ class OsdagMainWindow(QMainWindow):
                 }
 
 ####################################### UI Formation ################################
-
         for ModuleName in self.Modules:                      #Level 1 dictionary handling
             Button= LeftPanelButton(ModuleName)
             self.ButtonConnection(Button,list(self.Modules.keys()),ModuleName)
@@ -411,7 +398,32 @@ class OsdagMainWindow(QMainWindow):
 
             else:
                 raise ValueError
-        self.showMaximized()
+
+        self.resize(width * (0.85), height * (0.75))
+        self.center()
+        self.show()
+
+    def center(self):
+        frameGm = self.frameGeometry()
+        screen = QtWidgets.QApplication.desktop().screenNumber(QtWidgets.QApplication.desktop().cursor().pos())
+        centerPoint = QtWidgets.QApplication.desktop().screenGeometry(screen).center()
+        frameGm.moveCenter(centerPoint)
+        self.move(frameGm.topLeft())
+
+    @pyqtSlot(int)
+    def current_changed(self, index):
+        l = list(self.Modules.keys())
+        items = list(self.ui.verticalLayout.itemAt(i) for i in range(self.ui.verticalLayout.count()))
+        # print(items,"hfhh")
+        for item in range(len(items)):
+            if item == index-1:
+                items[item].widget().ui.LP_Button.setStyleSheet('''
+
+                background-color: qradialgradient(cx: 0.5, cy: 0.5, radius: 2, fx: 0.5, fy: 1, stop: 0 rgba(130, 36, 38,190), stop: 0.2 rgb(171, 39, 42), stop: 0.4 rgba(255,30,30,32));
+
+                ''')
+            else:
+                items[item].widget().ui.LP_Button.setStyleSheet(";")
 
 ################################ UI Methods ###############################################
 
@@ -447,8 +459,13 @@ class OsdagMainWindow(QMainWindow):
             self.about_osdag()
         elif loc == "Ask Us a Question":
             self.ask_question()
+        elif loc == "Check for Update":
+            update_class = Update()
+            msg = update_class.notifi()
+            QMessageBox.information(self, 'Info',msg)
         # elif loc == "FAQ":
         #     pass
+
 
     def select_workspace_folder(self):
         # This function prompts the user to select the workspace folder and returns the name of the workspace folder
@@ -461,17 +478,10 @@ class OsdagMainWindow(QMainWindow):
     @staticmethod
     def UnderDevelopmentModule():
         Page= ModulePage()
-        label=QLabel('This Module is Currently Under Devopment')
+        label=QLabel('This Module is Currently Under Development')
         Page.layout.addWidget(label)
         label.setAlignment(Qt.AlignCenter)
-        Page.setStyleSheet(
-            '''
-                QLabel{
-                    font-family: "Times New Roman", Times, serif;
-                    font-size: 30px;
-                }
-            '''
-        )
+        label.setObjectName('under_development_label')
         return Page
 
     def ButtonConnection(self,Button,Modules,ModuleName):
@@ -481,215 +491,80 @@ class OsdagMainWindow(QMainWindow):
 
     @pyqtSlot()
     def show_shear_connection(self):
-        # folder = self.select_workspace_folder()
-        # folder = str(folder)
-        # if not os.path.exists(folder):
-        #     if folder == '':
-        #         pass
-        #     else:
-        #         os.mkdir(folder, 0o755)
-        #
-        # root_path = folder
-        # images_html_folder = ['images_html']
-        # flag = True
-        # for create_folder in images_html_folder:
-        #     if root_path == '':
-        #         flag = False
-        #         return flag
-        #     else:
-        #         try:
-        #             os.mkdir(os.path.join(root_path, create_folder))
-        #         except OSError:
-        #             shutil.rmtree(os.path.join(folder, create_folder))
-        #             os.mkdir(os.path.join(root_path, create_folder))
-
         if self.findChild(QRadioButton,'Fin_Plate').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, FinPlateConnection, ' ')
+            self.ui2 = Ui_ModuleWindow(FinPlateConnection, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
-
-            # self.window = MainController(Ui_ModuleWindow, FinPlateConnection, folder)
-            # self.window.show()
-            # self.window.closed.connect(self.show)
         elif self.findChild(QRadioButton,'Cleat_Angle').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, CleatAngleConnection, ' ')
+            self.ui2 = Ui_ModuleWindow(CleatAngleConnection, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
-            # self.window = MainController(Ui_ModuleWindow, FinPlateConnection, folder)
-            # self.window.show()
-            # self.window.closed.connect(self.show)
         elif self.findChild(QRadioButton,'Seated_Angle').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, SeatedAngleConnection, ' ')
+            self.ui2 = Ui_ModuleWindow( SeatedAngleConnection, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
-            # self.window = MainController(Ui_ModuleWindow, FinPlateConnection, folder)
-            # self.window.show()
-            # self.window.closed.connect(self.show)
         elif self.findChild(QRadioButton,'End_Plate').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, EndPlateConnection, ' ')
+            self.ui2 = Ui_ModuleWindow(EndPlateConnection, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
-            # self.window = MainController(Ui_ModuleWindow, FinPlateConnection, folder)
-            # self.window.show()
-            # self.window.closed.connect(self.show)
         else:
             QMessageBox.about(self, "INFO", "Please select appropriate connection")
-    #
-    # def show_compression_module(self):
-    #     folder = self.select_workspace_folder()
-    #     folder = str(folder)
-    #     if not os.path.exists(folder):
-    #         if folder == '':
-    #             pass
-    #         else:
-    #             os.mkdir(folder, 0o755)
-    #
-    #     root_path = folder
-    #     images_html_folder = ['images_html']
-    #     flag = True
-    #     for create_folder in images_html_folder:
-    #         if root_path == '':
-    #             flag = False
-    #             return flag
-    #         else:
-    #             try:
-    #                 os.mkdir(os.path.join(root_path, create_folder))
-    #             except OSError:
-    #                 shutil.rmtree(os.path.join(folder, create_folder))
-    #                 os.mkdir(os.path.join(root_path, create_folder))
-    #     self.hide()
-    #     self.ui3 = Ui_ModuleWindow()
-    #     self.ui3.setupUi(self.ui3, Compression, folder)
-    #     self.ui3.show()
-    #     self.ui3.closed.connect(self.show)
-
 
     def show_moment_connection(self):
-        # folder = self.select_workspace_folder()
-        # folder = str(folder)
-        # if not os.path.exists(folder):
-        #     if folder == '':
-        #         pass
-        #     else:
-        #         os.mkdir(folder, 0o755)
-        #
-        # root_path = folder
-        # images_html_folder = ['images_html']
-        # flag = True
-        # for create_folder in images_html_folder:
-        #     if root_path == '':
-        #         flag = False
-        #         return flag
-        #     else:
-        #         try:
-        #             os.mkdir(os.path.join(root_path, create_folder))
-        #         except OSError:
-        #             shutil.rmtree(os.path.join(folder, create_folder))
-        #             os.mkdir(os.path.join(root_path, create_folder))
-
         if self.findChild(QRadioButton,'B2B_Cover_Plate_Bolted').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, BeamCoverPlate, ' ')
+            self.ui2 = Ui_ModuleWindow(BeamCoverPlate, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
         elif self.findChild(QRadioButton,'B2B_Cover_Plate_Welded').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, BeamCoverPlateWeld, ' ')
+            self.ui2 = Ui_ModuleWindow(BeamCoverPlateWeld, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
-            # self.window = MainController(Ui_ModuleWindow, FinPlateConnection, folder)
-            # self.window.show()
-            # self.window.closed.connect(self.show)
-        elif self.findChild(QRadioButton,'B2B_End_Plate_Connection').isChecked():
+        # elif self.findChild(QRadioButton,'B2B_End_Plate_Connection').isChecked():
+        #     self.hide()
+        #     self.ui2 = Ui_ModuleWindow(BeamBeamEndPlateSplice,' ')
+        #     self.ui2.show()
+        #     self.ui2.closed.connect(self.show)
+        elif self.findChild(QRadioButton, 'B2B_End_Plate_Splice').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2,BeamEndPlate,' ')
+            self.ui2 = Ui_ModuleWindow(BeamBeamEndPlateSplice, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
-            # self.window = MainController(Ui_ModuleWindow, FinPlateConnection, folder)
-            # self.window.show()
-            # self.window.closed.connect(self.show)
 
+    def show_moment_connection_bc(self):
+        if self.findChild(QRadioButton,'BC_End_Plate').isChecked():
+            self.hide()
+            self.ui2 = Ui_ModuleWindow(BeamColumnEndPlate, ' ')
+            self.ui2.show()
+            self.ui2.closed.connect(self.show)
 
     def show_base_plate(self):
-        # folder = self.select_workspace_folder()
-        # folder = str(folder)
-        # if not os.path.exists(folder):
-        #     if folder == '':
-        #         pass
-        #     else:
-        #         os.mkdir(folder, 0o755)
-        #
-        # root_path = folder
-        # images_html_folder = ['images_html']
-        # flag = True
-        # for create_folder in images_html_folder:
-        #     if root_path == '':
-        #         flag = False
-        #         return flag
-        #     else:
-        #         try:
-        #             os.mkdir(os.path.join(root_path, create_folder))
-        #         except OSError:
-        #             shutil.rmtree(os.path.join(folder, create_folder))
-        #             os.mkdir(os.path.join(root_path, create_folder))
         if self.findChild(QRadioButton, 'Base_Plate').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, BasePlateConnection, ' ')
+            self.ui2 = Ui_ModuleWindow(BasePlateConnection, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
     def show_moment_connection_cc(self):
-        # folder = self.select_workspace_folder()
-        # folder = str(folder)
-        # if not os.path.exists(folder):
-        #     if folder == '':
-        #         pass
-        #     else:
-        #         os.mkdir(folder, 0o755)
-        #
-        # root_path = folder
-        # images_html_folder = ['images_html']
-        # flag = True
-        # for create_folder in images_html_folder:
-        #     if root_path == '':
-        #         flag = False
-        #         return flag
-        #     else:
-        #         try:
-        #             os.mkdir(os.path.join(root_path, create_folder))
-        #         except OSError:
-        #             shutil.rmtree(os.path.join(folder, create_folder))
-        #             os.mkdir(os.path.join(root_path, create_folder))
-
         if self.findChild(QRadioButton,'C2C_Cover_Plate_Bolted').isChecked() :
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, ColumnCoverPlate, ' ')
+            self.ui2 = Ui_ModuleWindow(ColumnCoverPlate, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
         elif self.findChild(QRadioButton,'C2C_Cover_Plate_Welded').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, ColumnCoverPlateWeld, ' ')
+            self.ui2 = Ui_ModuleWindow(ColumnCoverPlateWeld, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
         elif self.findChild(QRadioButton,'C2C_End_Plate_Connection').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, ColumnEndPlate, ' ')
+            self.ui2 = Ui_ModuleWindow(ColumnEndPlate, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
@@ -717,15 +592,13 @@ class OsdagMainWindow(QMainWindow):
         #             os.mkdir(os.path.join(root_path, create_folder))
         if self.findChild(QRadioButton,'Compression_Bolted').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, Compression, ' ')
+            self.ui2 = Ui_ModuleWindow(Compression, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
         elif self.findChild(QRadioButton,'Compression_Welded').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, Compression, ' ')
+            self.ui2 = Ui_ModuleWindow(Compression, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
@@ -754,15 +627,13 @@ class OsdagMainWindow(QMainWindow):
 
         if self.findChild(QRadioButton,'Tension_Bolted').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2,Tension_bolted, ' ')
+            self.ui2 = Ui_ModuleWindow(Tension_bolted, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
         elif self.findChild(QRadioButton,'Tension_Welded').isChecked():
             self.hide()
-            self.ui2 = Ui_ModuleWindow()
-            self.ui2.setupUi(self.ui2, Tension_welded, ' ')
+            self.ui2 = Ui_ModuleWindow(Tension_welded, ' ')
             self.ui2.show()
             self.ui2.closed.connect(self.show)
 
@@ -790,23 +661,194 @@ class OsdagMainWindow(QMainWindow):
         self.ask_question()
 
     def design_examples(self):
-        root_path = os.path.join(os.path.dirname(__file__), 'ResourceFiles', 'design_example', '_build', 'html')
+        root_path = os.path.join('ResourceFiles', 'html_page', '_build', 'html')
         for html_file in os.listdir(root_path):
-           if html_file.startswith('index'):
+            # if html_file.startswith('index'):
+            print(os.path.splitext(html_file)[1])
+            if os.path.splitext(html_file)[1] == '.html':
                if sys.platform == ("win32" or "win64"):
-                   os.startfile("%s/%s" % (root_path, html_file))
+                   os.startfile(os.path.join(root_path, html_file))
                else:
                    opener ="open" if sys.platform == "darwin" else "xdg-open"
                    subprocess.call([opener, "%s/%s" % (root_path, html_file)])
 
+    def change_theme(self):
+        state = self.ui.switch.isChecked()
+        toggle_stylesheet(state)
+
+# class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
+#
+#     def __init__(self, icon, parent=None):
+#         QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
+#         self.parent = parent
+#         menu = QtWidgets.QMenu(self.parent)
+#         self.setContextMenu(menu)
+#         menu.addAction("Exit", self.exit)
+#
+#
+#     def exit(self):
+#         QCoreApplication.exit()
+
+######################### UpDateNotifi ################
+
+# class Update(QMainWindow):
+#     def __init__(self, old_version):
+#         super().__init__()
+#         self.old_version=old_version
+#     def notifi(self):
+#         try:
+#             url = "https://anshulsingh-py.github.io/test/version.txt"
+#             file = urllib.request.urlopen(url)
+#             for line in file:
+#                 decoded_line = line.decode("utf-8")
+#             new_version = decoded_line.split("=")[1]
+#             if int(new_version) > self.old_version:
+#                 print("update")
+#                 msg = QMessageBox.information(self, 'Update available','<a href=https://google.com>Click to downlaod<a/>')
+#         except:
+#             print("No internet connection")
+
+def toggle_stylesheet(state):
+    app = QApplication.instance()
+    if app is None:
+        raise RuntimeError("No Qt Application found.")
+    if state:
+        path = 'darkstyle.qss'
+    else:
+        path = 'light.qss'
+    theme_path = os.path.join(os.path.dirname(__file__), 'themes', path)
+    file = QFile(theme_path)
+    file.open(QFile.ReadOnly | QFile.Text)
+    stream = QTextStream(file)
+    app.setStyleSheet(stream.readAll())
+
+def hook_exception(exc_type, exc_value, tracebackobj):
+
+    instance = QApplication.instance()
+    # KeyboardInterrupt is a special case.
+    # We don't raise the error dialog when it occurs.
+    if issubclass(exc_type, KeyboardInterrupt):
+        if instance:
+            instance.closeAllWindows()
+        return
+
+    separator = '-' * 80
+    notice = \
+        """An unhandled exception occurred. Please report the problem\n""" \
+        """using the error reporting dialog or raise the issue to {}.\n""" \
+        """\n\nError information:\n""".format('github.com/osdag-admin/Osdag')
+    time_string = time.strftime("%Y-%m-%d, %H:%M:%S")
+
+    tbinfofile = io.StringIO()
+    traceback.print_tb(tracebackobj, None, tbinfofile)
+    tbinfofile.seek(0)
+    tbinfo = tbinfofile.read()
+    errmsg = '%s: \n%s' % (str(exc_type), str(exc_value))
+
+    sections = [separator, time_string, separator, errmsg, separator, tbinfo]
+    msg = '\n'.join(sections)
+    error_box.text_edit.setText(str(notice) + str(msg))
+    error_box.titlebar.save_log.clicked.connect(save_log(str(notice)+str(msg)))
+    error_box.titlebar.report_issue.clicked.connect(send_crash_report)
+
+    error_box.setWindowModality(QtCore.Qt.ApplicationModal)
+    if not error_box.exec_():
+        instance.quit()
+
+def save_log(log):
+    def save_():
+        file_type = "log (*.log)"
+        filename, _ = QFileDialog.getSaveFileName(QFileDialog(), "Save File As", '', file_type)
+        if filename:
+            with open(filename,'w') as file:
+                file.write(log)
+            QMessageBox.information(QMessageBox(), "Information", "Log saved successfully.")
+    return save_
+
+def get_system_info():
+    return 'OS: %s\nPython: %r' % (sys.platform, sys.version_info)
+
+def get_application_log():
+    return error_box.text_edit.toPlainText()
+
+def send_crash_report():
+    appcrash.get_application_log = get_application_log
+    appcrash.get_system_information = get_system_info
+    appcrash.show_report_dialog()
+
+class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
+
+    def __init__(self, icon, parent=None):
+        QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
+        self.parent = parent
+        menu = QtWidgets.QMenu(self.parent)
+        self.setContextMenu(menu)
+        menu.addAction("Exit", self.exit)
+
+
+    def exit(self):
+        QCoreApplication.exit()
+
+
+
 
 if __name__ == '__main__':
+    # from cad.common_logic import CommonDesignLogic
+    from multiprocessing import Pool
+    import multiprocessing
+
+    # app = QApplication(sys.argv)
+    # screen = app.screens()[0]
+    # dpi = screen.physicalDotsPerInch()
+    # scale = round(dpi/140.0,1)
+    #
+    # print('scale', dpi, scale,scale*300)
+    path = os.path.join(os.path.dirname(__file__), 'themes', 'light.qss')
+    file = QFile(path)
+    file.open(QFile.ReadOnly | QFile.Text)
+    stream = QTextStream(file)
     app = QApplication(sys.argv)
+    app.setStyleSheet(stream.readAll())
+    app.setStyle('Fusion')
+
+    # path = os.path.join(os.path.dirname(__file__), 'ResourceFiles', 'images', 'Osdag.png')
     window = OsdagMainWindow()
-    window.show()
-    # app.exec_()
-    # sys.exit(app.exec_())
+
+    # trayIcon = SystemTrayIcon(QtGui.QIcon(path), window)
+
+    ############################     Exception Dialog and Error Reporting  ###################
+
+    error_box = CriticalExceptionDialog()
+
+    GITHUB_OWNER = 'osdag-admin'    # username of the github account where crash report is to be submitted
+    GITHUB_REPO = 'Osdag'       # repo name
+    EMAIL = 'your.email@provider.com'  # Email address of developers
+
+    appcrash.install_backend(appcrash.backends.GithubBackend(GITHUB_OWNER, GITHUB_REPO))
+    appcrash.install_backend(appcrash.backends.EmailBackend(EMAIL, 'Osdag'))
+
+    #my_settings = QtCore.QSettings('FOSSEE','osdag')
+    #appcrash.set_qsettings(my_settings)
+    '''
+    You can save your GitHub username and password across each sessions so that you don't have to enter it each time you report an issue.
+    
+    Simply uncomment above two lines. To use QSetings we need to give an organisation name and the application name (compulsory).
+
+    For example, 'FOSSEE' is an organisation name and 'Osdag' is the application name in the above QSettings. Feel free to change them to suit your requirement, but try to keep it constant.
+    Do not change it frequently.
+
+    '''
+
+    ############################     Exception Dialog and Error Reporting  ###################
+
+    # trayIcon.show()
+
     try:
-        sys.exit(app.exec_())
+        # window.notification2()
+        #update = Update(0)
+        #update.notifi()
+
+        sys.excepthook = hook_exception
+        QCoreApplication.exit(app.exec_()) # to properly close the Qt Application use QCoreApplication instead of sys
     except BaseException as e:
         print("ERROR", e)

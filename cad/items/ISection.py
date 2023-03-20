@@ -8,6 +8,8 @@ from cad.items.ModelUtils import *
 from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Cut
 #from notch import Notch
 from cad.items.notch import Notch
+from OCC.Core.gp import (gp_Vec, gp_Pnt, gp_Trsf, gp_OX, gp_OY,
+                         gp_OZ, gp_XYZ, gp_Ax2, gp_Dir, gp_GTrsf, gp_Mat)
 """
                           ^ v
                               |
@@ -96,6 +98,7 @@ class ISection(object):
         extrudeDir = self.length * self.wDir  # extrudeDir is a numpy array
         prism = makePrismFromFace(aFace, extrudeDir)
 
+
         if self.notchObj is not None:
             uDir = numpy.array([-1.0, 0.0, 0])
             wDir = numpy.array([0.0, 1.0, 0.0])
@@ -108,3 +111,33 @@ class ISection(object):
             prism = BRepAlgoAPI_Cut(prism, notchModel).Shape()
 
         return prism
+
+
+if __name__ == '__main__':
+
+    from OCC.Display.SimpleGui import init_display
+    display, start_display, add_menu, add_function_to_menu = init_display()
+
+    B = 40
+    T = 3
+    D = 50
+    t = 2
+    R1 = 5
+    R2 = 5
+    alpha = 1
+    length = 200
+    width = 10
+    hight = 10
+    notchObj = Notch(R1, hight, width, length)
+
+    origin = numpy.array([0.,0.,0.])
+    uDir = numpy.array([1.,0.,0.])
+    shaftDir = numpy.array([0.,0.,1.])
+
+    ISec = ISection(B, T, D, t, R1, R2, alpha, length, notchObj)
+    _place = ISec.place(origin, uDir, shaftDir)
+    point = ISec.compute_params()
+    prism = ISec.create_model()
+    display.DisplayShape(prism, update=True)
+    display.DisableAntiAliasing()
+    start_display()
