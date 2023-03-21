@@ -4,8 +4,8 @@ from osdag.web_api.session_api import CreateSession
 from osdag.web_api.session_api import DeleteSession
 
 urlpatterns = [
-    path('sessions/create/', CreateSession.as_view()),
-    path('sessions/create', CreateSession.as_view()),
-
-    path('sessions/delete   ', DeleteSession.as_view()),
+    path('create_session/', CreateSession.as_view()),
+    path('create_session', CreateSession.as_view()),
+    path('delete_session/', DeleteSession.as_view()),
+    path('delete_session', DeleteSession.as_view()),
 ]

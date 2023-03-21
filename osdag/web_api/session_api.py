@@ -2,14 +2,14 @@
     This file includes the Create Session and Delete Session API.
     Create Session API (class CreateSession(View)):
         Accepts POST requests.
-        Accepts content-type/form-data
-        Request body must include module id
-        Creates a session object in db and returns session id as cookie
+        Accepts content-type/form-data.
+        Request body must include module id.
+        Creates a session object in db and returns session id as cookie.
     Delete Session API (class CreateSession(View)):
-        Accepts POST requests
-        Requires no POST data
-        Requires design_session cookie
-        Deletes session object in db and deletes session id cookie
+        Accepts POST requests.
+        Requires no POST data.
+        Requires design_session cookie.
+        Deletes session object in db and deletes session id cookie.
 """
 from django.shortcuts import render, redirect
 from django.utils.html import escape, urlencode
@@ -26,7 +26,14 @@ import typing
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateSession(View):
-    """Create a session in database and set session cookie."""
+    """
+        Create a session in database and set session cookie.
+            Create Session API (class CreateSession(View)):
+                Accepts POST requests..
+                Accepts content-type/form-data.
+                Request body must include module id.
+                Creates a session object in db and returns session id as cookie.
+    """
     def post(self,request: HttpRequest) -> HttpResponse:
         module_id = request.POST.get("module_id") # Type of Osdag Module
         if module_id == None or module_id == '': # Error Checking: If module id provided.
@@ -34,7 +41,7 @@ class CreateSession(View):
         if request.COOKIES.get("design_session") is not None: # Error Checking: Already editing design.
             return HttpResponse("Error: Already editing module", status=400) # Returns error response.
         if module_id not in developed_modules: # Error Checking: Does module api exist
-            return HttpResponse("Error: The server refuses the attempt to brew coffee with a teapot", status=418) # Return error response.
+            return HttpResponse("Error: This module has not been developed yet", status=501) # Return error response.
         response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
         cookie_id = get_random_string(length=32) # Session Id - random string.
         response.set_cookie("design_session", cookie_id) # Set session id cookie.
@@ -49,7 +56,14 @@ class CreateSession(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteSession(View):
-    """Delete session cookie and session data in db."""
+    """
+        Delete session cookie and session data in db.
+            Delete Session API (class CreateSession(View)):
+                Accepts POST requests.
+                Requires no POST data.
+                Requires design_session cookie.
+                Deletes session object in db and deletes session id cookie.
+    """
     def post(self,request: HttpRequest) -> HttpResponse:
         cookie_id = request.COOKIES.get("design_session") # Get design session id.
         if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
@@ -61,8 +75,6 @@ class DeleteSession(View):
             design_session.delete()
         except Exception as e: # Error Checking: While saving design.
             return HttpResponse("Inernal Server Error: " + e, status=500) # Return error response.
-        response = HttpResponse(status=200)
+        response = HttpResponse(status=200) # Status code 200 - Successfully deleted .
         response.delete_cookie("design_session")
         return response
-        
-        
