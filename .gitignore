@@ -37,3 +37,4 @@ ResourceFiles/last_designs/*
 ResourceFiles/html_page/*
 */__pycache__/
 osdag_web/secret_key.py
+db.sqlite3
