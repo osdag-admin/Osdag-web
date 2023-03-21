@@ -35,4 +35,4 @@ ResourceFiles/Osi_Files/*
 *.xlsx
 ResourceFiles/last_designs/*
 ResourceFiles/html_page/*
-**/__pycache__/
+*/__pycache__/
