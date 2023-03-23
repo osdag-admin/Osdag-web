@@ -2,9 +2,8 @@
     This file includes the Input Values API
     InputValues API (class InputValues(View)):
         Accepts POST requests.
-        Accepts content-type/form-data.
-        Request body must include module id.
-        Creates a session object in db and returns session id as cookie.
+        Accepts content_type application/json
+        Request must provide session cookie id.
 """
 from django.shortcuts import render, redirect
 from django.utils.html import escape, urlencode
@@ -27,7 +26,7 @@ class InputValues(View):
         Update input values in database.
             Create Session API (class CreateSession(View)):
                 Accepts POST requests.
-                Accepts content_type text/json
+                Accepts content_type application/json
                 Request must provide session cookie id.
     """
     def post(self, request: HttpRequest):
@@ -36,30 +35,30 @@ class InputValues(View):
             return HttpResponse("Error: Please open module", status=400) # Returns error response.
         if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
             return HttpResponse("Error: This design session does not exist", status=404) # Return error response.
-        if not request.content_type == "text/json": # Error checking: If content/type is not json.
+        if not request.content_type == "application/json": # Error checking: If content/type is not json.
             return HttpResponse("Error: Content type has to be text/json") # Return error response.
         try: # Error checking while loading body.
             body_unicode = request.body.decode('utf-8')
             input_data = json.loads(body_unicode)
         except Exception as e:
-            return HttpResponse("Error: Internal server error: " + e, status=500) # Return error response
+            return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response
         try: # Error checking while getting module api
             design_session = Design.objects.get(cookie_id=cookie_id) # Get the design session from the db.
             module_api = get_module_api(design_session.module_id) # Get the module api using the module id.
         except Exception as e:
-            return HttpResponse("Error: Internal server error: " + e, status=500) # Return error response
+            return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response
         try:
             module_api.validate_input(input_data) # Check if input data is valid.
         except OsdagApiException as e: # Catch input validation error.
-            return HttpResponse("Error: " + e, status=400) # Return error response
+            return HttpResponse("Error: " + repr(e), status=400) # Return error response
         except Exception as e: # Catch other error.
-            return HttpResponse("Error: Internal server error: " + e, status=500) # Return error response
+            return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response
         try: # Error checking while saving input values
             json_data = json.dumps(input_data) # Convert dict to json string
             Design.objects.filter(cookie_id=cookie_id).update(input_values=json_data)
             Design.objects.filter(cookie_id=cookie_id).update(current_state=False)
         except Exception as e:
-            return HttpResponse("Error: Internal server error: " + e, status=500) # Return error response
+            return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response
         response = HttpResponse(status=200) # Status code 200 - Success!
         return response
 

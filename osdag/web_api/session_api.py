@@ -49,7 +49,7 @@ class CreateSession(View):
             session = Design(cookie_id = cookie_id, module_id = module_id) # Create design session object in db
             session.save()
         except Exception as e: # Error Checking: While saving design.
-            return HttpResponse("Inernal Server Error: " + e, status=500) # Return error response.
+            return HttpResponse("Inernal Server Error: " + repr(e), status=500) # Return error response.
         response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
         response.set_cookie("design_session", cookie_id) # Set session id cookie
         return response
@@ -74,7 +74,7 @@ class DeleteSession(View):
             design_session = Design.objects.get(cookie_id=cookie_id) # Design session object in db.
             design_session.delete()
         except Exception as e: # Error Checking: While saving design.
-            return HttpResponse("Inernal Server Error: " + e, status=500) # Return error response.
+            return HttpResponse("Inernal Server Error: " + repr(e), status=500) # Return error response.
         response = HttpResponse(status=200) # Status code 200 - Successfully deleted .
         response.delete_cookie("design_session")
         return response
