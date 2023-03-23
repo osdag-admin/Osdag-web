@@ -160,7 +160,7 @@ def validate_input(input_values: Dict[str, Any]) -> None:
 
     # Validate Connector.Plate.Thickness_List
     connector_plate_thicknesslist = input_values["Connector.Plate.Thickness_List"]
-    if (not isinstance(connector_plate_thicknesslist, str) # Check if Connector.Plate.Thickness_List is a list.
+    if (not isinstance(connector_plate_thicknesslist, list) # Check if Connector.Plate.Thickness_List is a list.
             or not validate_list_type(connector_plate_thicknesslist, str) # Check if all items in Connector.Plate.Thickness_List are str.
             or not custom_list_validation(connector_plate_thicknesslist, int_able)): # Check if all items in Connector.Plate.Thickness_List can be converted to int.
         raise InvalidInputTypeError("Connector.Plate.Thickness_List", "List[str] where all items can be converted to int")
