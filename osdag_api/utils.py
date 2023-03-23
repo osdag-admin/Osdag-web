@@ -17,6 +17,8 @@ import typing
 from typing import List, Tuple, Callable, Any, Optional, Iterable
 def validate_list_type(iterable: Iterable, data_type: Any) -> bool:
     """Validate whether the all items of list are of data type."""
+    if len(iterable == 0):
+        return False
     for item in iterable:
         if not isinstance(item, data_type):
             return False
@@ -28,12 +30,14 @@ def contains_keys(data: dict, keys: List[str]) -> Optional[Tuple[str]]:
     for key in keys:
         if key not in data.keys():
             missing.append(key)
-    return tuple(missing)
+    if missing != []:
+        return tuple(missing)
 
 def custom_list_validation(iterable: Iterable, validation: Callable[[Any], bool]) -> bool:
     """Validate all items in the list using a custom function."""
     for item in iterable:
-        if not validation(iterable):
+        if not validation(item):
+            print(item)
             return False
     return True
 
