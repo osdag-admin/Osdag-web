@@ -1,4 +1,4 @@
-import osdag_api.modules.fin_plate_connection as fin_plate_connection
+from osdag_api.modules import fin_plate_connection
 from types import ModuleType
 import typing
 module_dict = {
