@@ -2,3 +2,4 @@ numpy
 pylatex
 pyyaml
 wheel
+pycharm
