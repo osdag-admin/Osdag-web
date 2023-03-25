@@ -11,6 +11,7 @@ Functions:
 from design_type.connection.fin_plate_connection import FinPlateConnection
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 from osdag_api.errors import MissingKeyError, InvalidInputTypeError
+from osdag_api.validation_utils import validate_arr, validate_num, validate_string
 import typing
 from typing import Dict, Any, List
 import os
@@ -164,3 +165,48 @@ def validate_input(input_values: Dict[str, Any]) -> None:
             or not validate_list_type(connector_plate_thicknesslist, str) # Check if all items in Connector.Plate.Thickness_List are str.
             or not custom_list_validation(connector_plate_thicknesslist, int_able)): # Check if all items in Connector.Plate.Thickness_List can be converted to int.
         raise InvalidInputTypeError("Connector.Plate.Thickness_List", "List[str] where all items can be converted to int")
+
+def validate_input_new(input_values: Dict[str, Any]) -> None:
+    """Validate type for all values in design dict. Raise error when invalid"""
+
+    # Check if all required keys exist
+    required_keys = get_required_keys()
+    missing_keys = contains_keys(input_values, required_keys) # Check if input_values contains all required keys.
+    if missing_keys != None: # If keys are missing.
+        raise MissingKeyError(missing_keys[0]) # Raise error for the first missing key.
+    
+    # Validate key types using loops.
+
+    # Validate all strings.
+    str_keys = ["Bolt.Bolt_Hole_Type", # List of all parameters that are strings
+                "Bolt.TensionType",
+                "Bolt.Type",
+                "Bolt.Connectivity",
+                "Bolt.Connector_Material",
+                "Design.Design_Method",
+                "Detailing.Edge_type",
+                "Material",
+                "Member.Supported_Section.Designation",
+                "Member.Supported_Section.Material",
+                "Member.Supporting_Section.Designation",
+                "Member.Supporting_Section.Material",
+                "Module",
+                "Weld.Fab"]
+    for key in str_keys: # Loop through all keys.
+        validate_string(key) # Check if key is a string. If not, raise error.
+    
+    # Validate for keys that are numbers
+    num_keys = [("Bolt.Slip_Factor", True) # List of all parameters that are numbers (key,)
+                ("Detailing.Gap", False),
+                ("Load.Axial", False),
+                ("Load.Shear", False),
+                ("Weld.Material_Grade_OverWrite", False)]
+    for key in num_keys: # Loop through all keys.
+        validate_num(key[0], key[1]) # Check if key is a number. If not, raise error.
+    
+    # Validate for keys that are arrays
+    arr_keys = [("Bolt.Diameter", False),
+                ("Bolt.Grade", True),
+                ("Connector.Plate.Thickness_List", False)]
+    for key in arr_keys:
+        validate_arr(key[0], key[1]) # Check if key is a list where all items can be converted to numbers. If not, raise error.
