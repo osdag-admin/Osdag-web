@@ -7,15 +7,31 @@ Functions:
         Go through all the input parameters.
         Check if all required parameters are given.
         Check if all parameters are of correct data type.
+    create_module() -> FinPlateConnection:
+        Create an instance of the fin plate connection module design class and set it up for use
+    create_from_input(input_values: Dict[str, Any]) -> FinPlateConnection
+        Create an instance of the fin plate connection module design class from input values.
+    generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
+        Generate, format and return the input values from the given output values.
+            Output format (json): {
+                "Bolt.Pitch": 
+                    "key": "Bolt.Pitch",
+                    "label": "Pitch Distance (mm)"
+                    "value": 40
+                }
+            }
 """
-from design_type.connection.fin_plate_connection import FinPlateConnection
+import sys
+import os
+import typing
+from typing import Dict, Any, List
+old_stdout = sys.stdout # Backup log
+sys.stdout = open(os.devnull, "w") # redirect stdout
+from design_type.connection.fin_plate_connection import FinPlateConnection # Will log a lot of unnessecary data.
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.validation_utils import validate_arr, validate_num, validate_string
-import typing
-from typing import Dict, Any, List
-import os
-os.system("clear") # Clear terminal
+sys.stdout = old_stdout # Reset log
 
 def get_required_keys() -> List[str]:
     return [
@@ -196,7 +212,7 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
         validate_string(key) # Check if key is a string. If not, raise error.
     
     # Validate for keys that are numbers
-    num_keys = [("Bolt.Slip_Factor", True) # List of all parameters that are numbers (key,)
+    num_keys = [("Bolt.Slip_Factor", True) # List of all parameters that are numbers (key, is_float)
                 ("Detailing.Gap", False),
                 ("Load.Axial", False),
                 ("Load.Shear", False),
@@ -205,8 +221,51 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
         validate_num(key[0], key[1]) # Check if key is a number. If not, raise error.
     
     # Validate for keys that are arrays
-    arr_keys = [("Bolt.Diameter", False),
+    arr_keys = [("Bolt.Diameter", False), # List of all parameters that can be converted to numbers (key, is_float)
                 ("Bolt.Grade", True),
                 ("Connector.Plate.Thickness_List", False)]
     for key in arr_keys:
         validate_arr(key[0], key[1]) # Check if key is a list where all items can be converted to numbers. If not, raise error.
+
+def create_module() -> FinPlateConnection:
+    """Create an instance of the fin plate connection module design class and set it up for use"""
+    module = FinPlateConnection() # Create an instance of the FinPlateConnection
+    module.set_osdaglogger(None)
+    return module
+
+def create_from_input(input_values: Dict[str, Any]) -> FinPlateConnection:
+    """Create an instance of the fin plate connection module design class from input values."""
+    validate_input(input_values)
+    module = create_module() # Create module instance.
+    module.set_input_values(input_values) # Set the input values on the module instance.
+    return module
+def generate_ouptut(input_values: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Generate, format and return the input values from the given output values.
+    Output format (json): {
+        "Bolt.Pitch": 
+            "key": "Bolt.Pitch",
+            "label": "Pitch Distance (mm)"
+            "value": 40
+        }
+    }
+    """
+    output = {} # Dictionary for formatted values
+    module = create_from_input(input_values) # Create module from input.
+    raw_output_text = module.output_values(True) # Generate output values in unformatted form.
+    raw_output_spacing = module.spacing(True) # Generate output val
+    raw_output_capacities = module.capacities(True)
+    raw_output = raw_output_capacities + raw_output_spacing + raw_output_text
+    os.system("clear")
+    # Loop over all the text values and add them to ouptut dict.
+    for param in raw_output:
+        if param[2] == "TextBox": # If the parameter is a text output,
+            key = param[0] # id/key
+            label = param[1] # label text.
+            value = param[3] # Value as string.
+            output[key] = {
+                "key": key,
+                "label": label,
+                "value": value
+            } # Set label, key and value in output
+    return output
