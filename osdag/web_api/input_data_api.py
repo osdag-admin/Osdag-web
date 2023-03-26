@@ -1,6 +1,7 @@
 """
     This file includes the Input Values API
     InputValues API (class InputValues(View)):
+        Update input values in database.
         Accepts POST requests.
         Accepts content_type application/json
         Request must provide session cookie id.
@@ -24,10 +25,10 @@ import json
 class InputValues(View):
     """
         Update input values in database.
-            Create Session API (class CreateSession(View)):
-                Accepts POST requests.
-                Accepts content_type application/json
-                Request must provide session cookie id.
+        InputValues API (class InputValues(View)):
+            Accepts POST requests.
+            Accepts content_type application/json
+            Request must provide session cookie id.
     """
     def post(self, request: HttpRequest):
         cookie_id = request.COOKIES.get("design_session") # Get design session id.
