@@ -12,6 +12,6 @@ urlpatterns = [
     path('sessions/delete', DeleteSession.as_view()),
     path('design/input_values/', InputValues.as_view()),
     path('design/input_values', InputValues.as_view()),
-    path('design/onput_values/', OutputValues.as_view()),
+    path('design/output_values/', OutputValues.as_view()),
     path('design/output_values', OutputValues.as_view()),
 ]
