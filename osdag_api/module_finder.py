@@ -1,18 +1,18 @@
-from design_type.main import Main
 from osdag_api.modules import fin_plate_connection
 from types import ModuleType
 import typing
-from typing import Dict, Any, List, Protocol
-class ModuleApiType(Protocol):
+from typing import Dict, Any, List, _Protocol
+class ModuleApiType(_Protocol):
+
     def validate_input(self, input_values: Dict[str, Any]) -> None:
         """Validate type for all values in design dict. Raise error when invalid"""
         pass
     def get_required_keys(self) -> List[str]:
         pass
-    def create_module(self) -> Main:
+    def create_module(self) -> Any:
         """Create an instance of themodule design class and set it up for use"""
         pass
-    def create_from_input(self, input_values: Dict[str, Any]) -> Main:
+    def create_from_input(self, input_values: Dict[str, Any]) -> Any:
         """Create an instance of the module design class from input values."""
         pass
     def generate_ouptut(self, input_values: Dict[str, Any]) -> Dict[str, Any]:
