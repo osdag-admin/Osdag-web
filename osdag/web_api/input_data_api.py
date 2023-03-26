@@ -57,7 +57,7 @@ class InputValues(View):
         try: # Error checking while saving input values
             json_data = json.dumps(input_data) # Convert dict to json string
             Design.objects.filter(cookie_id=cookie_id).update(input_values=json_data)
-            Design.objects.filter(cookie_id=cookie_id).update(current_state=False)
+            Design.objects.filter(cookie_id=cookie_id).update(current_state=True)
         except Exception as e:
             return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response
         response = HttpResponse(status=200) # Status code 200 - Success!
