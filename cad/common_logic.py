@@ -2080,7 +2080,7 @@ class CommonDesignLogic(object):
 
 
 
-    def call_3DModel(self, flag, module_class):  # Done
+    def call_3DModel(self, flag, module_class, do_display=True):  # Done
 
         self.module_class = module_class
 
@@ -2100,8 +2100,8 @@ class CommonDesignLogic(object):
 
                 else:
                     self.connectivityObj = self.create3DBeamWebBeamWeb()
-
-                self.display_3DModel("Model","gradient_bg")
+                if do_display:
+                    self.display_3DModel("Model","gradient_bg")
             else:
                 self.display.EraseAll()
 
