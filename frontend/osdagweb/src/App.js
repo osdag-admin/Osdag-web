@@ -8,7 +8,7 @@ import Homepage from "./homepage/homepage";
 import Connection from "./connection/Connection";
 import TensionMember from './tension/TensionMember';
 import Others from './others/Others';
-import FinPlate from './connectionPages/finPlate/FinPlate';
+import FinPlatee from './connectionPages/FinPlate2/FinPlatee';
 
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
         <Route path="/connection" element={<Connection/>}/>
         <Route path="/tension" element={<TensionMember/>}/>
         <Route path="/underdev" element={<Others/>}/>
-        <Route path="/finplate" element={<FinPlate/>}/>
+        <Route path="/finplate" element={<FinPlatee/>}/>
       </Routes>
     </BrowserRouter>
   );
