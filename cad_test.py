@@ -33,7 +33,7 @@ design_dict = {
     "Weld.Material_Grade_OverWrite": '410',
     "Connector.Plate.Thickness_List":['8','10','12','14','16','18','20','22','25','28','32','36','40','45','50','56','63','75','80','90','100','110','120']
 }
-app = QApplication(["-v"])
+app = QApplication(["Please remove this window"])
 fp = create_from_input(design_dict)
 used_backend = load_backend(None)
 if 'qt' in used_backend:
@@ -52,4 +52,4 @@ fuse_model = commonLogic.create2Dcad()
 os.system("clear")
 stl_writer = StlAPI_Writer()
 stl_writer.SetASCIIMode(False)
-print(repr(stl_writer.Write(fuse_model, "/home/aaranyak/Downloads/stl_file.stl")))
+print(repr(stl_writer.Write(fuse_model, "/home/aaranyak/School_Work_Grade_9/Internship/Osdag_Dev/osdag_web/file_storage/cad_models/design_123.stl")))
