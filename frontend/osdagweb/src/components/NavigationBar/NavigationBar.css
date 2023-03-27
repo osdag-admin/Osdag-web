@@ -1,0 +1,53 @@
+.navbar {
+    background-color: #ccc;
+    height: 30px;
+    display: flex;
+    padding: 20px;
+    margin-top:2px;
+  }
+  
+  .navbar-container {
+    display: flex;
+    max-width: 960px;
+    width: 100%;
+  }
+  
+  .navbar-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .navbar-item {
+    margin-right: 20px;
+    margin-left: 20px;
+    position: relative;
+    padding-top: 3px;
+  }
+  
+  .navbar-link {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .navbar-dropdown {
+    background-color: #fff;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+  }
+  
+  .navbar-dropdown-item {
+    padding: 10px;
+  }
+  
+  .navbar-dropdown-item:hover {
+    background-color: #f2f2f2;
+  }
+  

@@ -1,0 +1,41 @@
+.content {
+    margin: 20px;
+
+}
+.bottom_row {
+    display: flex;
+    justify-content: space-between;
+    width: calc((80vw - 80px));
+    position: fixed;
+    bottom: 20px;
+}
+.content img {
+    width: calc((80vw - 80px) - 30vw);
+    padding-left: 15vw;
+    padding-right: 15vw;
+    padding-top: 30vh;
+}
+.bottom_row .iitbLogo {
+    position: relative;
+    height: 10vh;
+    width: auto;
+    margin-left: -20px;
+    padding: 0;
+    margin: 20px;
+}
+.bottom_row .fossee_logo {
+    height: 10vh;
+    width: auto;
+    right: 10px;
+    padding: 0;
+    margin: 20px;
+}
+
+.osdagHeader {
+    right: 100px;
+    margin-top: 15px;
+}
+
+.mainDiv {
+    display: flex;
+}

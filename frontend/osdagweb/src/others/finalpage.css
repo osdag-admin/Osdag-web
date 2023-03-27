@@ -1,0 +1,50 @@
+#dropdown1 {
+    position: absolute;
+    left: 200px;
+  }
+  
+  .dropdowns {
+    padding-bottom: 20px;
+  }
+  
+  .input-box {
+    padding-bottom: 20px;
+  }
+  
+  .textbox {
+    position: absolute;
+    left: 150px;
+  }
+  
+  .input-buttons {
+    background-color:brown;
+      color: white;
+      border-radius: 4px;
+      font-size: 12px;
+      padding: 8px;
+      padding-left: 20px;
+      padding-right: 20px;
+      margin-right: 55px;
+      margin-top: 25px;
+  }
+  
+  .output-box {
+    padding-bottom: 5px;
+  }
+  
+  #output2 {
+    position: absolute;
+    left: 1180px;
+  }
+  
+  
+  .graphic-box {
+       position: absolute;
+       left: 380px;
+       width: 550px;
+       height: 450px;
+       backgroundColor: "gray";
+       display: "flex";
+       justifyContent: "center";
+       alignItems: "center";
+  }
