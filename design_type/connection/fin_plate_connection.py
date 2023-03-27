@@ -1307,3 +1307,5 @@ class FinPlateConnection(ShearConnection):
             if isinstance(chkbox, QCheckBox):
                 chkbox.setChecked(Qt.Unchecked)
         ui.commLogicObj.display_3DModel("Plate", bgcolor)
+    def __call__(self):
+        return self
