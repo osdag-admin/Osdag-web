@@ -1,12 +1,4 @@
-from cad.common_logic import CommonDesignLogic
 from osdag_api.modules.fin_plate_connection import *
-from OCC.Core.StlAPI import StlAPI_Writer
-from OCC.Display.backend import *
-from OCC.Core import BRepTools
-import osdag_api.modules.shear_connection_common as scc
-import pprint
-import json
-from Common import *
 design_dict = {
     "Bolt.Bolt_Hole_Type": "Standard",
     "Bolt.Diameter": ['8','10','12','16','20','24','30','36','42','48','56','64','14','18','22','27','33','39','45','52','60'],
@@ -32,10 +24,4 @@ design_dict = {
     "Weld.Material_Grade_OverWrite": '410',
     "Connector.Plate.Thickness_List":['8','10','12','14','16','18','20','22','25','28','32','36','40','45','50','56','63','75','80','90','100','110','120']
 }
-fp = create_from_input(design_dict)
-commonLogic = CommonDesignLogic(None, '', fp.module, fp.mainmodule)
-scc.setup_for_cad(commonLogic, fp)
-commonLogic.component = "Beam"
-fuse_model = commonLogic.create2Dcad()
-os.system("clear")
-BRepTools.breptools.Write(fuse_model, "/home/aaranyak/School_Work_Grade_9/Internship/Osdag_Dev/osdag_web/file_storage/cad_models/design_123.brep")
+create_cad_model(design_dict, "Model", "session123")
