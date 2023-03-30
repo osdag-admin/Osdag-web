@@ -56,6 +56,6 @@ class CADGeneration(View):
             cad_model = f.read() # Read CAD file Data
         os.remove(path) # Delete CAD File
         response = HttpResponse(status=200)
-        response["content/type"] = "text/plain"
+        response["content-type"] = "text/plain"
         response.write(cad_model)
         return response
