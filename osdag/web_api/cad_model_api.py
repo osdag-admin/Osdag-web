@@ -18,6 +18,7 @@ from osdag_api import developed_modules, get_module_api
 from osdag_api.errors import OsdagApiException
 import typing
 import json
+import os
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CADGeneration(View):
@@ -46,13 +47,14 @@ class CADGeneration(View):
         if request.GET.get("section") != None: # If section is specified,
             section = request.GET["section"] # Set section
         try: # Error checking while Generating BREP File.
-            path = module_api.create_cad_model(input_values, section, cookie_id)
+            path = module_api.create_cad_model(input_values, section, cookie_id) # Generate CAD Model.
         except OsdagApiException as e: # If section does no exist
             return HttpResponse(repr(e), status=400) # Return error response.
         except Exception as e:
             return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response.
-        with open(path, 'r') as f:
-            cad_model = f.read()
+        with open(path, 'r') as f: # Open CAD file
+            cad_model = f.read() # Read CAD file Data
+        os.remove(path) # Delete CAD File
         response = HttpResponse(status=200)
         response["content/type"] = "text/plain"
         response.write(cad_model)
