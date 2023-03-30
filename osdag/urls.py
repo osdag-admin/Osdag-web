@@ -14,4 +14,6 @@ urlpatterns = [
     path('design/input_values', InputValues.as_view()),
     path('design/output_values/', OutputValues.as_view()),
     path('design/output_values', OutputValues.as_view()),
+    path('design/cad/', OutputValues.as_view()),
+    path('design/cad', OutputValues.as_view()),
 ]
