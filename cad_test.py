@@ -2,9 +2,8 @@ from cad.common_logic import CommonDesignLogic
 from osdag_api.modules.fin_plate_connection import *
 from OCC.Core.StlAPI import StlAPI_Writer
 from OCC.Display.backend import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from OCC.Core import BRepTools
+import osdag_api.modules.shear_connection_common as scc
 import pprint
 import json
 from Common import *
@@ -33,23 +32,10 @@ design_dict = {
     "Weld.Material_Grade_OverWrite": '410',
     "Connector.Plate.Thickness_List":['8','10','12','14','16','18','20','22','25','28','32','36','40','45','50','56','63','75','80','90','100','110','120']
 }
-app = QApplication(["Please remove this window"])
 fp = create_from_input(design_dict)
-used_backend = load_backend(None)
-if 'qt' in used_backend:
-    from OCC.Display.qtDisplay import qtViewer3d
-    QtCore, QtGui, QtWidgets, QtOpenGL = get_qt_modules()
-dummyview = qtViewer3d()
-dummyview.InitDriver()
-display = dummyview._display
-print(display)
-print(fp.connectivity)
-commonLogic = CommonDesignLogic(display, '', fp.module, fp.mainmodule)
-commonLogic.display = display
-commonLogic.call_3DModel(True, fp)
-commonLogic.component = "Model"
+commonLogic = CommonDesignLogic(None, '', fp.module, fp.mainmodule)
+scc.setup_for_cad(commonLogic, fp)
+commonLogic.component = "Beam"
 fuse_model = commonLogic.create2Dcad()
 os.system("clear")
-stl_writer = StlAPI_Writer()
-stl_writer.SetASCIIMode(False)
-print(repr(stl_writer.Write(fuse_model, "/home/aaranyak/School_Work_Grade_9/Internship/Osdag_Dev/osdag_web/file_storage/cad_models/design_123.stl")))
+BRepTools.breptools.Write(fuse_model, "/home/aaranyak/School_Work_Grade_9/Internship/Osdag_Dev/osdag_web/file_storage/cad_models/design_123.brep")
