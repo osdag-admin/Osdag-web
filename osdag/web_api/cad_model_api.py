@@ -1,5 +1,10 @@
 """
-
+    This file includes the CAD Model API
+    Update input values in database.
+        CAD Model API (class CADGeneration(View)):
+            Accepts GET requests.
+            Returns BREP file as content_type text/plain.
+            Request must provide session cookie id.
 """
 from django.shortcuts import render, redirect
 from django.utils.html import escape, urlencode
@@ -15,9 +20,13 @@ import typing
 import json
 
 @method_decorator(csrf_exempt, name='dispatch')
-class CadGeneration(View):
+class CADGeneration(View):
     """
-
+        Update input values in database.
+            CAD Model API (class CADGeneration(View)):
+                Accepts GET requests.
+                Returns BREP file as content_type text/plain.
+                Request must provide session cookie id.
     """
     def get(self, request: HttpRequest):
         cookie_id = request.COOKIES.get("design_session") # Get design session id.
