@@ -7,6 +7,7 @@ module_dict = [
     {
         "key": "Fin Plate Connection",
         "image": "static/images/modules/fin_plate_connection.png",
-        "name": "Fin Plate"
+        "name": "Fin Plate",
+        "path": "Connection/Shear Connection"
     }
 ]
