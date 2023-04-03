@@ -1,5 +1,9 @@
 """
-    This file includes the 
+    This file includes the Modules API
+    Get Module Data.
+        Get Modules API (class GetModules(View)):
+            Accepts GET requests.
+            Returns all developed modules in json format.
 """
 from django.http import HttpResponse, HttpRequest
 from django.views import View
