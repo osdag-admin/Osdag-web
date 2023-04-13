@@ -1,4 +1,16 @@
 # Osdag Backend API
+
+### Installation Instructions:
+- Download and extract Osdag installer for linux
+- open 2-install-osdag.sh
+- Add line `conda install django` after line 29
+- Run osdag installation files as specified
+- Download `secret_key.py` and put in `osdag_web/secret_key.py`
+- Download `Intg_osdag.sql` and put in `ResourceFiles/Database/Intg_osdag.sql`
+- Download `Intg_osdag.sqlite` and put in `ResourceFiles/Database/Intg_osdag.sqlite`'
+- Create folder `file_storage/cad_models/`
+- Run `python manage.py migrate`
+- To run backend, run `python manage.py runserver`
 ### Project Structure:
 `osdag_web` Django Project files
 `osdag`: Django app for osdag web API
