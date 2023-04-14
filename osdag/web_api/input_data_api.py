@@ -37,7 +37,7 @@ class InputValues(View):
         if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
             return HttpResponse("Error: This design session does not exist", status=404) # Return error response.
         if not request.content_type == "application/json": # Error checking: If content/type is not json.
-            return HttpResponse("Error: Content type has to be text/json") # Return error response.
+            return HttpResponse("Error: Content type has to be text/json", status=400) # Return error response.
         try: # Error checking while loading body.
             body_unicode = request.body.decode('utf-8')
             input_data = json.loads(body_unicode)
