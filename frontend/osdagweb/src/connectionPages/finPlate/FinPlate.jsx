@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Finplate.css";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 
+//the finplate page for input, graphic rendering and output
 function FinPlate() {
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");

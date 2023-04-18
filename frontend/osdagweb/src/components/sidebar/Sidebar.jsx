@@ -2,6 +2,7 @@ import React from 'react'
 import "./sidebar.css"
 import { useNavigate } from 'react-router-dom';
 
+//a function for the main sidebar with links to all the modules
 function Sidebar() {
 
   const navigate = useNavigate();

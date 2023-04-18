@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './NavigationBar.css';
 
+//a navigation bar that is visible on connection/finplate and on pages of other modules where the calculation is done
 const NavigationBar = () => {
   const [fileDropdown, setFileDropdown] = useState(false);
   const [editDropdown, setEditDropdown] = useState(false);
@@ -33,9 +34,9 @@ const NavigationBar = () => {
       <div className='navbar-container'>
         <ul className='navbar-menu'>
           <li className='navbar-item'>
-            <a className='navbar-link' href="/" onClick={handleFileClick}>
+            <button href="#" onClick={handleFileClick}>
               File
-            </a>
+            </button>
             {fileDropdown && (
               <ul className='navbar-dropdown'>
                 <li className='navbar-dropdown-item'>New</li>
@@ -45,9 +46,9 @@ const NavigationBar = () => {
             )}
           </li>
           <li className='navbar-item'>
-            <a className='navbar-link' href="/" onClick={handleEditClick}>
+            <button className='navbar-link' onClick={handleEditClick}>
               Edit
-            </a>
+            </button>
             {editDropdown && (
               <ul className='navbar-dropdown'>
                 <li className='navbar-dropdown-item'>Cut</li>
@@ -57,9 +58,9 @@ const NavigationBar = () => {
             )}
           </li>
           <li className='navbar-item'>
-            <a className='navbar-link' href="/" onClick={handleGraphicsClick}>
+            <button className='navbar-link' onClick={handleGraphicsClick}>
               Graphics
-            </a>
+            </button>
             {graphicsDropdown && (
               <ul className='navbar-dropdown'>
                 <li className='navbar-dropdown-item'>Line</li>
@@ -69,9 +70,9 @@ const NavigationBar = () => {
             )}
           </li>
           <li className='navbar-item'>
-            <a className='navbar-link' href="/" onClick={handleDatabaseClick}>
+            <button className='navbar-link' href="/" onClick={handleDatabaseClick}>
               Database
-            </a>
+            </button>
             {databaseDropdown && (
               <ul className='navbar-dropdown'>
                 <li className='navbar-dropdown-item'>Add Record</li>
@@ -81,9 +82,9 @@ const NavigationBar = () => {
             )}
           </li>
           <li className='navbar-item'>
-            <a className='navbar-link' href="/" onClick={handleHelpClick}>
+            <button className='navbar-link' onClick={handleHelpClick}>
               Help
-            </a>
+            </button>
             {helpDropdown && (
               <ul className='navbar-dropdown'>
                 <li className='navbar-dropdown-item'>Documentation</li>

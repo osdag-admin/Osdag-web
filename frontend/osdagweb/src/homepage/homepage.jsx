@@ -2,6 +2,8 @@ import React from 'react'
 import "./homepage.css"
 import Sidebar from "../components/sidebar/Sidebar"
 
+
+//the home page
 function Homepage() {
   return (
     

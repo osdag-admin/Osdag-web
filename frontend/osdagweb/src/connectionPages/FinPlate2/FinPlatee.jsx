@@ -62,6 +62,13 @@ function FinPlatee() {
     // Retrieve the input values
     const input1 = document.getElementById('input1').value;
     const input2 = document.getElementById('input2').value;
+    const input3 = document.getElementById('input3').value;
+    const input4 = document.getElementById('input4').value;
+    const input5 = document.getElementById('input5').value;
+    const input6 = document.getElementById('input6').value;
+    const input7 = document.getElementById('input7').value;
+    const input8 = document.getElementById('input8').value;
+    const input9 = document.getElementById('input9').value;
 
     // Send a POST request to the API endpoint
     fetch('/', {

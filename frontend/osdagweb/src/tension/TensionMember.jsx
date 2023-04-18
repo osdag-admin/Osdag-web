@@ -3,7 +3,7 @@ import "./TensionMember.css";
 import Sidebar from "../components/sidebar/Sidebar";
 import { Link } from 'react-router-dom';
 
-
+//the tension page
 function TensionMember() {
   return (
     <div className="modules">
@@ -23,10 +23,6 @@ function TensionMember() {
             <Link to="/bolted-ten"> {/* Add the route for the desired page */}
                 <button className="design-button"> Start</button>
               </Link>
-              
-
-
-
           </div>
         </div>
         <div className="module_option">
