@@ -9,6 +9,7 @@ import * as THREE from './three.js-master/build/three.module.js'
 import { GLTFLoader }  from './three.js-master/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js'
 import Stats from './three.js-master/examples/jsm/libs/stats.module.js'
+import { FontLoader }  from './three.js-master/examples/jsm/loaders/FontLoader.js'
 var scene = new THREE.Scene();
 scene.add(new THREE.AxesHelper(5));
 scene.background = new THREE.Color(0xffffff)
@@ -49,8 +50,35 @@ const material = new THREE.MeshPhysicalMaterial({
         clearcoatRoughness: 0.25
 })
 controls.enableDamping = true;
+
+//Fontloader and adding strings over the axes
+var fontLoader = new FontLoader();
+
+fontLoader.load('examples/fonts/helvetiker_regular.typeface.json', function(font) {
+
+  // Create the text geometry
+    const textGeometry = new THREE.TextGeometry('X axis', {
+        font: font,
+        size: 0.5,
+        height: 0.05
+    });
+
+    // Create the material for the text
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    // Create the text mesh
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+    // Position the text mesh along the x axis
+    textMesh.position.set(1, 0, 0);  // Position the text on the X-axis
+    textMesh.rotation.y = Math.PI / 2;  // Rotate the text to face the camera
+
+    // Add the text mesh to the scene
+    scene.add(textMesh);
+    });
+
 var loader = new GLTFLoader();
-loader.load('assets/design_123.gltf', function (gltf) {
+loader.load('assets/bb-splice-bolted-freecad-gltf.gltf', function (gltf) {
     gltf.scene.traverse(function (child) {
         if (child.isMesh) {
             var m = child;
@@ -77,6 +105,35 @@ loader.load('assets/design_123.gltf', function (gltf) {
 }, function (error) {
     console.log(error);
 });
+
+// var loader1 = new GLTFLoader();
+// loader1.load('assets/bb-splice-bolted.gltf', function (gltf) {
+//     gltf.scene.traverse(function (child) {
+//         if (child.isMesh) {
+//             var m = child;
+//             m.receiveShadow = true;
+//             m.castShadow = true;
+//             m.material = material;
+//         }
+//         if (child.isLight) {
+//             var l = child;
+//             l.castShadow = true;
+//             l.shadow.bias = -0.003;
+//             l.shadow.mapSize.width = 2048;
+//             l.shadow.mapSize.height = 2048;
+//         }
+//     });
+//     gltf.scene.traverse(function(object) {
+//         if (object.isMesh && object.name) {
+//             console.log(object.name);
+//         }
+//     });
+//     scene.add(gltf.scene);
+// }, function (xhr) {
+//     console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+// }, function (error) {
+//     console.log(error);
+// });
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
