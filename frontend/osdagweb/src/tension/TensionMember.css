@@ -1,0 +1,83 @@
+.content {
+    margin: 20px;
+    width: calc(80vw - 80px);
+    height: calc(100vh - 40px);
+    display: grid;
+}
+
+.modules {
+    display: flex;
+    flex-wrap: wrap;
+   
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.bottom_line {
+    display:grid;
+    height: calc(10vh - 20px);
+    padding: 10px;
+    justify-items: center;
+}
+
+.bottom_line input[type="submit"] {
+    width: 20vw;
+    height: 100%;
+    border-radius: 15px;
+    border: 1px solid grey;
+    font-size: medium;
+    font-family: 'Ubuntu';
+}
+
+.module_option {
+    display: block;
+    width: calc(((80vw - 80px) / 3) - 30px);
+    height: calc((((100vh - 40px) - 10vh) / 2.5) - 30px);
+    padding: 15px;
+}
+
+.module_option h1{
+    font-family: 'Ubuntu';
+    font-size: 20px;
+}
+.module_option img{
+    width: calc(100% - 40px);
+    height: calc(100%);
+    object-fit: cover;
+    left: 40px;
+}
+.module_option .module_option_formatting {
+    display:inline-block; 
+    width: 100%; 
+    height: calc(((((100vh - 40px) - 10vh) / 2.5) - 30px) - 49.8px);
+}
+.module_option input {
+    bottom: 50%;
+    position: relative;
+}
+
+.module_options_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 100px;
+    margin: 20px;
+  }
+
+  .center {
+    display: flex;
+    justify-content: center;
+    padding-top: 150px;
+    padding-left: 100px;
+    gap: 100px;
+  }
+
+  .design-button {
+    margin-top: 20px;
+    margin-left:120px;
+    background-color:brown;
+    color: white;
+    border-radius: 4px;
+    font-size: 20px;
+    padding: 8px;
+  }

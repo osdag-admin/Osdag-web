@@ -1,0 +1,33 @@
+.navbar {
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2px !important;
+    background-color: rgba(216, 213, 213, 0.753);
+    color: black;
+    width: calc(150%);
+    margin-right: 0px;
+    padding-top: 30px;
+    padding-bottom: 20px;
+  }
+  
+  
+  .navbar-links {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+    width: 70%;
+  }
+  
+  .navbar-links li a {
+    font-size: 1.1rem;
+    color: black;
+  }
+  
+  .navbar-links li a:hover {
+    color: white;
+    background-color: brown;
+    padding: 8px;
+    border-radius: 8px;
+  }
