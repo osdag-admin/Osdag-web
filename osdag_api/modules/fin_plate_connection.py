@@ -20,6 +20,8 @@ Functions:
                     "value": 40
                 }
             }
+    create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
+        Generate the CAD model from input values as a BREP file. Return file path.
 """
 import sys
 import os
@@ -28,6 +30,9 @@ from typing import Dict, Any, List
 old_stdout = sys.stdout # Backup log
 sys.stdout = open(os.devnull, "w") # redirect stdout
 from design_type.connection.fin_plate_connection import FinPlateConnection # Will log a lot of unnessecary data.
+from cad.common_logic import CommonDesignLogic
+from OCC.Core import BRepTools
+import osdag_api.modules.shear_connection_common as scc
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.validation_utils import validate_arr, validate_num, validate_string
@@ -269,3 +274,18 @@ def generate_ouptut(input_values: Dict[str, Any]) -> Dict[str, Any]:
                 "value": value
             } # Set label, key and value in output
     return output
+
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
+    """Generate the CAD model from input values as a BREP file. Return file path."""
+    if section not in ("Model", "Beam", "Column", "Plate"): # Error checking: If section is valid.
+        raise InvalidInputTypeError("section", "'Model', 'Beam', 'Column' or 'Plate'")
+    module = create_from_input(input_values) # Create module from input.
+    cld = CommonDesignLogic(None, '', module.module, module.mainmodule) # Object that will create the CAD model.
+    scc.setup_for_cad(cld, module) # Setup the calculations object for generating CAD model.
+    cld.component = section # The section of the module that will be generated.
+    model = cld.create2Dcad() # Generate CAD Model.
+    os.system("clear") # clear the terminal
+    file_name = session + "_" + section + ".brep"
+    file_path = "file_storage/cad_models/" + file_name
+    BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+    return file_path

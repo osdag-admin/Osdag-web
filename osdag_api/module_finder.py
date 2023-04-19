@@ -27,6 +27,9 @@ class ModuleApiType(_Protocol):
         }
         """
         pass
+    def create_cad_model(self, input_values: Dict[str, Any], section: str, session: str) -> str:
+        """Generate the CAD model from input values as a BREP file. Return file path."""
+        pass
 module_dict : Dict[str, ModuleApiType] = {
     'Fin Plate Connection': fin_plate_connection
 } 
