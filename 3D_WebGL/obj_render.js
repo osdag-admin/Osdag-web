@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // var THREE = require("./three.js-master/build/three.module.js");
-// var GLTFLoader_js_1 = require("./three.js-master/examples/jsm/loaders/GLTFLoader.js");
+// var objLoader_js_1 = require("./three.js-master/examples/jsm/loaders/objLoader.js");
 // var OrbitControls_js_1 = require("./three.js-master/examples/jsm/controls/OrbitControls.js");
 // var stats_module_js_1 = require("./three.js-master/examples/jsm/libs/stats.module.js");
 
 import * as THREE from './three.js-master/build/three.module.js'
-import { GLTFLoader }  from './three.js-master/examples/jsm/loaders/GLTFLoader.js'
+import { OBJLoader }  from './three.js-master/examples/jsm/loaders/OBJLoader.js'
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js'
 import Stats from './three.js-master/examples/jsm/libs/stats.module.js'
 import { FontLoader }  from './three.js-master/examples/jsm/loaders/FontLoader.js'
@@ -39,7 +39,7 @@ var envTexture = new THREE.CubeTextureLoader().load([
 //envTexture.mapping = THREE.CubeReflectionMapping
 
 const material = new THREE.MeshPhysicalMaterial({
-        color: 0x964B00,
+        color: 0xFF0000,
         envMap: texture,
         metalness: 0.25,
         roughness: 0.1,
@@ -54,32 +54,31 @@ controls.enableDamping = true;
 //Fontloader and adding strings over the axes
 var fontLoader = new FontLoader();
 
-fontLoader.load('examples/fonts/helvetiker_regular.typeface.json', function(font) {
+// fontLoader.load('examples/fonts/helvetiker_regular.typeface.json', function(font) {
 
-  // Create the text geometry
-    const textGeometry = new THREE.TextGeometry('X axis', {
-        font: font,
-        size: 0.5,
-        height: 0.05
-    });
+//   // Create the text geometry
+//     const textGeometry = new THREE.TextGeometry('X axis', {
+//         font: font,
+//         size: 0.5,
+//         height: 0.05
+//     });
 
-    // Create the material for the text
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+//     // Create the material for the text
+//     const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-    // Create the text mesh
-    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+//     // Create the text mesh
+//     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
-    // Position the text mesh along the x axis
-    textMesh.position.set(1, 0, 0);  // Position the text on the X-axis
-    textMesh.rotation.y = Math.PI / 2;  // Rotate the text to face the camera
+//     // Position the text mesh along the x axis
+//     textMesh.position.set(1, 0, 0);  // Position the text on the X-axis
+//     textMesh.rotation.y = Math.PI / 2;  // Rotate the text to face the camera
 
-    // Add the text mesh to the scene
-    scene.add(textMesh);
-    });
-
-var loader = new GLTFLoader();
-loader.load('assets/fin-plate.glb', function (gltf) {
-    gltf.scene.traverse(function (child) {
+//     // Add the text mesh to the scene
+//     scene.add(textMesh);
+//     });
+var loader = new OBJLoader();
+loader.load('assets/fin-plate.obj', function (obj) {
+    obj.traverse(function (child) {
         if (child.isMesh) {
             var m = child;
             m.receiveShadow = true;
@@ -94,21 +93,21 @@ loader.load('assets/fin-plate.glb', function (gltf) {
             l.shadow.mapSize.height = 2048;
         }
     });
-    gltf.scene.traverse(function(object) {
+    obj.traverse(function(object) {
         if (object.isMesh && object.name) {
             console.log(object.name);
         }
     });
-    scene.add(gltf.scene);
+    scene.add(obj);
 }, function (xhr) {
     console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
 }, function (error) {
     console.log(error);
 });
 
-// var loader1 = new GLTFLoader();
-// loader1.load('assets/bb-splice-bolted.gltf', function (gltf) {
-//     gltf.scene.traverse(function (child) {
+// var loader1 = new objLoader();
+// loader1.load('assets/bb-splice-bolted.obj', function (obj) {
+//     obj.scene.traverse(function (child) {
 //         if (child.isMesh) {
 //             var m = child;
 //             m.receiveShadow = true;
@@ -123,12 +122,12 @@ loader.load('assets/fin-plate.glb', function (gltf) {
 //             l.shadow.mapSize.height = 2048;
 //         }
 //     });
-//     gltf.scene.traverse(function(object) {
+//     obj.scene.traverse(function(object) {
 //         if (object.isMesh && object.name) {
 //             console.log(object.name);
 //         }
 //     });
-//     scene.add(gltf.scene);
+//     scene.add(obj.scene);
 // }, function (xhr) {
 //     console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
 // }, function (error) {
