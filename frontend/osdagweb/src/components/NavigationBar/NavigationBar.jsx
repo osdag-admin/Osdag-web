@@ -8,7 +8,8 @@ const NavigationBar = () => {
   const [graphicsDropdown, setGraphicsDropdown] = useState(false);
   const [databaseDropdown, setDatabaseDropdown] = useState(false);
   const [helpDropdown, setHelpDropdown] = useState(false);
-
+  
+  //Functions for displaying dropdowns when users clicks on the links in navbar
   const handleFileClick = () => {
     setFileDropdown(!fileDropdown);
   };

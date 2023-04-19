@@ -3,9 +3,11 @@ import "./TensionMember.css";
 import Sidebar from "../components/sidebar/Sidebar";
 import { Link } from 'react-router-dom';
 
-//the tension page
+//the tension member page with cards for Bolted to End Gusset and Welded To End Gusset
 function TensionMember() {
   return (
+
+    //main sidebar and navbar for navigating to other connection subpage
     <div className="modules">
       <Sidebar />
       <div className="center">

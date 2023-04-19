@@ -14,7 +14,6 @@ function Sidebar() {
     return (
     <nav>
     <button className="conbutton" onClick={() => handleClick('/connection')}>Connection</button>
-
   <button className="navbutton" onClick={() => handleClick('/tension')}>Tension Member</button>
   <button className="navbutton" onClick={() => handleClick('/underdev')}>Compression Member</button>
   <button className="navbutton" onClick={() => handleClick('/underdev')}>Flexural Member</button>

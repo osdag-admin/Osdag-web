@@ -5,14 +5,17 @@ import Navbarcon from "../components/navbar/Navbarcon";
 import { Link } from 'react-router-dom';
 
 
-//the connection page
+//the connections page containing four cards for FinPlate, Cleat Angle, End Plate and Seated Angle
 function Connection() {
   return (
+
+    //main sidebar and navbar for navigating to other connection subpages
     <div className="modules">
     <Sidebar />
-
+    
     <div className="content-container">
     <Navbarcon />
+    
     
     <div className="module_options_container">
         <div className="module_option">
@@ -67,7 +70,9 @@ function Connection() {
           </div>
         </div>
         </div>
+       
 
+       
         <Link to="/finplate"> {/* Add the route for the desired page */}
                 <button className="start-button">Start</button>
         </Link>
