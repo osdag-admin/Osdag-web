@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var exports ={};
+        var delxhr = new XMLHttpRequest();
+        delxhr.open("POST", "http://127.0.0.1:8000/sessions/delete");
+        delxhr.withCredentials = true; // to send cookies with the request
+        delxhr.onreadystatechange = function() {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            console.log("Session deleted successfully");
+        } else if (this.readyState === XMLHttpRequest.DONE && this.status !== 200) {
+            console.error("Error deleting session");
+        }
+        };
+        delxhr.send();
+    </script>
+</body>
+</html>

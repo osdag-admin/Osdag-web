@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Session</title>
+</head>
+<body>
+    <script>
+                var exports ={};
+                var sessionXhr = new XMLHttpRequest();
+                sessionXhr.open('POST', 'http://127.0.0.1:8000/sessions/create');
+                sessionXhr.setRequestHeader('Content-Type', 'application/json');
+                var data = { module_id: 'Fin Plate Connection'};
+                // sessionXhr.send(JSON.stringify(data));
+                sessionXhr.onload = function() {
+                if (sessionXhr.status === 201) {
+                    // Parse the response as a JSON object
+                    var response = JSON.parse(sessionXhr.responseText);
+                    console.log(response);
+                }
+                };
+                sessionXhr.send(JSON.stringify(data));
+    </script>
+</body>
+</html>

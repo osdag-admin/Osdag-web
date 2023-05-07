@@ -1,0 +1,114 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cad Renderer</title>
+</head>
+<body>
+    <canvas class="webgl"> </canvas>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "{% static 'three.js-master/build/three.module.js' %}",
+            "OrbitControls": "{% static 'three.js-master/examples/jsm/controls/OrbitControls.js' %}"
+          }
+        }
+      </script>
+      <script type="module">
+          var exports ={};
+          "use strict";
+          Object.defineProperty(exports, "__esModule", { value: true });
+          import * as THREE from "{% static './three.js-master/build/three.module.js' %}"
+          import { OBJLoader }  from "{% static './three.js-master/examples/jsm/loaders/OBJLoader.js' %}"
+          import { OrbitControls } from "{% static './three.js-master/examples/jsm/controls/OrbitControls.js' %}"
+          import Stats from "{% static './three.js-master/examples/jsm/libs/stats.module.js' %}"
+          //import { FontLoader } from './three.js-master/examples/jsm/loaders/FontLoader.js'
+           
+          var scene = new THREE.Scene();
+          scene.add(new THREE.AxesHelper(5));
+          scene.background = new THREE.Color(0xffffff)
+          // const light = new THREE.SpotLight();
+          // light.position.set(5, 5, 5)
+          // scene.add(light);
+          var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.00001, 20000);
+          camera.position.z = 2
+          var renderer = new THREE.WebGLRenderer();
+          // renderer.PhysicallyCorrectLights = true
+          // renderer.shadowMap.enabled = true
+          // renderer.outputEncoding = THREE.sRGBEncoding
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.outputEncoding = THREE.sRGBEncoding
+          document.body.appendChild(renderer.domElement);
+          var controls = new OrbitControls(camera, renderer.domElement);
+  
+          var texture = new THREE.TextureLoader().load("{%static './three.js-master/examples/textures/carbon/Carbon_Normal.png' %}")
+          //envTexture.mapping = THREE.CubeReflectionMapping
+  
+          const material = new THREE.MeshPhysicalMaterial({
+                  color: 0xFF0000,
+                  envMap: texture,
+                  metalness: 0.25,
+                  roughness: 0.1,
+                  opacity: 1.0,
+                  transparent: true,
+                  transmission: 0.99,
+                  clearcoat: 1.0,
+                  clearcoatRoughness: 0.25
+          })
+          //outputFilePath="{%static './model_files/webgl_modelsfin_plate_brep_postman-obj.obj' %}"
+          controls.enableDamping = true;
+          var loader = new OBJLoader();
+          //var outputFilePath = "." + outputFilePath.substring(1);
+          loader.load("{%static './model_files/output-obj.obj' %}", function (obj) {
+              obj.traverse(function (child) {
+                  if (child.isMesh) {
+                      var m = child;
+                      m.receiveShadow = true;
+                      m.castShadow = true;
+                      m.material = material;
+                  }
+                  if (child.isLight) {
+                      var l = child;
+                      l.castShadow = true;
+                      l.shadow.bias = -0.003;
+                      l.shadow.mapSize.width = 2048;
+                      l.shadow.mapSize.height = 2048;
+                  }
+              });
+              obj.traverse(function(object) {
+                  if (object.isMesh && object.name) {
+                      console.log(object.name);
+                  }
+              });
+              scene.add(obj);
+          }, function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+          }, function (error) {
+              console.log(error);
+          });
+          window.addEventListener('resize', onWindowResize, false);
+          function onWindowResize() {
+              camera.aspect = window.innerWidth / window.innerHeight;
+              camera.updateProjectionMatrix();
+              renderer.setSize(window.innerWidth, window.innerHeight);
+              render();
+          }
+          var stats = Stats()
+          document.body.appendChild(stats.dom);
+          function animate() {
+              requestAnimationFrame(animate);
+              controls.update();
+              render();
+              stats.update();
+          }
+          function render() {
+              renderer.render(scene, camera);
+          }
+          animate();
+  
+      </script>
+</body>
+</html>

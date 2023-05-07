@@ -19,6 +19,8 @@ from osdag_api.errors import OsdagApiException
 import typing
 import json
 import os
+import subprocess
+import time
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CADGeneration(View):
@@ -31,6 +33,7 @@ class CADGeneration(View):
     """
     def get(self, request: HttpRequest):
         cookie_id = request.COOKIES.get("design_session") # Get design session id.
+        print(cookie_id)
         if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
             return HttpResponse("Error: Please open module", status=400) # Returns error response.
         if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
@@ -52,10 +55,30 @@ class CADGeneration(View):
             return HttpResponse(repr(e), status=400) # Return error response.
         except Exception as e:
             return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response.
-        with open(path, 'r') as f: # Open CAD file
-            cad_model = f.read() # Read CAD file Data
-        os.remove(path) # Delete CAD File
-        response = HttpResponse(status=200)
+
+        os.chdir('/home')
+        # Pass the path variable as a command-line argument to the FreeCAD macro
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # Get the path of the parent directory
+        parent_dir = os.path.dirname(os.path.dirname(current_dir))
+        macro_path = os.path.join(parent_dir,'freecad_utils/open_brep_file.FCMacro')
+        command = '/snap/bin/freecad.cmd'
+        #path = 'file_storage/cad_models/Uv9aURCfBDmhoosxMUy2UT7P3ghXcvV3_Model.brep'
+        path_to_file = os.path.join(parent_dir,path)
+        os.remove(path) #deleting the temporary cad file
+        output_dir = os.path.join(parent_dir,'3D_WebGL/model_files/output-obj.obj')
+        # Call the subprocess to create the empty output file
+        subprocess.run(["touch", output_dir])
+        command_with_arg = f'{command} {macro_path} {path_to_file} {output_dir}'
+        # Execute the command using subprocess.Popen()
+        process = subprocess.Popen(command_with_arg.split())
+        #print("CAD File dir",output_dir)
+        response = HttpResponse(output_dir,status=200)
         response["content-type"] = "text/plain"
-        response.write(cad_model)
-        return response
+        # response.write(cad_model)
+        #response.write(output_dir)
+        return response 
+        #return HttpResponse(path, content_type='text/plain')# Add freecad file converter shell instruction here file located at path
+
+
+        
