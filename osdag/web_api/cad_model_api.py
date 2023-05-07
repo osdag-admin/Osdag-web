@@ -65,7 +65,6 @@ class CADGeneration(View):
         command = '/snap/bin/freecad.cmd'
         #path = 'file_storage/cad_models/Uv9aURCfBDmhoosxMUy2UT7P3ghXcvV3_Model.brep'
         path_to_file = os.path.join(parent_dir,path)
-        os.remove(path) #deleting the temporary cad file
         output_dir = os.path.join(parent_dir,'3D_WebGL/model_files/output-obj.obj')
         # Call the subprocess to create the empty output file
         subprocess.run(["touch", output_dir])
@@ -73,6 +72,7 @@ class CADGeneration(View):
         # Execute the command using subprocess.Popen()
         process = subprocess.Popen(command_with_arg.split())
         #print("CAD File dir",output_dir)
+        os.remove(path_to_file) #deleting the temporary cad file
         response = HttpResponse(output_dir,status=200)
         response["content-type"] = "text/plain"
         # response.write(cad_model)
