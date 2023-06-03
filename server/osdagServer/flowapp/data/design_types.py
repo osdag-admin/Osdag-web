@@ -126,3 +126,53 @@ b2b_splice = {
     'has_subtypes': False,
     'success': True
 }
+
+b2column = {
+    'data': [{
+        'id': 1,
+        'name': 'End_Plate'
+    }],
+    'has_subtypes': False,
+    'success': True
+}
+
+c2c_splice = {
+    'data': [
+        {
+            'id': 1,
+            'name': 'Cover_Plate_Bolted'
+        },
+        {
+            'id': 2,
+            'name': 'Cover_Plate_Welded'
+        },
+        {
+            'id': 3,
+            'name': 'End_Plate'
+        }],
+    'has_subtypes': False,
+    'success': True
+}
+
+base_plate = {
+    'data': [{
+        'id': 1,
+        'name': 'Base_Plate_Connection'
+    }],
+    'has_subtypes': False,
+    'success': True
+}
+
+tension_member = {
+    'data': [
+        {
+            'id': 1,
+            'name': 'Bolted_To_End_Gusset'
+        },
+        {
+            'id': 2,
+            'name': 'Welded_To_End_Gusset'
+        }],
+    'has_subtypes': False,
+    'success': True
+}
