@@ -1,8 +1,8 @@
-import '../app.css'
+import '../App.css'
 import Osdag_logo from "../assets/logo-osdag.png"
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react';
-import SidebarJSON from '../urls/Sidebar.json'
+
 function Sidebar() {
 
 
@@ -43,7 +43,7 @@ function Sidebar() {
 
   const navigate = useNavigate();
   return (
-    <>
+    <div className='sidebar'>
       <div className="sidebar-container">
         <div className="sidebar-item-logo">
           <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={() => navigate("/")} /></center>
@@ -71,7 +71,7 @@ function Sidebar() {
           <option value={"5"}>Check for Update</option>
         </select>
       </div>
-    </>
+    </div>
   )
 }
 
