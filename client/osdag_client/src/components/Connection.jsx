@@ -22,20 +22,11 @@ import mccc3 from "../assets/MomentConnection/mccc1.png";
 //Base Plate
 
 import bp1 from "../assets/BasePlate/1.png";
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 
 
 function Connection() {
-
-  const navigate = useNavigate();
-  
-function shearConnectionNavigation()
-{
-  navigate("/connection/finplate");
-}
-
-
 
 
   const [toggleState, setToggleState] = useState(1);
@@ -99,7 +90,7 @@ function shearConnectionNavigation()
               <div className='conn-grid-item'><input type="radio" value="Seated_Angle" name="shear-conn" /><b>Seated Angle</b><br/> <img src={sc4}/></div>
             </div>
 
-            <center><div className='conn-btn'><button onClick={shearConnectionNavigation()}>Start</button></div></center>
+            <center><div className='conn-btn'><button>Start</button></div></center>
         </div>
 
         <div

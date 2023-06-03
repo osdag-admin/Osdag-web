@@ -18,15 +18,19 @@ function App() {
     createRoutesFromElements(
       <Route path="/" element={<Root />}>
         <Route index element={<Mainwindow />} />
-        <Route path="/connection" element={<Connection />} />
-        <Route path="/tenstionMember" element={<Tenstion_member />} />
-        <Route path="/notAvailable" element={<NotAvilable />} />
+        <Route path="/connections" element={<Connection />} />
+        <Route path="/tensionmember" element={<Tenstion_member />} />
 
-        {/* Share Connection  */}
-        <Route path="/connection/finplate" element={<FinePlate />} />
-        <Route path="/connection/cheatangle" element={<CheatAngle />} />
-        <Route path="/connection/endplate" element={<EndPlate />} />
-        <Route path="/connection/seatedangle" element={<SeatedAngle />} />
+        {/* Not Available Modules */}
+        <Route path="/compressionmember" element={<NotAvilable />} />
+        <Route path="/flexuralmember" element={<NotAvilable />} />
+        <Route path="/beamcolumn" element={<NotAvilable />} />
+        <Route path="/plategirder" element={<NotAvilable />} />
+        <Route path="/truss" element={<NotAvilable />} />
+        <Route path="/2dframe" element={<NotAvilable />} />
+        <Route path="/3dframe" element={<NotAvilable />} />
+        <Route path="/groupdesign" element={<NotAvilable />} />
+
 
       </Route>
     )
