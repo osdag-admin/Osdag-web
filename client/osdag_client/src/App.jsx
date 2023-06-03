@@ -4,7 +4,12 @@ import  Mainwindow  from './components/Mainwindow'
 import Connection from './components/Connection';
 import NotAvilable from './components/NotAvilable.jsx'
 import Tenstion_member from './components/Tenstion_member.jsx'
+// Shear Connection 
 import FinePlate from './components/shearConnection/FinePlate';
+import CheatAngle from './components/shearConnection/CleatAngle';
+import EndPlate from './components/shearConnection/EndPlate';
+import SeatedAngle from './components/shearConnection/SeatedAngle';
+
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet,RouterProvider } from 'react-router-dom';
 
 function App() {
@@ -19,15 +24,16 @@ function App() {
 
             {/* Share Connection  */}
             <Route path ="/connection/finplate" element={<FinePlate/>}/>
+            <Route path ="/connection/cheatangle" element={<CheatAngle/>}/>
+            <Route path ="/connection/endplate" element={<EndPlate/>}/>
+            <Route path ="/connection/seatedangle" element={<SeatedAngle/>}/>
+            
       </Route>
     )
   )
   return (
     <>
     <div className="sidebar">
-          {/* <div><Sidebar/></div> 
-          <div><Mainwindow/></div> 
-          <div><Connection/></div> */}
           <RouterProvider router={router}/>
     </div>
     </>

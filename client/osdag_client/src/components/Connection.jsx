@@ -25,7 +25,17 @@ import bp1 from "../assets/BasePlate/1.png";
 import { useNavigate } from 'react-router-dom';
 
 
+
 function Connection() {
+
+  const navigate = useNavigate();
+  
+function shearConnectionNavigation()
+{
+  navigate("/connection/finplate");
+}
+
+
 
 
   const [toggleState, setToggleState] = useState(1);
@@ -46,7 +56,6 @@ function Connection() {
   //   // popupWindow.location.href = '/connection/finplate';
   // };
 
-  const navigate = useNavigate();
 
   return (
     <div className="container">
@@ -90,7 +99,7 @@ function Connection() {
               <div className='conn-grid-item'><input type="radio" value="Seated_Angle" name="shear-conn" /><b>Seated Angle</b><br/> <img src={sc4}/></div>
             </div>
 
-            <center><div className='conn-btn'><button onClick={()=>navigate("/connection/finplate")}>Start</button></div></center>
+            <center><div className='conn-btn'><button onClick={shearConnectionNavigation()}>Start</button></div></center>
         </div>
 
         <div
