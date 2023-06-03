@@ -41,6 +41,88 @@ design_type_data = {
             'name': 'Group_Design'
         }
     ],
-
     'success': True,
+}
+
+connections_data = {
+    'data': [
+        {
+            'id': 1,
+            'name': 'Shear_Connection'
+        },
+        {
+            'id': 2,
+            'name': 'Moment_Connection'
+        },
+        {
+            'id': 3,
+            'name': 'Base_Plate'
+        },
+        {
+            'id': 4,
+            'name': 'Truss_Connection'
+        }],
+    'has_subtypes': True,
+    'success': True
+}
+
+shear_connection = {
+    'data': [
+        {
+            'id': 1,
+            'name': 'Fin_Plate'
+        },
+        {
+            'id': 2,
+            'name': 'Cleat_Angle'
+        },
+        {
+            'id': 3,
+            'name': 'End_Plate'
+        },
+        {
+            'id': 4,
+            'name': 'Seated_Angle'
+        }],
+    'has_subtypes': False,
+    'success': True
+}
+
+moment_connection = {
+    'data': [
+        {
+            'id': 1,
+            'name': 'Beam-To-Beam_Splice'
+        },
+        {
+            'id': 2,
+            'name': 'Beam-To-Column'
+        },
+        {
+            'id': 3,
+            'name': 'Column-To-Column_Splice'
+        },
+        {
+            'id': 4,
+            'name': 'PEB'
+        }],
+    'has_subtypes': True,
+    'success': True
+}
+
+b2b_splice = {
+    'data': [{
+        'id': 1,
+        'name': 'Cover_Plate_Bolted'
+    },
+        {
+        'id': 2,
+        'name': 'Cover_Plate_Welded'
+    },
+        {
+        'id': 3,
+        'name': 'End_Plate'
+    }],
+    'has_subtypes': False,
+    'success': True
 }
