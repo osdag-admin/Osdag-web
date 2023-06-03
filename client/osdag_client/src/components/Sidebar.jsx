@@ -1,8 +1,7 @@
 import '../app.css'
 import Osdag_logo from "../assets/logo-osdag.png"
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react';
-import SidebarJSON from '../urls/Sidebar.json'
+import { useEffect, useState } from 'react'
 function Sidebar() {
 
 
@@ -55,7 +54,7 @@ function Sidebar() {
                 <div key={index} className="sidebar-item" >
                   <button onClick={() => {
                     navigate(item.name.toLowerCase().replaceAll("_", ""))
-                  }}>{item.name}</button>
+                  }}>{item.name.toUpperCase().replaceAll("_", " ")}</button>
                 </div>
               </>
             )
