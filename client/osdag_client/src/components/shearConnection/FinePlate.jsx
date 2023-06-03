@@ -17,7 +17,7 @@ function FinePlate() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/design');
+      const response = await fetch('http://127.0.0.1:8000/osdag-web');
       const jsonData = await response.json();
       console.log(JSON.stringify(jsonData))
       setData(jsonData);

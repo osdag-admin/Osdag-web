@@ -1,8 +1,29 @@
 import '../app.css'
 import Osdag_logo from "../assets/logo-osdag.png"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react';
 import SidebarJSON from '../urls/Sidebar.json'
 function Sidebar() {
+
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/osdag-web/',{
+        method: 'GET'
+        });
+      const jsonData = await response.json();
+      console.log(JSON.stringify(jsonData))
+      setData(jsonData);
+    } catch (error) {
+      console.log('Error fetching data:', error);
+    }
+  };
+
 
   function handleSelectChange(event) {
     const selectedOptionValue = event.target.value;
@@ -23,11 +44,31 @@ function Sidebar() {
     const navigate = useNavigate();
   return (
     <> 
-    
     <div className="sidebar-container">   
         <div className="sidebar-item-logo">
            <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={()=>navigate("/")}/></center>
         </div>
+
+{/* 
+{
+  fetch('http://127.0.0.1:8000/osdag-web')
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      data.result.data.map(item => (
+        <div key={item.id} className="sidebar-item">
+          <button onClick={() => navigate(item.name.replace(/_/g, ""))}>
+            {item.name}
+          </button>
+        </div>
+      ))
+    }
+  })
+  .catch(error => {
+    console.error(error);
+  })
+} */}
+
 
         {SidebarJSON.Main_Sidebar.map((item, index) => (
         <div key={index} className="sidebar-item">
