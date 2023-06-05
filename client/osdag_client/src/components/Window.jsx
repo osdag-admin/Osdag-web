@@ -10,6 +10,7 @@ const Window = () => {
     const [activeTab, setActiveTab] = useState(1)
     const [subActiveTab, setSubActiveTab] = useState(1)
     const [leafActiveTab, setLeafActiveTab] = useState(1)
+    const [errorMsg, setErrorMsg] = useState(null)
 
     const getLeafLevelDesignType = async (prev_item, item) => {
         setIsLoading(true)
@@ -22,8 +23,11 @@ const Window = () => {
             console.log(jsonData.result)
             setLeafLevelDesignType(jsonData.result);
             setIsLoading(false)
+            setErrorMsg(null)
         } catch (error) {
             setIsLoading(false)
+            setLeafLevelDesignType(null)
+            setErrorMsg("Module Under Development")
             console.log('Error fetching data:', error);
         }
     }
@@ -42,8 +46,11 @@ const Window = () => {
                 getLeafLevelDesignType(item, jsonData.result.data[0])
             }
             setIsLoading(false)
+            setErrorMsg(null)
         } catch (error) {
             setIsLoading(false)
+            setSubDesignTypes(null)
+            setErrorMsg("Module Under Development")
             console.log('Error fetching data:', error);
         }
     }
@@ -69,6 +76,8 @@ const Window = () => {
             } catch (error) {
                 setIsLoading(false)
                 setResults(null)
+                setErrorMsg("Module Under Development")
+                setErrorMsg(null)
                 console.log('Error fetching data:', error);
             }
         }
@@ -77,7 +86,7 @@ const Window = () => {
     }, [designType])
 
     useEffect(() => {
-        if (!results) return;
+        if (!results && !subDesignTypes) return;
         getLeafLevelDesignType(results.data[activeTab - 1], subDesignTypes.data[subActiveTab - 1])
     }, [subActiveTab])
 
@@ -92,7 +101,6 @@ const Window = () => {
 
     return (
         <div>
-            {isLoading && <div>Loading...</div>}
             <div className='container'>
                 <div className='bloc-tabs'>
                     {results && results.has_subtypes && results.data.map((item, index) => {
@@ -188,6 +196,7 @@ const Window = () => {
                 }
 
             </div>
+            {errorMsg && <div>{errorMsg}</div>}
         </div>
     )
 }
