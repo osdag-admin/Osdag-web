@@ -2100,7 +2100,6 @@ class CommonDesignLogic(object):
 
                 else:
                     self.connectivityObj = self.create3DBeamWebBeamWeb()
-
                 self.display_3DModel("Model","gradient_bg")
             else:
                 self.display.EraseAll()
