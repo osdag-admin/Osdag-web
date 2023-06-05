@@ -147,7 +147,7 @@ const Window = () => {
                                     </div>
                                 )
                             })}
-                            <center><div className='conn-btn'><button>Start</button></div></center>
+                            <center><div className=''><button className='start-btn'>Start</button></div></center>
                         </div>
                     }
                     {subDesignTypes && !subDesignTypes.has_subtypes &&
@@ -168,7 +168,7 @@ const Window = () => {
                                     </div>
                                 )
                             })}
-                            <center><div className='conn-btn'><button>Start</button></div></center>
+                            <center><div className=''><button className='start-btn'>Start</button></div></center>
                         </div>
                     }
                     {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
@@ -189,7 +189,11 @@ const Window = () => {
                                     </div>
                                 )
                             })}
-                            <center><div className='conn-btn'><button>Start</button></div></center>
+                            <center>
+                                <div className=''>
+                                    <button className='start-btn'>Start</button>
+                                </div>
+                            </center>
                         </div>
                     }
                 </div>
