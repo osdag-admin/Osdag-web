@@ -20,6 +20,7 @@ const Window = () => {
                 setIsLoading(false)
             } catch (error) {
                 setIsLoading(false)
+                setResults(null)
                 console.log('Error fetching data:', error);
             }
         }
