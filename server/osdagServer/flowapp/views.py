@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
-import json
 
 # importing data
 from .data.design_types import design_type_data, connections_data, shear_connection, moment_connection, b2b_splice, b2column, c2c_splice, base_plate, tension_member

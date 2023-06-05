@@ -19,7 +19,7 @@ class APITest(TestCase) :
     ### TESTING MAIN WINDOW API ###
     """ VALID """
     def test_valid_window(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/")
+        response = self.client.get("/osdag-web/")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
 
@@ -28,13 +28,13 @@ class APITest(TestCase) :
 
     """ INVALID """
     def test_invalid_window(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web")
+        response = self.client.get("/osdag-web")
         self.assertTrue(response.status_code!=200)  # 301
         
-        response = self.client.get("http://127.0.0.1:8000/osdag_web/")
+        response = self.client.get("/osdag_web/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag_web")
+        response = self.client.get("/osdag_web")
         self.assertTrue(response.status_code!=200)  # 301
         
 
@@ -42,7 +42,7 @@ class APITest(TestCase) :
     ### TESTING MODULES API ###
     """ VALID """ 
     def test_valid_connection(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections")
+        response = self.client.get("/osdag-web/connections")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
 
@@ -51,18 +51,18 @@ class APITest(TestCase) :
     
     """ INVALID """
     def test_invalid_connection(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/")
+        response = self.client.get("/osdag-web/connections/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connection/")
+        response = self.client.get("/osdag-web/connection/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connection")
+        response = self.client.get("/osdag-web/connection")
         self.assertTrue(response.status_code!=200)  # 301
         
     """ VALID """
     def test_valid_tension_member(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/tension-member")
+        response = self.client.get("/osdag-web/tension-member")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -70,13 +70,13 @@ class APITest(TestCase) :
     
     """ INVALID """
     def test_invalid_tension_member(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/tension-member/")
+        response = self.client.get("/osdag-web/tension-member/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/tension_member")
+        response = self.client.get("/osdag-web/tension_member")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/tension_member/")
+        response = self.client.get("/osdag-web/tension_member/")
         self.assertTrue(response.status_code!=200)  # 301
 
 
@@ -87,7 +87,7 @@ class APITest(TestCase) :
     #########################################
     """ VALID """
     def test_valid_shear_connection(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/shear-connection")
+        response = self.client.get("/osdag-web/connections/shear-connection")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -95,21 +95,21 @@ class APITest(TestCase) :
     
     """ INVALID """
     def test_invalid_shear_connection(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/shear-connection/")
+        response = self.client.get("/osdag-web/connections/shear-connection/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/shear_connections")
+        response = self.client.get("/osdag-web/connections/shear_connections")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/shear_connection")
+        response = self.client.get("/osdag-web/connections/shear_connection")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/shear-connections")
+        response = self.client.get("/osdag-web/connections/shear-connections")
         self.assertTrue(response.status_code!=200)  # 301
     
     """ VALID """
     def test_valid_moment_connection(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection")
+        response = self.client.get("/osdag-web/connections/moment-connection")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -117,21 +117,21 @@ class APITest(TestCase) :
 
     """ INVALID """
     def test_invalid_moment_connection(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/")
+        response = self.client.get("/osdag-web/connections/moment-connection/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connections")
+        response = self.client.get("/osdag-web/connections/moment-connections")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment_connection")
+        response = self.client.get("/osdag-web/connections/moment_connection")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment_connections")
+        response = self.client.get("/osdag-web/connections/moment_connections")
         self.assertTrue(response.status_code!=200)  # 301
 
     """ VALID """
     def test_valid_connection_base_plate(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/base-plate")
+        response = self.client.get("/osdag-web/connections/base-plate")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -139,16 +139,16 @@ class APITest(TestCase) :
 
     """ INVALID """
     def test_invalid_connection_base_plate(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/base-plate/")
+        response = self.client.get("/osdag-web/connections/base-plate/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/base-plates")
+        response = self.client.get("/osdag-web/connections/base-plates")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/base_plate")
+        response = self.client.get("/osdag-web/connections/base_plate")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/base-plates")
+        response = self.client.get("/osdag-web/connections/base-plates")
         self.assertTrue(response.status_code!=200)  # 301
 
 
@@ -159,7 +159,7 @@ class APITest(TestCase) :
     ################################################
     """ VALID """
     def test_valid_moment_connection_beam_to_beam_splice(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam-to-beam-splice")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam-to-beam-splice")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -167,18 +167,18 @@ class APITest(TestCase) :
 
     """ INVALID """
     def test_invalid_moment_connection_beam_to_beam_splice(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam-to-beam-splice/")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam-to-beam-splice/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam_to_beam_splice")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam_to_beam_splice")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam_to_beam_splice/")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam_to_beam_splice/")
         self.assertTrue(response.status_code!=200)  # 301
 
     """ VALID """
     def test_valid_moment_connection_beam_to_column(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam-to-column")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam-to-column")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -186,18 +186,18 @@ class APITest(TestCase) :
 
     """ INVALID """
     def test_invalid_moment_connection_beam_to_column(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam-to-column/")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam-to-column/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam_to_column")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam_to_column")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/beam_to_column/")
+        response = self.client.get("/osdag-web/connections/moment-connection/beam_to_column/")
         self.assertTrue(response.status_code!=200)  # 301
 
     """ VALID """
     def test_valid_moment_connection_column_to_column_splice(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/column-to-column-splice")
+        response = self.client.get("/osdag-web/connections/moment-connection/column-to-column-splice")
         response = response.json()
         self.assertEqual(list(response.keys())[0] , 'result')
         response = json.dumps(response)
@@ -205,11 +205,11 @@ class APITest(TestCase) :
 
     """ INVALID """
     def test_invalid_moment_connection_column_to_column_splice(self) : 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/column-to-column-splice/")
+        response = self.client.get("/osdag-web/connections/moment-connection/column-to-column-splice/")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/column_to_column_splice")
+        response = self.client.get("/osdag-web/connections/moment-connection/column_to_column_splice")
         self.assertTrue(response.status_code!=200)  # 301
 
-        response = self.client.get("http://127.0.0.1:8000/osdag-web/connections/moment-connection/column_to_column_splice/")
+        response = self.client.get("/osdag-web/connections/moment-connection/column_to_column_splice/")
         self.assertTrue(response.status_code!=200)  # 301
