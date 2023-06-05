@@ -8,6 +8,21 @@ const Window = () => {
 
     useEffect(() => {
 
+        const getSubDesignTypes = async (item) => {
+            setIsLoading(true)
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}/${item.name.toLowerCase().replaceAll("_", '-')}`, {
+                    method: 'GET'
+                });
+                const jsonData = await response.json();
+                console.log(jsonData.result)
+                setIsLoading(false)
+            } catch (error) {
+                setIsLoading(false)
+                console.log('Error fetching data:', error);
+            }
+        }
+
         const getDesignTypes = async () => {
             setIsLoading(true)
             try {
@@ -15,8 +30,11 @@ const Window = () => {
                     method: 'GET'
                 });
                 const jsonData = await response.json();
-                console.log(JSON.stringify(jsonData))
+                console.log(jsonData.result)
                 setResults(jsonData.result);
+                if (jsonData.result.has_subtypes === true) {
+                    getSubDesignTypes(jsonData.result.data[0])
+                }
                 setIsLoading(false)
             } catch (error) {
                 setIsLoading(false)
