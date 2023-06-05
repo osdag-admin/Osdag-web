@@ -84,7 +84,7 @@ shear_connection = {
             'id': 4,
             'name': 'Seated_Angle'
         }],
-    'has_subtypes': False,
+    'has_subtypes': True,
     'success': True
 }
 
