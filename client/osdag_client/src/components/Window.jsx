@@ -6,10 +6,30 @@ const Window = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [results, setResults] = useState(null)
     const [subDesignTypes, setSubDesignTypes] = useState(null)
+    const [leafLevelDesignType, setLeafLevelDesignType] = useState(null)
     const [activeTab, setActiveTab] = useState(1)
     const [subActiveTab, setSubActiveTab] = useState(1)
+    const [leafActiveTab, setLeafActiveTab] = useState(1)
+
+    const getLeafLevelDesignType = async (prev_item, item) => {
+        setIsLoading(true)
+        try {
+            console.log(designType)
+            const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}/${prev_item.name.toLowerCase().replaceAll("_", '-')}/${item.name.toLowerCase().replaceAll("_", '-')}`, {
+                method: 'GET'
+            });
+            const jsonData = await response.json();
+            console.log(jsonData.result)
+            setLeafLevelDesignType(jsonData.result);
+            setIsLoading(false)
+        } catch (error) {
+            setIsLoading(false)
+            console.log('Error fetching data:', error);
+        }
+    }
 
     const getSubDesignTypes = async (item) => {
+        setLeafLevelDesignType(null)
         setIsLoading(true)
         try {
             const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}/${item.name.toLowerCase().replaceAll("_", '-')}`, {
@@ -18,6 +38,9 @@ const Window = () => {
             const jsonData = await response.json();
             console.log(jsonData.result)
             setSubDesignTypes(jsonData.result);
+            if (jsonData.result.has_subtypes === true) {
+                getLeafLevelDesignType(item, jsonData.result.data[0])
+            }
             setIsLoading(false)
         } catch (error) {
             setIsLoading(false)
@@ -26,7 +49,9 @@ const Window = () => {
     }
 
     useEffect(() => {
-
+        setResults(null)
+        setSubDesignTypes(null)
+        setLeafLevelDesignType(null)
         const getDesignTypes = async () => {
             setIsLoading(true)
             try {
@@ -38,6 +63,7 @@ const Window = () => {
                 setResults(jsonData.result);
                 if (jsonData.result.has_subtypes === true) {
                     getSubDesignTypes(jsonData.result.data[0])
+                    setActiveTab(1)
                 }
                 setIsLoading(false)
             } catch (error) {
@@ -49,6 +75,11 @@ const Window = () => {
 
         getDesignTypes()
     }, [designType])
+
+    useEffect(() => {
+        if (!results) return;
+        getLeafLevelDesignType(results.data[activeTab - 1], subDesignTypes.data[subActiveTab - 1])
+    }, [subActiveTab])
 
     useEffect(() => {
         if (!results) return;
@@ -92,6 +123,50 @@ const Window = () => {
                 {results && !results.has_subtypes &&
                     <div className='content-tabs'>
                         {results.data.map((item, index) => {
+                            return (
+                                <div
+                                // className={activeTab === item.id ? "content  active-content" : "content"}
+                                >
+                                    <hr />
+                                    <div className='conn-grid-container'>
+                                        <div className='conn-grid-item'>
+                                            <input type="radio" value="Fin_Plate" name="shear-conn"></input>
+                                            <b>{item.name}</b><br />
+                                            {/* <img src={sc1} /> */}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            )
+                        })}
+                        <center><div className='conn-btn'><button>Start</button></div></center>
+                    </div>
+                }
+                {subDesignTypes && !subDesignTypes.has_subtypes &&
+                    <div className='content-tabs'>
+                        {subDesignTypes.data.map((item, index) => {
+                            return (
+                                <div
+                                // className={activeTab === item.id ? "content  active-content" : "content"}
+                                >
+                                    <hr />
+                                    <div className='conn-grid-container'>
+                                        <div className='conn-grid-item'>
+                                            <input type="radio" value="Fin_Plate" name="shear-conn"></input>
+                                            <b>{item.name}</b><br />
+                                            {/* <img src={sc1} /> */}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            )
+                        })}
+                        <center><div className='conn-btn'><button>Start</button></div></center>
+                    </div>
+                }
+                {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
+                    <div className='content-tabs'>
+                        {leafLevelDesignType.data.map((item, index) => {
                             return (
                                 <div
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
