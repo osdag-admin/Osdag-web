@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import  { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 const Window = () => {
@@ -9,7 +9,7 @@ const Window = () => {
     const [leafLevelDesignType, setLeafLevelDesignType] = useState(null)
     const [activeTab, setActiveTab] = useState(1)
     const [subActiveTab, setSubActiveTab] = useState(1)
-    const [leafActiveTab, setLeafActiveTab] = useState(1)
+    // const [leafActiveTab, setLeafActiveTab] = useState(1)
     const [errorMsg, setErrorMsg] = useState(null)
 
     const getLeafLevelDesignType = async (prev_item, item) => {
@@ -132,7 +132,7 @@ const Window = () => {
                     <div className='content-tabs'>
                         {results.data.map((item, index) => {
                             return (
-                                <div
+                                <div key={item.id}
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
                                 >
                                     <hr />
@@ -154,7 +154,7 @@ const Window = () => {
                     <div className='content-tabs'>
                         {subDesignTypes.data.map((item, index) => {
                             return (
-                                <div
+                                <div key={item.id}
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
                                 >
                                     <hr />
@@ -176,7 +176,7 @@ const Window = () => {
                     <div className='content-tabs'>
                         {leafLevelDesignType.data.map((item, index) => {
                             return (
-                                <div
+                                <div key={item.id}
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
                                 >
                                     <hr />
