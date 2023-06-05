@@ -1,16 +1,8 @@
 import './App.css'
 import Sidebar from './components/Sidebar'
 import Mainwindow from './components/Mainwindow'
-import Connection from './components/Connection';
-import NotAvilable from './components/NotAvilable.jsx'
-import Tenstion_member from './components/Tenstion_member.jsx'
-// Shear Connection 
-import FinePlate from './components/shearConnection/FinePlate';
-import CheatAngle from './components/shearConnection/CleatAngle';
-import EndPlate from './components/shearConnection/EndPlate';
-import SeatedAngle from './components/shearConnection/SeatedAngle';
-
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
+import Window from './components/Window';
 
 function App() {
 
@@ -18,20 +10,7 @@ function App() {
     createRoutesFromElements(
       <Route path="/" element={<Root />}>
         <Route index element={<Mainwindow />} />
-        <Route path="/connections" element={<Connection />} />
-        <Route path="/tensionmember" element={<Tenstion_member />} />
-
-        {/* Not Available Modules */}
-        <Route path="/compressionmember" element={<NotAvilable />} />
-        <Route path="/flexuralmember" element={<NotAvilable />} />
-        <Route path="/beamcolumn" element={<NotAvilable />} />
-        <Route path="/plategirder" element={<NotAvilable />} />
-        <Route path="/truss" element={<NotAvilable />} />
-        <Route path="/2dframe" element={<NotAvilable />} />
-        <Route path="/3dframe" element={<NotAvilable />} />
-        <Route path="/groupdesign" element={<NotAvilable />} />
-
-
+        <Route path='/design-type/:designType' element={<Window />} />
       </Route>
     )
   )

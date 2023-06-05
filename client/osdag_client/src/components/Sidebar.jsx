@@ -51,9 +51,9 @@ function Sidebar() {
           data && data.data.map((item, index) => {
             return (
               <>
-                <div key={index} className="sidebar-item" >
+                <div key={item.id} className="sidebar-item" >
                   <button onClick={() => {
-                    navigate(item.name.toLowerCase().replaceAll("_", ""))
+                    navigate(`design-type/${item.name.toLowerCase().replaceAll("_", "-")}`)
                   }}>{item.name.toUpperCase().replaceAll("_", " ")}</button>
                 </div>
               </>
