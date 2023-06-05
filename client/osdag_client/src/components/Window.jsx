@@ -103,7 +103,7 @@ const Window = () => {
         <div>
             <div className='container'>
                 <div className='bloc-tabs'>
-                    {results && results.has_subtypes && results.data.map((item, index) => {
+                    {results && results.has_subtypes && results.data.map((item) => {
                         return (
                             <button
                                 key={item.id}
@@ -116,7 +116,7 @@ const Window = () => {
                     })}
                 </div>
                 <div className='bloc-tabs'>
-                    {subDesignTypes && subDesignTypes.has_subtypes && subDesignTypes.data.map((item, index) => {
+                    {subDesignTypes && subDesignTypes.has_subtypes && subDesignTypes.data.map((item) => {
                         return (
                             <button
                                 key={item.id}
@@ -130,7 +130,7 @@ const Window = () => {
                 </div>
                 {results && !results.has_subtypes &&
                     <div className='content-tabs'>
-                        {results.data.map((item, index) => {
+                        {results.data.map((item) => {
                             return (
                                 <div key={item.id}
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
@@ -152,7 +152,7 @@ const Window = () => {
                 }
                 {subDesignTypes && !subDesignTypes.has_subtypes &&
                     <div className='content-tabs'>
-                        {subDesignTypes.data.map((item, index) => {
+                        {subDesignTypes.data.map((item) => {
                             return (
                                 <div key={item.id}
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
@@ -174,7 +174,7 @@ const Window = () => {
                 }
                 {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
                     <div className='content-tabs'>
-                        {leafLevelDesignType.data.map((item, index) => {
+                        {leafLevelDesignType.data.map((item) => {
                             return (
                                 <div key={item.id}
                                 // className={activeTab === item.id ? "content  active-content" : "content"}
