@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 const Window = () => {
@@ -120,7 +120,7 @@ const Window = () => {
                         return (
                             <button
                                 key={item.id}
-                                className={subActiveTab === item.id ? "tab-btn tabs active-tabs" : "tab-btn tabs"}
+                                className={subActiveTab === item.id ? "tab-btn tabs active-subtabs" : "tab-btn tabs"}
                                 onClick={() => setSubActiveTab(item.id)}
                             >
                                 {item.name}
@@ -128,73 +128,71 @@ const Window = () => {
                         )
                     })}
                 </div>
-                {results && !results.has_subtypes &&
-                    <div className='content-tabs'>
-                        {results.data.map((item) => {
-                            return (
-                                <div key={item.id}
-                                // className={activeTab === item.id ? "content  active-content" : "content"}
-                                >
-                                    <hr />
-                                    <div className='conn-grid-container'>
-                                        <div className='conn-grid-item'>
-                                            <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                            <b>{item.name}</b><br />
-                                            {/* <img src={sc1} /> */}
+                <div className='design-types-cont'>
+                    {results && !results.has_subtypes &&
+                        <div className='content-tabs'>
+                            {results.data.map((item) => {
+                                return (
+                                    <div key={item.id}
+                                    // className={activeTab === item.id ? "content  active-content" : "content"}
+                                    >
+                                        <div className='conn-grid-container'>
+                                            <div className='conn-grid-item'>
+                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
+                                                <b>{item.name}</b><br />
+                                                {/* <img src={sc1} /> */}
+                                            </div>
                                         </div>
-                                    </div>
 
-                                </div>
-                            )
-                        })}
-                        <center><div className='conn-btn'><button>Start</button></div></center>
-                    </div>
-                }
-                {subDesignTypes && !subDesignTypes.has_subtypes &&
-                    <div className='content-tabs'>
-                        {subDesignTypes.data.map((item) => {
-                            return (
-                                <div key={item.id}
-                                // className={activeTab === item.id ? "content  active-content" : "content"}
-                                >
-                                    <hr />
-                                    <div className='conn-grid-container'>
-                                        <div className='conn-grid-item'>
-                                            <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                            <b>{item.name}</b><br />
-                                            {/* <img src={sc1} /> */}
+                                    </div>
+                                )
+                            })}
+                            <center><div className='conn-btn'><button>Start</button></div></center>
+                        </div>
+                    }
+                    {subDesignTypes && !subDesignTypes.has_subtypes &&
+                        <div className='content-tabs'>
+                            {subDesignTypes.data.map((item) => {
+                                return (
+                                    <div key={item.id}
+                                    // className={activeTab === item.id ? "content  active-content" : "content"}
+                                    >
+                                        <div className='conn-grid-container'>
+                                            <div className='conn-grid-item'>
+                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
+                                                <b>{item.name}</b><br />
+                                                {/* <img src={sc1} /> */}
+                                            </div>
                                         </div>
-                                    </div>
 
-                                </div>
-                            )
-                        })}
-                        <center><div className='conn-btn'><button>Start</button></div></center>
-                    </div>
-                }
-                {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
-                    <div className='content-tabs'>
-                        {leafLevelDesignType.data.map((item) => {
-                            return (
-                                <div key={item.id}
-                                // className={activeTab === item.id ? "content  active-content" : "content"}
-                                >
-                                    <hr />
-                                    <div className='conn-grid-container'>
-                                        <div className='conn-grid-item'>
-                                            <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                            <b>{item.name}</b><br />
-                                            {/* <img src={sc1} /> */}
+                                    </div>
+                                )
+                            })}
+                            <center><div className='conn-btn'><button>Start</button></div></center>
+                        </div>
+                    }
+                    {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
+                        <div className='content-tabs'>
+                            {leafLevelDesignType.data.map((item) => {
+                                return (
+                                    <div key={item.id}
+                                    // className={activeTab === item.id ? "content  active-content" : "content"}
+                                    >
+                                        <div className='conn-grid-container'>
+                                            <div className='conn-grid-item'>
+                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
+                                                <b>{item.name}</b><br />
+                                                {/* <img src={sc1} /> */}
+                                            </div>
                                         </div>
+
                                     </div>
-
-                                </div>
-                            )
-                        })}
-                        <center><div className='conn-btn'><button>Start</button></div></center>
-                    </div>
-                }
-
+                                )
+                            })}
+                            <center><div className='conn-btn'><button>Start</button></div></center>
+                        </div>
+                    }
+                </div>
             </div>
             {errorMsg && <div>{errorMsg}</div>}
         </div>
