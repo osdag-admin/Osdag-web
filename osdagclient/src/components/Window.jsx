@@ -162,16 +162,17 @@ const Window = () => {
                 </div>
                 <div className='design-types-cont'>
                     {results && !results.has_subtypes &&
+                        <>
                         <div className='content-tabs'>
                             {results.data.map((item) => {
-                                return (
+                                return ( // Tension Member
                                     <div key={item.id}
                                     // className={activeTab === item.id ? "content  active-content" : "content"}
                                     >
                                         <div className='conn-grid-container'>
                                             <div className='conn-grid-item'>
-                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                                <b>{item.name}</b><br />
+                                                <input type="radio" value={item.name} name="shear-conn"></input>
+                                                <b>{item.name.replaceAll("_"," ")}</b><br />
                                                 <img src={image_map[item.image_name]} alt={item.name} />
                                             </div>
                                         </div>
@@ -179,20 +180,24 @@ const Window = () => {
                                     </div>
                                 )
                             })}
-                            <center><div className=''><button className='start-btn'>Start</button></div></center>
+                            
                         </div>
+                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                        </>
                     }
                     {subDesignTypes && !subDesignTypes.has_subtypes &&
+                    <>
                         <div className='content-tabs'>
                             {subDesignTypes.data.map((item) => {
-                                return (
-                                    <div key={item.id}
+                                return ( // Shear Connection
+                                    <div key={item.id} 
                                     // className={activeTab === item.id ? "content  active-content" : "content"}
                                     >
                                         <div className='conn-grid-container'>
+                                        
                                             <div className='conn-grid-item'>
-                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                                <b>{item.name}</b><br />
+                                                <input type="radio" value={item.name} name="shear-conn"></input>
+                                                <b>{item.name.replaceAll("_"," ")}</b><br />
                                                 <img src={image_map[item.image_name]} alt={item.name} />
                                             </div>
                                         </div>
@@ -200,20 +205,23 @@ const Window = () => {
                                     </div>
                                 )
                             })}
-                            <center><div className=''><button className='start-btn'>Start</button></div></center>
+                            
                         </div>
+                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                        </>
                     }
                     {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
+                    <>
                         <div className='content-tabs'>
                             {leafLevelDesignType.data.map((item) => {
-                                return (
+                                return (// Momwnt Connection
                                     <div key={item.id}
                                     // className={activeTab === item.id ? "content  active-content" : "content"}
                                     >
                                         <div className='conn-grid-container'>
                                             <div className='conn-grid-item'>
-                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                                <b>{item.name}</b><br />
+                                                <input type="radio" value={item.name} name="shear-conn"></input>
+                                                <b>{item.name.replaceAll("_"," ")}</b><br />
                                                 <img src={image_map[item.image_name]} alt={item.name} />
                                             </div>
                                         </div>
@@ -221,12 +229,14 @@ const Window = () => {
                                     </div>
                                 )
                             })}
-                            <center>
+                            
+                        </div>
+                        <center>
                                 <div className=''>
                                     <button className='start-btn'>Start</button>
                                 </div>
                             </center>
-                        </div>
+                        </>
                     }
                 </div>
             </div>
