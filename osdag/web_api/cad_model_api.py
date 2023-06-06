@@ -20,6 +20,7 @@ import typing
 import json
 import os
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class CADGeneration(View):
     """
@@ -59,3 +60,5 @@ class CADGeneration(View):
         response["content-type"] = "text/plain"
         response.write(cad_model)
         return response
+    
+
