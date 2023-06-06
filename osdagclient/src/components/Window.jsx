@@ -1,6 +1,38 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
+import bolted_to_end from '../assets/TensionMember/bolted_to_end.png'
+import welded_to_end from '../assets/TensionMember/welded_to_end.png'
+import sc_fin_plate from '../assets/ShearConnection/sc_fin_plate.png'
+import sc_end_plate from '../assets/ShearConnection/sc_end_plate.png'
+import sc_cleat_angle from '../assets/ShearConnection/sc_cleat_angle.png'
+import sc_seated_angle from '../assets/ShearConnection/sc_seated_angle.png'
+import mc_btb_cpb from '../assets/MomentConnection/mc_btb_cpb.png'
+import mc_btb_cpw from '../assets/MomentConnection/mc_btb_cpw.png'
+import mc_btb_ep from '../assets/MomentConnection/mc_btb_ep.png'
+import mc_ctc_cpb from '../assets/MomentConnection/mc_ctc_cpb.png'
+import mc_ctc_cpw from '../assets/MomentConnection/mc_ctc_cpw.png'
+import mc_ctc_ep from '../assets/MomentConnection/mc_ctc_ep.png'
+import mc_btc_ep from '../assets/MomentConnection/mc_btc_ep.png'
+import base_plate from '../assets/BasePlate/base_plate.png'
+
+const image_map = {
+    bolted_to_end,
+    welded_to_end,
+    sc_cleat_angle,
+    sc_end_plate,
+    sc_fin_plate,
+    sc_seated_angle,
+    mc_btb_cpb,
+    mc_btb_cpw,
+    mc_btb_ep,
+    mc_ctc_cpb,
+    mc_ctc_cpw,
+    mc_ctc_ep,
+    mc_btc_ep,
+    base_plate
+}
+
 const Window = () => {
     const { designType } = useParams();
     const [isLoading, setIsLoading] = useState(false)
@@ -59,6 +91,7 @@ const Window = () => {
         setResults(null)
         setSubDesignTypes(null)
         setLeafLevelDesignType(null)
+        setErrorMsg(null)
         const getDesignTypes = async () => {
             setIsLoading(true)
             try {
@@ -130,71 +163,81 @@ const Window = () => {
                 </div>
                 <div className='design-types-cont'>
                     {results && !results.has_subtypes &&
+                        <>
                         <div className='content-tabs'>
                             {results.data.map((item) => {
-                                return (
+                                return ( // Tension Member
                                     <div key={item.id}
                                     // className={activeTab === item.id ? "content  active-content" : "content"}
                                     >
                                         <div className='conn-grid-container'>
                                             <div className='conn-grid-item'>
-                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                                <b>{item.name}</b><br />
-                                                {/* <img src={sc1} /> */}
+                                                <input type="radio" value={item.name} name="shear-conn"></input>
+                                                <b>{item.name.replaceAll("_"," ")}</b><br />
+                                                <img src={image_map[item.image_name]} alt={item.name} />
                                             </div>
                                         </div>
 
                                     </div>
                                 )
                             })}
-                            <center><div className=''><button className='start-btn'>Start</button></div></center>
+                            
                         </div>
+                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                        </>
                     }
                     {subDesignTypes && !subDesignTypes.has_subtypes &&
+                    <>
                         <div className='content-tabs'>
                             {subDesignTypes.data.map((item) => {
-                                return (
-                                    <div key={item.id}
+                                return ( // Shear Connection
+                                    <div key={item.id} 
                                     // className={activeTab === item.id ? "content  active-content" : "content"}
                                     >
                                         <div className='conn-grid-container'>
+                                        
                                             <div className='conn-grid-item'>
-                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                                <b>{item.name}</b><br />
-                                                {/* <img src={sc1} /> */}
+                                                <input type="radio" value={item.name} name="shear-conn"></input>
+                                                <b>{item.name.replaceAll("_"," ")}</b><br />
+                                                <img src={image_map[item.image_name]} alt={item.name} />
                                             </div>
                                         </div>
 
                                     </div>
                                 )
                             })}
-                            <center><div className=''><button className='start-btn'>Start</button></div></center>
+                            
                         </div>
+                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                        </>
                     }
                     {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
+                    <>
                         <div className='content-tabs'>
                             {leafLevelDesignType.data.map((item) => {
-                                return (
+                                return (// Momwnt Connection
                                     <div key={item.id}
                                     // className={activeTab === item.id ? "content  active-content" : "content"}
                                     >
                                         <div className='conn-grid-container'>
                                             <div className='conn-grid-item'>
-                                                <input type="radio" value="Fin_Plate" name="shear-conn"></input>
-                                                <b>{item.name}</b><br />
-                                                {/* <img src={sc1} /> */}
+                                                <input type="radio" value={item.name} name="shear-conn"></input>
+                                                <b>{item.name.replaceAll("_"," ")}</b><br />
+                                                <img src={image_map[item.image_name]} alt={item.name} />
                                             </div>
                                         </div>
 
                                     </div>
                                 )
                             })}
-                            <center>
+                            
+                        </div>
+                        <center>
                                 <div className=''>
                                     <button className='start-btn'>Start</button>
                                 </div>
                             </center>
-                        </div>
+                        </>
                     }
                 </div>
             </div>

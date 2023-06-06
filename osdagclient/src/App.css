@@ -221,10 +221,12 @@
 
 /* Grid */
 
-.conn-grid-container {
+.content-tabs {
   display: grid;
   grid-template-columns: auto auto;
   padding: 10px;
+  align-content: center; 
+  
 }
 
 .conn-grid-item {
@@ -233,6 +235,12 @@
   padding: 20px;
   font-size: 20px;
   text-align: center;
+}
+
+.conn-grid-container
+{
+  margin: 1rem;
+
 }
 
 .conn-grid-item {
