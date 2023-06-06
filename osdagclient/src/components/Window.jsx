@@ -91,6 +91,7 @@ const Window = () => {
         setResults(null)
         setSubDesignTypes(null)
         setLeafLevelDesignType(null)
+        setErrorMsg(null)
         const getDesignTypes = async () => {
             setIsLoading(true)
             try {
