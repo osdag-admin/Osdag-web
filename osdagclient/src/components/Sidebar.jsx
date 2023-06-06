@@ -2,14 +2,31 @@ import '../App.css'
 import Osdag_logo from "../assets/logo-osdag.png"
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+
+// importing thunks 
+import { getModules } from '../features/thunks/ModuleThunk'
+
+// redux imports 
+import {useDispatch , useSelector} from 'react-redux'
+
+let renderedOnce = false
+
 function Sidebar() {
 
 
-  const [data, setData] = useState(null);
+  // const [data, setData] = useState(null);
 
+  // using useSelecter to obtain the 'data' from the moduleSlice 
+  const data = useSelector((state) => state.module.data)
+
+  const dispatch = useDispatch()
+
+  /*
   useEffect(() => {
     fetchData();
   }, []);
+  */
+ /*
   const fetchData = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/osdag-web/', {
@@ -22,6 +39,16 @@ function Sidebar() {
       console.log('Error fetching data:', error);
     }
   };
+  */
+
+  // dispatching the getModules thunk here 
+  if(renderedOnce == false){
+    console.log('dispatching')
+    dispatch(getModules({}))
+    renderedOnce = true
+  }
+
+
 
 
   function handleSelectChange(event) {
