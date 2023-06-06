@@ -16,6 +16,7 @@ import mc_ctc_ep from '../assets/MomentConnection/mc_ctc_ep.png'
 import mc_btc_ep from '../assets/MomentConnection/mc_btc_ep.png'
 import base_plate from '../assets/BasePlate/base_plate.png'
 
+
 const image_map = {
     bolted_to_end,
     welded_to_end,
