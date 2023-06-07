@@ -55,81 +55,8 @@ const Window = () => {
     const subDesignTypes = useSelector(state => state.getSubDesignTypes.subDesignTypes)
     const leafLevelDesignType = useSelector(state => state.getLeafLevelDesignType.leafLevelDesignType)
 
-    // const getLeafLevelDesignType = async (prev_item, item) => {
-    //     setIsLoading(true)
-    //     try {
-    //         console.log(designType)
-    //         const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}/${prev_item.name.toLowerCase().replaceAll("_", '-')}/${item.name.toLowerCase().replaceAll("_", '-')}`, {
-    //             method: 'GET'
-    //         });
-    //         const jsonData = await response.json();
-    //         console.log(jsonData.result)
-    //         setLeafLevelDesignType(jsonData.result);
-    //         setIsLoading(false)
-    //         setErrorMsg(null)
-    //     } catch (error) {
-    //         setIsLoading(false)
-    //         setLeafLevelDesignType(null)
-    //         setErrorMsg("Module Under Development")
-    //         console.log('Error fetching data:', error);
-    //     }
-    // }
-
-    // const getSubDesignTypes = async (item) => {
-    //     setLeafLevelDesignType(null)
-    //     setIsLoading(true)
-    //     try {
-    //         const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}/${item.name.toLowerCase().replaceAll("_", '-')}`, {
-    //             method: 'GET'
-    //         });
-    //         const jsonData = await response.json();
-    //         console.log(jsonData.result)
-    //         setSubDesignTypes(jsonData.result);
-    //         if (jsonData.result.has_subtypes === true) {
-    //             getLeafLevelDesignType(item, jsonData.result.data[0])
-    //         }
-    //         setIsLoading(false)
-    //         setErrorMsg(null)
-    //     } catch (error) {
-    //         setIsLoading(false)
-    //         setSubDesignTypes(null)
-    //         setErrorMsg("Module Under Development")
-    //         console.log('Error fetching data:', error);
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     setResults(null)
-    //     setSubDesignTypes(null)
-    //     setLeafLevelDesignType(null)
-    //     setErrorMsg(null)
-    //     const getDesignTypes = async () => {
-    //         setIsLoading(true)
-    //         try {
-    //             const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}`, {
-    //                 method: 'GET'
-    //             });
-    //             const jsonData = await response.json();
-    //             console.log(jsonData.result)
-    //             setResults(jsonData.result);
-    //             if (jsonData.result.has_subtypes === true) {
-    //                 getSubDesignTypes(jsonData.result.data[0])
-    //                 setActiveTab(1)
-    //             }
-    //             setIsLoading(false)
-    //         } catch (error) {
-    //             setIsLoading(false)
-    //             setResults(null)
-    //             setErrorMsg("Module Under Development")
-    //             setErrorMsg(null)
-    //             console.log('Error fetching data:', error);
-    //         }
-    //     }
-
-    //     getDesignTypes()
-    // }, [designType])
-
     const wrapper = () => {
+        dispatch({ type: 'RESET_RESULTS', payload: null })
         dispatch(getDesignTypes(designType))
     }
 
@@ -221,10 +148,8 @@ const Window = () => {
                         <>
                             <div className='content-tabs'>
                                 {results.data.map((item) => {
-                                    return ( // Tension Member
-                                        <div key={item.id}
-                                        // className={activeTab === item.id ? "content  active-content" : "content"}
-                                        >
+                                    return (
+                                        <div key={item.id}>
                                             <div className='conn-grid-container'>
                                                 <div className='conn-grid-item'>
                                                     <input type="radio" value={item.name} name="shear-conn"></input>
@@ -245,10 +170,8 @@ const Window = () => {
                         <>
                             <div className='content-tabs'>
                                 {subDesignTypes.data.map((item) => {
-                                    return ( // Shear Connection
-                                        <div key={item.id}
-                                        // className={activeTab === item.id ? "content  active-content" : "content"}
-                                        >
+                                    return (
+                                        <div key={item.id}>
                                             <div className='conn-grid-container'>
 
                                                 <div className='conn-grid-item'>
@@ -270,10 +193,8 @@ const Window = () => {
                         <>
                             <div className='content-tabs'>
                                 {leafLevelDesignType.data.map((item) => {
-                                    return (// Momwnt Connection
-                                        <div key={item.id}
-                                        // className={activeTab === item.id ? "content  active-content" : "content"}
-                                        >
+                                    return (
+                                        <div key={item.id}>
                                             <div className='conn-grid-container'>
                                                 <div className='conn-grid-item'>
                                                     <input type="radio" value={item.name} name="shear-conn"></input>
