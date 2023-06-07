@@ -14,7 +14,7 @@ export const getModules = createAsyncThunk(
             method: "GET"
         })
         const jsonData = await response.json();
-        console.log(jsonData.result)
+        // console.log(jsonData.result)
         return jsonData?.result
     }
 )
@@ -22,12 +22,12 @@ export const getModules = createAsyncThunk(
 export const getDesignTypes = createAsyncThunk(
     'moduleSlice/getDesignTypes', async (item) => {
         console.log('inside the thunk')
-        const URL = BASE_URL + `osdag-web/designTypes/${item}`
+        const URL = BASE_URL + `osdag-web/${item}`
         const response = await fetch(URL, {
             method: "GET"
         })
         const jsonData = await response.json();
-        console.log(jsonData.result)
+        // console.log(jsonData.result)
         return jsonData?.result
     }
 )
@@ -40,7 +40,7 @@ export const getSubDesignTypes = createAsyncThunk(
             method: "GET"
         })
         const jsonData = await response.json();
-        console.log(jsonData.result)
+        // console.log(jsonData.result)
         return jsonData?.result
     }
 )
@@ -53,7 +53,7 @@ export const getLeafLevelDesignType = createAsyncThunk(
             method: "GET"
         })
         const jsonData = await response.json();
-        console.log(jsonData.result)
+        // console.log(jsonData.result)
         return jsonData?.result
     }
 )

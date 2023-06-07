@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
+// importing thunks
+import { getDesignTypes, getSubDesignTypes, getLeafLevelDesignType } from '../features/thunks/ModuleThunk'
+
+// redux imports
+import { useDispatch, useSelector } from 'react-redux'
+
+// importing images
 import bolted_to_end from '../assets/TensionMember/bolted_to_end.png'
 import welded_to_end from '../assets/TensionMember/welded_to_end.png'
 import sc_fin_plate from '../assets/ShearConnection/sc_fin_plate.png'
@@ -34,16 +41,19 @@ const image_map = {
     base_plate
 }
 
+let renderedOnce = false;
+
 const Window = () => {
     const { designType } = useParams();
     const [isLoading, setIsLoading] = useState(false)
-    const [results, setResults] = useState(null)
     const [subDesignTypes, setSubDesignTypes] = useState(null)
     const [leafLevelDesignType, setLeafLevelDesignType] = useState(null)
     const [activeTab, setActiveTab] = useState(1)
     const [subActiveTab, setSubActiveTab] = useState(1)
-    // const [leafActiveTab, setLeafActiveTab] = useState(1)
     const [errorMsg, setErrorMsg] = useState(null)
+
+    const dispatch = useDispatch()
+    const results = useSelector(state => state.getDesignTypes.results)
 
     const getLeafLevelDesignType = async (prev_item, item) => {
         setIsLoading(true)
@@ -88,46 +98,62 @@ const Window = () => {
         }
     }
 
-    useEffect(() => {
-        setResults(null)
-        setSubDesignTypes(null)
-        setLeafLevelDesignType(null)
-        setErrorMsg(null)
-        const getDesignTypes = async () => {
-            setIsLoading(true)
-            try {
-                const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}`, {
-                    method: 'GET'
-                });
-                const jsonData = await response.json();
-                console.log(jsonData.result)
-                setResults(jsonData.result);
-                if (jsonData.result.has_subtypes === true) {
-                    getSubDesignTypes(jsonData.result.data[0])
-                    setActiveTab(1)
-                }
-                setIsLoading(false)
-            } catch (error) {
-                setIsLoading(false)
-                setResults(null)
-                setErrorMsg("Module Under Development")
-                setErrorMsg(null)
-                console.log('Error fetching data:', error);
-            }
-        }
+    // useEffect(() => {
+    //     setResults(null)
+    //     setSubDesignTypes(null)
+    //     setLeafLevelDesignType(null)
+    //     setErrorMsg(null)
+    //     const getDesignTypes = async () => {
+    //         setIsLoading(true)
+    //         try {
+    //             const response = await fetch(`http://127.0.0.1:8000/osdag-web/${designType}`, {
+    //                 method: 'GET'
+    //             });
+    //             const jsonData = await response.json();
+    //             console.log(jsonData.result)
+    //             setResults(jsonData.result);
+    //             if (jsonData.result.has_subtypes === true) {
+    //                 getSubDesignTypes(jsonData.result.data[0])
+    //                 setActiveTab(1)
+    //             }
+    //             setIsLoading(false)
+    //         } catch (error) {
+    //             setIsLoading(false)
+    //             setResults(null)
+    //             setErrorMsg("Module Under Development")
+    //             setErrorMsg(null)
+    //             console.log('Error fetching data:', error);
+    //         }
+    //     }
 
-        getDesignTypes()
+    //     getDesignTypes()
+    // }, [designType])
+
+
+    const wrapper = () => {
+        dispatch(getDesignTypes(designType))
+    }
+
+    // useEffect(() => {
+    //     console.log(results)
+
+    // }, [results])
+
+    useEffect(() => {
+        wrapper()
     }, [designType])
 
-    useEffect(() => {
-        if (!results && !subDesignTypes) return;
-        getLeafLevelDesignType(results.data[activeTab - 1], subDesignTypes.data[subActiveTab - 1])
-    }, [subActiveTab])
 
-    useEffect(() => {
-        if (!results) return;
-        getSubDesignTypes(results.data[activeTab - 1])
-    }, [activeTab])
+
+    // useEffect(() => {
+    //     if (!results && !subDesignTypes) return;
+    //     getLeafLevelDesignType(results.data[activeTab - 1], subDesignTypes.data[subActiveTab - 1])
+    // }, [subActiveTab])
+
+    // useEffect(() => {
+    //     if (!results) return;
+    //     getSubDesignTypes(results.data[activeTab - 1])
+    // }, [activeTab])
 
 
     if (!results && !isLoading) return <div>Module Under Development</div>
@@ -137,6 +163,7 @@ const Window = () => {
         <div>
             <div className='container'>
                 <div className='bloc-tabs'>
+                    {console.log(results)}
                     {results && results.has_subtypes && results.data.map((item) => {
                         return (
                             <button
@@ -165,75 +192,75 @@ const Window = () => {
                 <div className='design-types-cont'>
                     {results && !results.has_subtypes &&
                         <>
-                        <div className='content-tabs'>
-                            {results.data.map((item) => {
-                                return ( // Tension Member
-                                    <div key={item.id}
-                                    // className={activeTab === item.id ? "content  active-content" : "content"}
-                                    >
-                                        <div className='conn-grid-container'>
-                                            <div className='conn-grid-item'>
-                                                <input type="radio" value={item.name} name="shear-conn"></input>
-                                                <b>{item.name.replaceAll("_"," ")}</b><br />
-                                                <img src={image_map[item.image_name]} alt={item.name} />
+                            <div className='content-tabs'>
+                                {results.data.map((item) => {
+                                    return ( // Tension Member
+                                        <div key={item.id}
+                                        // className={activeTab === item.id ? "content  active-content" : "content"}
+                                        >
+                                            <div className='conn-grid-container'>
+                                                <div className='conn-grid-item'>
+                                                    <input type="radio" value={item.name} name="shear-conn"></input>
+                                                    <b>{item.name.replaceAll("_", " ")}</b><br />
+                                                    <img src={image_map[item.image_name]} alt={item.name} />
+                                                </div>
                                             </div>
-                                        </div>
 
-                                    </div>
-                                )
-                            })}
-                            
-                        </div>
-                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                                        </div>
+                                    )
+                                })}
+
+                            </div>
+                            <center><div className=''><button className='start-btn'>Start</button></div></center>
                         </>
                     }
                     {subDesignTypes && !subDesignTypes.has_subtypes &&
-                    <>
-                        <div className='content-tabs'>
-                            {subDesignTypes.data.map((item) => {
-                                return ( // Shear Connection
-                                    <div key={item.id} 
-                                    // className={activeTab === item.id ? "content  active-content" : "content"}
-                                    >
-                                        <div className='conn-grid-container'>
-                                        
-                                            <div className='conn-grid-item'>
-                                                <input type="radio" value={item.name} name="shear-conn"></input>
-                                                <b>{item.name.replaceAll("_"," ")}</b><br />
-                                                <img src={image_map[item.image_name]} alt={item.name} />
-                                            </div>
-                                        </div>
+                        <>
+                            <div className='content-tabs'>
+                                {subDesignTypes.data.map((item) => {
+                                    return ( // Shear Connection
+                                        <div key={item.id}
+                                        // className={activeTab === item.id ? "content  active-content" : "content"}
+                                        >
+                                            <div className='conn-grid-container'>
 
-                                    </div>
-                                )
-                            })}
-                            
-                        </div>
-                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                                                <div className='conn-grid-item'>
+                                                    <input type="radio" value={item.name} name="shear-conn"></input>
+                                                    <b>{item.name.replaceAll("_", " ")}</b><br />
+                                                    <img src={image_map[item.image_name]} alt={item.name} />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    )
+                                })}
+
+                            </div>
+                            <center><div className=''><button className='start-btn'>Start</button></div></center>
                         </>
                     }
                     {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
-                    <>
-                        <div className='content-tabs'>
-                            {leafLevelDesignType.data.map((item) => {
-                                return (// Momwnt Connection
-                                    <div key={item.id}
-                                    // className={activeTab === item.id ? "content  active-content" : "content"}
-                                    >
-                                        <div className='conn-grid-container'>
-                                            <div className='conn-grid-item'>
-                                                <input type="radio" value={item.name} name="shear-conn"></input>
-                                                <b>{item.name.replaceAll("_"," ")}</b><br />
-                                                <img src={image_map[item.image_name]} alt={item.name} />
+                        <>
+                            <div className='content-tabs'>
+                                {leafLevelDesignType.data.map((item) => {
+                                    return (// Momwnt Connection
+                                        <div key={item.id}
+                                        // className={activeTab === item.id ? "content  active-content" : "content"}
+                                        >
+                                            <div className='conn-grid-container'>
+                                                <div className='conn-grid-item'>
+                                                    <input type="radio" value={item.name} name="shear-conn"></input>
+                                                    <b>{item.name.replaceAll("_", " ")}</b><br />
+                                                    <img src={image_map[item.image_name]} alt={item.name} />
+                                                </div>
                                             </div>
-                                        </div>
 
-                                    </div>
-                                )
-                            })}
-                            
-                        </div>
-                        <center>
+                                        </div>
+                                    )
+                                })}
+
+                            </div>
+                            <center>
                                 <div className=''>
                                     <button className='start-btn'>Start</button>
                                 </div>
