@@ -1,106 +1,122 @@
 import '../../App.css'
-import img1 from '../../assets/ShearConnection/1.png'
-import img2 from '../../assets/centerModule.png'
-import { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
+// import { useEffect, useState } from 'react';
+// import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Select,Input} from 'antd'
 
 
 function FinePlate() {
 
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/osdag-web');
-      const jsonData = await response.json();
-      console.log(JSON.stringify(jsonData))
-      setData(jsonData);
-    } catch (error) {
-      console.log('Error fetching data:', error);
+  const logData = [
+    {
+      "logID": 401,
+      "log": "This is log entry 1."
+    },
+    {
+      "logID": 202,
+      "log": "This is log entry 2."
+    },
+    {
+      "logID": 301,
+      "log": "This is log entry 3."
+    },
+    {
+      "logID": 404,
+      "log": "This is log entry 4."
+    },
+    {
+      "logID": 504,
+      "log": "This is log entry 5."
     }
-  };
+  ];
 
-  // const imageUpload = (e) => {
-  //   e.preventDefault();
-  //     console.log('Uploading image')
-  //   const formData = new FormData();
-  //   formData.append("file", e.target.files,e.target.files.name)
-  //   fetch('http://127.0.0.1:8000/design/savefile',{
-  //       method: "POST",
-  //       body: formData
-  //     }).then(res=>res.json())
-  // }
+  const column = [
+    {
+      "columnID": 81,
+      "col_name": "HB+197"
+    },
+    {
+      "columnID": 92,
+      "col_name": "HB+561"
+    },
+    {
+      "columnID": 73,
+      "col_name": "HB+804"
+    },
+    {
+      "columnID": 49,
+      "col_name": "HB+921"
+    },
+    {
+      "columnID": 27,
+      "col_name": "HB+156"
+    },
+    {
+      "columnID": 35,
+      "col_name": "HB+488"
+    },
+    {
+      "columnID": 62,
+      "col_name": "HB+279"
+    }
+  ];
 
-const savedata = async () => { 
+  const beamData = [
+    {
+      "beamID": 58,
+      "beam_name": "JB487"
+    },
+    {
+      "beamID": 91,
+      "beam_name": "JB104"
+    },
+    {
+      "beamID": 27,
+      "beam_name": "JB827"
+    },
+    {
+      "beamID": 72,
+      "beam_name": "JB655"
+    },
+    {
+      "beamID": 39,
+      "beam_name": "JB291"
+    },
+    {
+      "beamID": 15,
+      "beam_name": "JB737"
+    },
+    {
+      "beamID": 64,
+      "beam_name": "JB923"
+    }
+  ];
+  
+  const material = [
+    {"MaterialID": "Fe 290",
+      "Material_data": "Fe 290"
+    },
+    {"MaterialID": "Fe 410 W",
+      "Material_data": "Fe 410 W"
+    },
+    {"MaterialID": "Fe 410 W",
+      "Material_data": "Fe 410 W"
+    },
+    {"MaterialID": "Fe 410 W",
+      "Material_data": "Fe 410 W"
+    },
+    {"MaterialID": "Fe 440",
+      "Material_data": "Fe 440"
+    }
+  ];
 
-      if(values.DesignName=="" && values.PhotoFileName=="")
-      {
-        toast.warn('Please Enter Data !! ', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          });
-          return;
-      }
-      
-      
-      // Will create URLS for each model 
-      fetch('http://127.0.0.1:8000/design',{
-        method: 'POST',
-        headers: { 'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-        },
-        body:JSON.stringify({
-          DesignName:values.DesignName,
-          PhotoFileName:values.PhotoFilename
-        })
-      })
-      .then(res=>res.json())
-      fetchData();
-      toast.success('Data Saved Successfully', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        });
-
-      //   const fileDataInput  = new FormData();
-      //   fileDataInput.append("file",e.target.files[0],e.target.files[0].name)
-      
-      // fetch('http://127.0.0.1:8000/design/savefile',{
-      //   method: "POST",
-      //   body: fileDataInput
-      // }).then(res=>res.json())
-      
-      setValues.DesignId("");
-      setValues.PhotoFileName("");
-
-
-}
-
-
-  // const design=[];
-
-  const [values, setValues] = useState({
-    DesignName: "",
-    PhotoFilename: "",
-  });
-    console.log(values.DesignName, values.PhotoFilename);
+  console.log(beamData);
+    
+  console.log(material);
+  
+  console.log(column);
+  
 
   return (
 
@@ -119,77 +135,42 @@ const savedata = async () => {
     <div className='superMainBody'>
       {/* Left */}
       <div className='subMainBody'> 
-          <h1>Connecting Members</h1>
-          
-          <div className='childMainBody'>
-          <h4>Connectivity</h4>
-          </div>
-
-          <div>
-          <Select style={ {width:'200px'}}>
+          <h3>Connecting Members</h3>       
+          <div className='component-grid'>
+            <div><h4>Connectivity</h4></div>
+            
+            <div><Select style={ {width:'200px'}}>
                 <option value={"CFBW"}>Column Flange-Beam Web</option>
                 <option value={"CWBW"}>Column web-Beam Web</option>
                 <option value={"BB"}>Beam-Beam</option>             
-          </Select>
-          </div>
-          
-          <div>
-          <img src={img1} alt="Component" height='100px' width='100px' />
-          </div>
-          {/* 1 */}
+                </Select>
+            </div>
+            
+            <div>{/*Blank*/}</div>
+            
+            <div>
+              <img src={img1} alt="Component" height='100px' width='100px' />
+            </div>
 
-          <div className='childMainBody'>
-          <h4>Primary Beam</h4>
-          <Select style={ {width:'200px'}}>
+            <div><h4>Primary Beam</h4></div>
+            <div><Select style={ {width:'200px'}}>
                 <option value={"CFBW"}>Select Section</option>
                 <option value={"CFBW"}>JB 150</option>
                 <option value={"CFBW"}>JB 175</option>
                 <option value={"CFBW"}>JB 200</option>
                 <option value={"CFBW"}>JB 225</option>
-                           
-          </Select>
+                </Select>
+            </div>
           </div>
-          {/* 2 */}
-  
-          <div className='childMainBody'>
-          <h4>Secondary Beam</h4>
-          <Select style={ {width:'200px'}}>
-                <option value={"CFBW"}>Select Section</option>
-                <option value={"CFBW"}>JB 150</option>
-                <option value={"CFBW"}>JB 175</option>
-                <option value={"CFBW"}>JB 200</option>
-                <option value={"CFBW"}>JB 225</option>          
-          </Select>
-          </div>
-          {/* 3 */}
-
-          <div className='childMainBody'>
-          <h4>Material</h4>
-          <Select style={ {width:'200px'}}>
-                <option value={"CFBW"}>{`E 165 (Fe 290)`}</option>
-                <option value={"CWBW"}>{`E 250 (Fe 410 W)`}A</option>
-                <option value={"BB"}>{`E 250 (Fe 410 W)`}B</option> 
-                <option value={"BB"}>{`E 250 (Fe 410 W)`}C</option>
-                <option value={"BB"}>{`E 300 (Fe 440)`}</option>
-          </Select>
-          </div>
-
       </div>
 
       {/* Middle */}
       <div className='superMainBody_mid'>
-      <img src={img2} alt="Demo" height='400px' width='400px' /> 
+      <img src={img1} alt="Demo" height='300px' width='300px' /> 
       <br/>
       <div>
 
       <ul>
-      {/* {design.map((ds) => (
-        <li key={ds}>
-          {ds.DesignName}
-          {ds.PhotoFilename}
-        </li>
-      ))} */}
-
 {/* Code 1++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
 
       {/* {data.map((item) => (
@@ -202,13 +183,9 @@ const savedata = async () => {
 {/* Solution ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
       
 <select name="Cars" size="5" >  
-      {data.map((item) => (
-         <option key={item.DesignId} value={item.DesignName}> Save Name : {item.DesignName}{" || "}
-          File Name: {item.PhotoFileName}  </option>  
-        // <p key={item.DesignId}>Save name :{item.DesignName}
-        // <br/>
-        // File Name: {item.PhotoFileName}
-        // </p>   
+      {logData.map((item) => (
+         <option key={item.logID} value={item.logID}> Save Name : {item.logID}{" : "}
+          File Name: {item.log}  </option>   
       ))}
   
 </select>
@@ -221,52 +198,19 @@ const savedata = async () => {
       </div>
 
       {/* Right */}
-      <div className='superMainBody_right'> 
-      
-      <div>
-      <label>Enter File Name :</label>
-      <Input type="text" name="fileName" value={values.DesignName} onChange={(event) =>
-            setValues((prev) => ({ ...prev, DesignName: event.target.value }))
-          }/>
-      </div>
+      <div className='component-grid    '> 
+  
+      <div><label>Property Classes :</label></div>
+      <div><Input type="text" name="fileName" disabled/></div>
+  
 
-      <div>
-     
-      <input type="file" name="fileName" value={values.PhotoFilename} onChange={(event) =>
-            setValues((prev) => ({ ...prev, PhotoFilename: event.target.value }))
-          }/>
-
-
-
-      </div>
-
-
-      <div>
-      <label>Property Classes :</label>
-      <Input type="text" name="fileName" disabled/>
-      </div>
-      <div>
-      <label>Shared Capacity :</label>
-      <Input type="text" name="fileName" disabled/>
-      </div>
-      
-      <div>
-      <label>Bering Capacity :</label>
-      <Input type="text" name="fileName" disabled/>
-      </div>
-
-      <div>
-      <label>Bolt ColumnsNo :</label>
-      <Input type="text" name="fileName" disabled/>
-      </div>
-
-    <Input type="button" value="Submit" onClick={savedata}/>
+    {/* <Input type="button" value="Submit" onClick={savedata}/> */}
     
     {/* <input type="button" value="Submit" onClick={refreshList}/> */}
       </div>
     </div>
 
-    <ToastContainer />
+    {/* <ToastContainer /> */}
     </div>
     </>
   )

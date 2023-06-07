@@ -309,7 +309,7 @@
 /* Fine Plate */
 
 .module_nav {
-  margin-top: 2rem;
+  margin-top: 0.1rem;
   padding-left: 2rem;
   display: flex;
   flex-direction: row;
@@ -335,7 +335,7 @@
 
 .superMainBody {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 40% auto 40%;
   padding: 20px;
   margin: 20px;
 }
@@ -382,4 +382,10 @@
 
 .tab-btn {
   border: none;
+}
+
+.component-grid{
+  display: grid;
+  grid-template-columns: 0.5fr 1fr; /* Two equal columns */
+  gap: 10px;
 }
