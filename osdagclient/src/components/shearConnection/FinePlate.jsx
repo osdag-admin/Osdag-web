@@ -1,12 +1,32 @@
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
-// import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Select,Input} from 'antd'
 
+import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
+import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
+import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
+
+const { Option } = Select;
 
 function FinePlate() {
+
+  const [selectedOption, setSelectedOption] = useState('');
+
+  const handleSelectChange = (value) => {
+    setSelectedOption(value);
+  };
+
+  let imageSource = '';
+  if (selectedOption === 'Column_Flange_Beam_Web') {
+    imageSource = CFBW;
+  } else if (selectedOption === 'Column_web_Beam_Web') {
+    imageSource = CWBW;
+  } else if (selectedOption === 'Beam_Beam') {
+    imageSource = BB;
+  }
 
   const logData = [
     {
@@ -113,15 +133,15 @@ function FinePlate() {
 
   const Connectivity = [
     {
-      "connID": "Column_Flange-Beam_Web",
+      "connID": "Column_Flange_Beam_Web",
       "Data": "Column Flange-Beam Web"
     },
     {
-      "connID": "Column_web-Beam_Web",
+      "connID": "Column_web_Beam_Web",
       "Data": "Column web-Beam Web"
     },
     {
-      "connID": "Beam-Beam",
+      "connID": "Beam_Beam",
       "Data": "Beam-Beam"
     }
   ];
@@ -152,9 +172,12 @@ function FinePlate() {
           <div className='component-grid'>
             <div><h4>Connectivity</h4></div>
             
-            <div><Select style={ {width:'100%'}}>
+            <div><Select style={ {width:'100%'}} 
+                  onChange={handleSelectChange}
+                  value={selectedOption}
+                  >   
                   {Connectivity.map((item) => (
-                  <option key={item.connID} value={item.connID}>{item.Data}</option>   
+                  <Option key={item.connID} value={item.connID}>{item.Data}</Option>   
                   ))}   
                 </Select>
             </div>
@@ -162,13 +185,13 @@ function FinePlate() {
             <div>{/*Blank*/}</div>
             
             <div>
-              <img src={img1} alt="Component" height='100px' width='100px' />
+              <img src={imageSource} alt="Component" height='100px' width='100px' />
             </div>
 
             <div><h4>Column Section:</h4></div>
             <div><Select style={ {width:'100%'}}>
                   {column.map((item) => (
-                  <option key={item.columnID} value={item.columnID}>{item.col_name}</option>   
+                  <Option key={item.columnID} value={item.columnID}>{item.col_name}</Option>   
                   ))}
                 </Select>
             </div>
