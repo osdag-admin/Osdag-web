@@ -7,49 +7,23 @@ import { useEffect, useState } from 'react'
 import { getModules } from '../features/thunks/ModuleThunk'
 
 // redux imports 
-import {useDispatch , useSelector} from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 let renderedOnce = false
 
 function Sidebar() {
-
-
-  // const [data, setData] = useState(null);
 
   // using useSelecter to obtain the 'data' from the moduleSlice 
   const data = useSelector((state) => state.module.data)
 
   const dispatch = useDispatch()
 
-  /*
-  useEffect(() => {
-    fetchData();
-  }, []);
-  */
- /*
-  const fetchData = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/osdag-web/', {
-        method: 'GET'
-      });
-      const jsonData = await response.json();
-      console.log(JSON.stringify(jsonData))
-      setData(jsonData.result);
-    } catch (error) {
-      console.log('Error fetching data:', error);
-    }
-  };
-  */
-
   // dispatching the getModules thunk here 
-  if(renderedOnce == false){
+  if (renderedOnce == false) {
     console.log('dispatching')
     dispatch(getModules({}))
     renderedOnce = true
   }
-
-
-
 
   function handleSelectChange(event) {
     const selectedOptionValue = event.target.value;
@@ -74,8 +48,9 @@ function Sidebar() {
         <div className="sidebar-item-logo">
           <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={() => navigate("/")} /></center>
         </div>
+        {console.log(data)}
         {
-          data && data.data.map((item, index) => {
+          data && data.data && data.data.map((item, index) => {
             return (
               <>
                 <div key={item.id} className="sidebar-item" >
