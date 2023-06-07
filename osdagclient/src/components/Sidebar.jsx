@@ -1,7 +1,7 @@
 import '../App.css'
 import Osdag_logo from "../assets/logo-osdag.png"
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // importing thunks 
 import { getModules } from '../features/thunks/ModuleThunk'
@@ -13,6 +13,12 @@ let renderedOnce = false
 
 function Sidebar() {
 
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!isSidebarVisible);
+  };
+  
   // using useSelecter to obtain the 'data' from the moduleSlice 
   const data = useSelector((state) => state.module.data)
 
@@ -43,13 +49,35 @@ function Sidebar() {
 
   const navigate = useNavigate();
   return (
-    <div className='sidebar'>
+    <>
+    
+    {/* <button className='hambutton' onClick={toggleSidebar}>Toggle Sidebar</button> */}
+    <div className={`sidebar ${isSidebarVisible ? '' : 'hidden'}`}>
+      {/* hi */}
+      <svg onClick={toggleSidebar}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="20px"
+      height="20px"
+      className='hamburger'
+    >
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+      
       <div className="sidebar-container">
+
         <div className="sidebar-item-logo">
           <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={() => navigate("/")} /></center>
         </div>
         {
-          data && data.data && data.data.map((item, index) => {
+          data && data.data && data.data.map((item) => {
             return (
               <>
                 <div key={item.id} className="sidebar-item" >
@@ -72,6 +100,7 @@ function Sidebar() {
         </select>
       </div>
     </div>
+    </>
   )
 }
 

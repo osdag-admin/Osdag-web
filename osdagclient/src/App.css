@@ -7,17 +7,33 @@
 .app {
   display: flex;
   flex-direction: row;
+  overflow: hidden;
 }
 
 /* Sidebar- */
 .sidebar {
   height: 100vh;
-  width: 250px;
+  width: auto;
   background-color: #91b014;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding-bottom: 5px;
+}
+.sidebar {
+  /* Other styles for the sidebar */
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+.sidebar.hidden {
+  transform: translateX(-90%);
+}
+.hamburger{
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 5px;
 }
 
 .sidebar-container {
@@ -309,7 +325,7 @@
 /* Fine Plate */
 
 .module_nav {
-  margin-top: 2rem;
+  margin-top: 0.1rem;
   padding-left: 2rem;
   display: flex;
   flex-direction: row;
@@ -335,7 +351,7 @@
 
 .superMainBody {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 40% auto 40%;
   padding: 20px;
   margin: 20px;
 }
@@ -354,6 +370,12 @@
 
   
 } */
+.subMainBody{
+  padding: 1rem;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 3px;
+}
 
 
 .superMainBody_left {
@@ -382,4 +404,87 @@
 
 .tab-btn {
   border: none;
+}
+
+.component-grid{
+  display: grid;
+  grid-template-columns: 0.6fr 1fr; /* Two equal columns */
+  gap: 10px;
+}
+.component-grid div h4{
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-style:italic;
+  font-weight:100;
+  font-size: 14px;
+}
+.component-grid h3{
+  font-weight:200;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid black;
+}
+.inputdock-btn{
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  padding: 10px
+}
+.outputdock-btn{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 10px;
+  margin-left : 20%;
+  margin-right : 20%;
+}
+.scroll-data{
+
+  width: auto;
+  height: 33rem;
+  overflow-y: auto;
+}
+
+.subMainBody h3{
+  font-size: 16px;
+  width: 50%;
+  padding: 2px;
+}
+
+.scroll-data::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll-data::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.scroll-data::-webkit-scrollbar-thumb {
+  background-color: rgb(135, 91, 91);
+  border-radius: 5px;
+}
+
+.scroll-data::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(168, 121, 121);
+}
+
+.inputdock-btn Input{
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color:#f1f1f1;
+}
+.inputdock-btn Input:hover{
+  background-color: rgb(168, 121, 121);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+.outputdock-btn Input{
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color:#f1f1f1;
+}
+.outputdock-btn Input:hover{
+  background-color: rgb(168, 121, 121);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
 }

@@ -1,4 +1,5 @@
 import './App.css'
+import FinePlate from './components/shearConnection/FinePlate';
 import Sidebar from './components/Sidebar'
 import Mainwindow from './components/Mainwindow'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<Root />}>
         <Route index element={<Mainwindow />} />
         <Route path='/design-type/:designType' element={<Window />} />
+        <Route path='/fine_plate' element={<FinePlate />} />
       </Route>
     )
   )

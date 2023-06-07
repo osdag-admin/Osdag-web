@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 // importing thunks
 import { getDesignTypes, getSubDesignTypes, getLeafLevelDesignType } from '../features/thunks/ModuleThunk'
@@ -44,6 +44,7 @@ const image_map = {
 let renderedOnce = false;
 
 const Window = () => {
+    const navigate = useNavigate();
     const { designType } = useParams();
     const [isLoading, setIsLoading] = useState(false)
     const [activeTab, setActiveTab] = useState(1)
