@@ -57,10 +57,9 @@ class InputData(APIView) :
         1. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&connectivity=Column-Flange-Beam-Web
         2. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&boltDiameter=Customized
         3. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&propertyClass=Customized
-        4. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection ( REQUEST NOT HANDLED YET )
+        4. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&connectivity=Column-Web-Beam-Web
+        5. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection ( REQUEST NOT HANDLED YET )
 
-
-    
     """
     def get(self , request) : 
         print('received')
@@ -70,7 +69,7 @@ class InputData(APIView) :
         propertyClass = request.GET.get("propertyClass")
         
         
-        if ( connectivity=='Column-Flange-Beam-Web') : 
+        if ( connectivity=='Column-Flange-Beam-Web' or connectivity=='Column-Web-Beam-Web') : 
             print('connectivity : ' , connectivity)
 
             try : 
@@ -98,6 +97,8 @@ class InputData(APIView) :
         
             except : 
                 return Response({"error" : "Bad request"} , status=status.HTTP_400_BAD_REQUEST)
+
+        
 
         elif (connectivity=='Beam-Beam') : 
             print('connectivity : ' , connectivity)
