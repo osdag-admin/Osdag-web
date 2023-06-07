@@ -1,7 +1,7 @@
 import '../App.css'
 import Osdag_logo from "../assets/logo-osdag.png"
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+// import { useEffect, useState } from 'react'
 
 // importing thunks 
 import { getModules } from '../features/thunks/ModuleThunk'
@@ -13,6 +13,7 @@ let renderedOnce = false
 
 function Sidebar() {
 
+  
   // using useSelecter to obtain the 'data' from the moduleSlice 
   const data = useSelector((state) => state.module.data)
 
@@ -44,13 +45,15 @@ function Sidebar() {
   const navigate = useNavigate();
   return (
     <div className='sidebar'>
+      {/* hi */}
       <div className="sidebar-container">
+
         <div className="sidebar-item-logo">
           <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={() => navigate("/")} /></center>
         </div>
         {console.log(data)}
         {
-          data && data.data && data.data.map((item, index) => {
+          data && data.data && data.data.map((item) => {
             return (
               <>
                 <div key={item.id} className="sidebar-item" >

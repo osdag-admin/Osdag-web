@@ -126,11 +126,6 @@ function FinePlate() {
     }
   ];
 
-  console.log(beamData);
-    
-  console.log(material);
-  
-  console.log(column);
   
 
   return (
@@ -151,7 +146,7 @@ function FinePlate() {
       {/* Left */}
       <div>
         <h5>Input Dock</h5>
-      <div className='subMainBody'> 
+      <div className='subMainBody scroll-data'> 
       {/* Section 1 Start */}
           <h3>Connecting Members</h3>       
           <div className='component-grid'>
@@ -182,6 +177,14 @@ function FinePlate() {
             <div><Select style={ {width:'100%'}}>
                   {beamData.map((item) => (
                   <option key={item.beamID} value={item.beamID}>{item.beam_name}</option>   
+                  ))}
+                </Select>
+            </div>
+
+            <div><h4>Material:</h4></div>
+            <div><Select style={ {width:'100%'}}>
+                  {material.map((item) => (
+                  <option key={item.MaterialID} value={item.MaterialID}>{item.Material_data}</option>   
                   ))}
                 </Select>
             </div>
