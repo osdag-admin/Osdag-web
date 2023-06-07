@@ -2,12 +2,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 // importing reducers 
-import { moduleSlice, getDesignTypesSlice } from './features/moduleSlice'
+import { moduleSlice, getDesignTypesSlice, getSubDesignTypesSlice, getLeafLevelDesignTypeSlice } from './features/moduleSlice'
 
 const store = configureStore({
     reducer: {
         module: moduleSlice,
-        getDesignTypes: getDesignTypesSlice
+        getDesignTypes: getDesignTypesSlice,
+        getSubDesignTypes: getSubDesignTypesSlice,
+        getLeafLevelDesignType: getLeafLevelDesignTypeSlice
     }
 })
 

@@ -4,13 +4,15 @@ import { createSlice } from "@reduxjs/toolkit";
 import { ModuleReducer } from "./reducers/ModuleReducer";
 
 // importing thunks 
-import { getModules, getDesignTypes } from "./thunks/ModuleThunk";
+import { getModules, getDesignTypes, getSubDesignTypes, getLeafLevelDesignType } from "./thunks/ModuleThunk";
 
 
 // the initial value of the store 
 let initialValue = {
     data: [],
     results: null,
+    subDesignTypes: null,
+    leafLevelDesignType: null
 }
 
 
@@ -36,7 +38,7 @@ export const moduleSlice = createSlice({
 export const getDesignTypesSlice = createSlice({
     name: 'getDesignTypes',
     initialState: initialValue,
-    reducers: ModuleReducer, extraReducers(builder) {
+    reducers: {}, extraReducers(builder) {
         builder.addCase(getDesignTypes.pending, (state, action) => {
             // console.log('Loading...')
         })
@@ -48,6 +50,44 @@ export const getDesignTypesSlice = createSlice({
             .addCase(getDesignTypes.rejected, (state, action) => {
                 console.log('fetching failed')
                 state.results = null
+            })
+    }
+}).reducer
+
+export const getSubDesignTypesSlice = createSlice({
+    name: 'getSubDesignTypes',
+    initialState: initialValue,
+    reducers: {}, extraReducers(builder) {
+        builder.addCase(getSubDesignTypes.pending, (state, action) => {
+            // console.log('Loading...')
+        })
+            .addCase(getSubDesignTypes.fulfilled, (state, action) => {
+                // console.log('response received )')
+                console.log('received data (sub design types): ', action.payload)
+                state.subDesignTypes = action.payload
+            })
+            .addCase(getSubDesignTypes.rejected, (state, action) => {
+                console.log('fetching failed')
+                state.subDesignTypes = null
+            })
+    }
+}).reducer
+
+export const getLeafLevelDesignTypeSlice = createSlice({
+    name: 'getSubDesignTypes',
+    initialState: initialValue,
+    reducers: {}, extraReducers(builder) {
+        builder.addCase(getLeafLevelDesignType.pending, (state, action) => {
+            // console.log('Loading...')
+        })
+            .addCase(getLeafLevelDesignType.fulfilled, (state, action) => {
+                // console.log('response received )')
+                console.log('received data (leaf design types): ', action.payload)
+                state.leafLevelDesignType = action.payload
+            })
+            .addCase(getLeafLevelDesignType.rejected, (state, action) => {
+                console.log('fetching failed')
+                state.leafLevelDesignType = null
             })
     }
 }).reducer
