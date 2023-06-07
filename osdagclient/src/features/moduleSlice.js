@@ -4,21 +4,22 @@ import { createSlice } from "@reduxjs/toolkit";
 import { ModuleReducer } from "./reducers/ModuleReducer";
 
 // importing thunks 
-import { getModules } from "./thunks/ModuleThunk";
+import { getModules, getDesignTypes } from "./thunks/ModuleThunk";
 
 
 // the initial value of the store 
 let initialValue = {
-    data: []
+    data: [],
+    results: null,
 }
 
 
-const moduleSlice = createSlice({
+export const moduleSlice = createSlice({
     name: 'module',
     initialState: initialValue,
     reducers: ModuleReducer, extraReducers(builder) {
         builder.addCase(getModules.pending, (state, action) => {
-            console.log('Loading...')
+            // console.log('Loading...')
         })
             .addCase(getModules.fulfilled, (state, action) => {
                 // console.log('response received')
@@ -30,10 +31,27 @@ const moduleSlice = createSlice({
             })
     }
 
-})
+}).reducer
 
-// exporting reducer
-export default moduleSlice.reducer
+export const getDesignTypesSlice = createSlice({
+    name: 'getDesignTypes',
+    initialState: initialValue,
+    reducers: ModuleReducer, extraReducers(builder) {
+        builder.addCase(getDesignTypes.pending, (state, action) => {
+            // console.log('Loading...')
+        })
+            .addCase(getDesignTypes.fulfilled, (state, action) => {
+                // console.log('response received (design types))')
+                // console.log('received data : ', action.payload)
+                state.results = action.payload
+            })
+            .addCase(getDesignTypes.rejected, (state, action) => {
+                console.log('fetching failed')
+                state.results = null
+            })
+    }
+}).reducer
+
 
 // exporting actions
 // nothing

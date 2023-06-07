@@ -134,10 +134,14 @@ const Window = () => {
         dispatch(getDesignTypes(designType))
     }
 
-    // useEffect(() => {
-    //     console.log(results)
+    useEffect(() => {
+        if (!results) return;
 
-    // }, [results])
+        if (results.has_subtypes === true) {
+
+        }
+
+    }, [results])
 
     useEffect(() => {
         wrapper()
