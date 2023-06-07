@@ -8,6 +8,7 @@ import {Select,Input} from 'antd'
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
 import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
+import NotSelected from '../../assets/notSelected.png'
 
 const { Option } = Select;
 
@@ -26,6 +27,8 @@ function FinePlate() {
     imageSource = CWBW;
   } else if (selectedOption === 'Beam_Beam') {
     imageSource = BB;
+  }else if (selectedOption === '') {
+    imageSource = NotSelected;
   }
 
   const logData = [
@@ -302,7 +305,7 @@ function FinePlate() {
               <div><h4>Bolt Rows (nos)</h4></div>
               <div><Input type="text" name="bolt_Bolt_Rows"/></div>
               <div><h4>Spacing</h4></div>
-              <div><Input type="button" value="bolt_Spacing"/></div>
+              <div><Input type="button" name="bolt_Spacing"  value="Spacing Details"/></div>
           </div>
           {/* Section End */}
           {/* Section 2 Start */}
