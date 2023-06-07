@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate  } from 'react-router-dom'
 
 import bolted_to_end from '../assets/TensionMember/bolted_to_end.png'
 import welded_to_end from '../assets/TensionMember/welded_to_end.png'
@@ -35,6 +35,7 @@ const image_map = {
 }
 
 const Window = () => {
+    const navigate = useNavigate();
     const { designType } = useParams();
     const [isLoading, setIsLoading] = useState(false)
     const [results, setResults] = useState(null)
@@ -132,7 +133,7 @@ const Window = () => {
 
     if (!results && !isLoading) return <div>Module Under Development</div>
 
-
+   
     return (
         <div>
             <div className='container'>
@@ -209,7 +210,7 @@ const Window = () => {
                             })}
                             
                         </div>
-                        <center><div className=''><button className='start-btn'>Start</button></div></center>
+                        <center><div className=''><button className='start-btn' onClick={()=>{navigate('/fine_plate')}}>Start</button></div></center>
                         </>
                     }
                     {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
