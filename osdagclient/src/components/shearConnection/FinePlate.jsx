@@ -1,3 +1,4 @@
+import React from 'react';
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useState } from 'react';
@@ -15,6 +16,14 @@ const { Option } = Select;
 function FinePlate() {
 
   const [selectedOption, setSelectedOption] = useState('');
+  const [selectedColumn, setSelectedColumn] = useState('');
+  const [selectedBeam, setSelectedBeam] = useState('');
+  const [selectedMaterial, setSelectedMaterial] = useState('');
+  const [selectedBeamSection, setSelectedBeamSection] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedPropertyClass, setSelectedPropertyClass] = useState('');
+  const [selectedThickness, setSelectedThickness] = useState('');
+
 
   const handleSelectChange = (value) => {
     setSelectedOption(value);
@@ -209,6 +218,88 @@ function FinePlate() {
     ]
   };
 
+  const inputdock = {
+    "Connecting Members": {
+      "Connectivity": {
+        type: "select",
+        options: Connectivity.map((item) => ({
+          value: item.connID,
+          label: item.Data
+        })),
+        selected: selectedOption
+      },
+      "Column Section": {
+        type: "select",
+        options: column.map((item) => ({
+          value: item.columnID,
+          label: item.col_name
+        })),
+        selected: selectedColumn
+      },
+      "Beam Section": {
+        type: "select",
+        options: beamData.map((item) => ({
+          value: item.beamID,
+          label: item.beam_name
+        })),
+        selected: selectedBeam
+      },
+      "Material": {
+        type: "select",
+        options: material.map((item) => ({
+          value: item.MaterialID,
+          label: item.Material_data
+        })),
+        selected: selectedMaterial
+      }
+    },
+    "Factored Loads": {
+      "Shear Force (kN)": {
+        type: "text",
+        value: ""
+      },
+      "Axial Force (kN)": {
+        type: "text",
+        value: ""
+      }
+    },
+    "Bolt": {
+      "Beam Section": {
+        type: "select",
+        options: [
+          { value: "Customized", label: "Customized" },
+          { value: "All", label: "All" }
+        ],
+        selected: selectedBeamSection
+      },
+      "Type": {
+        type: "select",
+        options: [
+          { value: "Bearing_Bolt", label: "Bearing Bolt" },
+          { value: "Fraction_Grip_Bolt", label: "Fraction Grip Bolt" }
+        ],
+        selected: selectedType
+      },
+      "Property Class": {
+        type: "select",
+        options: [
+          { value: "Customized", label: "Customized" },
+          { value: "All", label: "All" }
+        ],
+        selected: selectedPropertyClass
+      }
+    },
+    "Plate": {
+      "Thickness (mm)": {
+        type: "select",
+        options: [
+          { value: "Customized", label: "Customized" },
+          { value: "All", label: "All" }
+        ],
+        selected: selectedThickness
+      }
+    }
+  };
 
   return (
 
@@ -225,105 +316,189 @@ function FinePlate() {
     <div className='superMainBody'>
       {/* Left */}
       <div>
-        <h5>Input Dock</h5>
-      <div className='subMainBody scroll-data'> 
-      {/* Section 1 Start */}
-          <h3>Connecting Members</h3>       
-          <div className='component-grid'>
-            <div><h4>Connectivity</h4></div>
-            
-            <div><Select style={ {width:'100%'}} 
-                  onChange={handleSelectChange}
-                  value={selectedOption}
-                  >   
-                  {Connectivity.map((item) => (
-                  <Option key={item.connID} value={item.connID}>{item.Data}</Option>   
-                  ))}   
-                </Select>
-            </div>
-            
-            <div>{/*Blank*/}</div>
-            
+  <h5>Input Dock</h5>
+  <div className='subMainBody scroll-data'>
+    {/* Section 1 Start */}
+    <h3>Connecting Members</h3>
+    <div className='component-grid'>
+      {Object.entries(inputdock["Connecting Members"]).map(([label, component]) => (
+        <React.Fragment key={label}>
+          <div><h4>{label}</h4></div>
+          {component.type === "select" ? (<>
             <div>
-              <img src={imageSource} alt="Component" height='100px' width='100px' />
+              <Select
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (label === "Connectivity") setSelectedOption(value) && handleSelectChange();
+                  else if (label === "Column Section") setSelectedColumn(value);
+                  else if (label === "Beam Section") setSelectedBeam(value);
+                  else if (label === "Material") setSelectedMaterial(value);
+                }}
+                value={
+                  label === "Connectivity"
+                    ? selectedOption
+                    : label === "Column_Section"
+                    ? selectedColumn
+                    : label === "Beam_Section"
+                    ? selectedBeam
+                    : label === "Material"
+                    ? selectedMaterial
+                    : null
+                }
+              >
+                {component.options.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
+              
             </div>
-
-            <div><h4>Column Section:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  {column.map((item) => (
-                  <Option key={item.columnID} value={item.columnID}>{item.col_name}</Option>   
-                  ))}
-                </Select>
+            {label === "Connectivity" ? (
+            <>
+            <div></div>
+            <div><img src={imageSource} height='100px' width='100px' alt="" /></div>
+            </>) : <></>}
+            
+            </>
+          ) : (
+            <div>
+              <Input
+                type="text"
+                name={`${label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+              />
             </div>
-
-            <div><h4>Beam Section:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  {beamData.map((item) => (
-                  <Option key={item.beamID} value={item.beamID}>{item.beam_name}</Option>   
-                  ))}
-                </Select>
+          )}
+        </React.Fragment>
+      ))}
+      {/* ... */}
+    </div>
+    {/* Section End */}
+    {/* Section Start  */}
+    <h3>Factored Loads</h3>
+    <div className='component-grid'>
+      {Object.entries(inputdock["Factored Loads"]).map(([label, component]) => (
+        <React.Fragment key={label}>
+          <div><h4>{label} :</h4></div>
+          {component.type === "select" ? (
+            <div>
+              <Select
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (label === "Shear Force (kN)") setSelectedOption(value);
+                  else if (label === "Axial Force (kN)") setSelectedColumn(value);
+                }}
+                value={
+                  label === "Shear Force (kN)"
+                    ? selectedOption
+                    : label === "Axial Force (kN)"
+                    ? selectedColumn
+                    : null
+                }
+              >
+                {component.options.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
             </div>
-
-            <div><h4>Material:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  {material.map((item) => (
-                  <Option key={item.MaterialID} value={item.MaterialID}>{item.Material_data}</Option>   
-                  ))}
-                </Select>
+          ) : (
+            <div>
+              <Input
+                type="text"
+                name={`${label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+              />
             </div>
-          </div>
-          {/* Section End */}
-          {/* Section Start  */}
-          <h3>Factored Loads</h3>
-          <div className='component-grid    '> 
-              <div><h4>Shear Force(kN) :</h4></div>
-              <div><Input type="text" name="fileName"/></div>
-
-              <div><h4>Axial Force(kN) :</h4></div>
-              <div><Input type="text" name="fileName"/></div>
-          </div>
-          {/* Section End */}
-          {/* Section Start */}
-          <h3>Bolt</h3>
-          <div className='component-grid    '> 
-          <div><h4>Beam Section:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  <Option value="Customized">Customized</Option>
-                  <Option value="All">All</Option>   
-                 </Select>
+          )}
+        </React.Fragment>
+      ))}
+      {/* ... */}
+    </div>
+    {/* Section End */}
+    {/* Section Start */}
+    <h3>Bolt</h3>
+    <div className='component-grid'>
+      {Object.entries(inputdock["Bolt"]).map(([label, component]) => (
+        <React.Fragment key={label}>
+          <div><h4>{label}:</h4></div>
+          {component.type === "select" ? (
+            <div>
+              <Select
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (label === "Beam Section") setSelectedBeamSection(value);
+                  else if (label === "Type") setSelectedType(value);
+                  else if (label === "Property Class") setSelectedPropertyClass(value);
+                }}
+                value={
+                  label === "Beam Section"
+                    ? selectedBeamSection
+                    : label === "Type"
+                    ? selectedType
+                    : label === "Property Class"
+                    ? selectedPropertyClass
+                    : null
+                }
+              >
+                {component.options.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
             </div>
-
-            <div><h4>Type:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  <Option value="Bearing_Bolt">Bearing Bolt</Option>
-                  <Option value="Fraction_Grip_Bolt">Fraction Grip Bolt</Option>   
-                 </Select>
+          ) : (
+            <div>
+              <Input
+                type="text"
+                name={`${label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+              />
             </div>
-
-            <div><h4>Property Class:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  <Option value="Customized">Customized</Option>
-                  <Option value="All">All</Option>   
-                 </Select>
+          )}
+        </React.Fragment>
+      ))}
+      {/* ... */}
+    </div>
+    {/* Section End */}
+    <h3>Plate</h3>
+    <div className='component-grid'>
+      {Object.entries(inputdock["Plate"]).map(([label, component]) => (
+        <React.Fragment key={label}>
+          <div><h4>{label}</h4></div>
+          {component.type === "select" ? (
+            <div>
+              <Select
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  if (label === "Thickness (mm)") setSelectedThickness(value);
+                }}
+                value={label === "Thickness (mm)" ? selectedThickness : null}
+              >
+                {component.options.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
             </div>
-          </div>
-          {/* Section End */}
-          <h3>Plate</h3>
-          <div className='component-grid    '> 
-          <div><h4>Thickness(mm)</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  <Option value="Customized">Customized</Option>
-                  <Option value="All">All</Option>   
-                 </Select>
+          ) : (
+            <div>
+              <Input
+                type="text"
+                name={`${label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+              />
             </div>
-            </div>
-          
-      </div>
-          <div className='inputdock-btn'>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  </div>
+  <div className='inputdock-btn'>
             <Input type="button" value="Reset" />
             <Input type="button" value="Design" />
           </div>
-      </div>              
+</div>              
       {/* Middle */}
       <div className='superMainBody_mid'>
         <img src={img1} alt="Demo" height='300px' width='300px' /> 
