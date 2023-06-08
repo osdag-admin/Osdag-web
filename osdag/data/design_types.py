@@ -70,19 +70,23 @@ shear_connection = {
     'data': [
         {
             'id': 1,
-            'name': 'Fin_Plate'
+            'name': 'Fin_Plate',
+            'image_name': 'sc_fin_plate'
         },
         {
             'id': 2,
-            'name': 'Cleat_Angle'
+            'name': 'Cleat_Angle',
+            'image_name': 'sc_cleat_angle'
         },
         {
             'id': 3,
-            'name': 'End_Plate'
+            'name': 'End_Plate',
+            'image_name': 'sc_end_plate'
         },
         {
             'id': 4,
-            'name': 'Seated_Angle'
+            'name': 'Seated_Angle',
+            'image_name': 'sc_seated_angle'
         }],
     'has_subtypes': False,
     'success': True
@@ -113,15 +117,18 @@ moment_connection = {
 b2b_splice = {
     'data': [{
         'id': 1,
-        'name': 'Cover_Plate_Bolted'
+        'name': 'Cover_Plate_Bolted',
+        'image_name': 'mc_btb_cpb'
     },
         {
         'id': 2,
-        'name': 'Cover_Plate_Welded'
+        'name': 'Cover_Plate_Welded',
+        'image_name': 'mc_btb_cpw'
     },
         {
         'id': 3,
-        'name': 'End_Plate'
+        'name': 'End_Plate',
+        'image_name': 'mc_btb_ep'
     }],
     'has_subtypes': False,
     'success': True
@@ -130,7 +137,8 @@ b2b_splice = {
 b2column = {
     'data': [{
         'id': 1,
-        'name': 'End_Plate'
+        'name': 'End_Plate',
+        'image_name': 'mc_btc_ep'
     }],
     'has_subtypes': False,
     'success': True
@@ -140,15 +148,18 @@ c2c_splice = {
     'data': [
         {
             'id': 1,
-            'name': 'Cover_Plate_Bolted'
+            'name': 'Cover_Plate_Bolted',
+            'image_name': 'mc_ctc_cpb'
         },
         {
             'id': 2,
-            'name': 'Cover_Plate_Welded'
+            'name': 'Cover_Plate_Welded',
+            'image_name': 'mc_ctc_cpw'
         },
         {
             'id': 3,
-            'name': 'End_Plate'
+            'name': 'End_Plate',
+            'image_name': 'mc_ctc_ep'
         }],
     'has_subtypes': False,
     'success': True
@@ -157,7 +168,8 @@ c2c_splice = {
 base_plate = {
     'data': [{
         'id': 1,
-        'name': 'Base_Plate_Connection'
+        'name': 'Base_Plate_Connection',
+        'image_name': 'base_plate'
     }],
     'has_subtypes': False,
     'success': True
@@ -167,11 +179,13 @@ tension_member = {
     'data': [
         {
             'id': 1,
-            'name': 'Bolted_To_End_Gusset'
+            'name': 'Bolted_To_End_Gusset',
+            'image_name': 'bolted_to_end'
         },
         {
             'id': 2,
-            'name': 'Welded_To_End_Gusset'
+            'name': 'Welded_To_End_Gusset',
+            'image_name': 'welded_to_end'
         }],
     'has_subtypes': False,
     'success': True
