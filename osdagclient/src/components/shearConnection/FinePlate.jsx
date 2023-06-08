@@ -18,7 +18,7 @@ function FinePlate() {
   const [selectedOption, setSelectedOption] = useState('');
 
 
-  const [connectivity, setConnectivity] = useState(null);
+  const [connectivity, setConnectivity] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
