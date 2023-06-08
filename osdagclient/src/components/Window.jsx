@@ -1,11 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
-// importing thunks
-import { getDesignTypes, getSubDesignTypes, getLeafLevelDesignType } from '../features/thunks/ModuleThunk'
-
-// redux imports
-import { useDispatch, useSelector } from 'react-redux'
+import { GlobalContext } from '../context/GlobalState'
 
 // importing images
 import bolted_to_end from '../assets/TensionMember/bolted_to_end.png'
@@ -41,8 +37,6 @@ const image_map = {
     base_plate
 }
 
-let renderedOnce = false;
-
 const Window = () => {
     const navigate = useNavigate();
     const { designType } = useParams();
@@ -51,21 +45,17 @@ const Window = () => {
     const [subActiveTab, setSubActiveTab] = useState(1)
     const [errorMsg, setErrorMsg] = useState(null)
 
-    const dispatch = useDispatch()
-    const results = useSelector(state => state.getDesignTypes.results)
-    const subDesignTypes = useSelector(state => state.getSubDesignTypes.subDesignTypes)
-    const leafLevelDesignType = useSelector(state => state.getLeafLevelDesignType.leafLevelDesignType)
+    const { results, getDesignTypes, getSubDesignTypes, subDesignTypes, leafLevelDesignType, getLeafLevelDesignType } = useContext(GlobalContext)
 
     const wrapper = () => {
-        dispatch({ type: 'RESET_RESULTS', payload: null })
-        dispatch(getDesignTypes(designType))
+        getDesignTypes(designType)
     }
 
     useEffect(() => {
         if (!results) return;
         if (results.has_subtypes === true) {
             const { name } = results.data[0]
-            dispatch(getSubDesignTypes({ designType, name }))
+            getSubDesignTypes(designType, name)
             setActiveTab(1)
         }
     }, [results])
@@ -76,7 +66,7 @@ const Window = () => {
         if (subDesignTypes.has_subtypes === true) {
             const { name: prev_item } = results.data[activeTab - 1]
             const { name } = subDesignTypes.data[0]
-            dispatch(getLeafLevelDesignType({ designType, prev_item, name }))
+            getLeafLevelDesignType(designType, prev_item, name)
             setSubActiveTab(1)
         }
 
@@ -89,27 +79,19 @@ const Window = () => {
     useEffect(() => {
         if (!results || !subDesignTypes) return;
 
-        console.log(results, subDesignTypes)
         const { name: prev_item } = results.data[activeTab - 1]
         const { name } = subDesignTypes.data[subActiveTab - 1]
-        dispatch(getLeafLevelDesignType({ designType, prev_item, name }))
+        getLeafLevelDesignType(designType, prev_item, name)
 
     }, [subActiveTab])
 
     useEffect(() => {
         if (!results) return;
         const { name } = results.data[activeTab - 1]
-        dispatch(getSubDesignTypes({ designType, name }))
+        getSubDesignTypes(designType, name)
     }, [activeTab])
 
-    if (renderedOnce === false) {
-        dispatch(getDesignTypes(designType))
-        renderedOnce = true
-    }
-
-
     if (!results && !isLoading) return <div>Module Under Development</div>
-
 
     return (
         <div>
