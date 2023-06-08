@@ -149,6 +149,23 @@ function FinePlate() {
     }
   ];
 
+  const MenuItems = [
+    {
+      label: "File",
+    },
+    {
+      label: "Edit",
+    },
+    {
+      label: "Graphics",
+    },
+    {
+      label: "Database",
+    },
+    {
+      label: "Help",
+    },
+  ];
   
 
   return (
@@ -157,11 +174,9 @@ function FinePlate() {
     <div>
       <div className='module_nav'>
 
-          <div>File</div>
-          <div>Edit</div>
-          <div>Graphics</div>
-          <div>Database</div>
-          <div>Help</div>
+      {MenuItems.map((item, index) => (
+        <div key={index}>{item.label}</div>
+      ))}
       </div>
     
     {/* Main Body of code  */}
