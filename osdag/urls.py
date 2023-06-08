@@ -6,7 +6,7 @@ from osdag.web_api.input_data_api import InputValues
 from osdag.web_api.output_data_api import OutputValues
 from osdag.web_api.cad_model_api import CADGeneration
 from osdag.web_api.modules_api import GetModules
-from osdag.web_api.inputData_view import InputData
+from osdag.web_api.inputData_view import InputData, DesignView
 from . import views
 
 # temporary 
@@ -43,5 +43,6 @@ urlpatterns = [
     path('osdag-web/tension-member', views.get_tension_member, name='tension-member'),
 
     # New APIs
-    path('populate' , InputData.as_view())
+    path('populate' , InputData.as_view()),
+    path('design' , DesignView.as_view())
 ]
