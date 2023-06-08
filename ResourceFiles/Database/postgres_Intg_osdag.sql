@@ -1,47 +1,49 @@
 /* PRAGMA foreign_keys=OFF; */
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS public."Bolt" (
+	"id" INTEGER PRIMARY KEY,
 	"Bolt_diameter"	TEXT
 );
-INSERT INTO public."Bolt" VALUES('8');
-INSERT INTO public."Bolt" VALUES('10');
-INSERT INTO public."Bolt" VALUES('12');
-INSERT INTO public."Bolt" VALUES('16');
-INSERT INTO public."Bolt" VALUES('20');
-INSERT INTO public."Bolt" VALUES('24');
-INSERT INTO public."Bolt" VALUES('30');
-INSERT INTO public."Bolt" VALUES('36');
-INSERT INTO public."Bolt" VALUES('42');
-INSERT INTO public."Bolt" VALUES('48');
-INSERT INTO public."Bolt" VALUES('56');
-INSERT INTO public."Bolt" VALUES('64');
-INSERT INTO public."Bolt" VALUES('14');
-INSERT INTO public."Bolt" VALUES('18');
-INSERT INTO public."Bolt" VALUES('22');
-INSERT INTO public."Bolt" VALUES('27');
-INSERT INTO public."Bolt" VALUES('33');
-INSERT INTO public."Bolt" VALUES('39');
-INSERT INTO public."Bolt" VALUES('45');
-INSERT INTO public."Bolt" VALUES('52');
-INSERT INTO public."Bolt" VALUES('60');
+INSERT INTO public."Bolt" VALUES(1,'8');
+INSERT INTO public."Bolt" VALUES(2,'10');
+INSERT INTO public."Bolt" VALUES(3,'12');
+INSERT INTO public."Bolt" VALUES(4,'16');
+INSERT INTO public."Bolt" VALUES(5,'20');
+INSERT INTO public."Bolt" VALUES(6,'24');
+INSERT INTO public."Bolt" VALUES(7,'30');
+INSERT INTO public."Bolt" VALUES(8,'36');
+INSERT INTO public."Bolt" VALUES(9,'42');
+INSERT INTO public."Bolt" VALUES(10,'48');
+INSERT INTO public."Bolt" VALUES(11,'56');
+INSERT INTO public."Bolt" VALUES(12,'64');
+INSERT INTO public."Bolt" VALUES(13,'14');
+INSERT INTO public."Bolt" VALUES(14,'18');
+INSERT INTO public."Bolt" VALUES(15,'22');
+INSERT INTO public."Bolt" VALUES(16,'27');
+INSERT INTO public."Bolt" VALUES(17,'33');
+INSERT INTO public."Bolt" VALUES(18,'39');
+INSERT INTO public."Bolt" VALUES(19,'45');
+INSERT INTO public."Bolt" VALUES(20,'52');
+INSERT INTO public."Bolt" VALUES(21,'60');
 CREATE TABLE IF NOT EXISTS public."Anchor_Bolt" (
+	"id" INTEGER PRIMARY KEY,
 	"Diameter"	TEXT
 );
-INSERT INTO public."Anchor_Bolt" VALUES('M8');
-INSERT INTO public."Anchor_Bolt" VALUES('M10');
-INSERT INTO public."Anchor_Bolt" VALUES('M12');
-INSERT INTO public."Anchor_Bolt" VALUES('M16');
-INSERT INTO public."Anchor_Bolt" VALUES('M20');
-INSERT INTO public."Anchor_Bolt" VALUES('M24');
-INSERT INTO public."Anchor_Bolt" VALUES('M30');
-INSERT INTO public."Anchor_Bolt" VALUES('M36');
-INSERT INTO public."Anchor_Bolt" VALUES('M42');
-INSERT INTO public."Anchor_Bolt" VALUES('M48');
-INSERT INTO public."Anchor_Bolt" VALUES('M56');
-INSERT INTO public."Anchor_Bolt" VALUES('M64');
-INSERT INTO public."Anchor_Bolt" VALUES('M72');
+INSERT INTO public."Anchor_Bolt" VALUES(1,'M8');
+INSERT INTO public."Anchor_Bolt" VALUES(2,'M10');
+INSERT INTO public."Anchor_Bolt" VALUES(3,'M12');
+INSERT INTO public."Anchor_Bolt" VALUES(4,'M16');
+INSERT INTO public."Anchor_Bolt" VALUES(5,'M20');
+INSERT INTO public."Anchor_Bolt" VALUES(6,'M24');
+INSERT INTO public."Anchor_Bolt" VALUES(7,'M30');
+INSERT INTO public."Anchor_Bolt" VALUES(8,'M36');
+INSERT INTO public."Anchor_Bolt" VALUES(9,'M42');
+INSERT INTO public."Anchor_Bolt" VALUES(10,'M48');
+INSERT INTO public."Anchor_Bolt" VALUES(11,'M56');
+INSERT INTO public."Anchor_Bolt" VALUES(12,'M64');
+INSERT INTO public."Anchor_Bolt" VALUES(13,'M72');
 CREATE TABLE IF NOT EXISTS public."Angle_Pitch" (
-	"ID"	INTEGER UNIQUE,
+	"id" INTEGER PRIMARY KEY,
 	"Nominal_Leg"	INTEGER,
 	"Max_Bolt_Dia"	INTEGER,
 	"Bolt_lines"	INTEGER,
@@ -63,6 +65,7 @@ INSERT INTO public."Angle_Pitch" VALUES(11,150,20,2,55,55,NULL);
 INSERT INTO public."Angle_Pitch" VALUES(13,200,30,2,75,75,NULL);
 INSERT INTO public."Angle_Pitch" VALUES(12,200,20,3,55,55,55);
 CREATE TABLE IF NOT EXISTS public."Material" (
+	"id" INTEGER PRIMARY KEY,
 	"Grade"	TEXT,
 	"Yield Stress (< 20)"	INTEGER,
 	"Yield Stress (20 -40)"	INTEGER,
@@ -70,316 +73,315 @@ CREATE TABLE IF NOT EXISTS public."Material" (
 	"Ultimate Tensile Stress"	INTEGER,
 	"Elongation "	INTEGER
 );
-INSERT INTO public."Material" VALUES('E 165 (Fe 290)',165,165,165,290,23);
-INSERT INTO public."Material" VALUES('E 250 (Fe 410 W)A',250,240,230,410,23);
-INSERT INTO public."Material" VALUES('E 250 (Fe 410 W)B',250,240,230,410,23);
-INSERT INTO public."Material" VALUES('E 250 (Fe 410 W)C',250,240,230,410,23);
-INSERT INTO public."Material" VALUES('E 300 (Fe 440)',300,290,280,440,22);
-INSERT INTO public."Material" VALUES('E 350 (Fe 490)',350,330,320,490,22);
-INSERT INTO public."Material" VALUES('E 410 (Fe 540)',410,390,380,540,20);
-INSERT INTO public."Material" VALUES('E 450 (Fe 570)D',450,430,420,570,20);
-INSERT INTO public."Material" VALUES('E 450 (Fe 590) E',450,430,420,590,20);
-INSERT INTO public."Material" VALUES('Cus_400_500_600_1400',400,500,600,1400,20);
+INSERT INTO public."Material" VALUES(1,'E 165 (Fe 290)',165,165,165,290,23);
+INSERT INTO public."Material" VALUES(2,'E 250 (Fe 410 W)A',250,240,230,410,23);
+INSERT INTO public."Material" VALUES(3,'E 250 (Fe 410 W)B',250,240,230,410,23);
+INSERT INTO public."Material" VALUES(4,'E 250 (Fe 410 W)C',250,240,230,410,23);
+INSERT INTO public."Material" VALUES(5,'E 300 (Fe 440)',300,290,280,440,22);
+INSERT INTO public."Material" VALUES(6,'E 350 (Fe 490)',350,330,320,490,22);
+INSERT INTO public."Material" VALUES(7,'E 410 (Fe 540)',410,390,380,540,20);
+INSERT INTO public."Material" VALUES(8,'E 450 (Fe 570)D',450,430,420,570,20);
+INSERT INTO public."Material" VALUES(9,'E 450 (Fe 590) E',450,430,420,590,20);
+INSERT INTO public."Material" VALUES(10,'Cus_400_500_600_1400',400,500,600,1400,20);
 CREATE TABLE IF NOT EXISTS public."Bolt_fy_fu" (
+	"id" INTEGER PRIMARY KEY,
 	"Property_Class"	NUMERIC,
 	"Diameter_min"	INTEGER,
 	"Diameter_max"	INTEGER,
 	"fy"	NUMERIC,
 	"fu"	NUMERIC
 );
-INSERT INTO public."Bolt_fy_fu" VALUES(4.6,0,100,240,400);
-INSERT INTO public."Bolt_fy_fu" VALUES(4.8,0,100,340,420);
-INSERT INTO public."Bolt_fy_fu" VALUES(5.6,0,100,300,500);
-INSERT INTO public."Bolt_fy_fu" VALUES(5.8,0,100,420,520);
-INSERT INTO public."Bolt_fy_fu" VALUES(3.6,0,100,190,330);
-INSERT INTO public."Bolt_fy_fu" VALUES(6.8,0,100,480,600);
-INSERT INTO public."Bolt_fy_fu" VALUES(8.8,0,16,640,800);
-INSERT INTO public."Bolt_fy_fu" VALUES(8.8,16,100,660,830);
-INSERT INTO public."Bolt_fy_fu" VALUES(9.8,0,100,720,900);
-INSERT INTO public."Bolt_fy_fu" VALUES(10.9,0,100,940,1040);
-INSERT INTO public."Bolt_fy_fu" VALUES(12.9,0,100,1100,1220);
+INSERT INTO public."Bolt_fy_fu" VALUES(1,4.6,0,100,240,400);
+INSERT INTO public."Bolt_fy_fu" VALUES(2,4.8,0,100,340,420);
+INSERT INTO public."Bolt_fy_fu" VALUES(3,5.6,0,100,300,500);
+INSERT INTO public."Bolt_fy_fu" VALUES(4,5.8,0,100,420,520);
+INSERT INTO public."Bolt_fy_fu" VALUES(5,3.6,0,100,190,330);
+INSERT INTO public."Bolt_fy_fu" VALUES(6,6.8,0,100,480,600);
+INSERT INTO public."Bolt_fy_fu" VALUES(7,8.8,0,16,640,800);
+INSERT INTO public."Bolt_fy_fu" VALUES(8,8.8,16,100,660,830);
+INSERT INTO public."Bolt_fy_fu" VALUES(9,9.8,0,100,720,900);
+INSERT INTO public."Bolt_fy_fu" VALUES(10,10.9,0,100,940,1040);
+INSERT INTO public."Bolt_fy_fu" VALUES(11,12.9,0,100,1100,1220);
 CREATE TABLE IF NOT EXISTS public."UnequalAngle" (
-	"Id"	INTEGER NOT NULL,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR(50),
-	"Mass"	DECIMAL(10 , 2),
-	"Area"	DECIMAL(10 , 2),
-	"a"	DECIMAL(10 , 2),
-	"b"	DECIMAL(10 , 2),
-	"t"	DECIMAL(10 , 2),
-	"R1"	DECIMAL(10 , 2),
-	"R2"	DECIMAL(10 , 2),
-	"Cz"	DECIMAL(10 , 2),
-	"Cy"	DECIMAL(10 , 2),
-	"Iz"	DECIMAL(10 , 2),
-	"Iy"	DECIMAL(10 , 2),
-	"Alpha"	DECIMAL(10 , 2),
-	"Iu(max)"	DECIMAL(10 , 2),
-	"Iv(min)"	DECIMAL(10 , 2),
-	"rz"	DECIMAL(10 , 2),
-	"ry"	DECIMAL(10 , 2),
-	"ru(max)"	DECIMAL(10 , 2),
-	"rv(min)"	DECIMAL(10 , 2),
-	"Zz"	DECIMAL(10 , 2),
-	"Zy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
+	"Mass"	NUMERIC(10 , 2),
+	"Area"	NUMERIC(10 , 2),
+	"a"	NUMERIC(10 , 2),
+	"b"	NUMERIC(10 , 2),
+	"t"	NUMERIC(10 , 2),
+	"R1"	NUMERIC(10 , 2),
+	"R2"	NUMERIC(10 , 2),
+	"Cz"	NUMERIC(10 , 2),
+	"Cy"	NUMERIC(10 , 2),
+	"Iz"	NUMERIC(10 , 2),
+	"Iy"	NUMERIC(10 , 2),
+	"Alpha"	NUMERIC(10 , 2),
+	"Iu_max"	NUMERIC(10 , 2),
+	"Iv_min"	NUMERIC(10 , 2),
+	"rz"	NUMERIC(10 , 2),
+	"ry"	NUMERIC(10 , 2),
+	"ru_max"	NUMERIC(10 , 2),
+	"rv_min"	NUMERIC(10 , 2),
+	"Zz"	NUMERIC(10 , 2),
+	"Zy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
 	"Source"	VARCHAR(100),
-	"It"	DECIMAL(10 , 2),
-	PRIMARY KEY("Id")
+	"It"	NUMERIC(10 , 2)
 );
-INSERT INTO public."UnequalAngle" VALUES(1,'∠ 30 ⅹ 20ⅹ 3',1.14,1.45,30.0,20.0,3.0,4.5,0.0,0.51,0.99,1.29,0.46,1.05,1.47,0.27,0.94,0.56,1.01,0.43,0.64,0.31,1.16,0.56,'IS808_Rev',0.042000000000000001776);
-INSERT INTO public."UnequalAngle" VALUES(2,'∠ 30 ⅹ 20ⅹ 4',1.48,1.88,30.0,20.0,4.0,4.5,0.0,0.55,1.04,1.63,0.57,0.4,1.85,0.34,0.93,0.55,0.99,0.43,0.83,0.39,1.48,0.73,'IS808_Rev',0.098000000000000024868);
-INSERT INTO public."UnequalAngle" VALUES(3,'∠ 30 ⅹ 20ⅹ 5',1.8,2.29,30.0,20.0,5.0,4.5,0.0,0.58,1.07,1.93,0.67,0.39,2.19,0.41,0.92,0.54,0.98,0.42,1.0,0.47,1.79,0.9,'IS808_Rev',0.18700000000000001065);
-INSERT INTO public."UnequalAngle" VALUES(4,'∠ 40 ⅹ 25ⅹ 3',1.5,1.91,40.0,25.0,3.0,5.0,0.0,0.59,1.32,3.11,0.94,0.37,3.48,0.57,1.27,0.7,1.35,0.54,1.16,0.49,2.08,0.9,'IS808_Rev',0.055);
-INSERT INTO public."UnequalAngle" VALUES(5,'∠ 40 ⅹ 25ⅹ 4',1.96,2.49,40.0,25.0,4.0,5.0,0.0,0.63,1.36,3.97,1.19,0.36,4.44,0.72,1.26,0.69,1.33,0.54,1.5,0.64,2.69,1.18,'IS808_Rev',0.13);
-INSERT INTO public."UnequalAngle" VALUES(6,'∠ 40 ⅹ 25ⅹ 5',2.4,3.05,40.0,25.0,5.0,5.0,0.0,0.67,1.4,4.76,1.42,0.36,5.31,0.87,1.25,0.68,1.32,0.53,1.83,0.77,3.27,1.45,'IS808_Rev',0.25);
-INSERT INTO public."UnequalAngle" VALUES(7,'∠ 40 ⅹ 25ⅹ 6',2.82,3.59,40.0,25.0,6.0,5.0,0.0,0.7,1.44,5.5,1.62,0.35,6.1,1.02,1.24,0.67,1.3,0.53,2.15,0.9,3.81,1.72,'IS808_Rev',0.42400000000000002131);
-INSERT INTO public."UnequalAngle" VALUES(8,'∠ 45 ⅹ 30ⅹ 3',1.74,2.21,45.0,30.0,3.0,5.0,0.0,0.71,1.44,4.57,1.65,0.41,5.26,0.96,1.44,0.86,1.54,0.66,1.49,0.72,2.7,1.29,'IS808_Rev',0.064000000000000003552);
-INSERT INTO public."UnequalAngle" VALUES(9,'∠ 45 ⅹ 30ⅹ 4',2.27,2.89,45.0,30.0,4.0,5.0,0.0,0.74,1.48,5.87,2.1,0.41,6.75,1.22,1.42,0.85,1.53,0.65,1.95,0.93,3.5,1.69,'IS808_Rev',0.15099999999999999644);
-INSERT INTO public."UnequalAngle" VALUES(10,'∠ 45 ⅹ 30ⅹ 5',2.79,3.55,45.0,30.0,5.0,5.0,0.0,0.78,1.52,7.08,2.51,0.4,8.11,1.48,1.41,0.84,1.51,0.64,2.38,1.13,4.27,2.08,'IS808_Rev',0.29099999999999997868);
-INSERT INTO public."UnequalAngle" VALUES(11,'∠ 45 ⅹ 30ⅹ 6',3.29,4.19,45.0,30.0,6.0,5.0,0.0,0.82,1.56,8.21,2.89,0.4,9.37,1.73,1.4,0.83,1.49,0.64,2.79,1.32,5.0,2.46,'IS808_Rev',0.49599999999999999644);
-INSERT INTO public."UnequalAngle" VALUES(12,'∠ 50 ⅹ30ⅹ 3',1.86,2.37,50.0,30.0,3.0,5.5,0.0,0.67,1.64,6.13,1.69,0.35,6.79,1.03,1.61,0.84,1.69,0.66,1.83,0.73,3.28,1.31,'IS808_Rev',0.069000000000000003552);
-INSERT INTO public."UnequalAngle" VALUES(13,'∠ 50 ⅹ30ⅹ 4',2.44,3.1,50.0,30.0,4.0,5.5,0.0,0.71,1.69,7.89,2.15,0.34,8.73,1.32,1.59,0.83,1.68,0.65,2.38,0.94,4.26,1.72,'IS808_Rev',0.16200000000000001065);
-INSERT INTO public."UnequalAngle" VALUES(14,'∠ 50 ⅹ30ⅹ 5',2.99,3.81,50.0,30.0,5.0,5.5,0.0,0.75,1.73,9.53,2.58,0.34,10.5,1.59,1.58,0.82,1.66,0.65,2.92,1.15,5.19,2.13,'IS808_Rev',0.31200000000000001065);
-INSERT INTO public."UnequalAngle" VALUES(15,'∠ 50 ⅹ30ⅹ 6',3.54,4.5,50.0,30.0,6.0,5.5,0.0,0.79,1.77,11.1,2.97,0.33,12.2,1.86,1.57,0.81,1.64,0.64,3.43,1.34,6.09,2.52,'IS808_Rev',0.53200000000000002842);
-INSERT INTO public."UnequalAngle" VALUES(16,'∠ 60ⅹ 40ⅹ 5',3.79,4.83,60.0,40.0,5.0,6.0,0.0,0.98,1.97,17.5,6.28,0.41,20.2,3.65,1.91,1.14,2.04,0.87,4.35,2.08,7.83,3.77,'IS808_Rev',0.39500000000000001776);
-INSERT INTO public."UnequalAngle" VALUES(17,'∠ 60ⅹ 40ⅹ 6',4.49,5.72,60.0,40.0,6.0,6.0,0.0,1.02,2.01,20.5,7.29,0.41,23.5,4.26,1.89,1.13,2.03,0.86,5.13,2.45,9.21,4.47,'IS808_Rev',0.67600000000000015631);
-INSERT INTO public."UnequalAngle" VALUES(18,'∠ 60ⅹ 40ⅹ 8',5.84,7.44,60.0,40.0,8.0,6.0,0.0,1.09,2.08,25.9,9.12,0.4,29.6,5.45,1.87,1.11,1.99,0.86,6.62,3.14,11.8,5.83,'IS808_Rev',1.57);
-INSERT INTO public."UnequalAngle" VALUES(19,'∠ 65 ⅹ45ⅹ 5',4.18,5.33,65.0,45.0,5.0,6.0,0.0,1.1,2.09,22.8,9.02,0.44,26.7,5.12,2.07,1.3,2.24,0.98,5.16,2.65,9.33,4.77,'IS808_Rev',0.43700000000000001065);
-INSERT INTO public."UnequalAngle" VALUES(20,'∠ 65 ⅹ45ⅹ 6',4.96,6.32,65.0,45.0,6.0,6.0,0.0,1.14,2.13,26.7,10.5,0.44,31.2,5.99,2.06,1.29,2.22,0.97,6.1,3.12,11.0,5.66,'IS808_Rev',0.74800000000000004263);
-INSERT INTO public."UnequalAngle" VALUES(21,'∠ 65 ⅹ45ⅹ 8',6.47,8.24,65.0,45.0,8.0,6.0,0.0,1.21,2.2,33.9,13.2,0.43,39.5,7.66,2.03,1.27,2.19,0.96,7.89,4.02,14.1,7.39,'IS808_Rev',1.74);
-INSERT INTO public."UnequalAngle" VALUES(22,'∠ 70 ⅹ45ⅹ 5',4.39,5.59,70.0,45.0,5.0,6.5,0.0,1.06,2.29,28.0,9.2,0.39,31.8,5.42,2.24,1.28,2.39,0.98,5.95,2.68,10.7,4.82,'IS808_Rev',0.4580000000000000071);
-INSERT INTO public."UnequalAngle" VALUES(23,'∠ 70 ⅹ45ⅹ 6',5.21,6.63,70.0,45.0,6.0,6.5,0.0,1.1,2.33,32.8,10.7,0.39,37.2,6.34,2.23,1.27,2.37,0.98,7.04,3.15,12.6,5.72,'IS808_Rev',0.78399999999999998578);
-INSERT INTO public."UnequalAngle" VALUES(24,'∠ 70 ⅹ45ⅹ 8',6.79,8.65,70.0,45.0,8.0,6.5,0.0,1.18,2.41,41.8,13.5,0.38,47.2,8.1,2.2,1.25,2.34,0.97,9.12,4.06,16.3,7.5,'IS808_Rev',1.82);
-INSERT INTO public."UnequalAngle" VALUES(25,'∠ 70 ⅹ45ⅹ 10',8.31,10.5,70.0,45.0,10.0,6.5,0.0,1.25,2.49,50.0,16.0,0.37,56.2,9.81,2.17,1.23,2.3,0.96,11.0,4.91,19.7,9.22,'IS808_Rev',3.5);
-INSERT INTO public."UnequalAngle" VALUES(26,'∠ 75 ⅹ 50ⅹ 5',4.78,6.09,75.0,50.0,5.0,6.5,0.0,1.18,2.41,35.1,12.7,0.41,40.5,7.32,2.4,1.44,2.58,1.1,6.9,3.32,12.4,5.95,'IS808_Rev',0.5);
-INSERT INTO public."UnequalAngle" VALUES(27,'∠ 75 ⅹ 50ⅹ 6',5.68,7.23,75.0,50.0,6.0,6.5,0.0,1.22,2.45,41.2,14.8,0.41,47.5,8.57,2.39,1.43,2.56,1.09,8.17,3.92,14.7,7.07,'IS808_Rev',0.85600000000000004973);
-INSERT INTO public."UnequalAngle" VALUES(28,'∠ 75 ⅹ 50ⅹ 8',7.42,9.45,75.0,50.0,8.0,6.5,0.0,1.29,2.53,52.7,18.7,0.41,60.5,10.9,2.36,1.41,2.53,1.08,10.6,5.05,19.0,9.25,'IS808_Rev',1.99);
-INSERT INTO public."UnequalAngle" VALUES(29,'∠ 75 ⅹ 50ⅹ 10',9.1,11.5,75.0,50.0,10.0,6.5,0.0,1.37,2.61,63.2,22.3,0.4,72.2,13.3,2.34,1.39,2.5,1.07,12.9,6.13,23.1,11.3,'IS808_Rev',3.83);
-INSERT INTO public."UnequalAngle" VALUES(30,'∠ 80ⅹ  50ⅹ 5',4.99,6.36,80.0,50.0,5.0,7.0,0.0,1.14,2.62,42.0,12.9,0.37,47.3,7.68,2.57,1.43,2.73,1.1,7.81,3.34,14.0,5.99,'IS808_Rev',0.52);
-INSERT INTO public."UnequalAngle" VALUES(31,'∠ 80ⅹ  50ⅹ 6',5.92,7.55,80.0,50.0,6.0,7.0,0.0,1.18,2.66,49.4,15.1,0.37,55.5,8.99,2.56,1.41,2.71,1.09,9.25,3.95,16.5,7.13,'IS808_Rev',0.89199999999999999289);
-INSERT INTO public."UnequalAngle" VALUES(32,'∠ 80ⅹ  50ⅹ 8',7.74,9.87,80.0,50.0,8.0,7.0,0.0,1.26,2.74,63.2,19.1,0.37,70.8,11.5,2.53,1.39,2.68,1.08,12.0,5.09,21.4,9.36,'IS808_Rev',2.08);
-INSERT INTO public."UnequalAngle" VALUES(33,'∠ 80ⅹ  50ⅹ 10',9.5,12.1,80.0,50.0,10.0,7.0,0.0,1.33,2.82,76.0,22.7,0.36,84.7,13.9,2.5,1.37,2.65,1.07,14.6,6.18,26.0,11.5,'IS808_Rev',4.0);
-INSERT INTO public."UnequalAngle" VALUES(34,'∠ 90 ⅹ 60ⅹ 6',6.88,8.76,90.0,60.0,6.0,7.5,0.0,1.42,2.9,72.8,26.3,0.41,84.0,15.2,2.88,1.73,3.1,1.32,11.9,5.74,21.5,10.2,'IS808_Rev',1.03);
-INSERT INTO public."UnequalAngle" VALUES(35,'∠ 90 ⅹ 60ⅹ 8',9.01,11.4,90.0,60.0,8.0,7.5,0.0,1.49,2.98,93.6,33.5,0.41,107.0,19.5,2.86,1.71,3.06,1.3,15.5,7.44,27.9,13.4,'IS808_Rev',2.42);
-INSERT INTO public."UnequalAngle" VALUES(36,'∠ 90 ⅹ 60ⅹ 10',11.08,14.1,90.0,60.0,10.0,7.5,0.0,1.57,3.06,113.0,40.1,0.41,129.0,23.6,2.83,1.69,3.03,1.29,19.0,9.05,34.1,16.6,'IS808_Rev',4.66);
-INSERT INTO public."UnequalAngle" VALUES(37,'∠ 90 ⅹ 60ⅹ 12',13.09,16.6,90.0,60.0,12.0,7.5,0.0,1.64,3.13,131.0,46.2,0.4,149.0,27.6,2.8,1.66,3.0,1.29,22.3,10.6,39.9,19.7,'IS808_Rev',7.94);
-INSERT INTO public."UnequalAngle" VALUES(38,'∠100 ⅹ 65ⅹ 6',7.6,9.68,100.0,65.0,6.0,8.0,0.0,1.5,3.22,100.0,34.0,0.4,114.0,19.8,3.22,1.88,3.44,1.43,14.8,6.8,26.6,12.1,'IS808_Rev',1.14);
-INSERT INTO public."UnequalAngle" VALUES(39,'∠100 ⅹ 65ⅹ 8',9.97,12.7,100.0,65.0,8.0,8.0,0.0,1.57,3.3,129.0,43.5,0.4,147.0,25.5,3.19,1.85,3.4,1.42,19.3,8.8,34.6,15.9,'IS808_Rev',2.67);
-INSERT INTO public."UnequalAngle" VALUES(40,'∠100 ⅹ 65ⅹ 10',12.28,15.6,100.0,65.0,10.0,8.0,0.0,1.65,3.38,156.0,52.2,0.39,177.0,30.9,3.16,1.83,3.37,1.4,23.6,10.8,42.3,19.7,'IS808_Rev',5.16);
-INSERT INTO public."UnequalAngle" VALUES(41,'∠100 ⅹ 75ⅹ 6',8.08,10.3,100.0,75.0,6.0,8.5,0.0,1.82,3.05,105.0,51.2,0.5,128.0,27.6,3.19,2.23,3.54,1.64,15.1,9.0,27.4,16.0,'IS808_Rev',1.21);
-INSERT INTO public."UnequalAngle" VALUES(42,'∠100 ⅹ 75ⅹ 8',10.61,13.5,100.0,75.0,8.0,8.5,0.0,1.89,3.13,135.0,65.7,0.5,165.0,35.5,3.17,2.21,3.5,1.62,19.7,11.7,35.8,21.0,'IS808_Rev',2.85);
-INSERT INTO public."UnequalAngle" VALUES(43,'∠100 ⅹ 75ⅹ 10',13.07,16.6,100.0,75.0,10.0,8.5,0.0,1.97,3.21,164.0,79.2,0.5,200.0,43.0,3.14,2.18,3.47,1.61,24.2,14.3,43.8,25.9,'IS808_Rev',5.5);
-INSERT INTO public."UnequalAngle" VALUES(44,'∠100 ⅹ 75ⅹ 12',15.48,19.7,100.0,75.0,12.0,8.5,0.0,2.04,3.28,191.0,91.7,0.5,232.0,50.4,3.11,2.16,3.43,1.6,28.5,16.8,51.4,30.6,'IS808_Rev',9.38);
-INSERT INTO public."UnequalAngle" VALUES(45,'∠ 125 ⅹ 75ⅹ 6',9.27,11.8,125.0,75.0,6.0,9.0,0.0,1.62,4.08,194.0,54.3,0.35,215.0,32.7,4.05,2.14,4.27,1.66,23.1,9.2,41.3,16.4,'IS808_Rev',1.39);
-INSERT INTO public."UnequalAngle" VALUES(46,'∠ 125 ⅹ 75ⅹ 8',12.19,15.5,125.0,75.0,8.0,9.0,0.0,1.7,4.17,251.0,69.7,0.35,279.0,42.1,4.03,2.12,4.24,1.65,30.2,12.0,53.9,21.6,'IS808_Rev',3.27);
-INSERT INTO public."UnequalAngle" VALUES(47,'∠ 125 ⅹ 75ⅹ 10',15.05,19.1,125.0,75.0,10.0,9.0,0.0,1.78,4.26,306.0,84.1,0.35,339.0,51.0,4.0,2.09,4.21,1.63,37.2,14.7,66.2,26.7,'IS808_Rev',6.33);
-INSERT INTO public."UnequalAngle" VALUES(48,'∠125 ⅹ 95 ⅹ 6',10.14,12.9,125.0,95.0,6.0,9.0,4.8,2.24,3.72,205.0,103.0,0.52,254.0,55.0,3.99,2.83,4.44,2.06,23.4,14.3,42.9,25.5,'IS808_Rev',1.54);
-INSERT INTO public."UnequalAngle" VALUES(49,'∠125 ⅹ 95ⅹ 8',13.37,17.0,125.0,95.0,8.0,9.0,4.8,2.32,3.8,268.0,134.0,0.52,331.0,71.4,3.97,2.81,4.41,2.05,30.9,18.8,56.4,33.7,'IS808_Rev',3.61);
-INSERT INTO public."UnequalAngle" VALUES(50,'∠125 ⅹ 95ⅹ 10',16.54,21.0,125.0,95.0,10.0,9.0,4.8,2.4,3.89,328.0,164.0,0.51,404.0,87.3,3.94,2.79,4.38,2.04,38.1,23.1,69.4,41.7,'IS808_Rev',7.0);
-INSERT INTO public."UnequalAngle" VALUES(51,'∠125 ⅹ 95ⅹ 12',19.65,25.0,125.0,95.0,12.0,9.0,4.8,2.48,3.97,384.0,191.0,0.51,473.0,102.0,3.92,2.77,4.35,2.02,45.1,27.3,82.0,49.5,'IS808_Rev',11.9);
-INSERT INTO public."UnequalAngle" VALUES(52,'∠150 ⅹ 115ⅹ 8',16.27,20.7,150.0,115.0,8.0,11.0,4.8,2.76,4.48,474.0,244.0,0.52,589.0,128.0,4.78,3.43,5.34,2.49,45.1,27.9,82.4,50.0,'IS808_Rev',4.38);
-INSERT INTO public."UnequalAngle" VALUES(53,'∠150 ⅹ 115ⅹ 10',20.14,25.6,150.0,115.0,10.0,11.0,4.8,2.84,4.57,581.0,298.0,0.52,722.0,157.0,4.76,3.41,5.31,2.48,55.8,34.5,101.0,61.9,'IS808_Rev',8.5);
-INSERT INTO public."UnequalAngle" VALUES(54,'∠150 ⅹ 115ⅹ 12',23.96,30.5,150.0,115.0,12.0,11.0,4.8,2.92,4.65,684.0,350.0,0.52,849.0,185.0,4.74,3.39,5.28,2.47,66.2,40.8,120.0,73.5,'IS808_Rev',14.5);
-INSERT INTO public."UnequalAngle" VALUES(55,'∠150 ⅹ 115ⅹ 16',31.4,40.0,150.0,115.0,16.0,11.0,4.8,3.07,4.81,878.0,446.0,0.52,1080.0,239.0,4.69,3.34,5.21,2.44,86.2,53.0,156.0,96.1,'IS808_Rev',33.9);
-INSERT INTO public."UnequalAngle" VALUES(56,'∠200ⅹ 100ⅹ 10',22.93,29.2,200.0,100.0,10.0,12.0,4.8,2.03,6.98,1220.0,214.0,0.26,1300.0,137.0,6.48,2.71,6.68,2.17,94.3,26.9,165.0,48.7,'IS808_Rev',9.66);
-INSERT INTO public."UnequalAngle" VALUES(57,'∠200ⅹ 100ⅹ 12',27.29,34.7,200.0,100.0,12.0,12.0,4.8,2.11,7.07,1440.0,251.0,0.26,1530.0,161.0,6.46,2.69,6.65,2.15,112.0,31.9,196.0,58.3,'IS808_Rev',16.5);
-INSERT INTO public."UnequalAngle" VALUES(58,'∠200ⅹ 100ⅹ 16',35.84,45.6,200.0,100.0,16.0,12.0,4.8,2.27,7.23,1870.0,319.0,0.25,1980.0,207.0,6.4,2.65,6.59,2.13,146.0,41.3,255.0,77.5,'IS808_Rev',38.7);
-INSERT INTO public."UnequalAngle" VALUES(59,'∠200ⅹ 150ⅹ 10',26.92,34.2,200.0,150.0,10.0,13.5,4.8,3.55,6.02,1400.0,688.0,0.51,1720.0,368.0,6.41,4.48,7.1,3.28,100.0,60.2,183.0,107.0,'IS808_Rev',11.3);
-INSERT INTO public."UnequalAngle" VALUES(60,'∠200ⅹ 150ⅹ 12',32.07,40.8,200.0,150.0,12.0,13.5,4.8,3.63,6.11,1660.0,812.0,0.51,2040.0,433.0,6.39,4.46,7.07,3.26,119.0,71.4,218.0,127.0,'IS808_Rev',19.4);
-INSERT INTO public."UnequalAngle" VALUES(61,'∠200ⅹ 150ⅹ 16',42.18,53.7,200.0,150.0,16.0,13.5,4.8,3.79,6.27,2150.0,1040.0,0.5,2630.0,560.0,6.33,4.41,7.01,3.23,156.0,93.2,285.0,167.0,'IS808_Rev',45.6);
-INSERT INTO public."UnequalAngle" VALUES(62,'∠200ⅹ 150ⅹ 20',52.04,66.2,200.0,150.0,20.0,13.5,4.8,3.94,6.42,2610.0,1260.0,0.5,3190.0,682.0,6.28,4.36,6.94,3.21,192.0,114.0,349.0,206.0,'IS808_Rev',88.0);
-INSERT INTO public."UnequalAngle" VALUES(63,'∠ 40 ⅹ20ⅹ3',1.37,1.74,40.0,20.0,3.0,4.0,0.0,0.45,1.43,2.9,0.49,0.25,3.04,0.32,1.28,0.53,1.32,0.43,1.11,0.32,1.95,0.59,'IS808_Rev',0.050999999999999996447);
-INSERT INTO public."UnequalAngle" VALUES(64,'∠ 40 ⅹ20ⅹ4',1.79,2.27,40.0,20.0,4.0,4.0,0.0,0.49,1.47,3.7,0.62,0.25,3.86,0.41,1.27,0.52,1.3,0.42,1.45,0.41,2.52,0.78,'IS808_Rev',0.11899999999999999467);
-INSERT INTO public."UnequalAngle" VALUES(65,'∠ 40 ⅹ20ⅹ5',2.19,2.78,40.0,20.0,5.0,4.0,0.0,0.52,1.51,4.4,0.73,0.24,4.62,0.49,1.25,0.51,1.29,0.42,1.76,0.49,3.05,0.97,'IS808_Rev',0.22900000000000000355);
-INSERT INTO public."UnequalAngle" VALUES(66,'∠ 60 ⅹ30ⅹ5',3.4,4.33,60.0,30.0,5.0,6.0,0.0,0.69,2.16,15.9,2.7,0.25,16.8,1.76,1.92,0.79,1.97,0.64,4.14,1.17,7.24,2.21,'IS808_Rev',0.35400000000000000355);
-INSERT INTO public."UnequalAngle" VALUES(67,'∠ 60 ⅹ30ⅹ6',4.02,5.12,60.0,30.0,6.0,6.0,0.0,0.73,2.21,18.5,3.11,0.25,19.6,2.06,1.9,0.78,1.96,0.63,4.88,1.37,8.5,2.64,'IS808_Rev',0.60400000000000000355);
-INSERT INTO public."UnequalAngle" VALUES(68,'∠ 60 ⅹ40ⅹ7',5.17,6.59,60.0,40.0,7.0,6.0,0.0,1.06,2.05,23.3,8.23,0.4,26.6,4.86,1.88,1.12,2.01,0.86,5.89,2.8,10.5,5.16,'IS808_Rev',1.06);
-INSERT INTO public."UnequalAngle" VALUES(69,' ∠65 ⅹ50ⅹ5',4.38,5.58,65.0,50.0,5.0,6.0,0.0,1.26,2.0,23.6,12.2,0.52,29.3,6.48,2.06,1.48,2.29,1.08,5.25,3.27,9.53,5.85,'IS808_Rev',0.4580000000000000071);
-INSERT INTO public."UnequalAngle" VALUES(70,'∠65 ⅹ50ⅹ6',5.19,6.62,65.0,50.0,6.0,6.0,0.0,1.3,2.04,27.6,14.2,0.52,34.3,7.59,2.04,1.47,2.28,1.07,6.2,3.85,11.2,6.93,'IS808_Rev',0.78399999999999998578);
-INSERT INTO public."UnequalAngle" VALUES(71,'∠65 ⅹ50ⅹ7',6.0,7.64,65.0,50.0,7.0,6.0,0.0,1.34,2.08,31.5,16.2,0.52,39.0,8.67,2.03,1.45,2.26,1.07,7.13,4.42,12.9,7.99,'IS808_Rev',1.23);
-INSERT INTO public."UnequalAngle" VALUES(72,'∠65 ⅹ50ⅹ8',6.78,8.64,65.0,50.0,8.0,6.0,0.0,1.38,2.12,35.2,18.0,0.52,43.4,9.72,2.02,1.44,2.24,1.06,8.03,4.97,14.5,9.03,'IS808_Rev',1.82);
-INSERT INTO public."UnequalAngle" VALUES(73,'∠ 70ⅹ 50ⅹ5',4.57,5.83,70.0,50.0,5.0,6.0,0.0,1.22,2.21,29.0,12.5,0.46,34.5,6.92,2.23,1.46,2.43,1.09,6.05,3.3,10.9,5.9,'IS808_Rev',0.47900000000000000355);
-INSERT INTO public."UnequalAngle" VALUES(74,'∠ 70ⅹ 50ⅹ6',5.43,6.92,70.0,50.0,6.0,6.0,0.0,1.26,2.25,34.0,14.5,0.46,40.4,8.11,2.22,1.45,2.42,1.08,7.16,3.89,12.9,7.0,'IS808_Rev',0.82);
-INSERT INTO public."UnequalAngle" VALUES(75,'∠ 70ⅹ 50ⅹ7',6.27,7.99,70.0,50.0,7.0,6.0,0.0,1.3,2.29,38.8,16.5,0.46,46.0,9.26,2.2,1.44,2.4,1.08,8.23,4.46,14.8,8.08,'IS808_Rev',1.29);
-INSERT INTO public."UnequalAngle" VALUES(76,'∠ 70ⅹ 50ⅹ8',7.09,9.04,70.0,50.0,8.0,6.0,0.0,1.33,2.33,43.4,18.4,0.46,51.4,10.3,2.19,1.43,2.38,1.07,9.28,5.01,16.7,9.14,'IS808_Rev',1.91);
-INSERT INTO public."UnequalAngle" VALUES(77,'∠75 ⅹ50ⅹ7',6.57,8.37,75.0,50.0,7.0,7.0,0.0,1.26,2.49,47.1,16.8,0.41,54.2,9.8,2.37,1.42,2.54,1.08,9.41,4.49,16.9,8.17,'IS808_Rev',1.34);
-INSERT INTO public."UnequalAngle" VALUES(78,'∠80 ⅹ40ⅹ5',4.6,5.86,80.0,40.0,5.0,7.0,0.0,0.86,2.82,39.0,6.74,0.26,41.4,4.36,2.58,1.07,2.66,0.86,7.53,2.14,13.1,3.94,'IS808_Rev',0.47900000000000000355);
-INSERT INTO public."UnequalAngle" VALUES(79,'∠80 ⅹ40ⅹ6',5.45,6.95,80.0,40.0,6.0,7.0,0.0,0.89,2.86,45.7,7.84,0.25,48.5,5.09,2.57,1.06,2.64,0.86,8.9,2.52,15.5,4.7,'IS808_Rev',0.82);
-INSERT INTO public."UnequalAngle" VALUES(80,'∠80 ⅹ40ⅹ7',6.29,8.02,80.0,40.0,7.0,7.0,0.0,0.93,2.91,52.2,8.87,0.25,55.3,5.8,2.55,1.05,2.63,0.85,10.2,2.89,17.8,5.47,'IS808_Rev',1.29);
-INSERT INTO public."UnequalAngle" VALUES(81,'∠80 ⅹ40ⅹ8',7.12,9.07,80.0,40.0,8.0,7.0,0.0,0.97,2.95,58.4,9.84,0.25,61.7,6.5,2.54,1.04,2.61,0.85,11.5,3.25,20.1,6.24,'IS808_Rev',1.91);
-INSERT INTO public."UnequalAngle" VALUES(82,'∠ 80ⅹ 60ⅹ6',6.42,8.18,80.0,60.0,6.0,8.0,0.0,1.5,2.48,52.6,25.5,0.5,64.3,13.8,2.54,1.77,2.8,1.3,9.5,5.7,17.3,10.1,'IS808_Rev',0.96400000000000005684);
-INSERT INTO public."UnequalAngle" VALUES(83,'∠ 80ⅹ 60ⅹ7',7.42,9.45,80.0,60.0,7.0,8.0,0.0,1.54,2.52,60.1,29.1,0.5,73.4,15.8,2.52,1.75,2.79,1.29,11.0,6.5,19.9,11.7,'IS808_Rev',1.52);
-INSERT INTO public."UnequalAngle" VALUES(84,'∠ 80ⅹ 60ⅹ8',8.4,10.7,80.0,60.0,8.0,8.0,0.0,1.57,2.56,67.4,32.5,0.5,82.2,17.7,2.51,1.74,2.77,1.29,12.4,7.3,22.4,13.3,'IS808_Rev',2.25);
-INSERT INTO public."UnequalAngle" VALUES(85,'∠ 90ⅹ 65 ⅹ 6',7.13,9.08,90.0,65.0,6.0,8.0,0.0,1.57,2.81,74.8,33.1,0.47,89.7,18.3,2.87,1.91,3.14,1.42,12.1,6.7,21.9,12.0,'IS808_Rev',1.07);
-INSERT INTO public."UnequalAngle" VALUES(86,'∠ 90ⅹ 65 ⅹ7',8.24,10.5,90.0,65.0,7.0,8.0,0.0,1.61,2.85,85.7,37.8,0.47,102.0,20.9,2.86,1.9,3.13,1.41,13.9,7.7,25.2,13.9,'IS808_Rev',1.69);
-INSERT INTO public."UnequalAngle" VALUES(87,'∠ 90ⅹ 65 ⅹ8',9.34,11.9,90.0,65.0,8.0,8.0,0.0,1.65,2.89,96.3,42.3,0.47,115.0,23.5,2.84,1.89,3.11,1.4,15.8,8.7,28.5,15.7,'IS808_Rev',2.5);
-INSERT INTO public."UnequalAngle" VALUES(88,'∠ 90ⅹ 65 ⅹ10',11.49,14.6,90.0,65.0,10.0,8.0,0.0,1.73,2.97,116.0,50.7,0.47,138.0,28.4,2.82,1.86,3.08,1.39,19.3,10.6,34.8,19.3,'IS808_Rev',4.83);
-INSERT INTO public."UnequalAngle" VALUES(89,'∠100 ⅹ50 ⅹ 6',6.92,8.81,100.0,50.0,6.0,9.0,0.0,1.06,3.51,91.9,15.9,0.26,97.5,10.3,3.23,1.34,3.33,1.08,14.2,4.0,24.8,7.4,'IS808_Rev',1.03);
-INSERT INTO public."UnequalAngle" VALUES(90,'∠100 ⅹ50 ⅹ 7',7.99,10.1,100.0,50.0,7.0,9.0,0.0,1.1,3.56,105.0,18.1,0.26,111.0,11.7,3.21,1.33,3.31,1.07,16.3,4.6,28.6,8.6,'IS808_Rev',1.63);
-INSERT INTO public."UnequalAngle" VALUES(91,'∠100 ⅹ50 ⅹ 8',9.05,11.5,100.0,50.0,8.0,9.0,0.0,1.14,3.6,118.0,20.2,0.25,125.0,13.1,3.2,1.32,3.29,1.07,18.5,5.2,32.2,9.8,'IS808_Rev',2.42);
-INSERT INTO public."UnequalAngle" VALUES(92,'∠100 ⅹ50 ⅹ10',11.13,14.1,100.0,50.0,10.0,9.0,0.0,1.21,3.68,142.0,24.0,0.25,150.0,15.9,3.17,1.3,3.26,1.06,22.6,6.3,39.3,12.2,'IS808_Rev',4.66);
-INSERT INTO public."UnequalAngle" VALUES(93,'∠100 ⅹ65 ⅹ7',8.85,11.2,100.0,65.0,7.0,10.0,0.0,1.53,3.25,115.0,38.9,0.4,131.0,22.8,3.2,1.86,3.41,1.42,17.1,7.8,30.7,14.1,'IS808_Rev',1.8);
-INSERT INTO public."UnequalAngle" VALUES(94,'∠120ⅹ80 ⅹ8',12.26,15.6,120.0,80.0,8.0,11.0,0.0,1.89,3.85,230.0,83.2,0.41,265.0,48.1,3.84,2.31,4.12,1.75,28.3,13.6,51.0,24.4,'IS808_Rev',3.27);
-INSERT INTO public."UnequalAngle" VALUES(95,'∠120ⅹ80 ⅹ10',15.12,19.2,120.0,80.0,10.0,11.0,0.0,1.96,3.94,280.0,100.0,0.41,322.0,58.3,3.81,2.28,4.09,1.74,34.8,16.6,62.6,30.1,'IS808_Rev',6.33);
-INSERT INTO public."UnequalAngle" VALUES(96,'∠120ⅹ80 ⅹ12',17.91,22.8,120.0,80.0,12.0,11.0,0.0,2.04,4.02,327.0,116.0,0.41,375.0,68.1,3.79,2.26,4.06,1.73,41.0,19.6,73.7,35.7,'IS808_Rev',10.8);
-INSERT INTO public."UnequalAngle" VALUES(97,'∠125ⅹ75 ⅹ12',17.91,22.8,125.0,75.0,12.0,11.0,0.0,1.85,4.32,358.0,97.5,0.34,396.0,59.8,3.97,2.07,4.17,1.62,43.9,17.3,78.1,31.8,'IS808_Rev',10.8);
-INSERT INTO public."UnequalAngle" VALUES(98,'∠135ⅹ65 ⅹ8',12.18,15.5,135.0,65.0,8.0,11.0,4.8,1.35,4.79,292.0,45.5,0.24,308.0,29.7,4.34,1.71,4.46,1.38,33.6,8.8,59.0,16.4,'IS808_Rev',3.27);
-INSERT INTO public."UnequalAngle" VALUES(99,'∠135ⅹ65 ⅹ10',15.04,19.1,135.0,65.0,10.0,11.0,4.8,1.43,4.88,357.0,55.0,0.24,376.0,36.1,4.32,1.69,4.43,1.37,41.4,10.8,72.5,20.5,'IS808_Rev',6.33);
-INSERT INTO public."UnequalAngle" VALUES(100,'∠135ⅹ65 ⅹ12',17.84,22.7,135.0,65.0,12.0,11.0,4.8,1.51,4.97,418.0,63.9,0.24,440.0,42.3,4.29,1.68,4.4,1.36,49.0,12.8,85.4,24.6,'IS808_Rev',10.8);
-INSERT INTO public."UnequalAngle" VALUES(101,'∠150ⅹ75 ⅹ9',15.39,19.6,150.0,75.0,9.0,11.0,4.8,1.58,5.28,457.0,78.8,0.26,485.0,50.7,4.83,2.01,4.98,1.61,47.1,13.3,82.8,24.5,'IS808_Rev',5.24);
-INSERT INTO public."UnequalAngle" VALUES(102,'∠150ⅹ75 ⅹ15',24.85,31.6,150.0,75.0,15.0,11.0,4.8,1.81,5.53,715.0,120.0,0.25,755.0,79.1,4.75,1.95,4.89,1.58,75.5,21.1,131.0,40.7,'IS808_Rev',23.6);
-INSERT INTO public."UnequalAngle" VALUES(103,'∠150ⅹ90ⅹ10',18.22,23.2,150.0,90.0,10.0,12.0,4.8,2.04,5.0,536.0,147.0,0.35,594.0,89.1,4.81,2.52,5.06,1.96,53.6,21.2,96.2,38.4,'IS808_Rev',7.66);
-INSERT INTO public."UnequalAngle" VALUES(104,'∠150ⅹ90ⅹ12',21.64,27.5,150.0,90.0,12.0,12.0,4.8,2.12,5.09,630.0,172.0,0.34,698.0,104.0,4.78,2.5,5.03,1.95,63.6,25.0,113.0,45.8,'IS808_Rev',13.1);
-INSERT INTO public."UnequalAngle" VALUES(105,'∠150ⅹ90ⅹ15',26.66,33.9,150.0,90.0,15.0,12.0,4.8,2.24,5.21,764.0,206.0,0.34,843.0,126.0,4.74,2.47,4.98,1.93,78.0,30.6,139.0,56.7,'IS808_Rev',25.3);
-INSERT INTO public."UnequalAngle" VALUES(106,'∠200ⅹ100ⅹ15',33.86,43.1,200.0,100.0,15.0,15.0,4.8,2.23,7.17,1770.0,303.0,0.25,1870.0,196.0,6.41,2.65,6.6,2.13,138.0,39.0,241.0,72.9,'IS808_Rev',32.0);
-INSERT INTO public."UnequalAngle" VALUES(107,'∠200ⅹ150ⅹ15',39.75,50.6,200.0,150.0,15.0,15.0,4.8,3.75,6.22,2030.0,988.0,0.5,2490.0,530.0,6.34,4.42,7.02,3.24,147.0,87.8,268.0,157.0,'IS808_Rev',37.6);
-INSERT INTO public."UnequalAngle" VALUES(108,'∠200ⅹ150ⅹ18',47.21,60.1,200.0,150.0,18.0,15.0,4.8,3.86,6.34,2390.0,1150.0,0.5,2920.0,623.0,6.3,4.38,6.97,3.22,175.0,103.0,317.0,187.0,'IS808_Rev',64.5);
-CREATE TABLE IF NOT EXISTS public."EqualAngle" (
-	"Id"	INTEGER NOT NULL,
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(1,'∠ 30 ⅹ 20ⅹ 3',1.14,1.45,30.0,20.0,3.0,4.5,0.0,0.51,0.99,1.29,0.46,1.05,1.47,0.27,0.94,0.56,1.01,0.43,0.64,0.31,1.16,0.56,'IS808_Rev',0.042000000000000001776);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(2,'∠ 30 ⅹ 20ⅹ 4',1.48,1.88,30.0,20.0,4.0,4.5,0.0,0.55,1.04,1.63,0.57,0.4,1.85,0.34,0.93,0.55,0.99,0.43,0.83,0.39,1.48,0.73,'IS808_Rev',0.098000000000000024868);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(3,'∠ 30 ⅹ 20ⅹ 5',1.8,2.29,30.0,20.0,5.0,4.5,0.0,0.58,1.07,1.93,0.67,0.39,2.19,0.41,0.92,0.54,0.98,0.42,1.0,0.47,1.79,0.9,'IS808_Rev',0.18700000000000001065);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(4,'∠ 40 ⅹ 25ⅹ 3',1.5,1.91,40.0,25.0,3.0,5.0,0.0,0.59,1.32,3.11,0.94,0.37,3.48,0.57,1.27,0.7,1.35,0.54,1.16,0.49,2.08,0.9,'IS808_Rev',0.055);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(5,'∠ 40 ⅹ 25ⅹ 4',1.96,2.49,40.0,25.0,4.0,5.0,0.0,0.63,1.36,3.97,1.19,0.36,4.44,0.72,1.26,0.69,1.33,0.54,1.5,0.64,2.69,1.18,'IS808_Rev',0.13);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(6,'∠ 40 ⅹ 25ⅹ 5',2.4,3.05,40.0,25.0,5.0,5.0,0.0,0.67,1.4,4.76,1.42,0.36,5.31,0.87,1.25,0.68,1.32,0.53,1.83,0.77,3.27,1.45,'IS808_Rev',0.25);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(7,'∠ 40 ⅹ 25ⅹ 6',2.82,3.59,40.0,25.0,6.0,5.0,0.0,0.7,1.44,5.5,1.62,0.35,6.1,1.02,1.24,0.67,1.3,0.53,2.15,0.9,3.81,1.72,'IS808_Rev',0.42400000000000002131);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(8,'∠ 45 ⅹ 30ⅹ 3',1.74,2.21,45.0,30.0,3.0,5.0,0.0,0.71,1.44,4.57,1.65,0.41,5.26,0.96,1.44,0.86,1.54,0.66,1.49,0.72,2.7,1.29,'IS808_Rev',0.064000000000000003552);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(9,'∠ 45 ⅹ 30ⅹ 4',2.27,2.89,45.0,30.0,4.0,5.0,0.0,0.74,1.48,5.87,2.1,0.41,6.75,1.22,1.42,0.85,1.53,0.65,1.95,0.93,3.5,1.69,'IS808_Rev',0.15099999999999999644);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(10,'∠ 45 ⅹ 30ⅹ 5',2.79,3.55,45.0,30.0,5.0,5.0,0.0,0.78,1.52,7.08,2.51,0.4,8.11,1.48,1.41,0.84,1.51,0.64,2.38,1.13,4.27,2.08,'IS808_Rev',0.29099999999999997868);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(11,'∠ 45 ⅹ 30ⅹ 6',3.29,4.19,45.0,30.0,6.0,5.0,0.0,0.82,1.56,8.21,2.89,0.4,9.37,1.73,1.4,0.83,1.49,0.64,2.79,1.32,5.0,2.46,'IS808_Rev',0.49599999999999999644);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(12,'∠ 50 ⅹ30ⅹ 3',1.86,2.37,50.0,30.0,3.0,5.5,0.0,0.67,1.64,6.13,1.69,0.35,6.79,1.03,1.61,0.84,1.69,0.66,1.83,0.73,3.28,1.31,'IS808_Rev',0.069000000000000003552);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(13,'∠ 50 ⅹ30ⅹ 4',2.44,3.1,50.0,30.0,4.0,5.5,0.0,0.71,1.69,7.89,2.15,0.34,8.73,1.32,1.59,0.83,1.68,0.65,2.38,0.94,4.26,1.72,'IS808_Rev',0.16200000000000001065);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(14,'∠ 50 ⅹ30ⅹ 5',2.99,3.81,50.0,30.0,5.0,5.5,0.0,0.75,1.73,9.53,2.58,0.34,10.5,1.59,1.58,0.82,1.66,0.65,2.92,1.15,5.19,2.13,'IS808_Rev',0.31200000000000001065);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(15,'∠ 50 ⅹ30ⅹ 6',3.54,4.5,50.0,30.0,6.0,5.5,0.0,0.79,1.77,11.1,2.97,0.33,12.2,1.86,1.57,0.81,1.64,0.64,3.43,1.34,6.09,2.52,'IS808_Rev',0.53200000000000002842);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(16,'∠ 60ⅹ 40ⅹ 5',3.79,4.83,60.0,40.0,5.0,6.0,0.0,0.98,1.97,17.5,6.28,0.41,20.2,3.65,1.91,1.14,2.04,0.87,4.35,2.08,7.83,3.77,'IS808_Rev',0.39500000000000001776);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(17,'∠ 60ⅹ 40ⅹ 6',4.49,5.72,60.0,40.0,6.0,6.0,0.0,1.02,2.01,20.5,7.29,0.41,23.5,4.26,1.89,1.13,2.03,0.86,5.13,2.45,9.21,4.47,'IS808_Rev',0.67600000000000015631);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(18,'∠ 60ⅹ 40ⅹ 8',5.84,7.44,60.0,40.0,8.0,6.0,0.0,1.09,2.08,25.9,9.12,0.4,29.6,5.45,1.87,1.11,1.99,0.86,6.62,3.14,11.8,5.83,'IS808_Rev',1.57);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(19,'∠ 65 ⅹ45ⅹ 5',4.18,5.33,65.0,45.0,5.0,6.0,0.0,1.1,2.09,22.8,9.02,0.44,26.7,5.12,2.07,1.3,2.24,0.98,5.16,2.65,9.33,4.77,'IS808_Rev',0.43700000000000001065);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(20,'∠ 65 ⅹ45ⅹ 6',4.96,6.32,65.0,45.0,6.0,6.0,0.0,1.14,2.13,26.7,10.5,0.44,31.2,5.99,2.06,1.29,2.22,0.97,6.1,3.12,11.0,5.66,'IS808_Rev',0.74800000000000004263);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(21,'∠ 65 ⅹ45ⅹ 8',6.47,8.24,65.0,45.0,8.0,6.0,0.0,1.21,2.2,33.9,13.2,0.43,39.5,7.66,2.03,1.27,2.19,0.96,7.89,4.02,14.1,7.39,'IS808_Rev',1.74);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(22,'∠ 70 ⅹ45ⅹ 5',4.39,5.59,70.0,45.0,5.0,6.5,0.0,1.06,2.29,28.0,9.2,0.39,31.8,5.42,2.24,1.28,2.39,0.98,5.95,2.68,10.7,4.82,'IS808_Rev',0.4580000000000000071);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(23,'∠ 70 ⅹ45ⅹ 6',5.21,6.63,70.0,45.0,6.0,6.5,0.0,1.1,2.33,32.8,10.7,0.39,37.2,6.34,2.23,1.27,2.37,0.98,7.04,3.15,12.6,5.72,'IS808_Rev',0.78399999999999998578);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(24,'∠ 70 ⅹ45ⅹ 8',6.79,8.65,70.0,45.0,8.0,6.5,0.0,1.18,2.41,41.8,13.5,0.38,47.2,8.1,2.2,1.25,2.34,0.97,9.12,4.06,16.3,7.5,'IS808_Rev',1.82);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(25,'∠ 70 ⅹ45ⅹ 10',8.31,10.5,70.0,45.0,10.0,6.5,0.0,1.25,2.49,50.0,16.0,0.37,56.2,9.81,2.17,1.23,2.3,0.96,11.0,4.91,19.7,9.22,'IS808_Rev',3.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(26,'∠ 75 ⅹ 50ⅹ 5',4.78,6.09,75.0,50.0,5.0,6.5,0.0,1.18,2.41,35.1,12.7,0.41,40.5,7.32,2.4,1.44,2.58,1.1,6.9,3.32,12.4,5.95,'IS808_Rev',0.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(27,'∠ 75 ⅹ 50ⅹ 6',5.68,7.23,75.0,50.0,6.0,6.5,0.0,1.22,2.45,41.2,14.8,0.41,47.5,8.57,2.39,1.43,2.56,1.09,8.17,3.92,14.7,7.07,'IS808_Rev',0.85600000000000004973);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(28,'∠ 75 ⅹ 50ⅹ 8',7.42,9.45,75.0,50.0,8.0,6.5,0.0,1.29,2.53,52.7,18.7,0.41,60.5,10.9,2.36,1.41,2.53,1.08,10.6,5.05,19.0,9.25,'IS808_Rev',1.99);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(29,'∠ 75 ⅹ 50ⅹ 10',9.1,11.5,75.0,50.0,10.0,6.5,0.0,1.37,2.61,63.2,22.3,0.4,72.2,13.3,2.34,1.39,2.5,1.07,12.9,6.13,23.1,11.3,'IS808_Rev',3.83);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(30,'∠ 80ⅹ  50ⅹ 5',4.99,6.36,80.0,50.0,5.0,7.0,0.0,1.14,2.62,42.0,12.9,0.37,47.3,7.68,2.57,1.43,2.73,1.1,7.81,3.34,14.0,5.99,'IS808_Rev',0.52);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(31,'∠ 80ⅹ  50ⅹ 6',5.92,7.55,80.0,50.0,6.0,7.0,0.0,1.18,2.66,49.4,15.1,0.37,55.5,8.99,2.56,1.41,2.71,1.09,9.25,3.95,16.5,7.13,'IS808_Rev',0.89199999999999999289);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(32,'∠ 80ⅹ  50ⅹ 8',7.74,9.87,80.0,50.0,8.0,7.0,0.0,1.26,2.74,63.2,19.1,0.37,70.8,11.5,2.53,1.39,2.68,1.08,12.0,5.09,21.4,9.36,'IS808_Rev',2.08);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(33,'∠ 80ⅹ  50ⅹ 10',9.5,12.1,80.0,50.0,10.0,7.0,0.0,1.33,2.82,76.0,22.7,0.36,84.7,13.9,2.5,1.37,2.65,1.07,14.6,6.18,26.0,11.5,'IS808_Rev',4.0);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(34,'∠ 90 ⅹ 60ⅹ 6',6.88,8.76,90.0,60.0,6.0,7.5,0.0,1.42,2.9,72.8,26.3,0.41,84.0,15.2,2.88,1.73,3.1,1.32,11.9,5.74,21.5,10.2,'IS808_Rev',1.03);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(35,'∠ 90 ⅹ 60ⅹ 8',9.01,11.4,90.0,60.0,8.0,7.5,0.0,1.49,2.98,93.6,33.5,0.41,107.0,19.5,2.86,1.71,3.06,1.3,15.5,7.44,27.9,13.4,'IS808_Rev',2.42);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(36,'∠ 90 ⅹ 60ⅹ 10',11.08,14.1,90.0,60.0,10.0,7.5,0.0,1.57,3.06,113.0,40.1,0.41,129.0,23.6,2.83,1.69,3.03,1.29,19.0,9.05,34.1,16.6,'IS808_Rev',4.66);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(37,'∠ 90 ⅹ 60ⅹ 12',13.09,16.6,90.0,60.0,12.0,7.5,0.0,1.64,3.13,131.0,46.2,0.4,149.0,27.6,2.8,1.66,3.0,1.29,22.3,10.6,39.9,19.7,'IS808_Rev',7.94);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(38,'∠100 ⅹ 65ⅹ 6',7.6,9.68,100.0,65.0,6.0,8.0,0.0,1.5,3.22,100.0,34.0,0.4,114.0,19.8,3.22,1.88,3.44,1.43,14.8,6.8,26.6,12.1,'IS808_Rev',1.14);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(39,'∠100 ⅹ 65ⅹ 8',9.97,12.7,100.0,65.0,8.0,8.0,0.0,1.57,3.3,129.0,43.5,0.4,147.0,25.5,3.19,1.85,3.4,1.42,19.3,8.8,34.6,15.9,'IS808_Rev',2.67);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(40,'∠100 ⅹ 65ⅹ 10',12.28,15.6,100.0,65.0,10.0,8.0,0.0,1.65,3.38,156.0,52.2,0.39,177.0,30.9,3.16,1.83,3.37,1.4,23.6,10.8,42.3,19.7,'IS808_Rev',5.16);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(41,'∠100 ⅹ 75ⅹ 6',8.08,10.3,100.0,75.0,6.0,8.5,0.0,1.82,3.05,105.0,51.2,0.5,128.0,27.6,3.19,2.23,3.54,1.64,15.1,9.0,27.4,16.0,'IS808_Rev',1.21);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(42,'∠100 ⅹ 75ⅹ 8',10.61,13.5,100.0,75.0,8.0,8.5,0.0,1.89,3.13,135.0,65.7,0.5,165.0,35.5,3.17,2.21,3.5,1.62,19.7,11.7,35.8,21.0,'IS808_Rev',2.85);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(43,'∠100 ⅹ 75ⅹ 10',13.07,16.6,100.0,75.0,10.0,8.5,0.0,1.97,3.21,164.0,79.2,0.5,200.0,43.0,3.14,2.18,3.47,1.61,24.2,14.3,43.8,25.9,'IS808_Rev',5.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(44,'∠100 ⅹ 75ⅹ 12',15.48,19.7,100.0,75.0,12.0,8.5,0.0,2.04,3.28,191.0,91.7,0.5,232.0,50.4,3.11,2.16,3.43,1.6,28.5,16.8,51.4,30.6,'IS808_Rev',9.38);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(45,'∠ 125 ⅹ 75ⅹ 6',9.27,11.8,125.0,75.0,6.0,9.0,0.0,1.62,4.08,194.0,54.3,0.35,215.0,32.7,4.05,2.14,4.27,1.66,23.1,9.2,41.3,16.4,'IS808_Rev',1.39);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(46,'∠ 125 ⅹ 75ⅹ 8',12.19,15.5,125.0,75.0,8.0,9.0,0.0,1.7,4.17,251.0,69.7,0.35,279.0,42.1,4.03,2.12,4.24,1.65,30.2,12.0,53.9,21.6,'IS808_Rev',3.27);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(47,'∠ 125 ⅹ 75ⅹ 10',15.05,19.1,125.0,75.0,10.0,9.0,0.0,1.78,4.26,306.0,84.1,0.35,339.0,51.0,4.0,2.09,4.21,1.63,37.2,14.7,66.2,26.7,'IS808_Rev',6.33);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(48,'∠125 ⅹ 95 ⅹ 6',10.14,12.9,125.0,95.0,6.0,9.0,4.8,2.24,3.72,205.0,103.0,0.52,254.0,55.0,3.99,2.83,4.44,2.06,23.4,14.3,42.9,25.5,'IS808_Rev',1.54);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(49,'∠125 ⅹ 95ⅹ 8',13.37,17.0,125.0,95.0,8.0,9.0,4.8,2.32,3.8,268.0,134.0,0.52,331.0,71.4,3.97,2.81,4.41,2.05,30.9,18.8,56.4,33.7,'IS808_Rev',3.61);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(50,'∠125 ⅹ 95ⅹ 10',16.54,21.0,125.0,95.0,10.0,9.0,4.8,2.4,3.89,328.0,164.0,0.51,404.0,87.3,3.94,2.79,4.38,2.04,38.1,23.1,69.4,41.7,'IS808_Rev',7.0);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(51,'∠125 ⅹ 95ⅹ 12',19.65,25.0,125.0,95.0,12.0,9.0,4.8,2.48,3.97,384.0,191.0,0.51,473.0,102.0,3.92,2.77,4.35,2.02,45.1,27.3,82.0,49.5,'IS808_Rev',11.9);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(52,'∠150 ⅹ 115ⅹ 8',16.27,20.7,150.0,115.0,8.0,11.0,4.8,2.76,4.48,474.0,244.0,0.52,589.0,128.0,4.78,3.43,5.34,2.49,45.1,27.9,82.4,50.0,'IS808_Rev',4.38);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(53,'∠150 ⅹ 115ⅹ 10',20.14,25.6,150.0,115.0,10.0,11.0,4.8,2.84,4.57,581.0,298.0,0.52,722.0,157.0,4.76,3.41,5.31,2.48,55.8,34.5,101.0,61.9,'IS808_Rev',8.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(54,'∠150 ⅹ 115ⅹ 12',23.96,30.5,150.0,115.0,12.0,11.0,4.8,2.92,4.65,684.0,350.0,0.52,849.0,185.0,4.74,3.39,5.28,2.47,66.2,40.8,120.0,73.5,'IS808_Rev',14.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(55,'∠150 ⅹ 115ⅹ 16',31.4,40.0,150.0,115.0,16.0,11.0,4.8,3.07,4.81,878.0,446.0,0.52,1080.0,239.0,4.69,3.34,5.21,2.44,86.2,53.0,156.0,96.1,'IS808_Rev',33.9);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(56,'∠200ⅹ 100ⅹ 10',22.93,29.2,200.0,100.0,10.0,12.0,4.8,2.03,6.98,1220.0,214.0,0.26,1300.0,137.0,6.48,2.71,6.68,2.17,94.3,26.9,165.0,48.7,'IS808_Rev',9.66);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(57,'∠200ⅹ 100ⅹ 12',27.29,34.7,200.0,100.0,12.0,12.0,4.8,2.11,7.07,1440.0,251.0,0.26,1530.0,161.0,6.46,2.69,6.65,2.15,112.0,31.9,196.0,58.3,'IS808_Rev',16.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(58,'∠200ⅹ 100ⅹ 16',35.84,45.6,200.0,100.0,16.0,12.0,4.8,2.27,7.23,1870.0,319.0,0.25,1980.0,207.0,6.4,2.65,6.59,2.13,146.0,41.3,255.0,77.5,'IS808_Rev',38.7);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(59,'∠200ⅹ 150ⅹ 10',26.92,34.2,200.0,150.0,10.0,13.5,4.8,3.55,6.02,1400.0,688.0,0.51,1720.0,368.0,6.41,4.48,7.1,3.28,100.0,60.2,183.0,107.0,'IS808_Rev',11.3);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(60,'∠200ⅹ 150ⅹ 12',32.07,40.8,200.0,150.0,12.0,13.5,4.8,3.63,6.11,1660.0,812.0,0.51,2040.0,433.0,6.39,4.46,7.07,3.26,119.0,71.4,218.0,127.0,'IS808_Rev',19.4);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(61,'∠200ⅹ 150ⅹ 16',42.18,53.7,200.0,150.0,16.0,13.5,4.8,3.79,6.27,2150.0,1040.0,0.5,2630.0,560.0,6.33,4.41,7.01,3.23,156.0,93.2,285.0,167.0,'IS808_Rev',45.6);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(62,'∠200ⅹ 150ⅹ 20',52.04,66.2,200.0,150.0,20.0,13.5,4.8,3.94,6.42,2610.0,1260.0,0.5,3190.0,682.0,6.28,4.36,6.94,3.21,192.0,114.0,349.0,206.0,'IS808_Rev',88.0);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(63,'∠ 40 ⅹ20ⅹ3',1.37,1.74,40.0,20.0,3.0,4.0,0.0,0.45,1.43,2.9,0.49,0.25,3.04,0.32,1.28,0.53,1.32,0.43,1.11,0.32,1.95,0.59,'IS808_Rev',0.050999999999999996447);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(64,'∠ 40 ⅹ20ⅹ4',1.79,2.27,40.0,20.0,4.0,4.0,0.0,0.49,1.47,3.7,0.62,0.25,3.86,0.41,1.27,0.52,1.3,0.42,1.45,0.41,2.52,0.78,'IS808_Rev',0.11899999999999999467);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(65,'∠ 40 ⅹ20ⅹ5',2.19,2.78,40.0,20.0,5.0,4.0,0.0,0.52,1.51,4.4,0.73,0.24,4.62,0.49,1.25,0.51,1.29,0.42,1.76,0.49,3.05,0.97,'IS808_Rev',0.22900000000000000355);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(66,'∠ 60 ⅹ30ⅹ5',3.4,4.33,60.0,30.0,5.0,6.0,0.0,0.69,2.16,15.9,2.7,0.25,16.8,1.76,1.92,0.79,1.97,0.64,4.14,1.17,7.24,2.21,'IS808_Rev',0.35400000000000000355);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(67,'∠ 60 ⅹ30ⅹ6',4.02,5.12,60.0,30.0,6.0,6.0,0.0,0.73,2.21,18.5,3.11,0.25,19.6,2.06,1.9,0.78,1.96,0.63,4.88,1.37,8.5,2.64,'IS808_Rev',0.60400000000000000355);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(68,'∠ 60 ⅹ40ⅹ7',5.17,6.59,60.0,40.0,7.0,6.0,0.0,1.06,2.05,23.3,8.23,0.4,26.6,4.86,1.88,1.12,2.01,0.86,5.89,2.8,10.5,5.16,'IS808_Rev',1.06);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(69,' ∠65 ⅹ50ⅹ5',4.38,5.58,65.0,50.0,5.0,6.0,0.0,1.26,2.0,23.6,12.2,0.52,29.3,6.48,2.06,1.48,2.29,1.08,5.25,3.27,9.53,5.85,'IS808_Rev',0.4580000000000000071);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(70,'∠65 ⅹ50ⅹ6',5.19,6.62,65.0,50.0,6.0,6.0,0.0,1.3,2.04,27.6,14.2,0.52,34.3,7.59,2.04,1.47,2.28,1.07,6.2,3.85,11.2,6.93,'IS808_Rev',0.78399999999999998578);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(71,'∠65 ⅹ50ⅹ7',6.0,7.64,65.0,50.0,7.0,6.0,0.0,1.34,2.08,31.5,16.2,0.52,39.0,8.67,2.03,1.45,2.26,1.07,7.13,4.42,12.9,7.99,'IS808_Rev',1.23);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(72,'∠65 ⅹ50ⅹ8',6.78,8.64,65.0,50.0,8.0,6.0,0.0,1.38,2.12,35.2,18.0,0.52,43.4,9.72,2.02,1.44,2.24,1.06,8.03,4.97,14.5,9.03,'IS808_Rev',1.82);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(73,'∠ 70ⅹ 50ⅹ5',4.57,5.83,70.0,50.0,5.0,6.0,0.0,1.22,2.21,29.0,12.5,0.46,34.5,6.92,2.23,1.46,2.43,1.09,6.05,3.3,10.9,5.9,'IS808_Rev',0.47900000000000000355);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(74,'∠ 70ⅹ 50ⅹ6',5.43,6.92,70.0,50.0,6.0,6.0,0.0,1.26,2.25,34.0,14.5,0.46,40.4,8.11,2.22,1.45,2.42,1.08,7.16,3.89,12.9,7.0,'IS808_Rev',0.82);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(75,'∠ 70ⅹ 50ⅹ7',6.27,7.99,70.0,50.0,7.0,6.0,0.0,1.3,2.29,38.8,16.5,0.46,46.0,9.26,2.2,1.44,2.4,1.08,8.23,4.46,14.8,8.08,'IS808_Rev',1.29);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(76,'∠ 70ⅹ 50ⅹ8',7.09,9.04,70.0,50.0,8.0,6.0,0.0,1.33,2.33,43.4,18.4,0.46,51.4,10.3,2.19,1.43,2.38,1.07,9.28,5.01,16.7,9.14,'IS808_Rev',1.91);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(77,'∠75 ⅹ50ⅹ7',6.57,8.37,75.0,50.0,7.0,7.0,0.0,1.26,2.49,47.1,16.8,0.41,54.2,9.8,2.37,1.42,2.54,1.08,9.41,4.49,16.9,8.17,'IS808_Rev',1.34);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(78,'∠80 ⅹ40ⅹ5',4.6,5.86,80.0,40.0,5.0,7.0,0.0,0.86,2.82,39.0,6.74,0.26,41.4,4.36,2.58,1.07,2.66,0.86,7.53,2.14,13.1,3.94,'IS808_Rev',0.47900000000000000355);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(79,'∠80 ⅹ40ⅹ6',5.45,6.95,80.0,40.0,6.0,7.0,0.0,0.89,2.86,45.7,7.84,0.25,48.5,5.09,2.57,1.06,2.64,0.86,8.9,2.52,15.5,4.7,'IS808_Rev',0.82);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(80,'∠80 ⅹ40ⅹ7',6.29,8.02,80.0,40.0,7.0,7.0,0.0,0.93,2.91,52.2,8.87,0.25,55.3,5.8,2.55,1.05,2.63,0.85,10.2,2.89,17.8,5.47,'IS808_Rev',1.29);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(81,'∠80 ⅹ40ⅹ8',7.12,9.07,80.0,40.0,8.0,7.0,0.0,0.97,2.95,58.4,9.84,0.25,61.7,6.5,2.54,1.04,2.61,0.85,11.5,3.25,20.1,6.24,'IS808_Rev',1.91);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(82,'∠ 80ⅹ 60ⅹ6',6.42,8.18,80.0,60.0,6.0,8.0,0.0,1.5,2.48,52.6,25.5,0.5,64.3,13.8,2.54,1.77,2.8,1.3,9.5,5.7,17.3,10.1,'IS808_Rev',0.96400000000000005684);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(83,'∠ 80ⅹ 60ⅹ7',7.42,9.45,80.0,60.0,7.0,8.0,0.0,1.54,2.52,60.1,29.1,0.5,73.4,15.8,2.52,1.75,2.79,1.29,11.0,6.5,19.9,11.7,'IS808_Rev',1.52);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(84,'∠ 80ⅹ 60ⅹ8',8.4,10.7,80.0,60.0,8.0,8.0,0.0,1.57,2.56,67.4,32.5,0.5,82.2,17.7,2.51,1.74,2.77,1.29,12.4,7.3,22.4,13.3,'IS808_Rev',2.25);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(85,'∠ 90ⅹ 65 ⅹ 6',7.13,9.08,90.0,65.0,6.0,8.0,0.0,1.57,2.81,74.8,33.1,0.47,89.7,18.3,2.87,1.91,3.14,1.42,12.1,6.7,21.9,12.0,'IS808_Rev',1.07);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(86,'∠ 90ⅹ 65 ⅹ7',8.24,10.5,90.0,65.0,7.0,8.0,0.0,1.61,2.85,85.7,37.8,0.47,102.0,20.9,2.86,1.9,3.13,1.41,13.9,7.7,25.2,13.9,'IS808_Rev',1.69);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(87,'∠ 90ⅹ 65 ⅹ8',9.34,11.9,90.0,65.0,8.0,8.0,0.0,1.65,2.89,96.3,42.3,0.47,115.0,23.5,2.84,1.89,3.11,1.4,15.8,8.7,28.5,15.7,'IS808_Rev',2.5);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(88,'∠ 90ⅹ 65 ⅹ10',11.49,14.6,90.0,65.0,10.0,8.0,0.0,1.73,2.97,116.0,50.7,0.47,138.0,28.4,2.82,1.86,3.08,1.39,19.3,10.6,34.8,19.3,'IS808_Rev',4.83);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(89,'∠100 ⅹ50 ⅹ 6',6.92,8.81,100.0,50.0,6.0,9.0,0.0,1.06,3.51,91.9,15.9,0.26,97.5,10.3,3.23,1.34,3.33,1.08,14.2,4.0,24.8,7.4,'IS808_Rev',1.03);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(90,'∠100 ⅹ50 ⅹ 7',7.99,10.1,100.0,50.0,7.0,9.0,0.0,1.1,3.56,105.0,18.1,0.26,111.0,11.7,3.21,1.33,3.31,1.07,16.3,4.6,28.6,8.6,'IS808_Rev',1.63);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(91,'∠100 ⅹ50 ⅹ 8',9.05,11.5,100.0,50.0,8.0,9.0,0.0,1.14,3.6,118.0,20.2,0.25,125.0,13.1,3.2,1.32,3.29,1.07,18.5,5.2,32.2,9.8,'IS808_Rev',2.42);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(92,'∠100 ⅹ50 ⅹ10',11.13,14.1,100.0,50.0,10.0,9.0,0.0,1.21,3.68,142.0,24.0,0.25,150.0,15.9,3.17,1.3,3.26,1.06,22.6,6.3,39.3,12.2,'IS808_Rev',4.66);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(93,'∠100 ⅹ65 ⅹ7',8.85,11.2,100.0,65.0,7.0,10.0,0.0,1.53,3.25,115.0,38.9,0.4,131.0,22.8,3.2,1.86,3.41,1.42,17.1,7.8,30.7,14.1,'IS808_Rev',1.8);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(94,'∠120ⅹ80 ⅹ8',12.26,15.6,120.0,80.0,8.0,11.0,0.0,1.89,3.85,230.0,83.2,0.41,265.0,48.1,3.84,2.31,4.12,1.75,28.3,13.6,51.0,24.4,'IS808_Rev',3.27);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(95,'∠120ⅹ80 ⅹ10',15.12,19.2,120.0,80.0,10.0,11.0,0.0,1.96,3.94,280.0,100.0,0.41,322.0,58.3,3.81,2.28,4.09,1.74,34.8,16.6,62.6,30.1,'IS808_Rev',6.33);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(96,'∠120ⅹ80 ⅹ12',17.91,22.8,120.0,80.0,12.0,11.0,0.0,2.04,4.02,327.0,116.0,0.41,375.0,68.1,3.79,2.26,4.06,1.73,41.0,19.6,73.7,35.7,'IS808_Rev',10.8);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(97,'∠125ⅹ75 ⅹ12',17.91,22.8,125.0,75.0,12.0,11.0,0.0,1.85,4.32,358.0,97.5,0.34,396.0,59.8,3.97,2.07,4.17,1.62,43.9,17.3,78.1,31.8,'IS808_Rev',10.8);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(98,'∠135ⅹ65 ⅹ8',12.18,15.5,135.0,65.0,8.0,11.0,4.8,1.35,4.79,292.0,45.5,0.24,308.0,29.7,4.34,1.71,4.46,1.38,33.6,8.8,59.0,16.4,'IS808_Rev',3.27);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(99,'∠135ⅹ65 ⅹ10',15.04,19.1,135.0,65.0,10.0,11.0,4.8,1.43,4.88,357.0,55.0,0.24,376.0,36.1,4.32,1.69,4.43,1.37,41.4,10.8,72.5,20.5,'IS808_Rev',6.33);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(100,'∠135ⅹ65 ⅹ12',17.84,22.7,135.0,65.0,12.0,11.0,4.8,1.51,4.97,418.0,63.9,0.24,440.0,42.3,4.29,1.68,4.4,1.36,49.0,12.8,85.4,24.6,'IS808_Rev',10.8);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(101,'∠150ⅹ75 ⅹ9',15.39,19.6,150.0,75.0,9.0,11.0,4.8,1.58,5.28,457.0,78.8,0.26,485.0,50.7,4.83,2.01,4.98,1.61,47.1,13.3,82.8,24.5,'IS808_Rev',5.24);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(102,'∠150ⅹ75 ⅹ15',24.85,31.6,150.0,75.0,15.0,11.0,4.8,1.81,5.53,715.0,120.0,0.25,755.0,79.1,4.75,1.95,4.89,1.58,75.5,21.1,131.0,40.7,'IS808_Rev',23.6);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(103,'∠150ⅹ90ⅹ10',18.22,23.2,150.0,90.0,10.0,12.0,4.8,2.04,5.0,536.0,147.0,0.35,594.0,89.1,4.81,2.52,5.06,1.96,53.6,21.2,96.2,38.4,'IS808_Rev',7.66);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(104,'∠150ⅹ90ⅹ12',21.64,27.5,150.0,90.0,12.0,12.0,4.8,2.12,5.09,630.0,172.0,0.34,698.0,104.0,4.78,2.5,5.03,1.95,63.6,25.0,113.0,45.8,'IS808_Rev',13.1);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(105,'∠150ⅹ90ⅹ15',26.66,33.9,150.0,90.0,15.0,12.0,4.8,2.24,5.21,764.0,206.0,0.34,843.0,126.0,4.74,2.47,4.98,1.93,78.0,30.6,139.0,56.7,'IS808_Rev',25.3);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(106,'∠200ⅹ100ⅹ15',33.86,43.1,200.0,100.0,15.0,15.0,4.8,2.23,7.17,1770.0,303.0,0.25,1870.0,196.0,6.41,2.65,6.6,2.13,138.0,39.0,241.0,72.9,'IS808_Rev',32.0);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(107,'∠200ⅹ150ⅹ15',39.75,50.6,200.0,150.0,15.0,15.0,4.8,3.75,6.22,2030.0,988.0,0.5,2490.0,530.0,6.34,4.42,7.02,3.24,147.0,87.8,268.0,157.0,'IS808_Rev',37.6);
+INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(108,'∠200ⅹ150ⅹ18',47.21,60.1,200.0,150.0,18.0,15.0,4.8,3.86,6.34,2390.0,1150.0,0.5,2920.0,623.0,6.3,4.38,6.97,3.22,175.0,103.0,317.0,187.0,'IS808_Rev',64.5);
+
+CREATE TABLE IF NOT EXISTS public."EqualAngle"(
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR(50),
-	"Mass"	DECIMAL(10 , 2),
-	"Area"	DECIMAL(10 , 2),
-	"a"	DECIMAL(10 , 2),
-	"b"	DECIMAL(10 , 2),
-	"t"	DECIMAL(10 , 2),
-	"R1"	DECIMAL(10 , 2),
-	"R2"	DECIMAL(10 , 2),
-	"Cz"	DECIMAL(10 , 2),
-	"Cy"	DECIMAL(10 , 2),
-	"Iz"	DECIMAL(10 , 2),
-	"Iy"	DECIMAL(10 , 2),
-	"Alpha"	DECIMAL(10 , 2),
-	"Iu(max)"	DECIMAL(10 , 2),
-	"Iv(min)"	DECIMAL(10 , 2),
-	"rz"	DECIMAL(10 , 2),
-	"ry"	DECIMAL(10 , 2),
-	"ru(max)"	DECIMAL(10 , 2),
-	"rv(min)"	DECIMAL(10 , 2),
-	"Zz"	DECIMAL(10 , 2),
-	"Zy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
+	"Mass"	NUMERIC(10 , 2),
+	"Area"	NUMERIC(10 , 2),
+	"a"	NUMERIC(10 , 2),
+	"b"	NUMERIC(10 , 2),
+	"t"	NUMERIC(10 , 2),
+	"R1"	NUMERIC(10 , 2),
+	"R2"	NUMERIC(10 , 2),
+	"Cz"	NUMERIC(10 , 2),
+	"Cy"	NUMERIC(10 , 2),
+	"Iz"	NUMERIC(10 , 2),
+	"Iy"	NUMERIC(10 , 2),
+	"Alpha"	NUMERIC(10 , 2),
+	"Iu_max"	NUMERIC(10 , 2),
+	"Iv_min"	NUMERIC(10 , 2),
+	"rz"	NUMERIC(10 , 2),
+	"ry"	NUMERIC(10 , 2),
+	"ru_max"	NUMERIC(10 , 2),
+	"rv_min"	NUMERIC(10 , 2),
+	"Zz"	NUMERIC(10 , 2),
+	"Zy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
 	"Source"	VARCHAR(50),
-	"It"	DECIMAL(10 , 2),
-	PRIMARY KEY("Id")
+	"It"	NUMERIC(10 , 2) 
 );
-INSERT INTO public."EqualAngle" VALUES(1,'∠ 20ⅹ 20ⅹ 3',0.9,1.14,20.0,20.0,3.0,4.0,0.0,0.6,0.6,0.4,0.4,0.79,0.64,0.17,0.59,0.59,0.75,0.39,0.29,0.29,0.52,0.53,'IS808_Rev',0.033000000000000007105);
-INSERT INTO public."EqualAngle" VALUES(2,'∠ 20ⅹ 20ⅹ 4',1.16,1.47,20.0,20.0,4.0,4.0,0.0,0.64,0.64,0.5,0.5,0.79,0.79,0.22,0.58,0.58,0.73,0.39,0.37,0.37,0.66,0.67,'IS808_Rev',0.075999999999999996447);
-INSERT INTO public."EqualAngle" VALUES(3,'∠ 25ⅹ 25ⅹ 3',1.14,1.45,25.0,25.0,3.0,4.5,0.0,0.73,0.73,0.83,0.83,0.79,1.3,0.35,0.75,0.75,0.95,0.49,0.46,0.46,0.83,0.84,'IS808_Rev',0.042000000000000001776);
-INSERT INTO public."EqualAngle" VALUES(4,'∠ 25ⅹ 25ⅹ 4',1.48,1.88,25.0,25.0,4.0,4.5,0.0,0.76,0.76,1.04,1.04,0.79,1.63,0.44,0.74,0.74,0.93,0.48,0.6,0.6,1.07,1.09,'IS808_Rev',0.098000000000000024868);
-INSERT INTO public."EqualAngle" VALUES(5,'∠ 25ⅹ 25ⅹ 5',1.8,2.29,25.0,25.0,5.0,4.5,0.0,0.8,0.8,1.23,1.23,0.79,1.92,0.54,0.73,0.73,0.92,0.48,0.72,0.72,1.3,1.31,'IS808_Rev',0.18700000000000001065);
-INSERT INTO public."EqualAngle" VALUES(6,'∠ 30ⅹ 30ⅹ 3',1.38,1.76,30.0,30.0,3.0,5.0,0.0,0.85,0.85,1.47,1.47,0.79,2.32,0.62,0.91,0.91,1.15,0.59,0.68,0.68,1.22,1.23,'IS808_Rev',0.050999999999999996447);
-INSERT INTO public."EqualAngle" VALUES(7,'∠ 30ⅹ 30ⅹ 4',1.8,2.29,30.0,30.0,4.0,5.0,0.0,0.89,0.89,1.86,1.86,0.79,2.94,0.78,0.9,0.9,1.13,0.58,0.88,0.88,1.58,1.6,'IS808_Rev',0.11899999999999999467);
-INSERT INTO public."EqualAngle" VALUES(8,'∠ 30ⅹ 30ⅹ 5',2.2,2.8,30.0,30.0,5.0,5.0,0.0,0.93,0.93,2.22,2.22,0.79,3.49,0.95,0.89,0.89,1.12,0.58,1.07,1.07,1.92,1.94,'IS808_Rev',0.22900000000000000355);
-INSERT INTO public."EqualAngle" VALUES(9,'∠ 35ⅹ 35ⅹ 3',1.62,2.06,35.0,35.0,3.0,5.0,0.0,0.97,0.97,2.38,2.38,0.79,3.77,0.99,1.07,1.07,1.35,0.69,0.94,0.94,1.69,1.7,'IS808_Rev',0.06);
-INSERT INTO public."EqualAngle" VALUES(10,'∠ 35ⅹ 35ⅹ 4',2.11,2.69,35.0,35.0,4.0,5.0,0.0,1.01,1.01,3.04,3.04,0.79,4.81,1.27,1.06,1.06,1.34,0.69,1.22,1.22,2.19,2.21,'IS808_Rev',0.14);
-INSERT INTO public."EqualAngle" VALUES(11,'∠ 35ⅹ 35ⅹ 5',2.59,3.3,35.0,35.0,5.0,5.0,0.0,1.05,1.05,3.65,3.65,0.79,5.76,1.54,1.05,1.05,1.32,0.68,1.49,1.49,2.68,2.69,'IS808_Rev',0.27);
-INSERT INTO public."EqualAngle" VALUES(12,'∠ 35ⅹ 35ⅹ 6',3.06,3.89,35.0,35.0,6.0,5.0,0.0,1.09,1.09,4.2,4.2,0.79,6.61,1.8,1.04,1.04,1.3,0.68,1.74,1.74,3.14,3.15,'IS808_Rev',0.46);
-INSERT INTO public."EqualAngle" VALUES(13,'∠ 40ⅹ 40ⅹ 3',1.86,2.37,40.0,40.0,3.0,5.5,0.0,1.09,1.09,3.61,3.61,0.79,5.72,1.51,1.23,1.23,1.55,0.8,1.24,1.24,2.22,2.24,'IS808_Rev',0.069000000000000003552);
-INSERT INTO public."EqualAngle" VALUES(14,'∠ 40ⅹ 40ⅹ 4',2.44,3.1,40.0,40.0,4.0,5.5,0.0,1.13,1.13,4.63,4.63,0.79,7.34,1.93,1.22,1.22,1.54,0.79,1.62,1.62,2.9,2.92,'IS808_Rev',0.16200000000000001065);
-INSERT INTO public."EqualAngle" VALUES(15,'∠ 40ⅹ 40ⅹ 5',2.99,3.81,40.0,40.0,5.0,5.5,0.0,1.17,1.17,5.58,5.58,0.79,8.83,2.33,1.21,1.21,1.52,0.78,1.97,1.97,3.55,3.57,'IS808_Rev',0.31200000000000001065);
-INSERT INTO public."EqualAngle" VALUES(16,'∠ 40ⅹ 40ⅹ 6',3.54,4.5,40.0,40.0,6.0,5.5,0.0,1.21,1.21,6.46,6.46,0.79,10.2,2.73,1.2,1.2,1.5,0.78,2.32,2.32,4.17,4.19,'IS808_Rev',0.53200000000000002842);
-INSERT INTO public."EqualAngle" VALUES(17,'∠ 45ⅹ 45ⅹ 3',2.1,2.67,45.0,45.0,3.0,5.5,0.0,1.22,1.22,5.2,5.2,0.79,8.2,2.17,1.39,1.39,1.76,0.9,1.58,1.58,2.84,2.86,'IS808_Rev',0.078000000000000015987);
-INSERT INTO public."EqualAngle" VALUES(18,'∠ 45ⅹ 45ⅹ 4',2.75,3.5,45.0,45.0,4.0,5.5,0.0,1.26,1.26,6.7,6.7,0.79,10.6,2.78,1.38,1.38,1.74,0.89,2.07,2.07,3.71,3.73,'IS808_Rev',0.1830000000000000071);
-INSERT INTO public."EqualAngle" VALUES(19,'∠ 45ⅹ 45ⅹ 5',3.39,4.31,45.0,45.0,5.0,5.5,0.0,1.3,1.3,8.1,8.1,0.79,12.8,3.37,1.37,1.37,1.72,0.88,2.53,2.53,4.55,4.57,'IS808_Rev',0.35400000000000000355);
-INSERT INTO public."EqualAngle" VALUES(20,'∠ 45ⅹ 45ⅹ 6',4.01,5.1,45.0,45.0,6.0,5.5,0.0,1.34,1.34,9.42,9.42,0.79,14.9,3.94,1.36,1.36,1.71,0.88,2.98,2.98,5.36,5.38,'IS808_Rev',0.60400000000000000355);
-INSERT INTO public."EqualAngle" VALUES(21,'∠ 50ⅹ 50ⅹ 3',2.34,2.99,50.0,50.0,3.0,6.0,0.0,1.34,1.34,7.21,7.21,0.79,11.4,3.01,1.55,1.55,1.96,1.0,1.97,1.97,3.53,3.55,'IS808_Rev',0.086999999999999992894);
-INSERT INTO public."EqualAngle" VALUES(22,'∠ 50ⅹ 50ⅹ 4',3.08,3.92,50.0,50.0,4.0,6.0,0.0,1.38,1.38,9.32,9.32,0.79,14.8,3.86,1.54,1.54,1.94,0.99,2.57,2.57,4.62,4.64,'IS808_Rev',0.20400000000000000355);
-INSERT INTO public."EqualAngle" VALUES(23,'∠ 50ⅹ 50ⅹ 5',3.79,4.83,50.0,50.0,5.0,6.0,0.0,1.42,1.42,11.3,11.3,0.79,17.9,4.69,1.53,1.53,1.93,0.99,3.16,3.16,5.67,5.7,'IS808_Rev',0.39500000000000001776);
-INSERT INTO public."EqualAngle" VALUES(24,'∠ 50ⅹ 50ⅹ 6',4.49,5.72,50.0,50.0,6.0,6.0,0.0,1.46,1.46,13.2,13.2,0.79,20.8,5.48,1.52,1.52,1.91,0.98,3.72,3.72,6.69,6.71,'IS808_Rev',0.67600000000000015631);
-INSERT INTO public."EqualAngle" VALUES(25,'∠ 55ⅹ 55ⅹ 4',3.4,4.33,55.0,55.0,4.0,6.5,0.0,1.5,1.5,12.5,12.5,0.79,19.9,5.2,1.7,1.7,2.14,1.1,3.14,3.14,5.63,5.66,'IS808_Rev',0.22600000000000002309);
-INSERT INTO public."EqualAngle" VALUES(26,'∠ 55ⅹ 55ⅹ 5',4.19,5.34,55.0,55.0,5.0,6.5,0.0,1.54,1.54,15.2,15.2,0.79,24.2,6.31,1.69,1.69,2.13,1.09,3.85,3.85,6.92,6.95,'IS808_Rev',0.43700000000000001065);
-INSERT INTO public."EqualAngle" VALUES(27,'∠ 55ⅹ 55ⅹ 6',4.97,6.33,55.0,55.0,6.0,6.5,0.0,1.58,1.58,17.8,17.8,0.79,28.2,7.39,1.68,1.68,2.11,1.08,4.55,4.55,8.17,8.2,'IS808_Rev',0.74800000000000004263);
-INSERT INTO public."EqualAngle" VALUES(28,'∠ 55ⅹ 55ⅹ 8',6.48,8.25,55.0,55.0,8.0,6.5,0.0,1.66,1.66,22.5,22.5,0.79,35.6,9.48,1.65,1.65,2.08,1.07,5.87,5.87,10.5,10.6,'IS808_Rev',1.74);
-INSERT INTO public."EqualAngle" VALUES(29,'∠ 60ⅹ 60ⅹ 4',3.71,4.73,60.0,60.0,4.0,6.5,0.0,1.63,1.63,16.4,16.4,0.79,26.0,6.8,1.86,1.86,2.35,1.2,3.76,3.76,6.74,6.77,'IS808_Rev',0.24699999999999993072);
-INSERT INTO public."EqualAngle" VALUES(30,'∠ 60ⅹ 60ⅹ 5',4.58,5.84,60.0,60.0,5.0,6.5,0.0,1.67,1.67,20.0,20.0,0.79,31.7,8.26,1.85,1.85,2.33,1.19,4.62,4.62,8.3,8.32,'IS808_Rev',0.47900000000000000355);
-INSERT INTO public."EqualAngle" VALUES(31,'∠ 60ⅹ 60ⅹ 6',5.44,6.93,60.0,60.0,6.0,6.5,0.0,1.71,1.71,23.4,23.4,0.79,37.1,9.69,1.84,1.84,2.31,1.18,5.46,5.46,9.81,9.84,'IS808_Rev',0.82);
-INSERT INTO public."EqualAngle" VALUES(32,'∠ 60ⅹ 60ⅹ 8',7.1,9.05,60.0,60.0,8.0,6.5,0.0,1.78,1.78,29.8,29.8,0.79,47.1,12.4,1.81,1.81,2.28,1.17,7.06,7.06,12.7,12.7,'IS808_Rev',1.91);
-INSERT INTO public."EqualAngle" VALUES(33,'∠ 65ⅹ 65ⅹ 4',4.03,5.13,65.0,65.0,4.0,6.5,0.0,1.75,1.75,21.0,21.0,0.79,33.4,8.69,2.02,2.02,2.55,1.3,4.43,4.43,7.95,7.98,'IS808_Rev',0.26800000000000001598);
-INSERT INTO public."EqualAngle" VALUES(34,'∠ 65ⅹ 65ⅹ 5',4.98,6.34,65.0,65.0,5.0,6.5,0.0,1.79,1.79,25.7,25.7,0.79,40.8,10.6,2.01,2.01,2.54,1.29,5.45,5.45,9.8,9.83,'IS808_Rev',0.52);
-INSERT INTO public."EqualAngle" VALUES(35,'∠ 65ⅹ 65ⅹ 6',5.91,7.53,65.0,65.0,6.0,6.5,0.0,1.83,1.83,30.1,30.1,0.79,47.8,12.4,2.0,2.0,2.52,1.28,6.45,6.45,11.5,11.6,'IS808_Rev',0.89199999999999999289);
-INSERT INTO public."EqualAngle" VALUES(36,'∠ 65ⅹ 65ⅹ 8',7.73,9.85,65.0,65.0,8.0,6.5,0.0,1.91,1.91,38.4,38.4,0.79,60.8,16.0,1.97,1.97,2.48,1.27,8.36,8.36,15.0,15.0,'IS808_Rev',2.08);
-INSERT INTO public."EqualAngle" VALUES(37,'∠ 70ⅹ 70ⅹ 5',5.38,6.86,70.0,70.0,5.0,7.0,0.0,1.92,1.92,32.3,32.3,0.79,51.3,13.3,2.17,2.17,2.74,1.39,6.36,6.36,11.4,11.4,'IS808_Rev',0.56200000000000009947);
-INSERT INTO public."EqualAngle" VALUES(38,'∠ 70ⅹ 70ⅹ 6',6.39,8.15,70.0,70.0,6.0,7.0,0.0,1.96,1.96,38.0,38.0,0.79,60.3,15.6,2.16,2.16,2.72,1.39,7.53,7.53,13.5,13.5,'IS808_Rev',0.96400000000000005684);
-INSERT INTO public."EqualAngle" VALUES(39,'∠ 70ⅹ 70ⅹ 8',8.37,10.6,70.0,70.0,8.0,7.0,0.0,2.03,2.03,48.5,48.5,0.79,76.9,20.1,2.13,2.13,2.69,1.37,9.77,9.77,17.5,17.6,'IS808_Rev',2.25);
-INSERT INTO public."EqualAngle" VALUES(40,'∠ 70ⅹ 70ⅹ 10',10.29,13.1,70.0,70.0,10.0,7.0,0.0,2.11,2.11,58.3,58.3,0.79,92.1,24.4,2.11,2.11,2.65,1.37,11.9,11.9,21.4,21.5,'IS808_Rev',4.33);
-INSERT INTO public."EqualAngle" VALUES(41,'∠ 75ⅹ 75ⅹ 5',5.77,7.36,75.0,75.0,5.0,7.0,0.0,2.04,2.04,40.0,40.0,0.79,63.6,16.5,2.33,2.33,2.94,1.5,7.3,7.3,13.2,13.2,'IS808_Rev',0.60400000000000000355);
-INSERT INTO public."EqualAngle" VALUES(42,'∠ 75ⅹ 75ⅹ 6',6.86,8.75,75.0,75.0,6.0,7.0,0.0,2.08,2.08,47.1,47.1,0.79,74.8,19.4,2.32,2.32,2.92,1.49,8.7,8.7,15.6,15.6,'IS808_Rev',1.03);
-INSERT INTO public."EqualAngle" VALUES(43,'∠ 75ⅹ 75ⅹ 8',9.0,11.4,75.0,75.0,8.0,7.0,0.0,2.16,2.16,60.3,60.3,0.79,95.7,24.9,2.29,2.29,2.89,1.47,11.3,11.3,20.3,20.4,'IS808_Rev',2.42);
-INSERT INTO public."EqualAngle" VALUES(44,'∠ 75ⅹ 75ⅹ 10',11.07,14.1,75.0,75.0,10.0,7.0,0.0,2.23,2.23,72.6,72.6,0.79,114.0,30.3,2.27,2.27,2.85,1.47,13.8,13.8,24.8,24.9,'IS808_Rev',4.66);
-INSERT INTO public."EqualAngle" VALUES(45,'∠ 80ⅹ 80ⅹ 6',7.36,9.38,80.0,80.0,6.0,8.0,0.0,2.2,2.2,57.6,57.6,0.79,91.4,23.7,2.48,2.48,3.12,1.59,9.9,9.9,17.8,17.9,'IS808_Rev',1.1);
-INSERT INTO public."EqualAngle" VALUES(46,'∠ 80ⅹ 80ⅹ 8',9.65,12.3,80.0,80.0,8.0,8.0,0.0,2.28,2.28,74.0,74.0,0.79,117.0,30.5,2.45,2.45,3.09,1.58,12.9,12.9,23.3,23.3,'IS808_Rev',2.59);
-INSERT INTO public."EqualAngle" VALUES(47,'∠ 80ⅹ 80ⅹ 10',11.88,15.1,80.0,80.0,10.0,8.0,0.0,2.36,2.36,89.2,89.2,0.79,141.0,37.1,2.43,2.43,3.05,1.57,15.8,15.8,28.4,28.5,'IS808_Rev',5.0);
-INSERT INTO public."EqualAngle" VALUES(48,'∠ 80ⅹ 80ⅹ 12',14.05,17.9,80.0,80.0,12.0,8.0,0.0,2.43,2.43,103.0,103.0,0.79,163.0,43.5,2.4,2.4,3.02,1.56,18.5,18.5,33.4,33.5,'IS808_Rev',8.52);
-INSERT INTO public."EqualAngle" VALUES(49,'∠ 90ⅹ 90ⅹ 6',8.32,10.6,90.0,90.0,6.0,8.5,0.0,2.45,2.45,83.0,83.0,0.79,131.0,34.2,2.8,2.8,3.53,1.8,12.7,12.7,22.8,22.8,'IS808_Rev',1.25);
-INSERT INTO public."EqualAngle" VALUES(50,'∠ 90ⅹ 90ⅹ 8',10.92,13.9,90.0,90.0,8.0,8.5,0.0,2.53,2.53,107.0,107.0,0.79,170.0,44.1,2.77,2.77,3.5,1.78,16.5,16.5,29.7,29.8,'IS808_Rev',2.93);
-INSERT INTO public."EqualAngle" VALUES(51,'∠ 90ⅹ 90ⅹ 10',13.47,17.1,90.0,90.0,10.0,8.5,0.0,2.6,2.6,129.0,129.0,0.79,205.0,53.6,2.75,2.75,3.46,1.77,20.2,20.2,36.4,36.5,'IS808_Rev',5.66);
-INSERT INTO public."EqualAngle" VALUES(52,'∠ 90ⅹ 90ⅹ 12',15.95,20.3,90.0,90.0,12.0,8.5,0.0,2.68,2.68,150.0,150.0,0.79,238.0,62.8,2.72,2.72,3.42,1.76,23.8,23.8,42.9,43.0,'IS808_Rev',9.67);
-INSERT INTO public."EqualAngle" VALUES(53,'∠ 100 ⅹ 100ⅹ 6',9.26,11.8,100.0,100.0,6.0,8.5,0.0,2.7,2.7,115.0,115.0,0.79,182.0,47.2,3.12,3.12,3.94,2.0,15.7,15.7,28.3,28.3,'IS808_Rev',1.39);
-INSERT INTO public."EqualAngle" VALUES(54,'∠ 100 ⅹ 100ⅹ 8',12.18,15.5,100.0,100.0,8.0,8.5,0.0,2.78,2.78,148.0,148.0,0.79,236.0,61.0,3.1,3.1,3.9,1.98,20.6,20.6,37.0,37.1,'IS808_Rev',3.27);
-INSERT INTO public."EqualAngle" VALUES(55,'∠ 100 ⅹ 100ⅹ 10',15.04,19.1,100.0,100.0,10.0,8.5,0.0,2.85,2.85,180.0,180.0,0.79,286.0,74.3,3.07,3.07,3.87,1.97,25.3,25.3,45.4,45.5,'IS808_Rev',6.33);
-INSERT INTO public."EqualAngle" VALUES(56,'∠ 100 ⅹ 100ⅹ 12',17.83,22.7,100.0,100.0,12.0,8.5,0.0,2.93,2.93,210.0,210.0,0.79,333.0,87.2,3.04,3.04,3.83,1.96,29.8,29.8,53.6,53.7,'IS808_Rev',10.8);
-INSERT INTO public."EqualAngle" VALUES(57,'∠ 110 ⅹ 110ⅹ 8',13.4,17.0,110.0,110.0,8.0,10.0,4.8,3.0,3.0,196.0,196.0,0.79,312.0,80.7,3.39,3.39,4.28,2.17,24.6,24.6,44.6,44.7,'IS808_Rev',3.61);
-INSERT INTO public."EqualAngle" VALUES(58,'∠ 110 ⅹ 110ⅹ 10',16.58,21.1,110.0,110.0,10.0,10.0,4.8,3.09,3.09,240.0,240.0,0.79,381.0,98.6,3.37,3.37,4.25,2.16,30.4,30.4,54.9,55.0,'IS808_Rev',7.0);
-INSERT INTO public."EqualAngle" VALUES(59,'∠ 110 ⅹ 110ⅹ 12',19.68,25.0,110.0,110.0,12.0,10.0,4.8,3.17,3.17,281.0,281.0,0.79,446.0,116.0,3.35,3.35,4.22,2.15,35.9,35.9,64.9,65.1,'IS808_Rev',11.9);
-INSERT INTO public."EqualAngle" VALUES(60,'∠ 110 ⅹ 110ⅹ 16',25.71,32.7,110.0,110.0,16.0,10.0,4.8,3.32,3.32,357.0,357.0,0.79,565.0,149.0,3.3,3.3,4.15,2.14,46.5,46.5,84.1,84.2,'IS808_Rev',27.8);
-INSERT INTO public."EqualAngle" VALUES(61,'∠ 130ⅹ 130ⅹ 8',15.92,20.2,130.0,130.0,8.0,10.0,4.8,3.5,3.5,330.0,330.0,0.79,526.0,135.0,4.04,4.04,5.1,2.58,34.8,34.8,63.0,63.1,'IS808_Rev',4.3);
-INSERT INTO public."EqualAngle" VALUES(62,'∠ 130ⅹ130ⅹ 10',19.72,25.1,130.0,130.0,10.0,10.0,4.8,3.59,3.59,405.0,405.0,0.79,644.0,165.0,4.02,4.02,5.07,2.57,43.1,43.1,77.8,77.9,'IS808_Rev',8.33);
-INSERT INTO public."EqualAngle" VALUES(63,'∠ 130ⅹ130ⅹ 12',23.45,29.8,130.0,130.0,12.0,10.0,4.8,3.67,3.67,476.0,476.0,0.79,757.0,195.0,3.99,3.99,5.04,2.56,51.0,51.0,92.2,92.3,'IS808_Rev',14.2);
-INSERT INTO public."EqualAngle" VALUES(64,'∠ 130ⅹ130ⅹ 16',30.74,39.1,130.0,130.0,16.0,10.0,4.8,3.82,3.82,609.0,609.0,0.79,966.0,252.0,3.94,3.94,4.97,2.54,66.3,66.3,119.0,120.0,'IS808_Rev',33.3);
-INSERT INTO public."EqualAngle" VALUES(65,'∠150ⅹ 150ⅹ 10',22.93,29.2,150.0,150.0,10.0,12.0,4.8,4.08,4.08,633.0,633.0,0.79,1000.0,259.0,4.66,4.66,5.87,2.98,58.0,58.0,104.0,104.0,'IS808_Rev',9.66);
-INSERT INTO public."EqualAngle" VALUES(66,'∠150ⅹ 150ⅹ 12',27.29,34.7,150.0,150.0,12.0,12.0,4.8,4.16,4.16,746.0,746.0,0.79,1180.0,305.0,4.63,4.63,5.84,2.96,68.8,68.8,124.0,124.0,'IS808_Rev',16.5);
-INSERT INTO public."EqualAngle" VALUES(67,'∠150ⅹ 150ⅹ 16',35.84,45.6,150.0,150.0,16.0,12.0,4.8,4.31,4.31,958.0,958.0,0.79,1520.0,394.0,4.58,4.58,5.78,2.94,89.7,89.7,162.0,162.0,'IS808_Rev',38.7);
-INSERT INTO public."EqualAngle" VALUES(68,'∠150ⅹ 150ⅹ 20',44.12,56.2,150.0,150.0,20.0,12.0,4.8,4.46,4.46,1150.0,1150.0,0.79,1830.0,480.0,4.53,4.53,5.71,2.92,109.0,109.0,198.0,198.0,'IS808_Rev',74.6);
-INSERT INTO public."EqualAngle" VALUES(69,'∠200 ⅹ 200ⅹ 12',36.85,46.9,200.0,200.0,12.0,15.0,4.8,5.39,5.39,1820.0,1820.0,0.79,2900.0,746.0,6.24,6.24,7.87,3.99,125.0,125.0,225.0,225.0,'IS808_Rev',22.3);
-INSERT INTO public."EqualAngle" VALUES(70,'∠200 ⅹ 200ⅹ 16',48.53,61.8,200.0,200.0,16.0,15.0,4.8,5.56,5.56,2360.0,2360.0,0.79,3760.0,967.0,6.19,6.19,7.8,3.96,163.0,163.0,295.0,295.0,'IS808_Rev',52.4);
-INSERT INTO public."EqualAngle" VALUES(71,'∠200 ⅹ 200ⅹ 20',59.96,76.3,200.0,200.0,20.0,15.0,4.8,5.71,5.71,2870.0,2870.0,0.79,4560.0,1180.0,6.13,6.13,7.73,3.93,201.0,201.0,362.0,363.0,'IS808_Rev',101.0);
-INSERT INTO public."EqualAngle" VALUES(72,'∠200 ⅹ 200ⅹ 25',73.9,94.1,200.0,200.0,25.0,15.0,4.8,5.9,5.9,3470.0,3470.0,0.79,5500.0,1430.0,6.07,6.07,7.65,3.91,246.0,246.0,443.0,444.0,'IS808_Rev',195.0);
-INSERT INTO public."EqualAngle" VALUES(73,'∠50 ⅹ 50ⅹ 7',5.17,6.59,50.0,50.0,7.0,6.0,0.0,1.5,1.5,14.9,14.9,0.79,23.6,6.27,1.51,1.51,1.89,0.98,4.26,4.26,7.67,7.7,'IS808_Rev',1.06);
-INSERT INTO public."EqualAngle" VALUES(74,'∠50 ⅹ 50ⅹ 8',5.84,7.44,50.0,50.0,8.0,6.0,0.0,1.54,1.54,16.6,16.6,0.79,26.2,7.03,1.49,1.49,1.88,0.97,4.79,4.79,8.62,8.65,'IS808_Rev',1.57);
-INSERT INTO public."EqualAngle" VALUES(75,'∠55 ⅹ 55 x10',7.92,10.0,55.0,55.0,10.0,6.5,0.0,1.73,1.73,26.8,26.8,0.79,42.1,11.5,1.63,1.63,2.04,1.07,7.11,7.11,12.8,12.8,'IS808_Rev',3.33);
-INSERT INTO public."EqualAngle" VALUES(76,'∠60 ⅹ 60 ⅹ 10',8.71,11.0,60.0,60.0,10.0,6.5,0.0,1.86,1.86,35.5,35.5,0.79,55.9,15.1,1.79,1.79,2.25,1.17,8.57,8.57,15.4,15.4,'IS808_Rev',3.66);
-INSERT INTO public."EqualAngle" VALUES(77,'∠65 ⅹ 65ⅹ 10',9.49,12.0,65.0,65.0,10.0,6.5,0.0,1.98,1.98,45.9,45.9,0.79,72.5,19.4,1.95,1.95,2.45,1.27,10.1,10.1,18.3,18.3,'IS808_Rev',4.0);
-INSERT INTO public."EqualAngle" VALUES(78,'∠ 70 ⅹ 70ⅹ 7',7.39,9.42,70.0,70.0,7.0,7.0,0.0,2.0,2.0,43.4,43.4,0.79,68.8,17.9,2.15,2.15,2.7,1.38,8.66,8.66,15.5,15.6,'IS808_Rev',1.52);
-INSERT INTO public."EqualAngle" VALUES(79,'∠ 100 ⅹ 100ⅹ 7',10.73,13.6,100.0,100.0,7.0,8.5,0.0,2.74,2.74,132.0,132.0,0.79,210.0,54.2,3.11,3.11,3.92,1.99,18.2,18.2,32.7,32.7,'IS808_Rev',2.2);
-INSERT INTO public."EqualAngle" VALUES(80,'∠ 100 ⅹ 100ⅹ 15',21.91,27.9,100.0,100.0,15.0,8.5,0.0,3.04,3.04,252.0,252.0,0.79,398.0,106.0,3.01,3.01,3.78,1.95,36.2,36.2,65.3,65.4,'IS808_Rev',20.8);
-INSERT INTO public."EqualAngle" VALUES(81,'∠ 120 ⅹ 120ⅹ 8',14.66,18.6,120.0,120.0,8.0,10.0,4.8,3.25,3.25,258.0,258.0,0.79,410.0,105.0,3.72,3.72,4.69,2.38,29.5,29.5,53.4,53.5,'IS808_Rev',3.95);
-INSERT INTO public."EqualAngle" VALUES(82,'∠ 120 ⅹ 120ⅹ 10',18.15,23.1,120.0,120.0,10.0,10.0,4.8,3.34,3.34,315.0,315.0,0.79,501.0,129.0,3.69,3.69,4.66,2.36,36.4,36.4,65.9,66.0,'IS808_Rev',7.66);
-INSERT INTO public."EqualAngle" VALUES(83,'∠ 120 ⅹ 120ⅹ 12',21.57,27.4,120.0,120.0,12.0,10.0,4.8,3.42,3.42,370.0,370.0,0.79,588.0,152.0,3.67,3.67,4.63,2.35,43.1,43.1,78.0,78.1,'IS808_Rev',13.1);
-INSERT INTO public."EqualAngle" VALUES(84,'∠ 120 ⅹ 120ⅹ 15',26.58,33.8,120.0,120.0,15.0,10.0,4.8,3.53,3.53,447.0,447.0,0.79,709.0,185.0,3.64,3.64,4.58,2.34,52.8,52.8,95.5,95.6,'IS808_Rev',25.3);
-INSERT INTO public."EqualAngle" VALUES(85,'∠ 130 ⅹ 130ⅹ 9',17.82,22.7,130.0,130.0,9.0,10.0,4.8,3.55,3.55,368.0,368.0,0.79,586.0,150.0,4.03,4.03,5.08,2.57,39.0,39.0,70.5,70.6,'IS808_Rev',6.09);
-INSERT INTO public."EqualAngle" VALUES(86,'∠150 ⅹ 150ⅹ 15',33.72,42.9,150.0,150.0,15.0,12.0,4.8,4.28,4.28,907.0,907.0,0.79,1440.0,372.0,4.6,4.6,5.79,2.95,84.6,84.6,152.0,152.0,'IS808_Rev',32.0);
-INSERT INTO public."EqualAngle" VALUES(87,'∠150 ⅹ 150ⅹ 18',40.01,50.9,150.0,150.0,18.0,12.0,4.8,4.39,4.39,1050.0,1050.0,0.79,1680.0,437.0,4.56,4.56,5.74,2.93,99.8,99.8,180.0,180.0,'IS808_Rev',54.8);
-INSERT INTO public."EqualAngle" VALUES(88,'∠180 ⅹ 180ⅹ 15',41.09,52.3,180.0,180.0,15.0,18.0,4.8,5.0,5.0,1610.0,1610.0,0.79,2550.0,663.0,5.55,5.55,6.99,3.56,123.0,123.0,223.0,223.0,'IS808_Rev',38.8);
-INSERT INTO public."EqualAngle" VALUES(89,'∠180 ⅹ 180ⅹ 18',48.79,62.1,180.0,180.0,18.0,18.0,4.8,5.12,5.12,1880.0,1880.0,0.79,2990.0,778.0,5.51,5.51,6.94,3.54,146.0,146.0,264.0,264.0,'IS808_Rev',66.4);
-INSERT INTO public."EqualAngle" VALUES(90,'∠180 ⅹ 180ⅹ 20',53.85,68.6,180.0,180.0,20.0,18.0,4.8,5.2,5.2,2060.0,2060.0,0.79,3270.0,853.0,5.49,5.49,6.91,3.53,161.0,161.0,290.0,291.0,'IS808_Rev',90.6);
-INSERT INTO public."EqualAngle" VALUES(91,'∠200 ⅹ 200ⅹ 24',71.31,90.8,200.0,200.0,24.0,18.0,4.8,5.85,5.85,3350.0,3350.0,0.79,5320.0,1390.0,6.08,6.08,7.65,3.91,237.0,237.0,427.0,428.0,'IS808_Rev',173.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(1,'∠ 20ⅹ 20ⅹ 3',0.9,1.14,20.0,20.0,3.0,4.0,0.0,0.6,0.6,0.4,0.4,0.79,0.64,0.17,0.59,0.59,0.75,0.39,0.29,0.29,0.52,0.53,'IS808_Rev',0.033000000000000007105);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(2,'∠ 20ⅹ 20ⅹ 4',1.16,1.47,20.0,20.0,4.0,4.0,0.0,0.64,0.64,0.5,0.5,0.79,0.79,0.22,0.58,0.58,0.73,0.39,0.37,0.37,0.66,0.67,'IS808_Rev',0.075999999999999996447);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(3,'∠ 25ⅹ 25ⅹ 3',1.14,1.45,25.0,25.0,3.0,4.5,0.0,0.73,0.73,0.83,0.83,0.79,1.3,0.35,0.75,0.75,0.95,0.49,0.46,0.46,0.83,0.84,'IS808_Rev',0.042000000000000001776);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(4,'∠ 25ⅹ 25ⅹ 4',1.48,1.88,25.0,25.0,4.0,4.5,0.0,0.76,0.76,1.04,1.04,0.79,1.63,0.44,0.74,0.74,0.93,0.48,0.6,0.6,1.07,1.09,'IS808_Rev',0.098000000000000024868);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(5,'∠ 25ⅹ 25ⅹ 5',1.8,2.29,25.0,25.0,5.0,4.5,0.0,0.8,0.8,1.23,1.23,0.79,1.92,0.54,0.73,0.73,0.92,0.48,0.72,0.72,1.3,1.31,'IS808_Rev',0.18700000000000001065);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(6,'∠ 30ⅹ 30ⅹ 3',1.38,1.76,30.0,30.0,3.0,5.0,0.0,0.85,0.85,1.47,1.47,0.79,2.32,0.62,0.91,0.91,1.15,0.59,0.68,0.68,1.22,1.23,'IS808_Rev',0.050999999999999996447);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(7,'∠ 30ⅹ 30ⅹ 4',1.8,2.29,30.0,30.0,4.0,5.0,0.0,0.89,0.89,1.86,1.86,0.79,2.94,0.78,0.9,0.9,1.13,0.58,0.88,0.88,1.58,1.6,'IS808_Rev',0.11899999999999999467);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(8,'∠ 30ⅹ 30ⅹ 5',2.2,2.8,30.0,30.0,5.0,5.0,0.0,0.93,0.93,2.22,2.22,0.79,3.49,0.95,0.89,0.89,1.12,0.58,1.07,1.07,1.92,1.94,'IS808_Rev',0.22900000000000000355);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(9,'∠ 35ⅹ 35ⅹ 3',1.62,2.06,35.0,35.0,3.0,5.0,0.0,0.97,0.97,2.38,2.38,0.79,3.77,0.99,1.07,1.07,1.35,0.69,0.94,0.94,1.69,1.7,'IS808_Rev',0.06);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(10,'∠ 35ⅹ 35ⅹ 4',2.11,2.69,35.0,35.0,4.0,5.0,0.0,1.01,1.01,3.04,3.04,0.79,4.81,1.27,1.06,1.06,1.34,0.69,1.22,1.22,2.19,2.21,'IS808_Rev',0.14);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(11,'∠ 35ⅹ 35ⅹ 5',2.59,3.3,35.0,35.0,5.0,5.0,0.0,1.05,1.05,3.65,3.65,0.79,5.76,1.54,1.05,1.05,1.32,0.68,1.49,1.49,2.68,2.69,'IS808_Rev',0.27);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(12,'∠ 35ⅹ 35ⅹ 6',3.06,3.89,35.0,35.0,6.0,5.0,0.0,1.09,1.09,4.2,4.2,0.79,6.61,1.8,1.04,1.04,1.3,0.68,1.74,1.74,3.14,3.15,'IS808_Rev',0.46);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(13,'∠ 40ⅹ 40ⅹ 3',1.86,2.37,40.0,40.0,3.0,5.5,0.0,1.09,1.09,3.61,3.61,0.79,5.72,1.51,1.23,1.23,1.55,0.8,1.24,1.24,2.22,2.24,'IS808_Rev',0.069000000000000003552);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(14,'∠ 40ⅹ 40ⅹ 4',2.44,3.1,40.0,40.0,4.0,5.5,0.0,1.13,1.13,4.63,4.63,0.79,7.34,1.93,1.22,1.22,1.54,0.79,1.62,1.62,2.9,2.92,'IS808_Rev',0.16200000000000001065);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(15,'∠ 40ⅹ 40ⅹ 5',2.99,3.81,40.0,40.0,5.0,5.5,0.0,1.17,1.17,5.58,5.58,0.79,8.83,2.33,1.21,1.21,1.52,0.78,1.97,1.97,3.55,3.57,'IS808_Rev',0.31200000000000001065);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(16,'∠ 40ⅹ 40ⅹ 6',3.54,4.5,40.0,40.0,6.0,5.5,0.0,1.21,1.21,6.46,6.46,0.79,10.2,2.73,1.2,1.2,1.5,0.78,2.32,2.32,4.17,4.19,'IS808_Rev',0.53200000000000002842);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(17,'∠ 45ⅹ 45ⅹ 3',2.1,2.67,45.0,45.0,3.0,5.5,0.0,1.22,1.22,5.2,5.2,0.79,8.2,2.17,1.39,1.39,1.76,0.9,1.58,1.58,2.84,2.86,'IS808_Rev',0.078000000000000015987);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(18,'∠ 45ⅹ 45ⅹ 4',2.75,3.5,45.0,45.0,4.0,5.5,0.0,1.26,1.26,6.7,6.7,0.79,10.6,2.78,1.38,1.38,1.74,0.89,2.07,2.07,3.71,3.73,'IS808_Rev',0.1830000000000000071);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(19,'∠ 45ⅹ 45ⅹ 5',3.39,4.31,45.0,45.0,5.0,5.5,0.0,1.3,1.3,8.1,8.1,0.79,12.8,3.37,1.37,1.37,1.72,0.88,2.53,2.53,4.55,4.57,'IS808_Rev',0.35400000000000000355);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(20,'∠ 45ⅹ 45ⅹ 6',4.01,5.1,45.0,45.0,6.0,5.5,0.0,1.34,1.34,9.42,9.42,0.79,14.9,3.94,1.36,1.36,1.71,0.88,2.98,2.98,5.36,5.38,'IS808_Rev',0.60400000000000000355);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(21,'∠ 50ⅹ 50ⅹ 3',2.34,2.99,50.0,50.0,3.0,6.0,0.0,1.34,1.34,7.21,7.21,0.79,11.4,3.01,1.55,1.55,1.96,1.0,1.97,1.97,3.53,3.55,'IS808_Rev',0.086999999999999992894);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(22,'∠ 50ⅹ 50ⅹ 4',3.08,3.92,50.0,50.0,4.0,6.0,0.0,1.38,1.38,9.32,9.32,0.79,14.8,3.86,1.54,1.54,1.94,0.99,2.57,2.57,4.62,4.64,'IS808_Rev',0.20400000000000000355);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(23,'∠ 50ⅹ 50ⅹ 5',3.79,4.83,50.0,50.0,5.0,6.0,0.0,1.42,1.42,11.3,11.3,0.79,17.9,4.69,1.53,1.53,1.93,0.99,3.16,3.16,5.67,5.7,'IS808_Rev',0.39500000000000001776);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(24,'∠ 50ⅹ 50ⅹ 6',4.49,5.72,50.0,50.0,6.0,6.0,0.0,1.46,1.46,13.2,13.2,0.79,20.8,5.48,1.52,1.52,1.91,0.98,3.72,3.72,6.69,6.71,'IS808_Rev',0.67600000000000015631);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(25,'∠ 55ⅹ 55ⅹ 4',3.4,4.33,55.0,55.0,4.0,6.5,0.0,1.5,1.5,12.5,12.5,0.79,19.9,5.2,1.7,1.7,2.14,1.1,3.14,3.14,5.63,5.66,'IS808_Rev',0.22600000000000002309);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(26,'∠ 55ⅹ 55ⅹ 5',4.19,5.34,55.0,55.0,5.0,6.5,0.0,1.54,1.54,15.2,15.2,0.79,24.2,6.31,1.69,1.69,2.13,1.09,3.85,3.85,6.92,6.95,'IS808_Rev',0.43700000000000001065);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(27,'∠ 55ⅹ 55ⅹ 6',4.97,6.33,55.0,55.0,6.0,6.5,0.0,1.58,1.58,17.8,17.8,0.79,28.2,7.39,1.68,1.68,2.11,1.08,4.55,4.55,8.17,8.2,'IS808_Rev',0.74800000000000004263);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(28,'∠ 55ⅹ 55ⅹ 8',6.48,8.25,55.0,55.0,8.0,6.5,0.0,1.66,1.66,22.5,22.5,0.79,35.6,9.48,1.65,1.65,2.08,1.07,5.87,5.87,10.5,10.6,'IS808_Rev',1.74);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(29,'∠ 60ⅹ 60ⅹ 4',3.71,4.73,60.0,60.0,4.0,6.5,0.0,1.63,1.63,16.4,16.4,0.79,26.0,6.8,1.86,1.86,2.35,1.2,3.76,3.76,6.74,6.77,'IS808_Rev',0.24699999999999993072);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(30,'∠ 60ⅹ 60ⅹ 5',4.58,5.84,60.0,60.0,5.0,6.5,0.0,1.67,1.67,20.0,20.0,0.79,31.7,8.26,1.85,1.85,2.33,1.19,4.62,4.62,8.3,8.32,'IS808_Rev',0.47900000000000000355);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(31,'∠ 60ⅹ 60ⅹ 6',5.44,6.93,60.0,60.0,6.0,6.5,0.0,1.71,1.71,23.4,23.4,0.79,37.1,9.69,1.84,1.84,2.31,1.18,5.46,5.46,9.81,9.84,'IS808_Rev',0.82);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(32,'∠ 60ⅹ 60ⅹ 8',7.1,9.05,60.0,60.0,8.0,6.5,0.0,1.78,1.78,29.8,29.8,0.79,47.1,12.4,1.81,1.81,2.28,1.17,7.06,7.06,12.7,12.7,'IS808_Rev',1.91);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(33,'∠ 65ⅹ 65ⅹ 4',4.03,5.13,65.0,65.0,4.0,6.5,0.0,1.75,1.75,21.0,21.0,0.79,33.4,8.69,2.02,2.02,2.55,1.3,4.43,4.43,7.95,7.98,'IS808_Rev',0.26800000000000001598);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(34,'∠ 65ⅹ 65ⅹ 5',4.98,6.34,65.0,65.0,5.0,6.5,0.0,1.79,1.79,25.7,25.7,0.79,40.8,10.6,2.01,2.01,2.54,1.29,5.45,5.45,9.8,9.83,'IS808_Rev',0.52);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(35,'∠ 65ⅹ 65ⅹ 6',5.91,7.53,65.0,65.0,6.0,6.5,0.0,1.83,1.83,30.1,30.1,0.79,47.8,12.4,2.0,2.0,2.52,1.28,6.45,6.45,11.5,11.6,'IS808_Rev',0.89199999999999999289);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(36,'∠ 65ⅹ 65ⅹ 8',7.73,9.85,65.0,65.0,8.0,6.5,0.0,1.91,1.91,38.4,38.4,0.79,60.8,16.0,1.97,1.97,2.48,1.27,8.36,8.36,15.0,15.0,'IS808_Rev',2.08);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(37,'∠ 70ⅹ 70ⅹ 5',5.38,6.86,70.0,70.0,5.0,7.0,0.0,1.92,1.92,32.3,32.3,0.79,51.3,13.3,2.17,2.17,2.74,1.39,6.36,6.36,11.4,11.4,'IS808_Rev',0.56200000000000009947);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(38,'∠ 70ⅹ 70ⅹ 6',6.39,8.15,70.0,70.0,6.0,7.0,0.0,1.96,1.96,38.0,38.0,0.79,60.3,15.6,2.16,2.16,2.72,1.39,7.53,7.53,13.5,13.5,'IS808_Rev',0.96400000000000005684);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(39,'∠ 70ⅹ 70ⅹ 8',8.37,10.6,70.0,70.0,8.0,7.0,0.0,2.03,2.03,48.5,48.5,0.79,76.9,20.1,2.13,2.13,2.69,1.37,9.77,9.77,17.5,17.6,'IS808_Rev',2.25);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(40,'∠ 70ⅹ 70ⅹ 10',10.29,13.1,70.0,70.0,10.0,7.0,0.0,2.11,2.11,58.3,58.3,0.79,92.1,24.4,2.11,2.11,2.65,1.37,11.9,11.9,21.4,21.5,'IS808_Rev',4.33);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(41,'∠ 75ⅹ 75ⅹ 5',5.77,7.36,75.0,75.0,5.0,7.0,0.0,2.04,2.04,40.0,40.0,0.79,63.6,16.5,2.33,2.33,2.94,1.5,7.3,7.3,13.2,13.2,'IS808_Rev',0.60400000000000000355);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(42,'∠ 75ⅹ 75ⅹ 6',6.86,8.75,75.0,75.0,6.0,7.0,0.0,2.08,2.08,47.1,47.1,0.79,74.8,19.4,2.32,2.32,2.92,1.49,8.7,8.7,15.6,15.6,'IS808_Rev',1.03);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(43,'∠ 75ⅹ 75ⅹ 8',9.0,11.4,75.0,75.0,8.0,7.0,0.0,2.16,2.16,60.3,60.3,0.79,95.7,24.9,2.29,2.29,2.89,1.47,11.3,11.3,20.3,20.4,'IS808_Rev',2.42);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(44,'∠ 75ⅹ 75ⅹ 10',11.07,14.1,75.0,75.0,10.0,7.0,0.0,2.23,2.23,72.6,72.6,0.79,114.0,30.3,2.27,2.27,2.85,1.47,13.8,13.8,24.8,24.9,'IS808_Rev',4.66);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(45,'∠ 80ⅹ 80ⅹ 6',7.36,9.38,80.0,80.0,6.0,8.0,0.0,2.2,2.2,57.6,57.6,0.79,91.4,23.7,2.48,2.48,3.12,1.59,9.9,9.9,17.8,17.9,'IS808_Rev',1.1);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(46,'∠ 80ⅹ 80ⅹ 8',9.65,12.3,80.0,80.0,8.0,8.0,0.0,2.28,2.28,74.0,74.0,0.79,117.0,30.5,2.45,2.45,3.09,1.58,12.9,12.9,23.3,23.3,'IS808_Rev',2.59);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(47,'∠ 80ⅹ 80ⅹ 10',11.88,15.1,80.0,80.0,10.0,8.0,0.0,2.36,2.36,89.2,89.2,0.79,141.0,37.1,2.43,2.43,3.05,1.57,15.8,15.8,28.4,28.5,'IS808_Rev',5.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(48,'∠ 80ⅹ 80ⅹ 12',14.05,17.9,80.0,80.0,12.0,8.0,0.0,2.43,2.43,103.0,103.0,0.79,163.0,43.5,2.4,2.4,3.02,1.56,18.5,18.5,33.4,33.5,'IS808_Rev',8.52);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(49,'∠ 90ⅹ 90ⅹ 6',8.32,10.6,90.0,90.0,6.0,8.5,0.0,2.45,2.45,83.0,83.0,0.79,131.0,34.2,2.8,2.8,3.53,1.8,12.7,12.7,22.8,22.8,'IS808_Rev',1.25);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(50,'∠ 90ⅹ 90ⅹ 8',10.92,13.9,90.0,90.0,8.0,8.5,0.0,2.53,2.53,107.0,107.0,0.79,170.0,44.1,2.77,2.77,3.5,1.78,16.5,16.5,29.7,29.8,'IS808_Rev',2.93);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(51,'∠ 90ⅹ 90ⅹ 10',13.47,17.1,90.0,90.0,10.0,8.5,0.0,2.6,2.6,129.0,129.0,0.79,205.0,53.6,2.75,2.75,3.46,1.77,20.2,20.2,36.4,36.5,'IS808_Rev',5.66);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(52,'∠ 90ⅹ 90ⅹ 12',15.95,20.3,90.0,90.0,12.0,8.5,0.0,2.68,2.68,150.0,150.0,0.79,238.0,62.8,2.72,2.72,3.42,1.76,23.8,23.8,42.9,43.0,'IS808_Rev',9.67);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(53,'∠ 100 ⅹ 100ⅹ 6',9.26,11.8,100.0,100.0,6.0,8.5,0.0,2.7,2.7,115.0,115.0,0.79,182.0,47.2,3.12,3.12,3.94,2.0,15.7,15.7,28.3,28.3,'IS808_Rev',1.39);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(54,'∠ 100 ⅹ 100ⅹ 8',12.18,15.5,100.0,100.0,8.0,8.5,0.0,2.78,2.78,148.0,148.0,0.79,236.0,61.0,3.1,3.1,3.9,1.98,20.6,20.6,37.0,37.1,'IS808_Rev',3.27);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(55,'∠ 100 ⅹ 100ⅹ 10',15.04,19.1,100.0,100.0,10.0,8.5,0.0,2.85,2.85,180.0,180.0,0.79,286.0,74.3,3.07,3.07,3.87,1.97,25.3,25.3,45.4,45.5,'IS808_Rev',6.33);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(56,'∠ 100 ⅹ 100ⅹ 12',17.83,22.7,100.0,100.0,12.0,8.5,0.0,2.93,2.93,210.0,210.0,0.79,333.0,87.2,3.04,3.04,3.83,1.96,29.8,29.8,53.6,53.7,'IS808_Rev',10.8);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(57,'∠ 110 ⅹ 110ⅹ 8',13.4,17.0,110.0,110.0,8.0,10.0,4.8,3.0,3.0,196.0,196.0,0.79,312.0,80.7,3.39,3.39,4.28,2.17,24.6,24.6,44.6,44.7,'IS808_Rev',3.61);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(58,'∠ 110 ⅹ 110ⅹ 10',16.58,21.1,110.0,110.0,10.0,10.0,4.8,3.09,3.09,240.0,240.0,0.79,381.0,98.6,3.37,3.37,4.25,2.16,30.4,30.4,54.9,55.0,'IS808_Rev',7.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(59,'∠ 110 ⅹ 110ⅹ 12',19.68,25.0,110.0,110.0,12.0,10.0,4.8,3.17,3.17,281.0,281.0,0.79,446.0,116.0,3.35,3.35,4.22,2.15,35.9,35.9,64.9,65.1,'IS808_Rev',11.9);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(60,'∠ 110 ⅹ 110ⅹ 16',25.71,32.7,110.0,110.0,16.0,10.0,4.8,3.32,3.32,357.0,357.0,0.79,565.0,149.0,3.3,3.3,4.15,2.14,46.5,46.5,84.1,84.2,'IS808_Rev',27.8);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(61,'∠ 130ⅹ 130ⅹ 8',15.92,20.2,130.0,130.0,8.0,10.0,4.8,3.5,3.5,330.0,330.0,0.79,526.0,135.0,4.04,4.04,5.1,2.58,34.8,34.8,63.0,63.1,'IS808_Rev',4.3);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(62,'∠ 130ⅹ130ⅹ 10',19.72,25.1,130.0,130.0,10.0,10.0,4.8,3.59,3.59,405.0,405.0,0.79,644.0,165.0,4.02,4.02,5.07,2.57,43.1,43.1,77.8,77.9,'IS808_Rev',8.33);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(63,'∠ 130ⅹ130ⅹ 12',23.45,29.8,130.0,130.0,12.0,10.0,4.8,3.67,3.67,476.0,476.0,0.79,757.0,195.0,3.99,3.99,5.04,2.56,51.0,51.0,92.2,92.3,'IS808_Rev',14.2);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(64,'∠ 130ⅹ130ⅹ 16',30.74,39.1,130.0,130.0,16.0,10.0,4.8,3.82,3.82,609.0,609.0,0.79,966.0,252.0,3.94,3.94,4.97,2.54,66.3,66.3,119.0,120.0,'IS808_Rev',33.3);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(65,'∠150ⅹ 150ⅹ 10',22.93,29.2,150.0,150.0,10.0,12.0,4.8,4.08,4.08,633.0,633.0,0.79,1000.0,259.0,4.66,4.66,5.87,2.98,58.0,58.0,104.0,104.0,'IS808_Rev',9.66);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(66,'∠150ⅹ 150ⅹ 12',27.29,34.7,150.0,150.0,12.0,12.0,4.8,4.16,4.16,746.0,746.0,0.79,1180.0,305.0,4.63,4.63,5.84,2.96,68.8,68.8,124.0,124.0,'IS808_Rev',16.5);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(67,'∠150ⅹ 150ⅹ 16',35.84,45.6,150.0,150.0,16.0,12.0,4.8,4.31,4.31,958.0,958.0,0.79,1520.0,394.0,4.58,4.58,5.78,2.94,89.7,89.7,162.0,162.0,'IS808_Rev',38.7);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(68,'∠150ⅹ 150ⅹ 20',44.12,56.2,150.0,150.0,20.0,12.0,4.8,4.46,4.46,1150.0,1150.0,0.79,1830.0,480.0,4.53,4.53,5.71,2.92,109.0,109.0,198.0,198.0,'IS808_Rev',74.6);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(69,'∠200 ⅹ 200ⅹ 12',36.85,46.9,200.0,200.0,12.0,15.0,4.8,5.39,5.39,1820.0,1820.0,0.79,2900.0,746.0,6.24,6.24,7.87,3.99,125.0,125.0,225.0,225.0,'IS808_Rev',22.3);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(70,'∠200 ⅹ 200ⅹ 16',48.53,61.8,200.0,200.0,16.0,15.0,4.8,5.56,5.56,2360.0,2360.0,0.79,3760.0,967.0,6.19,6.19,7.8,3.96,163.0,163.0,295.0,295.0,'IS808_Rev',52.4);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(71,'∠200 ⅹ 200ⅹ 20',59.96,76.3,200.0,200.0,20.0,15.0,4.8,5.71,5.71,2870.0,2870.0,0.79,4560.0,1180.0,6.13,6.13,7.73,3.93,201.0,201.0,362.0,363.0,'IS808_Rev',101.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(72,'∠200 ⅹ 200ⅹ 25',73.9,94.1,200.0,200.0,25.0,15.0,4.8,5.9,5.9,3470.0,3470.0,0.79,5500.0,1430.0,6.07,6.07,7.65,3.91,246.0,246.0,443.0,444.0,'IS808_Rev',195.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(73,'∠50 ⅹ 50ⅹ 7',5.17,6.59,50.0,50.0,7.0,6.0,0.0,1.5,1.5,14.9,14.9,0.79,23.6,6.27,1.51,1.51,1.89,0.98,4.26,4.26,7.67,7.7,'IS808_Rev',1.06);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(74,'∠50 ⅹ 50ⅹ 8',5.84,7.44,50.0,50.0,8.0,6.0,0.0,1.54,1.54,16.6,16.6,0.79,26.2,7.03,1.49,1.49,1.88,0.97,4.79,4.79,8.62,8.65,'IS808_Rev',1.57);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(75,'∠55 ⅹ 55 x10',7.92,10.0,55.0,55.0,10.0,6.5,0.0,1.73,1.73,26.8,26.8,0.79,42.1,11.5,1.63,1.63,2.04,1.07,7.11,7.11,12.8,12.8,'IS808_Rev',3.33);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(76,'∠60 ⅹ 60 ⅹ 10',8.71,11.0,60.0,60.0,10.0,6.5,0.0,1.86,1.86,35.5,35.5,0.79,55.9,15.1,1.79,1.79,2.25,1.17,8.57,8.57,15.4,15.4,'IS808_Rev',3.66);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(77,'∠65 ⅹ 65ⅹ 10',9.49,12.0,65.0,65.0,10.0,6.5,0.0,1.98,1.98,45.9,45.9,0.79,72.5,19.4,1.95,1.95,2.45,1.27,10.1,10.1,18.3,18.3,'IS808_Rev',4.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(78,'∠ 70 ⅹ 70ⅹ 7',7.39,9.42,70.0,70.0,7.0,7.0,0.0,2.0,2.0,43.4,43.4,0.79,68.8,17.9,2.15,2.15,2.7,1.38,8.66,8.66,15.5,15.6,'IS808_Rev',1.52);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(79,'∠ 100 ⅹ 100ⅹ 7',10.73,13.6,100.0,100.0,7.0,8.5,0.0,2.74,2.74,132.0,132.0,0.79,210.0,54.2,3.11,3.11,3.92,1.99,18.2,18.2,32.7,32.7,'IS808_Rev',2.2);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(80,'∠ 100 ⅹ 100ⅹ 15',21.91,27.9,100.0,100.0,15.0,8.5,0.0,3.04,3.04,252.0,252.0,0.79,398.0,106.0,3.01,3.01,3.78,1.95,36.2,36.2,65.3,65.4,'IS808_Rev',20.8);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(81,'∠ 120 ⅹ 120ⅹ 8',14.66,18.6,120.0,120.0,8.0,10.0,4.8,3.25,3.25,258.0,258.0,0.79,410.0,105.0,3.72,3.72,4.69,2.38,29.5,29.5,53.4,53.5,'IS808_Rev',3.95);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(82,'∠ 120 ⅹ 120ⅹ 10',18.15,23.1,120.0,120.0,10.0,10.0,4.8,3.34,3.34,315.0,315.0,0.79,501.0,129.0,3.69,3.69,4.66,2.36,36.4,36.4,65.9,66.0,'IS808_Rev',7.66);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(83,'∠ 120 ⅹ 120ⅹ 12',21.57,27.4,120.0,120.0,12.0,10.0,4.8,3.42,3.42,370.0,370.0,0.79,588.0,152.0,3.67,3.67,4.63,2.35,43.1,43.1,78.0,78.1,'IS808_Rev',13.1);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(84,'∠ 120 ⅹ 120ⅹ 15',26.58,33.8,120.0,120.0,15.0,10.0,4.8,3.53,3.53,447.0,447.0,0.79,709.0,185.0,3.64,3.64,4.58,2.34,52.8,52.8,95.5,95.6,'IS808_Rev',25.3);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(85,'∠ 130 ⅹ 130ⅹ 9',17.82,22.7,130.0,130.0,9.0,10.0,4.8,3.55,3.55,368.0,368.0,0.79,586.0,150.0,4.03,4.03,5.08,2.57,39.0,39.0,70.5,70.6,'IS808_Rev',6.09);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(86,'∠150 ⅹ 150ⅹ 15',33.72,42.9,150.0,150.0,15.0,12.0,4.8,4.28,4.28,907.0,907.0,0.79,1440.0,372.0,4.6,4.6,5.79,2.95,84.6,84.6,152.0,152.0,'IS808_Rev',32.0);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(87,'∠150 ⅹ 150ⅹ 18',40.01,50.9,150.0,150.0,18.0,12.0,4.8,4.39,4.39,1050.0,1050.0,0.79,1680.0,437.0,4.56,4.56,5.74,2.93,99.8,99.8,180.0,180.0,'IS808_Rev',54.8);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(88,'∠180 ⅹ 180ⅹ 15',41.09,52.3,180.0,180.0,15.0,18.0,4.8,5.0,5.0,1610.0,1610.0,0.79,2550.0,663.0,5.55,5.55,6.99,3.56,123.0,123.0,223.0,223.0,'IS808_Rev',38.8);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(89,'∠180 ⅹ 180ⅹ 18',48.79,62.1,180.0,180.0,18.0,18.0,4.8,5.12,5.12,1880.0,1880.0,0.79,2990.0,778.0,5.51,5.51,6.94,3.54,146.0,146.0,264.0,264.0,'IS808_Rev',66.4);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(90,'∠180 ⅹ 180ⅹ 20',53.85,68.6,180.0,180.0,20.0,18.0,4.8,5.2,5.2,2060.0,2060.0,0.79,3270.0,853.0,5.49,5.49,6.91,3.53,161.0,161.0,290.0,291.0,'IS808_Rev',90.6);
+INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(91,'∠200 ⅹ 200ⅹ 24',71.31,90.8,200.0,200.0,24.0,18.0,4.8,5.85,5.85,3350.0,3350.0,0.79,5320.0,1390.0,6.08,6.08,7.65,3.91,237.0,237.0,427.0,428.0,'IS808_Rev',173.0);
 CREATE TABLE IF NOT EXISTS public."Columns" (
-	"Id"	INTEGER,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR(50),
-	"Mass"	DECIMAL(10 , 2),
-	"Area"	DECIMAL(10 , 2),
-	"D"	DECIMAL(10 , 2),
-	"B"	DECIMAL(10 , 2),
-	"tw"	DECIMAL(10 , 2),
+	"Mass"	NUMERIC(10 , 2),
+	"Area"	NUMERIC(10 , 2),
+	"D"	NUMERIC(10 , 2),
+	"B"	NUMERIC(10 , 2),
+	"tw"	NUMERIC(10 , 2),
 	"T"	INTEGER,
 	"FlangeSlope"	INTEGER DEFAULT (null),
-	"R1"	DECIMAL(10 , 2),
-	"R2"	DECIMAL(10 , 2),
-	"Iz"	DECIMAL(10 , 2),
-	"Iy"	DECIMAL(10 , 2),
-	"rz"	DECIMAL(10 , 2),
-	"ry"	DECIMAL(10 , 2),
-	"Zz"	DECIMAL(10 , 2),
-	"Zy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
-	"It"	DECIMAL(10 , 2),
-	"Iw"	DECIMAL(10 , 2),
+	"R1"	NUMERIC(10 , 2),
+	"R2"	NUMERIC(10 , 2),
+	"Iz"	NUMERIC(10 , 2),
+	"Iy"	NUMERIC(10 , 2),
+	"rz"	NUMERIC(10 , 2),
+	"ry"	NUMERIC(10 , 2),
+	"Zz"	NUMERIC(10 , 2),
+	"Zy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
+	"It"	NUMERIC(10 , 2),
+	"Iw"	NUMERIC(10 , 2),
 	"Source"	VARCHAR(100),
-	"Type"	VARCHAR(100),
-	PRIMARY KEY("Id")
+	"Type"	VARCHAR(100)
 );
 INSERT INTO public."Columns" VALUES(1,'HB 150',27.06,34.4,150.0,150.0,5.4,9,94,8.0,4.0,1450.0,431.0,6.49,3.53,194.0,57.5,215.0,92.7,10.1,25100.0,'IS808_Rev',NULL);
 INSERT INTO public."Columns" VALUES(2,'HB 150*',30.15,38.4,150.0,150.0,8.4,9,94,8.0,4.0,1510.0,435.0,6.27,3.36,201.0,58.0,228.0,94.7,12.6,25100.0,'IS808_Rev',NULL);
@@ -468,30 +470,29 @@ INSERT INTO public."Columns" VALUES(84,'UC 356 x 406 x 467',467.0,594.9,436.6,41
 INSERT INTO public."Columns" VALUES(85,'UC 356 x 406 x 551',551.0,701.9,455.6,418.5,42.1,67.5,90,15.2,0.0,226938.0,82668.0,18.0,10.9,9962.0,3951.0,12076.0,6058.0,NULL,NULL,'IS808_Rev',NULL);
 INSERT INTO public."Columns" VALUES(86,'UC 356 x 406 x 634',633.9,807.5,474.6,424.0,47.6,77,90,15.2,0.0,274845.0,98122.0,18.4,11.0,11582.0,4628.0,14235.0,7108.0,NULL,NULL,'IS808_Rev',NULL);
 CREATE TABLE IF NOT EXISTS public."Beams" (
-	"Id"	INTEGER,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR(50),
-	"Mass"	DECIMAL(10 , 2),
-	"Area"	DECIMAL(10 , 2),
-	"D"	DECIMAL(10 , 2),
-	"B"	DECIMAL(10 , 2),
-	"tw"	DECIMAL(10 , 2),
-	"T"	DECIMAL(10 , 2),
+	"Mass"	NUMERIC(10 , 2),
+	"Area"	NUMERIC(10 , 2),
+	"D"	NUMERIC(10 , 2),
+	"B"	NUMERIC(10 , 2),
+	"tw"	NUMERIC(10 , 2),
+	"T"	NUMERIC(10 , 2),
 	"FlangeSlope"	INTEGER,
-	"R1"	DECIMAL(10 , 2),
-	"R2"	DECIMAL(10 , 2),
-	"Iz"	DECIMAL(10 , 2),
-	"Iy"	DECIMAL(10 , 2),
-	"rz"	DECIMAL(10 , 2),
-	"ry"	DECIMAL(10 , 2),
-	"Zz"	DECIMAL(10 , 2),
-	"Zy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
-	"It"	DECIMAL(10 , 2),
-	"Iw"	DECIMAL(10 , 2),
+	"R1"	NUMERIC(10 , 2),
+	"R2"	NUMERIC(10 , 2),
+	"Iz"	NUMERIC(10 , 2),
+	"Iy"	NUMERIC(10 , 2),
+	"rz"	NUMERIC(10 , 2),
+	"ry"	NUMERIC(10 , 2),
+	"Zz"	NUMERIC(10 , 2),
+	"Zy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
+	"It"	NUMERIC(10 , 2),
+	"Iw"	NUMERIC(10 , 2),
 	"Source"	VARCHAR(100),
-	"Type"	VARCHAR(100),
-	PRIMARY KEY("Id")
+	"Type"	VARCHAR(100)
 );
 INSERT INTO public."Beams" VALUES(1,'JB 150',7.07,9.0,150.0,50.0,3.0,4.6,91.5,5.0,1.5,321.0,9.21,5.97,1.01,42.8,3.68,49.5,5.96,0.54800000000000004263,506.0,'IS808_Rev',NULL);
 INSERT INTO public."Beams" VALUES(2,'JB 175',8.07,10.2,175.0,50.0,3.2,4.8,91.5,5.0,1.5,480.0,9.65,6.83,0.96899999999999995026,54.9,3.86,64.2,6.32,0.65600000000000004973,724.0,'IS808_Rev',NULL);
@@ -817,110 +818,108 @@ INSERT INTO public."Beams" VALUES(321,'UB 914 x 305 x 289',289.1,368.3,926.6,307
 INSERT INTO public."Beams" VALUES(322,'UB 914 x 419 x 343',343.3,437.3,911.8,418.5,19.4,32.0,90,24.1,0.0,625779.0,39149.0,37.8,9.5,13726.0,1871.0,15477.0,2890.0,NULL,NULL,'',NULL);
 INSERT INTO public."Beams" VALUES(323,'UB 914 x 419 x 388',388.0,494.2,921.0,420.5,21.4,36.6,90,24.1,0.0,719635.0,45431.0,38.2,9.6,15627.0,2161.0,17665.0,3341.0,NULL,NULL,'',NULL);
 CREATE TABLE IF NOT EXISTS public."Channels" (
-	"Id"	INTEGER,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR(50),
-	"Mass"	DECIMAL(10 , 2),
-	"Area"	DECIMAL(10 , 2),
+	"Mass"	NUMERIC(10 , 2),
+	"Area"	NUMERIC(10 , 2),
 	"D"	INTEGER,
 	"B"	INTEGER,
-	"tw"	DECIMAL(10 , 2),
-	"T"	DECIMAL(10 , 2),
+	"tw"	NUMERIC(10 , 2),
+	"T"	NUMERIC(10 , 2),
 	"FlangeSlope"	INTEGER,
-	"R1"	DECIMAL(10 , 2),
-	"R2"	DECIMAL(10 , 2),
-	"Cy"	DECIMAL(10 , 2),
-	"Iz"	DECIMAL(10 , 2),
-	"Iy"	DECIMAL(10 , 2),
-	"rz"	DECIMAL(10 , 2),
-	"ry"	DECIMAL(10 , 2),
-	"Zz"	DECIMAL(10 , 2),
-	"Zy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL,
-	"It"	DECIMAL(10 , 2),
-	"Iw"	DECIMAL(10 , 2),
+	"R1"	NUMERIC(10 , 2),
+	"R2"	NUMERIC(10 , 2),
+	"Cy"	NUMERIC(10 , 2),
+	"Iz"	NUMERIC(10 , 2),
+	"Iy"	NUMERIC(10 , 2),
+	"rz"	NUMERIC(10 , 2),
+	"ry"	NUMERIC(10 , 2),
+	"Zz"	NUMERIC(10 , 2),
+	"Zy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
+	"It"	NUMERIC(10 , 2),
+	"Iw"	NUMERIC(10 , 2),
 	"Source"	VARCHAR(100),
-	"Type"	VARCHAR(100),
-	PRIMARY KEY("Id")
-);
-INSERT INTO public."Channels" VALUES(1,'MC 75',7.14,9.08,75,40,4.8,7.5,96,8.5,2.4,1.32,78.2,12.7,2.94,1.18,20.9,4.8,25.0,9.0,1.59,132.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(2,'MC 100',9.56,12.1,100,50,5.0,7.7,96,9.0,2.4,1.54,191.0,26.3,3.97,1.47,38.4,7.6,45.2,14.8,2.25,512.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(3,'MC 125',13.1,16.6,125,65,5.3,8.2,96,9.5,2.4,1.95,424.0,60.3,5.05,1.9,67.9,13.3,78.9,26.0,3.59,1900.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(4,'MC 125*',13.7,17.4,125,66,6.0,8.1,96,9.5,2.4,1.92,433.0,63.7,4.98,1.91,69.4,13.6,81.2,27.1,3.9,2030.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(5,'MC 150',16.8,21.3,150,75,5.7,9.0,96,10.0,2.4,2.2,786.0,102.0,6.08,2.19,104.0,19.3,121.0,38.1,5.45,4700.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(6,'MC 150*',17.7,22.5,150,76,6.5,9.0,96,10.0,2.4,2.17,810.0,108.0,6.0,2.2,108.0,20.0,126.0,40.0,6.07,5060.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(7,'MC 175',19.6,24.8,175,75,6.0,10.2,96,10.5,3.2,2.19,1230.0,120.0,7.04,2.2,141.0,22.7,163.0,44.7,7.49,7450.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(8,'MC 175*',22.7,27.3,175,76,7.5,10.2,96,10.5,3.2,2.14,1290.0,130.0,6.87,2.18,147.0,23.7,174.0,47.4,9.01,8250.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(9,'MC 200',22.3,28.4,200,75,6.2,11.4,96,11.0,3.2,2.2,1820.0,139.0,8.02,2.21,182.0,26.2,212.0,51.2,9.89,11000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(10,'MC 200*',24.3,30.9,200,76,7.5,11.4,96,11.0,3.2,2.12,1900.0,149.0,7.85,2.2,190.0,27.3,224.0,53.8,11.4,12100.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(11,'MC 225',26.1,33.2,225,80,6.5,12.4,96,12.0,3.2,2.31,2700.0,185.0,9.02,2.36,240.0,32.7,279.0,63.8,13.3,18700.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(12,'MC 225*',30.7,38.7,225,82,9.0,12.4,96,12.0,3.2,2.22,2920.0,210.0,8.69,2.33,260.0,35.1,309.0,68.6,17.6,22000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(13,'MC 250',30.6,38.9,250,80,7.2,14.1,96,12.0,3.2,2.3,3820.0,218.0,9.92,2.37,306.0,38.2,358.0,74.2,18.9,26800.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(14,'MC 250*',34.2,43.4,250,82,9.0,14.1,96,12.0,3.2,2.23,4060.0,242.0,9.68,2.36,325.0,40.7,386.0,78.7,22.8,30600.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(15,'MC 250*',38.1,48.1,250,83,11.0,14.1,96,12.0,3.2,2.19,4280.0,258.0,9.44,2.32,342.0,42.1,414.0,80.8,28.5,33800.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(16,'MC 300',36.3,46.2,300,90,7.8,13.6,96,13.0,3.2,2.35,6400.0,311.0,11.7,2.59,427.0,46.8,501.0,91.9,21.7,57500.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(17,'MC 300*',41.5,52.7,300,92,10.0,13.6,96,13.0,3.2,2.26,6880.0,344.0,11.4,2.55,458.0,49.6,549.0,96.3,28.1,66100.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(18,'MC 300*',46.2,58.4,300,93,12.0,13.6,96,13.0,3.2,2.22,7260.0,363.0,11.1,2.49,484.0,51.2,589.0,98.7,36.1,72300.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(19,'MC 350',42.7,54.3,350,100,8.3,13.5,96,14.0,4.8,2.44,10000.0,429.0,13.6,2.81,575.0,56.8,677.0,112.0,26.1,112000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(20,'MC 400',50.1,63.7,400,100,8.8,15.3,96,15.0,4.8,2.42,15100.0,504.0,15.4,2.81,758.0,66.5,898.0,129.0,36.1,170000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(21,'JC 100',5.8,7.41,100,45,3.0,5.1,91.5,6.0,2.0,1.4,123.0,14.6,4.09,1.4,24.8,4.7,28.4,8.8,0.51900000000000003907,264.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(22,'JC 125',7.9,10.0,125,50,3.0,6.6,91.5,6.0,2.4,1.64,269.0,25.1,5.17,1.58,43.1,7.5,49.1,13.6,1.07,701.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(23,'JC 150',9.9,12.6,150,55,3.6,6.9,91.5,7.0,2.4,1.67,471.0,37.4,6.1,1.72,62.9,9.8,72.1,18.1,1.47,1520.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(24,'JC 175',11.2,14.2,175,60,3.6,6.9,91.5,7.0,3.0,1.75,720.0,49.6,7.11,1.87,82.3,11.7,94.2,21.9,1.62,2780.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(25,'JC 200',14.0,17.7,200,70,4.1,7.1,91.5,8.0,3.2,1.97,1160.0,82.8,8.08,2.16,116.0,16.5,133.0,31.0,2.23,6150.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(26,'LC 75',5.7,7.26,75,40,3.7,6.0,91.5,6.0,2.0,1.35,65.9,11.3,3.01,1.25,17.6,4.3,20.6,7.7,0.72599999999999997868,110.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(27,'LC 100',7.9,10.0,100,50,4.0,6.4,91.5,6.0,2.0,1.62,164.0,24.4,4.05,1.56,32.9,7.2,38.1,13.3,1.11,434.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(28,'LC 125',10.7,13.6,125,65,4.4,6.6,91.5,7.0,2.4,2.04,356.0,56.3,5.11,2.03,57.1,12.6,65.4,23.4,1.68,1590.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(29,'LC (P) 125',11.3,14.3,125,65,4.6,7.0,96,7.0,2.4,1.87,370.0,50.6,5.08,1.88,59.2,10.9,68.3,22.0,2.27,1670.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(30,'LC 150',14.4,18.3,150,75,4.8,7.8,91.5,8.0,2.4,2.39,697.0,101.0,6.16,2.35,93.1,19.9,106.0,36.5,3.04,4120.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(31,'LC (P) 150',15.6,19.8,150,75,5.0,8.7,96,8.0,2.4,2.24,750.0,96.1,6.15,2.2,100.0,18.3,114.0,35.7,4.55,4450.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(32,'LC 175',17.6,22.4,175,75,5.1,9.5,91.5,8.0,3.2,2.4,1140.0,124.0,7.16,2.36,131.0,24.4,150.0,44.7,5.07,6830.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(33,'LC 200',20.6,26.2,200,75,5.5,10.8,91.5,8.5,3.2,2.36,1720.0,144.0,8.11,2.35,172.0,28.2,199.0,51.8,7.31,10300.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(34,'LC (P) 200',21.5,27.3,200,75,5.7,11.4,96,8.5,3.2,2.23,1790.0,136.0,8.09,2.23,179.0,25.9,207.0,50.2,9.13,10800.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(35,'LC 225',24.0,30.5,225,90,5.8,10.2,96,11.0,3.2,2.47,2550.0,207.0,9.14,2.6,226.0,31.8,260.0,64.2,9.3,22200.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(36,'LC 250',28.0,35.6,250,100,6.1,10.7,96,11.0,3.2,2.71,3690.0,295.0,10.1,2.88,295.0,40.6,338.0,82.5,12.0,39700.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(37,'LC 300',33.1,42.1,300,100,6.7,11.6,96,12.0,3.2,2.56,6050.0,344.0,11.9,2.86,403.0,46.3,467.0,94.2,15.6,66400.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(38,'LC (P) 300',33.1,42.1,300,90,7.0,12.5,96,12.0,3.2,2.32,5910.0,282.0,11.8,2.59,394.0,42.4,460.0,84.3,16.8,53000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(39,'LC 350',38.9,49.4,350,100,7.4,12.5,96,13.0,4.8,2.42,9310.0,391.0,13.7,2.81,532.0,51.6,623.0,103.0,20.3,103000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(40,'LC 400',45.8,58.2,400,100,8.0,14.0,96,14.0,4.8,2.37,13900.0,457.0,15.5,2.8,699.0,60.0,825.0,117.0,27.9,157000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(41,'MPC 75',7.14,9.1,75,40,4.8,7.5,90,8.5,4.5,1.38,78.6,13.7,2.94,1.23,21.0,5.2,25.2,9.5,1.48,132.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(42,'MPC 100',9.56,12.1,100,50,5.0,7.7,90,9.0,4.5,1.65,193.0,29.4,3.98,1.55,38.6,8.8,45.5,16.0,2.04,512.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(43,'MPC 125',13.1,16.7,125,65,5.5,8.1,90,9.5,5.0,2.14,426.0,69.8,5.04,2.04,68.2,15.9,79.3,29.1,3.14,1900.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(44,'MPC 125*',13.7,17.5,125,66,6.0,8.1,90,9.5,5.0,2.11,437.0,74.1,5.0,2.06,69.9,16.5,81.7,30.2,3.4,2030.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(45,'MPC 150',16.8,21.3,150,75,5.7,9.0,90,10.0,5.0,2.46,792.0,120.0,6.09,2.37,105.0,23.8,122.0,43.2,4.71,4700.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(46,'MPC 150*',17.7,22.5,150,76,6.5,9.0,90,10.0,5.0,2.4,817.0,128.0,6.02,2.38,109.0,24.7,126.0,45.1,5.25,5060.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(47,'MPC 175',19.6,24.9,175,75,6.0,10.2,90,10.5,6.0,2.39,1240.0,138.0,7.06,2.36,141.0,27.0,164.0,49.5,6.66,7450.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(48,'MPC 175*',21.7,27.6,175,77,7.5,10.2,90,10.5,6.0,2.32,1310.0,155.0,6.9,2.37,150.0,28.9,176.0,53.0,8.1,8550.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(49,'MPC 200',22.3,28.4,200,75,6.2,11.4,90,11.0,6.0,2.34,1830.0,157.0,8.03,2.35,183.0,30.5,213.0,55.9,8.99,11000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(50,'MPC 200*',24.3,30.9,200,76,7.5,11.4,90,11.0,6.5,2.26,1910.0,168.0,7.86,2.33,191.0,31.5,225.0,57.8,10.4,12100.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(51,'MPC 225',26.1,33.2,225,80,6.5,12.4,90,12.0,6.5,2.48,2710.0,208.0,9.03,2.5,241.0,37.9,280.0,69.5,12.1,18700.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(52,'MPC 225*',30.7,39.0,225,83,9.0,12.4,90,12.0,7.0,2.37,2960.0,244.0,8.72,2.51,263.0,41.3,312.0,75.3,16.2,22800.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(53,'MPC 250',30.6,38.9,250,80,7.2,14.1,90,12.0,7.0,2.44,3830.0,240.0,9.93,2.48,307.0,43.2,359.0,79.3,17.5,26800.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(54,'MPC 250*',34.2,43.4,250,82,9.0,14.1,90,12.0,7.0,2.36,4080.0,267.0,9.69,2.48,326.0,45.9,387.0,83.5,21.1,30600.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(55,'MPC 250*',38.1,48.6,250,84,11.0,14.1,90,12.0,7.0,2.31,4350.0,295.0,9.46,2.46,348.0,48.4,420.0,87.7,26.7,34900.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(56,'MPC 300',36.3,46.2,300,90,7.8,13.6,90,13.0,7.0,2.54,6420.0,351.0,11.7,2.76,428.0,54.4,502.0,99.1,19.8,57500.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(57,'MPC 300*',41.5,52.8,300,92,10.0,13.6,90,13.0,7.0,2.42,6910.0,390.0,11.4,2.72,460.0,57.5,551.0,103.0,25.7,66100.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(58,'MPC 300*',46.2,58.8,300,94,12.0,13.6,90,13.0,7.0,2.36,7360.0,424.0,11.1,2.69,490.0,60.3,596.0,108.0,33.5,74400.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(59,'MPC 350',42.7,54.3,350,100,8.3,13.5,90,14.0,8.0,2.65,10100.0,497.0,13.6,3.02,577.0,67.7,679.0,122.0,23.4,112000.0,'IS808_Rev',NULL);
-INSERT INTO public."Channels" VALUES(60,'MPC 400',50.1,63.8,400,100,8.8,15.3,90,15.0,8.0,2.6,15200.0,572.0,15.4,3.0,762.0,77.4,901.0,139.0,33.1,170000.0,'IS808_Rev',NULL);
+	"Type"	VARCHAR(100)
+); 
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(1,'MC 75',7.14,9.08,75,40,4.8,7.5,96,8.5,2.4,1.32,78.2,12.7,2.94,1.18,20.9,4.8,25.0,9.0,1.59,132.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(2,'MC 100',9.56,12.1,100,50,5.0,7.7,96,9.0,2.4,1.54,191.0,26.3,3.97,1.47,38.4,7.6,45.2,14.8,2.25,512.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(3,'MC 125',13.1,16.6,125,65,5.3,8.2,96,9.5,2.4,1.95,424.0,60.3,5.05,1.9,67.9,13.3,78.9,26.0,3.59,1900.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(4,'MC 125*',13.7,17.4,125,66,6.0,8.1,96,9.5,2.4,1.92,433.0,63.7,4.98,1.91,69.4,13.6,81.2,27.1,3.9,2030.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(5,'MC 150',16.8,21.3,150,75,5.7,9.0,96,10.0,2.4,2.2,786.0,102.0,6.08,2.19,104.0,19.3,121.0,38.1,5.45,4700.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(6,'MC 150*',17.7,22.5,150,76,6.5,9.0,96,10.0,2.4,2.17,810.0,108.0,6.0,2.2,108.0,20.0,126.0,40.0,6.07,5060.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(7,'MC 175',19.6,24.8,175,75,6.0,10.2,96,10.5,3.2,2.19,1230.0,120.0,7.04,2.2,141.0,22.7,163.0,44.7,7.49,7450.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(8,'MC 175*',22.7,27.3,175,76,7.5,10.2,96,10.5,3.2,2.14,1290.0,130.0,6.87,2.18,147.0,23.7,174.0,47.4,9.01,8250.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(9,'MC 200',22.3,28.4,200,75,6.2,11.4,96,11.0,3.2,2.2,1820.0,139.0,8.02,2.21,182.0,26.2,212.0,51.2,9.89,11000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(10,'MC 200*',24.3,30.9,200,76,7.5,11.4,96,11.0,3.2,2.12,1900.0,149.0,7.85,2.2,190.0,27.3,224.0,53.8,11.4,12100.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(11,'MC 225',26.1,33.2,225,80,6.5,12.4,96,12.0,3.2,2.31,2700.0,185.0,9.02,2.36,240.0,32.7,279.0,63.8,13.3,18700.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(12,'MC 225*',30.7,38.7,225,82,9.0,12.4,96,12.0,3.2,2.22,2920.0,210.0,8.69,2.33,260.0,35.1,309.0,68.6,17.6,22000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(13,'MC 250',30.6,38.9,250,80,7.2,14.1,96,12.0,3.2,2.3,3820.0,218.0,9.92,2.37,306.0,38.2,358.0,74.2,18.9,26800.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(14,'MC 250*',34.2,43.4,250,82,9.0,14.1,96,12.0,3.2,2.23,4060.0,242.0,9.68,2.36,325.0,40.7,386.0,78.7,22.8,30600.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(15,'MC 250*',38.1,48.1,250,83,11.0,14.1,96,12.0,3.2,2.19,4280.0,258.0,9.44,2.32,342.0,42.1,414.0,80.8,28.5,33800.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(16,'MC 300',36.3,46.2,300,90,7.8,13.6,96,13.0,3.2,2.35,6400.0,311.0,11.7,2.59,427.0,46.8,501.0,91.9,21.7,57500.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(17,'MC 300*',41.5,52.7,300,92,10.0,13.6,96,13.0,3.2,2.26,6880.0,344.0,11.4,2.55,458.0,49.6,549.0,96.3,28.1,66100.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(18,'MC 300*',46.2,58.4,300,93,12.0,13.6,96,13.0,3.2,2.22,7260.0,363.0,11.1,2.49,484.0,51.2,589.0,98.7,36.1,72300.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(19,'MC 350',42.7,54.3,350,100,8.3,13.5,96,14.0,4.8,2.44,10000.0,429.0,13.6,2.81,575.0,56.8,677.0,112.0,26.1,112000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(20,'MC 400',50.1,63.7,400,100,8.8,15.3,96,15.0,4.8,2.42,15100.0,504.0,15.4,2.81,758.0,66.5,898.0,129.0,36.1,170000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(21,'JC 100',5.8,7.41,100,45,3.0,5.1,91.5,6.0,2.0,1.4,123.0,14.6,4.09,1.4,24.8,4.7,28.4,8.8,0.51900000000000003907,264.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(22,'JC 125',7.9,10.0,125,50,3.0,6.6,91.5,6.0,2.4,1.64,269.0,25.1,5.17,1.58,43.1,7.5,49.1,13.6,1.07,701.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(23,'JC 150',9.9,12.6,150,55,3.6,6.9,91.5,7.0,2.4,1.67,471.0,37.4,6.1,1.72,62.9,9.8,72.1,18.1,1.47,1520.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(24,'JC 175',11.2,14.2,175,60,3.6,6.9,91.5,7.0,3.0,1.75,720.0,49.6,7.11,1.87,82.3,11.7,94.2,21.9,1.62,2780.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(25,'JC 200',14.0,17.7,200,70,4.1,7.1,91.5,8.0,3.2,1.97,1160.0,82.8,8.08,2.16,116.0,16.5,133.0,31.0,2.23,6150.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(26,'LC 75',5.7,7.26,75,40,3.7,6.0,91.5,6.0,2.0,1.35,65.9,11.3,3.01,1.25,17.6,4.3,20.6,7.7,0.72599999999999997868,110.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(27,'LC 100',7.9,10.0,100,50,4.0,6.4,91.5,6.0,2.0,1.62,164.0,24.4,4.05,1.56,32.9,7.2,38.1,13.3,1.11,434.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(28,'LC 125',10.7,13.6,125,65,4.4,6.6,91.5,7.0,2.4,2.04,356.0,56.3,5.11,2.03,57.1,12.6,65.4,23.4,1.68,1590.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(29,'LC (P) 125',11.3,14.3,125,65,4.6,7.0,96,7.0,2.4,1.87,370.0,50.6,5.08,1.88,59.2,10.9,68.3,22.0,2.27,1670.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(30,'LC 150',14.4,18.3,150,75,4.8,7.8,91.5,8.0,2.4,2.39,697.0,101.0,6.16,2.35,93.1,19.9,106.0,36.5,3.04,4120.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(31,'LC (P) 150',15.6,19.8,150,75,5.0,8.7,96,8.0,2.4,2.24,750.0,96.1,6.15,2.2,100.0,18.3,114.0,35.7,4.55,4450.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(32,'LC 175',17.6,22.4,175,75,5.1,9.5,91.5,8.0,3.2,2.4,1140.0,124.0,7.16,2.36,131.0,24.4,150.0,44.7,5.07,6830.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(33,'LC 200',20.6,26.2,200,75,5.5,10.8,91.5,8.5,3.2,2.36,1720.0,144.0,8.11,2.35,172.0,28.2,199.0,51.8,7.31,10300.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(34,'LC (P) 200',21.5,27.3,200,75,5.7,11.4,96,8.5,3.2,2.23,1790.0,136.0,8.09,2.23,179.0,25.9,207.0,50.2,9.13,10800.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(35,'LC 225',24.0,30.5,225,90,5.8,10.2,96,11.0,3.2,2.47,2550.0,207.0,9.14,2.6,226.0,31.8,260.0,64.2,9.3,22200.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(36,'LC 250',28.0,35.6,250,100,6.1,10.7,96,11.0,3.2,2.71,3690.0,295.0,10.1,2.88,295.0,40.6,338.0,82.5,12.0,39700.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(37,'LC 300',33.1,42.1,300,100,6.7,11.6,96,12.0,3.2,2.56,6050.0,344.0,11.9,2.86,403.0,46.3,467.0,94.2,15.6,66400.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(38,'LC (P) 300',33.1,42.1,300,90,7.0,12.5,96,12.0,3.2,2.32,5910.0,282.0,11.8,2.59,394.0,42.4,460.0,84.3,16.8,53000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(39,'LC 350',38.9,49.4,350,100,7.4,12.5,96,13.0,4.8,2.42,9310.0,391.0,13.7,2.81,532.0,51.6,623.0,103.0,20.3,103000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(40,'LC 400',45.8,58.2,400,100,8.0,14.0,96,14.0,4.8,2.37,13900.0,457.0,15.5,2.8,699.0,60.0,825.0,117.0,27.9,157000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(41,'MPC 75',7.14,9.1,75,40,4.8,7.5,90,8.5,4.5,1.38,78.6,13.7,2.94,1.23,21.0,5.2,25.2,9.5,1.48,132.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(42,'MPC 100',9.56,12.1,100,50,5.0,7.7,90,9.0,4.5,1.65,193.0,29.4,3.98,1.55,38.6,8.8,45.5,16.0,2.04,512.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(43,'MPC 125',13.1,16.7,125,65,5.5,8.1,90,9.5,5.0,2.14,426.0,69.8,5.04,2.04,68.2,15.9,79.3,29.1,3.14,1900.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(44,'MPC 125*',13.7,17.5,125,66,6.0,8.1,90,9.5,5.0,2.11,437.0,74.1,5.0,2.06,69.9,16.5,81.7,30.2,3.4,2030.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(45,'MPC 150',16.8,21.3,150,75,5.7,9.0,90,10.0,5.0,2.46,792.0,120.0,6.09,2.37,105.0,23.8,122.0,43.2,4.71,4700.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(46,'MPC 150*',17.7,22.5,150,76,6.5,9.0,90,10.0,5.0,2.4,817.0,128.0,6.02,2.38,109.0,24.7,126.0,45.1,5.25,5060.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(47,'MPC 175',19.6,24.9,175,75,6.0,10.2,90,10.5,6.0,2.39,1240.0,138.0,7.06,2.36,141.0,27.0,164.0,49.5,6.66,7450.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(48,'MPC 175*',21.7,27.6,175,77,7.5,10.2,90,10.5,6.0,2.32,1310.0,155.0,6.9,2.37,150.0,28.9,176.0,53.0,8.1,8550.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(49,'MPC 200',22.3,28.4,200,75,6.2,11.4,90,11.0,6.0,2.34,1830.0,157.0,8.03,2.35,183.0,30.5,213.0,55.9,8.99,11000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(50,'MPC 200*',24.3,30.9,200,76,7.5,11.4,90,11.0,6.5,2.26,1910.0,168.0,7.86,2.33,191.0,31.5,225.0,57.8,10.4,12100.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(51,'MPC 225',26.1,33.2,225,80,6.5,12.4,90,12.0,6.5,2.48,2710.0,208.0,9.03,2.5,241.0,37.9,280.0,69.5,12.1,18700.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(52,'MPC 225*',30.7,39.0,225,83,9.0,12.4,90,12.0,7.0,2.37,2960.0,244.0,8.72,2.51,263.0,41.3,312.0,75.3,16.2,22800.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(53,'MPC 250',30.6,38.9,250,80,7.2,14.1,90,12.0,7.0,2.44,3830.0,240.0,9.93,2.48,307.0,43.2,359.0,79.3,17.5,26800.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(54,'MPC 250*',34.2,43.4,250,82,9.0,14.1,90,12.0,7.0,2.36,4080.0,267.0,9.69,2.48,326.0,45.9,387.0,83.5,21.1,30600.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(55,'MPC 250*',38.1,48.6,250,84,11.0,14.1,90,12.0,7.0,2.31,4350.0,295.0,9.46,2.46,348.0,48.4,420.0,87.7,26.7,34900.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(56,'MPC 300',36.3,46.2,300,90,7.8,13.6,90,13.0,7.0,2.54,6420.0,351.0,11.7,2.76,428.0,54.4,502.0,99.1,19.8,57500.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(57,'MPC 300*',41.5,52.8,300,92,10.0,13.6,90,13.0,7.0,2.42,6910.0,390.0,11.4,2.72,460.0,57.5,551.0,103.0,25.7,66100.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(58,'MPC 300*',46.2,58.8,300,94,12.0,13.6,90,13.0,7.0,2.36,7360.0,424.0,11.1,2.69,490.0,60.3,596.0,108.0,33.5,74400.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(59,'MPC 350',42.7,54.3,350,100,8.3,13.5,90,14.0,8.0,2.65,10100.0,497.0,13.6,3.02,577.0,67.7,679.0,122.0,23.4,112000.0,'IS808_Rev',NULL);
+INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(60,'MPC 400',50.1,63.8,400,100,8.8,15.3,90,15.0,8.0,2.6,15200.0,572.0,15.4,3.0,762.0,77.4,901.0,139.0,33.1,170000.0,'IS808_Rev',NULL);
 CREATE TABLE IF NOT EXISTS public."SHS" (
-	"Id"	INTEGER NOT NULL,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR,
-	"D"	DECIMAL(10 , 2),
-	"B"	DECIMAL(10 , 2),
-	"T"	DECIMAL(10 , 2),
-	"W"	DECIMAL(10 , 2),
-	"A"	DECIMAL(10 , 2),
-	"Izz"	DECIMAL(10 , 2),
-	"Iyy"	DECIMAL(10 , 2),
-	"Rzz"	DECIMAL(10 , 2),
-	"Ryy"	DECIMAL(10 , 2),
-	"Zzz"	DECIMAL(10 , 2),
-	"Zyy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
-	"Source"	VARCHAR(50),
-	PRIMARY KEY("Id")
+	"D"	NUMERIC(10 , 2),
+	"B"	NUMERIC(10 , 2),
+	"T"	NUMERIC(10 , 2),
+	"W"	NUMERIC(10 , 2),
+	"A"	NUMERIC(10 , 2),
+	"Izz"	NUMERIC(10 , 2),
+	"Iyy"	NUMERIC(10 , 2),
+	"Rzz"	NUMERIC(10 , 2),
+	"Ryy"	NUMERIC(10 , 2),
+	"Zzz"	NUMERIC(10 , 2),
+	"Zyy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
+	"Source"	VARCHAR(50)
 );
 INSERT INTO public."SHS" VALUES(1,' SHS 25  x  25 x  2.6',25.0,25.0,2.6,1.69,2.16,1.72,1.72,0.89,0.89,1.38,1.38,1.76,1.76,'IS 4923:1997');
 INSERT INTO public."SHS" VALUES(2,' SHS 25  x  25 x  3.2',25.0,25.0,3.2,1.98,2.53,1.89,1.89,0.86,0.86,1.51,1.51,1.98,1.98,'IS 4923:1997');
@@ -985,23 +984,22 @@ INSERT INTO public."SHS" VALUES(60,' SHS 180 x  180 x  5.0',180.0,180.0,5.0,27.2
 INSERT INTO public."SHS" VALUES(61,' SHS 180 x  180 x  6.0',180.0,180.0,6.0,32.05,40.83,2036.0,2036.0,7.06,7.06,226.0,226.0,280.0,280.0,'IS 4923:1997');
 INSERT INTO public."SHS" VALUES(62,' SHS 180 x  180 x  8.0',180.0,180.0,8.0,41.91,53.39,2590.73,2590.73,6.97,6.97,287.86,287.86,340.68,340.68,'IS 4923:1997');
 CREATE TABLE IF NOT EXISTS public."RHS" (
-	"Id"	INTEGER NOT NULL,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR,
-	"D"	DECIMAL(10 , 2),
-	"B"	DECIMAL(10 , 2),
-	"T"	DECIMAL(10 , 2),
-	"W"	DECIMAL(10 , 2),
-	"A"	DECIMAL(10 , 2),
-	"Izz"	DECIMAL(10 , 2),
-	"Iyy"	DECIMAL(10 , 2),
-	"Rzz"	DECIMAL(10 , 2),
-	"Ryy"	DECIMAL(10 , 2),
-	"Zzz"	DECIMAL(10 , 2),
-	"Zyy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
-	"Source"	VARCHAR(50),
-	PRIMARY KEY("Id")
+	"D"	NUMERIC(10 , 2),
+	"B"	NUMERIC(10 , 2),
+	"T"	NUMERIC(10 , 2),
+	"W"	NUMERIC(10 , 2),
+	"A"	NUMERIC(10 , 2),
+	"Izz"	NUMERIC(10 , 2),
+	"Iyy"	NUMERIC(10 , 2),
+	"Rzz"	NUMERIC(10 , 2),
+	"Ryy"	NUMERIC(10 , 2),
+	"Zzz"	NUMERIC(10 , 2),
+	"Zyy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
+	"Source"	VARCHAR(50)
 );
 INSERT INTO public."RHS" VALUES(1,' RHS 50  x  25  x  2.9',50.0,25.0,2.9,2.98,3.8,10.93,3.6,1.7,0.97,4.37,2.88,5.72,3.48,'IS 4923:1997');
 INSERT INTO public."RHS" VALUES(2,' RHS 50 x  25 x 3.2',50.0,25.0,3.2,3.24,4.13,11.63,3.8,1.68,0.96,4.65,3.04,6.14,3.73,'IS 4923:1997');
@@ -1030,22 +1028,21 @@ INSERT INTO public."RHS" VALUES(24,' RHS 145  x 82  x 5.4',145.0,82.0,5.4,17.74,
 INSERT INTO public."RHS" VALUES(25,' RHS 172 x  92  x  4.8',172.0,92.0,4.8,18.71,23.83,917.13,346.91,6.2,3.82,106.64,75.41,132.08,85.61,'IS 4923:1997');
 INSERT INTO public."RHS" VALUES(26,' RHS 172  x  92  x  5.4',172.0,92.0,5.4,20.88,26.59,1012.47,381.74,6.17,3.79,117.73,82.99,146.55,94.86,'IS 4923:1997');
 CREATE TABLE IF NOT EXISTS public."CHS" (
-	"Id"	INTEGER,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR,
 	"NB"	VARCHAR,
-	"OD"	DECIMAL(10 , 2),
-	"T"	DECIMAL(10 , 2),
-	"W"	DECIMAL(10 , 2),
-	"A"	DECIMAL(10 , 2),
-	"V"	DECIMAL(10 , 2),
-	"Ves"	DECIMAL(10 , 2),
-	"Vis"	DECIMAL(10 , 2),
-	"I"	DECIMAL(10 , 2),
-	"Z"	DECIMAL(10 , 2),
-	"R"	DECIMAL(10 , 2),
-	"Rsq"	DECIMAL(10 , 2),
-	"Source"	VARCHAR,
-	PRIMARY KEY("Id")
+	"OD"	NUMERIC(10 , 2),
+	"T"	NUMERIC(10 , 2),
+	"W"	NUMERIC(10 , 2),
+	"A"	NUMERIC(10 , 2),
+	"V"	NUMERIC(10 , 2),
+	"Ves"	NUMERIC(10 , 2),
+	"Vis"	NUMERIC(10 , 2),
+	"I"	NUMERIC(10 , 2),
+	"Z"	NUMERIC(10 , 2),
+	"R"	NUMERIC(10 , 2),
+	"Rsq"	NUMERIC(10 , 2),
+	"Source"	VARCHAR
 );
 INSERT INTO public."CHS" VALUES(1,' CHS 21.3 x 2','15',21.3,2.0,0.95,1.21,235.0,669.0,543.0,0.57,0.54,0.69,0.47,'IS 1161:2014');
 INSERT INTO public."CHS" VALUES(2,' CHS 21.3 x 2.6','15',21.3,2.6,1.2,1.53,204.0,669.0,506.0,0.68,0.64,0.67,0.45,'IS 1161:2014');
@@ -1129,34 +1126,33 @@ INSERT INTO public."CHS" VALUES(79,' CHS 355.6 x 8','350',355.6,8.0,68.58,87.36,
 INSERT INTO public."CHS" VALUES(80,' CHS 355.6 x 10','350',355.6,10.0,85.23,108.57,88457.0,11172.0,10543.0,16223.5,912.46,12.22,149.42,'IS 1161:2014');
 INSERT INTO public."CHS" VALUES(81,' CHS 355.6 x 12','350',355.6,12.0,101.68,129.53,86361.0,11172.0,10418.0,19139.47,1076.46,12.16,147.76,'IS 1161:2014');
 CREATE TABLE IF NOT EXISTS public."Angles" (
-	"Id"	INTEGER,
+	"id" INTEGER PRIMARY KEY,
 	"Designation"	VARCHAR(50),
-	"Mass"	DECIMAL(10 , 2),
-	"Area"	DECIMAL(10 , 2),
-	"a"	DECIMAL(10 , 2),
-	"b"	DECIMAL(10 , 2),
-	"t"	DECIMAL(10 , 2),
-	"R1"	DECIMAL(10 , 2),
-	"R2"	DECIMAL(10 , 2) DEFAULT (null),
-	"Cz"	DECIMAL(10 , 2),
-	"Cy"	DECIMAL(10 , 2),
-	"Iz"	DECIMAL(10 , 2),
-	"Iy"	DECIMAL(10 , 2),
-	"Alpha"	DECIMAL(10 , 2),
-	"Iumax"	DECIMAL(10 , 2),
-	"Ivmin"	DECIMAL(10 , 2),
-	"rz"	DECIMAL(10 , 2),
-	"ry"	DECIMAL(10 , 2),
-	"rumax"	DECIMAL(10 , 2),
-	"rvmin"	DECIMAL(10 , 2),
-	"Zz"	DECIMAL(10 , 2),
-	"Zy"	DECIMAL(10 , 2),
-	"Zpz"	DECIMAL(10 , 2),
-	"Zpy"	DECIMAL(10 , 2),
-	"It"	DECIMAL(10 , 2),
+	"Mass"	NUMERIC(10 , 2),
+	"Area"	NUMERIC(10 , 2),
+	"a"	NUMERIC(10 , 2),
+	"b"	NUMERIC(10 , 2),
+	"t"	NUMERIC(10 , 2),
+	"R1"	NUMERIC(10 , 2),
+	"R2"	NUMERIC(10 , 2) DEFAULT (null),
+	"Cz"	NUMERIC(10 , 2),
+	"Cy"	NUMERIC(10 , 2),
+	"Iz"	NUMERIC(10 , 2),
+	"Iy"	NUMERIC(10 , 2),
+	"Alpha"	NUMERIC(10 , 2),
+	"Iumax"	NUMERIC(10 , 2),
+	"Ivmin"	NUMERIC(10 , 2),
+	"rz"	NUMERIC(10 , 2),
+	"ry"	NUMERIC(10 , 2),
+	"rumax"	NUMERIC(10 , 2),
+	"rvmin"	NUMERIC(10 , 2),
+	"Zz"	NUMERIC(10 , 2),
+	"Zy"	NUMERIC(10 , 2),
+	"Zpz"	NUMERIC(10 , 2),
+	"Zpy"	NUMERIC(10 , 2),
+	"It"	NUMERIC(10 , 2),
 	"Source"	VARCHAR(100),
-	"Type"	VARCHAR(100),
-	PRIMARY KEY("Id")
+	"Type"	VARCHAR(100)
 );
 INSERT INTO public."Angles" VALUES(1,'20 x 20 x 3',0.9,1.14,20.0,20.0,3.0,4.0,0.0,0.6,0.6,0.4,0.4,0.79,0.64,0.17,0.59,0.59,0.75,0.39,0.29,0.29,0.52,0.53,0.033000000000000007105,'IS808_Rev',NULL);
 INSERT INTO public."Angles" VALUES(2,'20 x 20 x 4',1.16,1.47,20.0,20.0,4.0,4.0,0.0,0.64,0.64,0.5,0.5,0.79,0.79,0.22,0.58,0.58,0.73,0.39,0.37,0.37,0.66,0.67,0.075999999999999996447,'IS808_Rev',NULL);
