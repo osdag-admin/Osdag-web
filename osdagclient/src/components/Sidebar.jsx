@@ -10,7 +10,6 @@ function Sidebar() {
 
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const { data } = useContext(GlobalContext)
-  console.log(data)
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
@@ -35,10 +34,7 @@ function Sidebar() {
   const navigate = useNavigate();
   return (
     <>
-
-      {/* <button className='hambutton' onClick={toggleSidebar}>Toggle Sidebar</button> */}
       <div className={`sidebar ${isSidebarVisible ? '' : 'hidden'}`}>
-        {/* hi */}
         <svg onClick={toggleSidebar}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

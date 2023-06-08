@@ -1,6 +1,11 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import AppReducer from './AppReducer';
 
+/*
+    Author: Sai Charan (Fossee' 23)
+    This file contains the GlobalState and GlobalProvider components which are used to manage the state of the application.
+*/
+
 import axios from 'axios';
 
 //initial state
@@ -37,8 +42,36 @@ export const GlobalProvider = ({ children }) => {
     }, []);
 
     //action
-    function getDesingTypes(conn_type) {
-        dispatch({ type: 'GET_DESIGNTYPES', payload: conn_type })
+    const getDesignTypes = async (conn_type) => {
+        try {
+            const response = await axios.get(`${BASE_URL}osdag-web/${conn_type}`);
+            const data = response.data.result;
+            dispatch({ type: 'GET_DESIGNTYPES', payload: data });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getSubDesignTypes = async (designType, name) => {
+        try {
+            const response = await axios.get(`${BASE_URL}osdag-web/${designType}/${name.toLowerCase().replaceAll("_", '-')}`);
+            const data = response.data.result;
+            // console.log(data)
+            dispatch({ type: 'GET_SUB_DESIGNTYPES', payload: data });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getLeafLevelDesignType = async (designType, prev, name) => {
+        try {
+            const response = await axios.get(`${BASE_URL}osdag-web/${designType}/${prev.toLowerCase().replaceAll("_", '-')}/${name.toLowerCase().replaceAll("_", '-')}`);
+            const data = response.data.result;
+            // console.log(data)
+            dispatch({ type: 'GET_LEAF_DESIGNTYPES', payload: data });
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -47,7 +80,9 @@ export const GlobalProvider = ({ children }) => {
             results: state.results,
             subDesignTypes: state.subDesignTypes,
             leafLevelDesignType: state.leafLevelDesignType,
-            getDesingTypes
+            getDesignTypes,
+            getSubDesignTypes,
+            getLeafLevelDesignType
         }}>
             {children}
         </GlobalContext.Provider>
