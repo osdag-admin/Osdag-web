@@ -3,6 +3,8 @@ function EndPlate() {
   return (
     <>
     <h1>End Plate</h1>
+
+
     </>
   )
 }

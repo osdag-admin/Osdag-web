@@ -167,6 +167,48 @@ function FinePlate() {
     },
   ];
   
+  const data = {
+    "mainTitle": "Output Dock",
+    "sections": [
+      {
+        "title": "Bolt",
+        "components": [
+          { "label": "Diameter (mm)", "inputType": "text" },
+          { "label": "Property Class", "inputType": "text" },
+          { "label": "Shear Capacity (kN)", "inputType": "text" },
+          { "label": "Capacity (kN)", "inputType": "text" },
+          { "label": "Bolt Force (kN)", "inputType": "text" },
+          { "label": "Bolt Columns (nos)", "inputType": "text" },
+          { "label": "Bolt Rows (nos)", "inputType": "text" },
+          { "label": "Spacing", "inputType": "button" }
+        ]
+      },
+      {
+        "title": "Plate",
+        "components": [
+          { "label": "Thickness (mm)", "inputType": "text" },
+          { "label": "Height (mm)", "inputType": "text" },
+          { "label": "Length (mm)", "inputType": "text" },
+          { "label": "Capacity", "inputType": "button" }
+        ]
+      },
+      {
+        "title": "Section Details",
+        "components": [
+          { "label": "Capacity", "inputType": "button" }
+        ]
+      },
+      {
+        "title": "Weld",
+        "components": [
+          { "label": "Size (mm)", "inputType": "text" },
+          { "label": "Strength (N/mm2)", "inputType": "text" },
+          { "label": "Stress (N/mm)", "inputType": "text" }
+        ]
+      }
+    ]
+  };
+
 
   return (
 
@@ -217,7 +259,7 @@ function FinePlate() {
             <div><h4>Beam Section:</h4></div>
             <div><Select style={ {width:'100%'}}>
                   {beamData.map((item) => (
-                  <option key={item.beamID} value={item.beamID}>{item.beam_name}</option>   
+                  <Option key={item.beamID} value={item.beamID}>{item.beam_name}</Option>   
                   ))}
                 </Select>
             </div>
@@ -225,7 +267,7 @@ function FinePlate() {
             <div><h4>Material:</h4></div>
             <div><Select style={ {width:'100%'}}>
                   {material.map((item) => (
-                  <option key={item.MaterialID} value={item.MaterialID}>{item.Material_data}</option>   
+                  <Option key={item.MaterialID} value={item.MaterialID}>{item.Material_data}</Option>   
                   ))}
                 </Select>
             </div>
@@ -246,22 +288,22 @@ function FinePlate() {
           <div className='component-grid    '> 
           <div><h4>Beam Section:</h4></div>
             <div><Select style={ {width:'100%'}}>
-                  <option value="Customized">Customized</option>
-                  <option value="All">All</option>   
+                  <Option value="Customized">Customized</Option>
+                  <Option value="All">All</Option>   
                  </Select>
             </div>
 
             <div><h4>Type:</h4></div>
             <div><Select style={ {width:'100%'}}>
-                  <option value="Bearing_Bolt">Bearing Bolt</option>
-                  <option value="Fraction_Grip_Bolt">Fraction Grip Bolt</option>   
+                  <Option value="Bearing_Bolt">Bearing Bolt</Option>
+                  <Option value="Fraction_Grip_Bolt">Fraction Grip Bolt</Option>   
                  </Select>
             </div>
 
             <div><h4>Property Class:</h4></div>
             <div><Select style={ {width:'100%'}}>
-                  <option value="Customized">Customized</option>
-                  <option value="All">All</option>   
+                  <Option value="Customized">Customized</Option>
+                  <Option value="All">All</Option>   
                  </Select>
             </div>
           </div>
@@ -270,8 +312,8 @@ function FinePlate() {
           <div className='component-grid    '> 
           <div><h4>Thickness(mm)</h4></div>
             <div><Select style={ {width:'100%'}}>
-                  <option value="Customized">Customized</option>
-                  <option value="All">All</option>   
+                  <Option value="Customized">Customized</Option>
+                  <Option value="All">All</Option>   
                  </Select>
             </div>
             </div>
@@ -300,66 +342,41 @@ function FinePlate() {
 
       {/* Right */}
       <div>
-        <h5>Output Dock</h5>
-      <div className='subMainBody scroll-data'> 
-      {/* Section 1 Start */}
-          <h3>Bolt</h3>       
-          <div className='component-grid'> 
-              <div><h4>Diameter (mm)</h4></div>
-              <div><Input type="text" name="bolt_Diameter"/></div>
-              <div><h4>Property Class</h4></div>
-              <div><Input type="text" name="bolt_Property_Class"/></div>
-              <div><h4>Shear Capacity (kN)</h4></div>
-              <div><Input type="text" name="bolt_Shear Capacity"/></div>
-              <div><h4>Capacity (kN)</h4></div>
-              <div><Input type="text" name="bolt_Capacity"/></div>
-              <div><h4>Bolt Force (kN)</h4></div>
-              <div><Input type="text" name="bolt_Bolt_Force"/></div>
-              <div><h4>Bolt Columns (nos)</h4></div>
-              <div><Input type="text" name="boly_Bolt_Columns"/></div>
-              <div><h4>Bolt Rows (nos)</h4></div>
-              <div><Input type="text" name="bolt_Bolt_Rows"/></div>
-              <div><h4>Spacing</h4></div>
-              <div><Input type="button" name="bolt_Spacing"  value="Spacing Details"/></div>
+      <h5>{data.mainTitle}</h5>
+      <div className='subMainBody scroll-data'>
+        {data.sections.map((section) => (
+          <div key={section.title}>
+            <h3>{section.title}</h3>
+            <div className='component-grid'>
+              {section.components.map((component) => (
+              <>
+                <div key={component.label}>
+                  <h4>{component.label}</h4> </div>
+                  <div>
+                  {component.inputType === "button" ? (
+                    <Input
+                      type={component.inputType}
+                      name={`${section.title.replace(/[^a-zA-Z0-9]/g, "_")}_${component.label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+                      value={component.label}
+                    />
+                  ) : (
+                    <Input
+                      type={component.inputType}
+                      name={`${section.title.replace(/[^a-zA-Z0-9]/g, "_")}_${component.label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+                    />
+                  )}
+                </div>
+              </>
+              ))}
+            </div>
           </div>
-          {/* Section End */}
-          {/* Section 2 Start */}
-          <h3>Plate</h3>       
-          <div className='component-grid    '> 
-              <div><h4>Thickness (mm)</h4></div>
-              <div><Input type="text" name="plate_Thickness"/></div>
-              <div><h4>Hight (mm)</h4></div>
-              <div><Input type="text" name="plate_Hight"/></div>
-              <div><h4>Length (mm)</h4></div>
-              <div><Input type="text" name="plate_Length"/></div>
-              <div><h4>Capacity</h4></div>
-              <div><Input type="button" name="plate_Capacity" value="Spacing Details"/></div>
-          </div>
-          {/* Section End */}
-          {/* Section 3 Start */}
-          <h3>Section Details</h3>       
-          <div className='component-grid    '> 
-              <div><h4>Capacity</h4></div>
-              <div><Input type="button" value="Spacing Details"/></div>
-          </div>
-          {/* Section End */}
-          {/* Section 4 Start */}
-          <h3>Weld</h3>       
-          <div className='component-grid    '> 
-              <div><h4>Size (mm)</h4></div>
-              <div><Input type="text" name="fileName"/></div>
-              <div><h4>Strength (N/mm2)</h4></div>
-              <div><Input type="text" name="fileName"/></div>
-              <div><h4>Stress (N/mm)</h4></div>
-              <div><Input type="text" name="fileName"/></div>
-          </div>
-          {/* Section End */}
+        ))}
       </div>
-          <div className='outputdock-btn'>
+      <div className='outputdock-btn'>
             <Input type="button" value="Create Design Report" />
             <Input type="button" value="Save Output" />
           </div>
-      </div>
+    </div>
     </div>
 
     {/* <ToastContainer /> */}
@@ -369,3 +386,66 @@ function FinePlate() {
 }
 
 export default FinePlate
+
+// Old Code 
+// <div>
+// <h5>Output Dock</h5>
+// <div className='subMainBody scroll-data'> 
+// {/* Section 1 Start */}
+//   <h3>Bolt</h3>       
+//   <div className='component-grid'> 
+//       <div><h4>Diameter (mm)</h4></div>
+//       <div><Input type="text" name="bolt_Diameter"/></div>
+//       <div><h4>Property Class</h4></div>
+//       <div><Input type="text" name="bolt_Property_Class"/></div>
+//       <div><h4>Shear Capacity (kN)</h4></div>
+//       <div><Input type="text" name="bolt_Shear_Capacity"/></div>
+//       <div><h4>Capacity (kN)</h4></div>
+//       <div><Input type="text" name="bolt_Capacity"/></div>
+//       <div><h4>Bolt Force (kN)</h4></div>
+//       <div><Input type="text" name="bolt_Bolt_Force"/></div>
+//       <div><h4>Bolt Columns (nos)</h4></div>
+//       <div><Input type="text" name="boly_Bolt_Columns"/></div>
+//       <div><h4>Bolt Rows (nos)</h4></div>
+//       <div><Input type="text" name="bolt_Bolt_Rows"/></div>
+//       <div><h4>Spacing</h4></div>
+//       <div><Input type="button" name="bolt_Spacing"  value="Spacing Details"/></div>
+//   </div>
+//   {/* Section End */}
+//   {/* Section 2 Start */}
+//   <h3>Plate</h3>       
+//   <div className='component-grid    '> 
+//       <div><h4>Thickness (mm)</h4></div>
+//       <div><Input type="text" name="plate_Thickness"/></div>
+//       <div><h4>Hight (mm)</h4></div>
+//       <div><Input type="text" name="plate_Hight"/></div>
+//       <div><h4>Length (mm)</h4></div>
+//       <div><Input type="text" name="plate_Length"/></div>
+//       <div><h4>Capacity</h4></div>
+//       <div><Input type="button" name="plate_Capacity" value="Spacing Details"/></div>
+//   </div>
+//   {/* Section End */}
+//   {/* Section 3 Start */}
+//   <h3>Section Details</h3>       
+//   <div className='component-grid    '> 
+//       <div><h4>Capacity</h4></div>
+//       <div><Input type="button" name="plate_Capacity" value="Spacing Details"/></div>
+//   </div>
+//   {/* Section End */}
+//   {/* Section 4 Start */}
+//   <h3>Weld</h3>       
+//   <div className='component-grid    '> 
+//       <div><h4>Size (mm)</h4></div>
+//       <div><Input type="text" name="fileName"/></div>
+//       <div><h4>Strength (N/mm2)</h4></div>
+//       <div><Input type="text" name="fileName"/></div>
+//       <div><h4>Stress (N/mm)</h4></div>
+//       <div><Input type="text" name="fileName"/></div>
+//   </div>
+//   {/* Section End */}
+// </div>
+//   <div className='outputdock-btn'>
+//     <Input type="button" value="Create Design Report" />
+//     <Input type="button" value="Save Output" />
+//   </div>
+// </div>
