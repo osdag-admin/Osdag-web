@@ -275,9 +275,9 @@ function FinePlate() {
           <h3>Factored Loads</h3>
           <div className='component-grid    '> 
               <div><h4>Shear Force(kN) :</h4></div>
-              <div><Input type="text" name="ShearForce" onInput={()=>{event.target.value = event.target.value.replace(/\D/, '')}} pattern="\d*"/></div>
+              <div><Input type="text" name="ShearForce" onInput={()=>{event.target.value = event.target.value.replace(/[^0-9.]/g, '')}} pattern="\d*"/></div>
               <div><h4>Axial Force(kN) :</h4></div>
-              <div><Input type="text" name="AxialForce" onInput={()=>{event.target.value = event.target.value.replace(/\D/, '')}}  pattern="\d*"/></div>
+              <div><Input type="text" name="AxialForce" onInput={()=>{event.target.value = event.target.value.replace(/[^0-9.]/g, '')}}  pattern="\d*"/></div>
           </div>
           {/* Section End */}
           {/* Section Start */}
