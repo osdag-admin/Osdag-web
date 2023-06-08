@@ -26,7 +26,7 @@ function Sidebar() {
 
   // dispatching the getModules thunk here 
   if (renderedOnce == false) {
-    console.log('dispatching')
+    // console.log('dispatching')
     dispatch(getModules({}))
     renderedOnce = true
   }
@@ -76,7 +76,6 @@ function Sidebar() {
         <div className="sidebar-item-logo">
           <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={() => navigate("/")} /></center>
         </div>
-        {console.log(data)}
         {
           data && data.data && data.data.map((item) => {
             return (
