@@ -5,6 +5,8 @@ import Mainwindow from './components/Mainwindow'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
 import Window from './components/Window';
 
+import { GlobalProvider } from './context/GlobalState'
+
 function App() {
 
   const router = createBrowserRouter(
@@ -17,11 +19,11 @@ function App() {
     )
   )
   return (
-    <>
+    <GlobalProvider>
       <div className="app">
         <RouterProvider router={router} />
       </div>
-    </>
+    </GlobalProvider>
   )
 }
 const Root = () => {

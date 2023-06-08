@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // importing reducer
-import { ModuleReducer } from "./reducers/ModuleReducer";
+// import { ModuleReducer } from "./reducers/ModuleReducer";
 
 
-// importing thunks 
+// importing thunks
 import { getModules, getDesignTypes, getSubDesignTypes, getLeafLevelDesignType } from "./thunks/ModuleThunk";
 
 
-// the initial value of the store 
+// the initial value of the store
 let initialValue = {
     data: [],
     results: null,
@@ -20,7 +20,7 @@ let initialValue = {
 export const moduleSlice = createSlice({
     name: 'module',
     initialState: initialValue,
-    reducers: ModuleReducer, extraReducers(builder) {
+    reducers: {}, extraReducers(builder) {
         builder.addCase(getModules.pending, (state, action) => {
             // console.log('Loading...')
         })
@@ -64,7 +64,7 @@ export const getDesignTypesSlice = createSlice({
 export const getSubDesignTypesSlice = createSlice({
     name: 'getSubDesignTypes',
     initialState: initialValue,
-    reducers: ModuleReducer, extraReducers(builder) {
+    reducers: {}, extraReducers(builder) {
         builder.addCase(getSubDesignTypes.pending, (state, action) => {
             // console.log('Loading...')
         })
@@ -85,7 +85,7 @@ export const getSubDesignTypesSlice = createSlice({
 export const getLeafLevelDesignTypeSlice = createSlice({
     name: 'getLeafLevelDesignType',
     initialState: initialValue,
-    reducers: ModuleReducer, extraReducers(builder) {
+    reducers: {}, extraReducers(builder) {
         builder.addCase(getLeafLevelDesignType.pending, (state, action) => {
             // console.log('Loading...')
         })
