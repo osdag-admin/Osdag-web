@@ -26,6 +26,10 @@ urlpatterns = [
     path('modules', GetModules.as_view()),
     path('modules/', GetModules.as_view()),
 
+     #########################################################
+     # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+     #########################################################
+
      # URLs from osdagServer/flowapp  
     path('osdag-web/', views.get_design_types, name='index'),
     path('osdag-web/connections', views.get_connections, name='connections'),

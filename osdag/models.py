@@ -6,6 +6,11 @@ class Design(models.Model):
     current_state = models.BooleanField(default=False) # False - Input values, True -> Viewing design.
     input_values = models.TextField(blank=True)
 
+
+#########################################################
+# Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+#########################################################
+
 class Anchor_Bolt(models.Model) : 
     Diameter = models.TextField()
 

@@ -3,6 +3,11 @@ from django.contrib import admin
 # import models 
 from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , Material, RHS , SHS , UnequalAngle
 
+#########################################################
+# Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+#########################################################
+
+
 # Register your models here.
 admin.site.register(Anchor_Bolt)
 admin.site.register(Angle_Pitch)

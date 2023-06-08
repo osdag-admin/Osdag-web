@@ -5,6 +5,11 @@ import json
 # importing data
 from ..data.design_types import design_type_data, connections_data, shear_connection, moment_connection, b2b_splice, b2column, c2c_splice, base_plate, tension_member
 
+#########################################################
+# Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+#########################################################
+
+
 # Create your tests here.
 class APITest(TestCase) : 
 

@@ -8,6 +8,11 @@ from rest_framework.parsers import JSONParser
 from osdag.models import Columns , Beams , Bolt , Bolt_fy_fu, Material
 
 
+#########################################################
+# Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+#########################################################
+
+
 class InputData(APIView) : 
 
 
@@ -39,7 +44,12 @@ class InputData(APIView) :
         connectivity = request.GET.get("connectivity")
         boltDiameter = request.GET.get("boltDiameter")
         propertyClass = request.GET.get("propertyClass")
+
+        if (moduleName!='Fin-Plate-Connection') : 
+            return Response({"error" : "Bad Query Parameter"} , status = status.HTTP_400_BAD_REQUEST)
         
+        if (moduleName=='Fin-Plate-Connection' and ( connectivity is None and boltDiameter is None and propertyClass is None)) :
+            return Response({"error" : "This request is not handled"} , status = status.HTTP_400_BAD_REQUEST)
         
         if ( connectivity=='Column-Flange-Beam-Web' or connectivity=='Column-Web-Beam-Web') : 
             print('connectivity : ' , connectivity)

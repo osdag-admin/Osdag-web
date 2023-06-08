@@ -1,4 +1,11 @@
 /* PRAGMA foreign_keys=OFF; */
+
+/*
+#########################################################
+# Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+#########################################################
+*/ 
+
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS public."Bolt" (
 	"id" INTEGER PRIMARY KEY,
