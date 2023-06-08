@@ -11,4 +11,4 @@ data = file.read()
 
 cursor.execute(data)
 print()
-print('executed')
+print('executed')   

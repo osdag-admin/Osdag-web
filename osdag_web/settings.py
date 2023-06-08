@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from osdag_web.secret_key import get_secret_key
+from osdag_web.postgres_credentials import get_database_name , get_host , get_password , get_port , get_username
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,6 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret_key()
+DATABASE_NAME = get_database_name()
+USER = get_username()
+PASSWORD = get_password()
+PORT = get_port()
+HOST = get_host()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,11 +90,11 @@ WSGI_APPLICATION = 'osdag_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres_Intg_osdag', 
-        'USER': 'osdagdeveloper',
-        'PASSWORD': 'password',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
+        'NAME': DATABASE_NAME,
+        'USER': USER,
+        'PASSWORD': PASSWORD,
+        'HOST': HOST, 
+        'PORT': PORT,
     }
 }
 
