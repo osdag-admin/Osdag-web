@@ -13,7 +13,8 @@ let initialValue = {
     data: [],
     results: null,
     subDesignTypes: null,
-    leafLevelDesignType: null
+    leafLevelDesignType: null,
+    error_message: null
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -48,6 +49,7 @@ export const GlobalProvider = ({ children }) => {
             const data = response.data.result;
             dispatch({ type: 'GET_DESIGNTYPES', payload: data });
         } catch (error) {
+            dispatch({ type: 'SET_ERR_MSG', payload: '' });
             console.error(error);
         }
     }
@@ -59,6 +61,7 @@ export const GlobalProvider = ({ children }) => {
             // console.log(data)
             dispatch({ type: 'GET_SUB_DESIGNTYPES', payload: data });
         } catch (error) {
+            dispatch({ type: 'SET_ERR_MSG_SUB', payload: '' });
             console.error(error);
         }
     }
@@ -70,6 +73,7 @@ export const GlobalProvider = ({ children }) => {
             // console.log(data)
             dispatch({ type: 'GET_LEAF_DESIGNTYPES', payload: data });
         } catch (error) {
+            dispatch({ type: 'SET_ERR_MSG_LEAF', payload: '' });
             console.error(error);
         }
     }
@@ -80,6 +84,7 @@ export const GlobalProvider = ({ children }) => {
             results: state.results,
             subDesignTypes: state.subDesignTypes,
             leafLevelDesignType: state.leafLevelDesignType,
+            error_message: state.error_message,
             getDesignTypes,
             getSubDesignTypes,
             getLeafLevelDesignType

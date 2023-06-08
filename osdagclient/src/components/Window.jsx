@@ -40,12 +40,10 @@ const image_map = {
 const Window = () => {
     const navigate = useNavigate();
     const { designType } = useParams();
-    const [isLoading, setIsLoading] = useState(false)
     const [activeTab, setActiveTab] = useState(1)
     const [subActiveTab, setSubActiveTab] = useState(1)
-    const [errorMsg, setErrorMsg] = useState(null)
 
-    const { results, getDesignTypes, getSubDesignTypes, subDesignTypes, leafLevelDesignType, getLeafLevelDesignType } = useContext(GlobalContext)
+    const { results, getDesignTypes, getSubDesignTypes, subDesignTypes, leafLevelDesignType, getLeafLevelDesignType, error_message } = useContext(GlobalContext)
 
     const wrapper = () => {
         getDesignTypes(designType)
@@ -91,7 +89,7 @@ const Window = () => {
         getSubDesignTypes(designType, name)
     }, [activeTab])
 
-    if (!results && !isLoading) return <div>Module Under Development</div>
+    if (!results) return <div>Module Under Development</div>
 
     return (
         <div>
@@ -199,8 +197,10 @@ const Window = () => {
                         </>
                     }
                 </div>
+                <div className='error-cont'>
+                    {error_message && <div>{error_message}</div>}
+                </div>
             </div>
-            {errorMsg && <div>{errorMsg}</div>}
         </div>
     )
 }
