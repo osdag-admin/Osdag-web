@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response 
 from rest_framework import status
+from rest_framework.parsers import JSONParser
+
 
 # importing models 
 from osdag.models import Columns , Beams , Bolt , Bolt_fy_fu, Material
@@ -114,3 +116,33 @@ class InputData(APIView) :
             
             except : 
                 return Response({"error" : "Something went wrong"} , status = status.HTTP_400_BAD_REQUEST)
+
+
+
+class DesignView(APIView) : 
+
+    parser_classes = [JSONParser]
+
+    """
+    Endpoint : http://127.0.0.1:8000/design
+
+    format : 
+        {
+            "data" : ...
+        }
+
+    method : POST
+    Content-Type : application/JSON
+    """
+    
+    def post(self , request) : 
+
+        try : 
+            data = request.data
+
+            print('data : ' , data)
+
+            return Response({'success' : 'Request made successfully'} , status = status.HTTP_200_OK)
+        
+        except : 
+            return Response({'error' : 'Something went wrong'} , status = status.HTTP_400_BAD_REQUEST)
