@@ -2,41 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response 
 from rest_framework import status
 
-import psycopg2
-from osdag_web import postgres_credentials
+# importing models 
+from osdag.models import Columns , Beams , Bolt , Bolt_fy_fu, Material
+
 
 class InputData(APIView) : 
 
-    def fetchFromColumn(self , conn) :
-        cursor = conn.cursor()
-        query = cursor.execute('SELECT "Columns"."Designation" FROM public."Columns" ORDER BY "Id" ASC')
-        columnList = []
-        for record in cursor.fetchall(): 
-            columnList.append(record[0])
-        print('executed')
-
-        return columnList
-
-    def fetchFromBeam(self , conn) : 
-        cursor = conn.cursor()
-        query = cursor.execute('SELECT "Beams"."Designation" FROM public."Beams" ORDER BY "Id" ASC')
-        beamList = []
-        for record in cursor.fetchall() : 
-            beamList.append(record[0])
-        print("executed")
-
-        return beamList
-    
-    def fetchFromMaterial(self, conn) : 
-        cursor = conn.cursor()
-        query = cursor.execute('SELECT "Material"."Grade" FROM public."Material"')
-        materialList = []
-        for record in cursor.fetchall() : 
-            print(record)
-            materialList.append(record[0])
-        print("executed")
-
-        return materialList
 
     """
     method : GET 
@@ -62,7 +33,6 @@ class InputData(APIView) :
 
     """
     def get(self , request) : 
-        print('received')
         moduleName = request.GET.get("moduleName")
         connectivity = request.GET.get("connectivity")
         boltDiameter = request.GET.get("boltDiameter")
@@ -77,21 +47,15 @@ class InputData(APIView) :
                 # fetch all records from Beam table 
                 # fetch all records from Material table 
 
-                username = postgres_credentials.get_username()
-                password = postgres_credentials.get_password()
-                conn = psycopg2.connect(database = 'osdagDatabase' , host = '127.0.0.1' , user = username , password = password , port = '5432')
-
-                columnList = self.fetchFromColumn(conn)
-                beamList = self.fetchFromBeam(conn)
-                materialList = self.fetchFromMaterial(conn)
-
+                columnList = list(Columns.objects.values_list('Designation' , flat = True))
+                beamList = list(Beams.objects.values_list('Designation' , flat = True))
+                materialList = list(Material.objects.values_list('Grade' , flat = True))
+                
                 response = {
                     'columnList' : columnList,
                     'beamList' : beamList,
                     'materialList' : materialList
                 }
-
-                conn.close()
 
                 return Response(response , status = status.HTTP_200_OK)
         
@@ -103,20 +67,15 @@ class InputData(APIView) :
         elif (connectivity=='Beam-Beam') : 
             print('connectivity : ' , connectivity)
 
-            # fetch all records from Beam table 
-
+            # fetch all records from Beams table 
+            # fetch all recorsd from the Material Table
             try : 
-                username = postgres_credentials.get_username()
-                password = postgres_credentials.get_password()
-                conn = psycopg2.connect(database = 'osdagDatabase' , host = '127.0.0.1' , user = username , password = password , port = '5432')
-
-                beamList = self.fetchFromBeam(conn)
-
+                beamList = list(Beams.objects.values_list('Designation' , flat = True))
+                materialList = list(Material.objects.values_list('Grade' , flat = True))
                 response = {
-                    'beamList' : beamList
+                    'beamList' : beamList,
+                    'materialList' : materialList
                 }
-
-                conn.close()
 
                 return Response(response , status = 200)
             
@@ -127,23 +86,13 @@ class InputData(APIView) :
             print('boltDiameter : ' , boltDiameter)
 
             # fetch the data from Bolt table 
-
-            try : 
-                username = postgres_credentials.get_username()
-                password = postgres_credentials.get_password()
-                conn = psycopg2.connect(database = 'osdagDatabase' , host = '127.0.0.1' , user = username , password = password , port = '5432')
-                cursor = conn.cursor()
-                query = cursor.execute('SELECT "Bolt"."Bolt_diameter" FROM public."Bolt"')       
-                boltList = []
-                for record in cursor.fetchall() : 
-                    boltList.append(record[0])
-                print("executed")    
-
+            try :                 
+                print('fetching')
+                boltList = list(Bolt.objects.values_list('Bolt_diameter' , flat = True))  
+                print(boltList)  
                 response = {
                     'boltList' : boltList
                 }
-
-                conn.close()
 
                 return Response(response , status = status.HTTP_200_OK)
             
@@ -154,25 +103,12 @@ class InputData(APIView) :
             print('propertyClass : ' , propertyClass)
 
             # fetch the data from Bolt_fy_fu table 
-
-            try : 
-                username = postgres_credentials.get_username()
-                password = postgres_credentials.get_password()
-                conn = psycopg2.connect(database = 'osdagDatabase' , host = '127.0.0.1' , user = username , password = password , port = '5432')
-                cursor = conn.cursor()
-                query = cursor.execute('SELECT "Bolt_fy_fu"."Property_Class" FROM public."Bolt_fy_fu"')       
-
-                boltFyFuList = []
-                for record in cursor.fetchall() : 
-                    boltFyFuList.append(record[0])
-
-                print("executed")    
+            try :     
+                boltFyFuList = list(Bolt_fy_fu.objects.values_list('Property_Class' , flat = True))    
 
                 response = {
                     'propertyClassList' : boltFyFuList
                 }
-
-                conn.close()
 
                 return Response(response , status = status.HTTP_200_OK)
             
