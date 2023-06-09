@@ -15,15 +15,15 @@ const { Option } = Select;
 
 function FinePlate() {
 
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState();
 
 
-  const [connectivity, setConnectivity] = useState(null);
+  const [connectivity, setConnectivity] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-    const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&connectivity=${selectedOption}`);
+    const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=${selectedOption}`);
         const jsonData = await response.json();
         setConnectivity(jsonData);
         
