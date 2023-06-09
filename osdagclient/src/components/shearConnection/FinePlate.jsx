@@ -288,6 +288,7 @@ function FinePlate() {
                   <Option value="All">All</Option>
                 </Select>
                 </div>
+
                 <div><h4>Type:</h4></div>
                 <div><Select style={{ width: '100%' }}>
                   <Option value="Bearing_Bolt">Bearing Bolt</Option>
