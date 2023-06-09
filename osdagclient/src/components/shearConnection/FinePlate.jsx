@@ -135,7 +135,7 @@ function FinePlate() {
     fetchData();
     
   }, []);
-  console.log(selectedItems);
+  // console.log(selectedItems);
   const handleSelectChange = (value) => {
     setSelectedOption(value);
   };
