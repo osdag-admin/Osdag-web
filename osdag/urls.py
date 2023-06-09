@@ -7,9 +7,10 @@ from osdag.web_api.output_data_api import OutputValues
 from osdag.web_api.cad_model_api import CADGeneration
 from osdag.web_api.modules_api import GetModules
 from osdag.web_api.inputData_view import InputData, DesignView
+from osdag.web_api.outputCalc_view import OutputData
 from . import views
 
-# temporary 
+# temporary
 app_name = 'osdag-web/'
 
 urlpatterns = [
@@ -26,11 +27,11 @@ urlpatterns = [
     path('modules', GetModules.as_view()),
     path('modules/', GetModules.as_view()),
 
-     #########################################################
-     # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
-     #########################################################
+    #########################################################
+    # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+    #########################################################
 
-     # URLs from osdagServer/flowapp  
+    # URLs from osdagServer/flowapp
     path('osdag-web/', views.get_design_types, name='index'),
     path('osdag-web/connections', views.get_connections, name='connections'),
     path('osdag-web/connections/shear-connection',
@@ -43,10 +44,16 @@ urlpatterns = [
          views.get_b2column, name='beam-to-column'),
     path('osdag-web/connections/moment-connection/column-to-column-splice',
          views.get_c2c_splice, name='column-to-column-splice'),
-    path('osdag-web/connections/base-plate', views.get_base_plate, name='base-plate'),
-    path('osdag-web/tension-member', views.get_tension_member, name='tension-member'),
+    path('osdag-web/connections/base-plate',
+         views.get_base_plate, name='base-plate'),
+    path('osdag-web/tension-member',
+         views.get_tension_member, name='tension-member'),
 
     # New APIs
-    path('populate' , InputData.as_view()),
-    path('design' , DesignView.as_view())
+    path('populate', InputData.as_view()),
+    path('design', DesignView.as_view()),
+
+    # output generation from input
+    path('calculate-output/fin-plate-connection',
+         OutputData.as_view(), name='fin-plate-connection'),
 ]
