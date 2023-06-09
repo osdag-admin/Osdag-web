@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {Select,Input} from 'antd'
+// import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, FormControl, InputLabel, MenuItem } from '@mui/material';
+
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
@@ -107,7 +109,7 @@ function FinePlate() {
       label: "Help",
     },
   ];
-  
+
   const data = {
     "mainTitle": "Output Dock",
     "sections": [
@@ -289,6 +291,7 @@ function FinePlate() {
                   <Option value="All">All</Option>   
                  </Select>
             </div>
+            
             <div><h4>Type:</h4></div>
             <div><Select style={ {width:'100%'}}>
                   <Option value="Bearing_Bolt">Bearing Bolt</Option>
