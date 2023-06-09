@@ -22,6 +22,50 @@ function FinePlate() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [checkboxLabels, setCheckboxLabels] = useState([]);
+  
+  const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
+  const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
+  const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
+
+  const handleSelectChangePropertyClass = (value) => {
+    if (value === 'Customized') {
+      setModalpropertyClassListOpen(true);
+    } else {
+      setModalpropertyClassListOpen(false);
+    }
+  };
+
+  const handleCheckboxChangePropertyClass = (label) => (event) => {
+    if (event.target.checked) {
+      setSelectItemspropertyClassList([...selectItemspropertyClassList, label]);
+    } else {
+      setSelectItemspropertyClassList(selectItemspropertyClassList.filter((item) => item !== label));
+    }
+  };
+
+  const handleSelectAllChangePropertyClass = (event) => {
+    if (event.target.checked) {
+      const allLabels = checkboxLabelspropertyClassList;
+      setSelectItemspropertyClassList(allLabels);
+    } else {
+      setSelectItemspropertyClassList([]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&propertyClass=Customized');
+        const data = await response.json();
+        setCheckboxLabelspropertyClassList(data.propertyClassList.map(String));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
@@ -364,11 +408,32 @@ function FinePlate() {
                 </Select>
                 </div>
                 <div><h4>Property Class:</h4></div>
-                <div><Select style={{ width: '100%' }}>
-                  <Option value="Customized">Customized</Option>
-                  <Option value="All">All</Option>
-                </Select>
-                </div>
+                <div>
+        <Select style={{ width: '100%' }} onChange={handleSelectChangePropertyClass}>
+          <Option value="Customized">Customized</Option>
+          <Option value="All">All</Option>
+        </Select>
+      </div>
+      <Modal
+        visible={isModalpropertyClassListOpen}
+        onCancel={() => setModalpropertyClassListOpen(false)}
+        footer={null}
+      >
+        <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
+        <div style={{ height: '200px', overflowY: 'scroll', display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            {checkboxLabelspropertyClassList.map((label) => (
+              <Checkbox
+                key={label}
+                checked={selectItemspropertyClassList.includes(label)}
+                onChange={handleCheckboxChangePropertyClass(label)}
+              >
+                {label}
+              </Checkbox>
+            ))}
+          </div>
+        </div>
+      </Modal>
               </div>
               {/* Section End */}
               <h3>Plate</h3>
