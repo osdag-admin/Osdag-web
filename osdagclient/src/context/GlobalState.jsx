@@ -27,22 +27,16 @@ export const GlobalContext = createContext(initialValue);
 export const GlobalProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AppReducer, initialValue);
 
-    useEffect(() => {
-        // Fetch initial data from API and update the state
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(BASE_URL + "osdag-web/");
-                const data = response.data.result;
-                dispatch({ type: 'GET_MODULES', payload: data });
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
     //action
+    const getInitialData = async () => {
+        try {
+            const response = await axios.get(BASE_URL + "osdag-web/");
+            const data = response.data.result;
+            dispatch({ type: 'GET_MODULES', payload: data });
+        } catch (error) {
+            console.error(error);
+        }
+    }
     const getDesignTypes = async (conn_type) => {
         try {
             const response = await axios.get(`${BASE_URL}osdag-web/${conn_type}`);
@@ -85,6 +79,7 @@ export const GlobalProvider = ({ children }) => {
             subDesignTypes: state.subDesignTypes,
             leafLevelDesignType: state.leafLevelDesignType,
             error_message: state.error_message,
+            getInitialData,
             getDesignTypes,
             getSubDesignTypes,
             getLeafLevelDesignType

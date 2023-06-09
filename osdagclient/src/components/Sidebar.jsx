@@ -6,10 +6,17 @@ import { useState } from 'react'
 import { GlobalContext } from '../context/GlobalState'
 import { useContext } from 'react'
 
+let initialRender = false;
+
 function Sidebar() {
 
   const [isSidebarVisible, setSidebarVisible] = useState(true);
-  const { data } = useContext(GlobalContext)
+  const { data, getInitialData } = useContext(GlobalContext)
+
+  if (!initialRender) {
+    getInitialData()
+    initialRender = true;
+  }
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
