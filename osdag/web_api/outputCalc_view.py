@@ -11,10 +11,39 @@ from osdag_api import get_module_api
 # importing models
 from osdag.models import Columns, Beams, Bolt, Bolt_fy_fu, Material
 
+"""
+    Author : Sai Charan ( FOSSEE'23 )
 
-#########################################################
-# Author : Sai Charan ( FOSSEE Summer Fellow '23 ) #
-#########################################################
+    Example input:
+    {
+        "Bolt.Bolt_Hole_Type" : "Standard",
+        "Bolt.Diameter" : ["12" , "16" , "20" , "24" , "30"],
+        "Bolt.Grade" : ["4.6" , "4.8" , "5.6" , "6.8" , "8.8"],
+        "Bolt.Slip_Factor" : "0.3",
+        "Bolt.TensionType" : "Pre-tensioned",
+        "Bolt.Type" : "Friction Grip Bolt",
+        "Connectivity" : "Flange-Beam Web",
+        "Connector.Material" : "E 250 (Fe 410 W)A",
+        "Design.Design_Method" : "Limit State Design",
+        "Detailing.Corrosive_Influences" : "No",
+        "Detailing.Edge_type" : "Rolled",
+        "Detailing.Gap" : "15",
+        "Load.Axial" : "50",
+        "Load.Shear" : "180",
+        "Material" : "E 250 (Fe 410 W)A",
+        "Member.Supported_Section.Designation" : "MB 350",
+        "Member.Supported_Section.Material" : "E 250 (Fe 410 W)A",
+        "Member.Supporting_Section.Designation" : "JB 150",
+        "Member.Supporting_Section.Material" : "E 250 (Fe 410 W)A",
+        "Module" : "Fin Plate Connection",
+        "Weld.Fab" : "Shop Weld",
+        "Weld.Material_Grade_OverWrite" : "410",
+        "Connector.Plate.Thickness_List" : ["10" , "12" , "16" , "18" , "20"],
+        "KEY_CONNECTOR_MATERIAL": "E 250 (Fe 410 W)A",
+        "KEY_DP_WELD_MATERIAL_G_O": "E 250 (Fe 410 W)A"
+    }
+"""
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class OutputData(APIView):
