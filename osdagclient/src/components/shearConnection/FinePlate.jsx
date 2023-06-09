@@ -4,9 +4,8 @@ import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {Select,Input} from 'antd'
-// import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, FormControl, InputLabel, MenuItem } from '@mui/material';
-
+// import {Select,Input} from 'antd'
+import {Select,Input , Button, Modal, Checkbox } from 'antd';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
@@ -18,9 +17,36 @@ const { Option } = Select;
 function FinePlate() {
 
   const [selectedOption, setSelectedOption] = useState();
-
-
   const [connectivity, setConnectivity] = useState();
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleSelectChangeBoltBeam = (value) => {
+    if (value === 'Customized') {
+      setModalOpen(true);
+    } else {
+      setModalOpen(false);
+    }
+  };
+
+  const handleCheckboxChange = (label) => (event) => {
+    if (event.target.checked) {
+      setSelectedItems([...selectedItems, label]);
+    } else {
+      setSelectedItems(selectedItems.filter((item) => item !== label));
+    }
+  };
+
+  const handleSelectAllChange = (event) => {
+    if (event.target.checked) {
+      const allLabels = checkboxLabels;
+      setSelectedItems(allLabels);
+    } else {
+      setSelectedItems([]);
+    }
+  };
+
+  const checkboxLabels = ['Label 1', 'Label 2', 'Label 3']; // Placeholder array
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,9 +273,9 @@ function FinePlate() {
           </div>
 
           <div>
-            <h4>Beam Section:</h4>
-          </div>
-          <div>
+        <h4>Beam Section:</h4>
+      </div>
+      <div>
             <Select style={{ width: '100%' }}>
               {connectivity && connectivity.beamList ? (
                 connectivity.beamList.map((column, index) => (
@@ -258,7 +284,7 @@ function FinePlate() {
                   </Option>
                 ))
               ) : (
-                <></>
+                <Option value="">No data available</Option>
               )}
             </Select>
           </div>
@@ -285,12 +311,31 @@ function FinePlate() {
           {/* Section Start */}
           <h3>Bolt</h3>
           <div className='component-grid    '> 
-          <div><h4>Beam Section:</h4></div>
-            <div><Select style={ {width:'100%'}}>
-                  <Option value="Customized">Customized</Option>
-                  <Option value="All">All</Option>   
-                 </Select>
-            </div>
+          <div>
+        <h4>Beam Section:</h4>
+      </div>
+      <div>
+        <Select style={{ width: '100%' }} onChange={handleSelectChangeBoltBeam}>
+          <Option value="Customized">Customized</Option>
+          <Option value="All">All</Option>
+        </Select>
+      </div>
+      <Modal
+        visible={isModalOpen}
+        onCancel={() => setModalOpen(false)}
+        footer={null}
+      >
+        <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
+        {checkboxLabels.map((index,label) => (
+          <Checkbox
+            key={label}
+            checked={selectedItems.includes(label)}
+            onChange={handleCheckboxChange(label)}
+          >
+            {label}
+          </Checkbox>
+        ))}
+      </Modal>
             
             <div><h4>Type:</h4></div>
             <div><Select style={ {width:'100%'}}>
