@@ -9,7 +9,7 @@ import {Select,Input} from 'antd'
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
 import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
-import NotSelected from '../../assets/notSelected.png'
+import ErrorImg from '../../assets/notSelected.png'
 
 const { Option } = Select;
 
@@ -48,7 +48,7 @@ function FinePlate() {
   } else if (selectedOption === 'Beam-Beam') {
     imageSource = BB;
   }else if (selectedOption === '') {
-    imageSource = NotSelected;
+    imageSource = ErrorImg;
   }
 
   const logData = [
@@ -353,11 +353,13 @@ function FinePlate() {
                       type={component.inputType}
                       name={`${section.title.replace(/[^a-zA-Z0-9]/g, "_")}_${component.label.replace(/[^a-zA-Z0-9]/g, "_")}`}
                       value={component.label}
+                      disabled
                     />
                   ) : (
                     <Input
                       type={component.inputType}
                       name={`${section.title.replace(/[^a-zA-Z0-9]/g, "_")}_${component.label.replace(/[^a-zA-Z0-9]/g, "_")}`}
+                      disabled
                     />
                   )}
                 </div>
