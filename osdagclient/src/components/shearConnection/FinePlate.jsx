@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
-import {Select,Input , Button, Modal, Checkbox } from 'antd';
+import {Select,Input , Modal, Checkbox } from 'antd';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
@@ -21,6 +21,7 @@ function FinePlate() {
   const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [checkboxLabels, setCheckboxLabels] = useState([]);
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
@@ -47,7 +48,7 @@ function FinePlate() {
     }
   };
 
-  const checkboxLabels = ['Label 1', 'Label 2', 'Label 3']; // Placeholder array
+  // const checkboxLabels = ['Label 1', 'Label 2', 'Label 3']; // Placeholder array
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,8 +75,23 @@ function FinePlate() {
     }
 
   }, [selectedOption]);
-  console.log("Data" + JSON.stringify(connectivity, null, 2));
 
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized');
+        const data = await response.json();
+        setCheckboxLabels(data.boltList);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+    
+  }, []);
+  console.log(selectedItems);
   const handleSelectChange = (value) => {
     setSelectedOption(value);
   };
@@ -313,7 +329,7 @@ function FinePlate() {
               <h3>Bolt</h3>
               <div className='component-grid    '>
               <div>
-        <h4>Beam Section:</h4>
+        <h4>Diameter(mm):</h4>
       </div>
       <div>
         <Select style={{ width: '100%' }} onChange={handleSelectChangeBoltBeam}>
@@ -327,17 +343,20 @@ function FinePlate() {
         footer={null}
       >
         <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
-        {checkboxLabels.map((label) => (
-          <Checkbox
-            key={label}
-            checked={selectedItems.includes(label)}
-            onChange={handleCheckboxChange(label)}
-          >
-            {label}
-          </Checkbox>
-        ))}
+        <div style={{ height: '200px', overflowY: 'scroll' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {checkboxLabels.map((label) => (
+              <Checkbox
+                key={label}
+                checked={selectedItems.includes(label)}
+                onChange={handleCheckboxChange(label)}
+              >
+                {label}
+              </Checkbox>
+            ))}
+          </div>
+        </div>
       </Modal>
-
                 <div><h4>Type:</h4></div>
                 <div><Select style={{ width: '100%' }}>
                   <Option value="Bearing_Bolt">Bearing Bolt</Option>
