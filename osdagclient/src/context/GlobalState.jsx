@@ -14,7 +14,8 @@ let initialValue = {
     results: null,
     subDesignTypes: null,
     leafLevelDesignType: null,
-    error_message: null
+    error_message: null,
+    fetch_cache: ''
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -27,25 +28,22 @@ export const GlobalContext = createContext(initialValue);
 export const GlobalProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AppReducer, initialValue);
 
-    useEffect(() => {
-        // Fetch initial data from API and update the state
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(BASE_URL + "osdag-web/");
-                const data = response.data.result;
-                dispatch({ type: 'GET_MODULES', payload: data });
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
     //action
-    const getDesignTypes = async (conn_type) => {
+    const getInitialData = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}osdag-web/${conn_type}`);
+            const response = await axios.get(BASE_URL + "osdag-web/");
+            const data = response.data.result;
+            dispatch({ type: 'GET_MODULES', payload: data });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    const getDesignTypes = async (conn_type) => {
+        const URL = `${BASE_URL}osdag-web/${conn_type}`
+        if (initialValue.fetch_cache === URL) return;
+        initialValue.fetch_cache = URL;
+        try {
+            const response = await axios.get(URL);
             const data = response.data.result;
             dispatch({ type: 'GET_DESIGNTYPES', payload: data });
         } catch (error) {
@@ -85,6 +83,7 @@ export const GlobalProvider = ({ children }) => {
             subDesignTypes: state.subDesignTypes,
             leafLevelDesignType: state.leafLevelDesignType,
             error_message: state.error_message,
+            getInitialData,
             getDesignTypes,
             getSubDesignTypes,
             getLeafLevelDesignType
