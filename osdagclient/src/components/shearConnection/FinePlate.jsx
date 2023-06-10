@@ -23,9 +23,23 @@ function FinePlate() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [checkboxLabels, setCheckboxLabels] = useState([]);
 
+  const [inputs, setInputs] = useState({
+    bolt_diameter: [],
+    bolt_grade: [],
+    bolt_type: "",
+    connector_material: "",
+    load_shear: "",
+    load_axial: "",
+    module: "Fin Plate Connection",
+    plate_thickness: ["10", "12", "16", "18", "20"],
+    beam_section: "",
+    column_section: "",
+  })
+
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
+  const [plateThicknessModal, setPlateThicknessModal] = useState(false)
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
@@ -35,10 +49,20 @@ function FinePlate() {
     }
   };
 
+  // const handlePlateThicknessChange = (label) => (e) => {
+  //   if (e.target.checked) {
+  //     setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
+  //   } else {
+  //     setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
+  //   }
+  // }
+
   const handleCheckboxChangePropertyClass = (label) => (event) => {
     if (event.target.checked) {
+      setInputs({ ...inputs, bolt_grade: [...inputs.bolt_grade, label] })
       setSelectItemspropertyClassList([...selectItemspropertyClassList, label]);
     } else {
+      setInputs({ ...inputs, bolt_grade: inputs.bolt_grade.filter((item) => item !== label) })
       setSelectItemspropertyClassList(selectItemspropertyClassList.filter((item) => item !== label));
     }
   };
@@ -46,8 +70,10 @@ function FinePlate() {
   const handleSelectAllChangePropertyClass = (event) => {
     if (event.target.checked) {
       const allLabels = checkboxLabelspropertyClassList;
+      setInputs({ ...inputs, bolt_grade: allLabels });
       setSelectItemspropertyClassList(allLabels);
     } else {
+      setInputs({ ...inputs, bolt_grade: [] });
       setSelectItemspropertyClassList([]);
     }
   };
@@ -91,17 +117,21 @@ function FinePlate() {
   const handleCheckboxChange = (label) => (event) => {
     if (event.target.checked) {
       setSelectedItems([...selectedItems, label]);
+      setInputs({ ...inputs, bolt_diameter: [...inputs.bolt_diameter, label] });
     } else {
       setSelectedItems(selectedItems.filter((item) => item !== label));
+      setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter.filter((item) => item !== label) });
     }
   };
 
   const handleSelectAllChange = (event) => {
     if (event.target.checked) {
+      setInputs({ ...inputs, bolt_diameter: checkboxLabels });
       const allLabels = checkboxLabels;
       setSelectedItems(allLabels);
     } else {
       setSelectedItems([]);
+      setInputs({ ...inputs, bolt_diameter: [] });
     }
   };
 
@@ -237,6 +267,11 @@ function FinePlate() {
     ]
   };
 
+  const handleSubmit = () => {
+    console.log('Submit button clicked');
+    console.log(inputs);
+  }
+
 
   return (
 
@@ -318,7 +353,10 @@ function FinePlate() {
                       <h4>Column Section:</h4>
                     </div>
                     <div>
-                      <Select style={{ width: '100%' }}>
+                      <Select style={{ width: '100%' }}
+                        value={inputs.column_section}
+                        onSelect={(value) => setInputs({ ...inputs, column_section: value })}
+                      >
                         {connectivity && connectivity.columnList ? (
                           connectivity.columnList.map((column, index) => (
                             <Option key={index} value={column}>
@@ -335,7 +373,10 @@ function FinePlate() {
                       <h4>Beam Section:</h4>
                     </div>
                     <div>
-                      <Select style={{ width: '100%' }}>
+                      <Select style={{ width: '100%' }}
+                        value={inputs.beam_section}
+                        onSelect={(value) => setInputs({ ...inputs, beam_section: value })}
+                      >
                         {connectivity && connectivity.beamList ? (
                           connectivity.beamList.map((column, index) => (
                             <Option key={index} value={column}>
@@ -350,11 +391,15 @@ function FinePlate() {
                   </>
                 )}
                 <div><h4>Material:</h4></div>
-                <div><Select style={{ width: '100%' }}>
-                  {connectivity ? connectivity.materialList.map((column, index) => (
-                    <Option key={index} value={column}>{column}</Option>
-                  )) : null}
-                </Select>
+                <div>
+                  <Select style={{ width: '100%' }}
+                    value={inputs.connector_material}
+                    onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
+                  >
+                    {connectivity ? connectivity.materialList.map((column, index) => (
+                      <Option key={index} value={column}>{column}</Option>
+                    )) : null}
+                  </Select>
                 </div>
               </div>
               {/* Section End */}
@@ -362,9 +407,25 @@ function FinePlate() {
               <h3>Factored Loads</h3>
               <div className='component-grid    '>
                 <div><h4>Shear Force(kN) :</h4></div>
-                <div><Input type="text" name="ShearForce" onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*" /></div>
+                <div>
+                  <Input
+                    type="text"
+                    name="ShearForce"
+                    onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
+                    value={inputs.load_shear}
+                    onChange={(event) => setInputs({ ...inputs, load_shear: event.target.value })}
+                  />
+                </div>
                 <div><h4>Axial Force(kN) :</h4></div>
-                <div><Input type="text" name="AxialForce" onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*" /></div>
+                <div>
+                  <Input
+                    type="text"
+                    name="AxialForce"
+                    onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
+                    value={inputs.load_axial}
+                    onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
+                  />
+                </div>
               </div>
               {/* Section End */}
               {/* Section Start */}
@@ -374,7 +435,10 @@ function FinePlate() {
                   <h4>Diameter(mm):</h4>
                 </div>
                 <div>
-                  <Select style={{ width: '100%' }} onChange={handleSelectChangeBoltBeam}>
+                  <Select
+                    style={{ width: '100%' }}
+                    onChange={handleSelectChangeBoltBeam}
+                  >
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -400,10 +464,14 @@ function FinePlate() {
                   </div>
                 </Modal>
                 <div><h4>Type:</h4></div>
-                <div><Select style={{ width: '100%' }}>
-                  <Option value="Bearing_Bolt">Bearing Bolt</Option>
-                  <Option value="Fraction_Grip_Bolt">Fraction Grip Bolt</Option>
-                </Select>
+                <div>
+                  <Select style={{ width: '100%' }}
+                    value={inputs.bolt_type}
+                    onSelect={(value) => setInputs({ ...inputs, bolt_type: value })}
+                  >
+                    <Option value="Bearing_Bolt">Bearing Bolt</Option>
+                    <Option value="Fraction_Grip_Bolt">Fraction Grip Bolt</Option>
+                  </Select>
                 </div>
                 <div><h4>Property Class:</h4></div>
                 <div>
@@ -437,17 +505,17 @@ function FinePlate() {
               <h3>Plate</h3>
               <div className='component-grid    '>
                 <div><h4>Thickness(mm)</h4></div>
-                <div><Select style={{ width: '100%' }}>
-                  <Option value="Customized">Customized</Option>
-                  <Option value="All">All</Option>
-                </Select>
+                <div>
+                  <Select style={{ width: '100%' }}>
+                    <Option value="Customized">Customized</Option>
+                    <Option value="All">All</Option>
+                  </Select>
                 </div>
               </div>
-
             </div>
             <div className='inputdock-btn'>
               <Input type="button" value="Reset" />
-              <Input type="button" value="Design" />
+              <Input type="button" value="Design" onClick={() => handleSubmit()} />
             </div>
           </div>
           {/* Middle */}
