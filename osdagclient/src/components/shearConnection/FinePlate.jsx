@@ -285,6 +285,7 @@ function FinePlate() {
       "Beam-Beam": "Beam-Beam"
     }
 
+    // the mapping of API fields is not clear, so I have used dummy values for some fields.
     try {
       const response = await fetch('http://127.0.0.1:8000/calculate-output/fin-plate-connection', {
         method: 'POST',
