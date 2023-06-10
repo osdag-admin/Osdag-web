@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
-import {Select,Input , Modal, Checkbox } from 'antd';
+import { Select, Input, Modal, Checkbox } from 'antd';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
@@ -16,13 +16,13 @@ const { Option } = Select;
 
 function FinePlate() {
 
-  const [selectedOption, setSelectedOption] = useState();
+  const [selectedOption, setSelectedOption] = useState("Column-Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
   const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [checkboxLabels, setCheckboxLabels] = useState([]);
-  
+
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
@@ -53,7 +53,20 @@ function FinePlate() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+
+    const fetchBoltData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized');
+        const data = await response.json();
+        setCheckboxLabels(data.boltList);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchBoltData();
+
+    const fetchClassListData = async () => {
       try {
         const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&propertyClass=Customized');
         const data = await response.json();
@@ -63,7 +76,7 @@ function FinePlate() {
       }
     };
 
-    fetchData();
+    fetchClassListData();
   }, []);
 
 
@@ -92,9 +105,10 @@ function FinePlate() {
     }
   };
 
-  // const checkboxLabels = ['Label 1', 'Label 2', 'Label 3']; // Placeholder array
-
   useEffect(() => {
+
+    if (!selectedOption) return;
+
     const fetchData = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=${selectedOption}`);
@@ -120,22 +134,6 @@ function FinePlate() {
 
   }, [selectedOption]);
 
-  useEffect(() => {
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized');
-        const data = await response.json();
-        setCheckboxLabels(data.boltList);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-    
-  }, []);
-  // console.log(selectedItems);
   const handleSelectChange = (value) => {
     setSelectedOption(value);
   };
@@ -372,35 +370,35 @@ function FinePlate() {
               {/* Section Start */}
               <h3>Bolt</h3>
               <div className='component-grid    '>
-              <div>
-        <h4>Diameter(mm):</h4>
-      </div>
-      <div>
-        <Select style={{ width: '100%' }} onChange={handleSelectChangeBoltBeam}>
-          <Option value="Customized">Customized</Option>
-          <Option value="All">All</Option>
-        </Select>
-      </div>
-      <Modal
-        visible={isModalOpen}
-        onCancel={() => setModalOpen(false)}
-        footer={null}
-      >
-        <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
-        <div style={{ height: '200px', overflowY: 'scroll' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {checkboxLabels.map((label) => (
-              <Checkbox
-                key={label}
-                checked={selectedItems.includes(label)}
-                onChange={handleCheckboxChange(label)}
-              >
-                {label}
-              </Checkbox>
-            ))}
-          </div>
-        </div>
-      </Modal>
+                <div>
+                  <h4>Diameter(mm):</h4>
+                </div>
+                <div>
+                  <Select style={{ width: '100%' }} onChange={handleSelectChangeBoltBeam}>
+                    <Option value="Customized">Customized</Option>
+                    <Option value="All">All</Option>
+                  </Select>
+                </div>
+                <Modal
+                  visible={isModalOpen}
+                  onCancel={() => setModalOpen(false)}
+                  footer={null}
+                >
+                  <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
+                  <div style={{ height: '200px', overflowY: 'scroll' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {checkboxLabels.map((label) => (
+                        <Checkbox
+                          key={label}
+                          checked={selectedItems.includes(label)}
+                          onChange={handleCheckboxChange(label)}
+                        >
+                          {label}
+                        </Checkbox>
+                      ))}
+                    </div>
+                  </div>
+                </Modal>
                 <div><h4>Type:</h4></div>
                 <div><Select style={{ width: '100%' }}>
                   <Option value="Bearing_Bolt">Bearing Bolt</Option>
@@ -409,31 +407,31 @@ function FinePlate() {
                 </div>
                 <div><h4>Property Class:</h4></div>
                 <div>
-        <Select style={{ width: '100%' }} onChange={handleSelectChangePropertyClass}>
-          <Option value="Customized">Customized</Option>
-          <Option value="All">All</Option>
-        </Select>
-      </div>
-      <Modal
-        visible={isModalpropertyClassListOpen}
-        onCancel={() => setModalpropertyClassListOpen(false)}
-        footer={null}
-      >
-        <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
-        <div style={{ height: '200px', overflowY: 'scroll', display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            {checkboxLabelspropertyClassList.map((label) => (
-              <Checkbox
-                key={label}
-                checked={selectItemspropertyClassList.includes(label)}
-                onChange={handleCheckboxChangePropertyClass(label)}
-              >
-                {label}
-              </Checkbox>
-            ))}
-          </div>
-        </div>
-      </Modal>
+                  <Select style={{ width: '100%' }} onChange={handleSelectChangePropertyClass}>
+                    <Option value="Customized">Customized</Option>
+                    <Option value="All">All</Option>
+                  </Select>
+                </div>
+                <Modal
+                  visible={isModalpropertyClassListOpen}
+                  onCancel={() => setModalpropertyClassListOpen(false)}
+                  footer={null}
+                >
+                  <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
+                  <div style={{ height: '200px', overflowY: 'scroll', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      {checkboxLabelspropertyClassList.map((label) => (
+                        <Checkbox
+                          key={label}
+                          checked={selectItemspropertyClassList.includes(label)}
+                          onChange={handleCheckboxChangePropertyClass(label)}
+                        >
+                          {label}
+                        </Checkbox>
+                      ))}
+                    </div>
+                  </div>
+                </Modal>
               </div>
               {/* Section End */}
               <h3>Plate</h3>
@@ -476,8 +474,8 @@ function FinePlate() {
                 <div key={section.title}>
                   <h3>{section.title}</h3>
                   <div className='component-grid'>
-                    {section.components.map((component) => (
-                      <>
+                    {section.components.map((component, index) => (
+                      <div key={index}>
                         <div key={component.label}>
                           <h4>{component.label}</h4> </div>
                         <div>
@@ -496,7 +494,7 @@ function FinePlate() {
                             />
                           )}
                         </div>
-                      </>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -509,73 +507,9 @@ function FinePlate() {
           </div>
         </div>
 
-        {/* <ToastContainer /> */}
       </div>
     </>
   )
 }
 
 export default FinePlate
-
-// Old Code
-// <div>
-// <h5>Output Dock</h5>
-// <div className='subMainBody scroll-data'>
-// {/* Section 1 Start */}
-//   <h3>Bolt</h3>
-//   <div className='component-grid'>
-//       <div><h4>Diameter (mm)</h4></div>
-//       <div><Input type="text" name="bolt_Diameter"/></div>
-//       <div><h4>Property Class</h4></div>
-//       <div><Input type="text" name="bolt_Property_Class"/></div>
-//       <div><h4>Shear Capacity (kN)</h4></div>
-//       <div><Input type="text" name="bolt_Shear_Capacity"/></div>
-//       <div><h4>Capacity (kN)</h4></div>
-//       <div><Input type="text" name="bolt_Capacity"/></div>
-//       <div><h4>Bolt Force (kN)</h4></div>
-//       <div><Input type="text" name="bolt_Bolt_Force"/></div>
-//       <div><h4>Bolt Columns (nos)</h4></div>
-//       <div><Input type="text" name="boly_Bolt_Columns"/></div>
-//       <div><h4>Bolt Rows (nos)</h4></div>
-//       <div><Input type="text" name="bolt_Bolt_Rows"/></div>
-//       <div><h4>Spacing</h4></div>
-//       <div><Input type="button" name="bolt_Spacing"  value="Spacing Details"/></div>
-//   </div>
-//   {/* Section End */}
-//   {/* Section 2 Start */}
-//   <h3>Plate</h3>
-//   <div className='component-grid    '>
-//       <div><h4>Thickness (mm)</h4></div>
-//       <div><Input type="text" name="plate_Thickness"/></div>
-//       <div><h4>Hight (mm)</h4></div>
-//       <div><Input type="text" name="plate_Hight"/></div>
-//       <div><h4>Length (mm)</h4></div>
-//       <div><Input type="text" name="plate_Length"/></div>
-//       <div><h4>Capacity</h4></div>
-//       <div><Input type="button" name="plate_Capacity" value="Spacing Details"/></div>
-//   </div>
-//   {/* Section End */}
-//   {/* Section 3 Start */}
-//   <h3>Section Details</h3>
-//   <div className='component-grid    '>
-//       <div><h4>Capacity</h4></div>
-//       <div><Input type="button" name="plate_Capacity" value="Spacing Details"/></div>
-//   </div>
-//   {/* Section End */}
-//   {/* Section 4 Start */}
-//   <h3>Weld</h3>
-//   <div className='component-grid    '>
-//       <div><h4>Size (mm)</h4></div>
-//       <div><Input type="text" name="fileName"/></div>
-//       <div><h4>Strength (N/mm2)</h4></div>
-//       <div><Input type="text" name="fileName"/></div>
-//       <div><h4>Stress (N/mm)</h4></div>
-//       <div><Input type="text" name="fileName"/></div>
-//   </div>
-//   {/* Section End */}
-// </div>
-//   <div className='outputdock-btn'>
-//     <Input type="button" value="Create Design Report" />
-//     <Input type="button" value="Save Output" />
-//   </div>
-// </div>
