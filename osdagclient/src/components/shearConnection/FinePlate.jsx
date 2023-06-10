@@ -39,12 +39,19 @@ function FinePlate() {
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
-  const [plateThicknessModal, setPlateThicknessModal] = useState(false)
+  // const [plateThicknessModal, setPlateThicknessModal] = useState(false)
+  const [allSelected, setAllSelected] = useState({
+    plate_thickness: false,
+    bolt_diameter: false,
+    bolt_grade: false,
+  })
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
+      setAllSelected({ ...allSelected, bolt_grade: false })
       setModalpropertyClassListOpen(true);
     } else {
+      setAllSelected({ ...allSelected, bolt_grade: true })
       setModalpropertyClassListOpen(false);
     }
   };
@@ -108,8 +115,10 @@ function FinePlate() {
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
+      setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
     } else {
+      setAllSelected({ ...allSelected, bolt_diameter: true });
       setModalOpen(false);
     }
   };
@@ -126,12 +135,10 @@ function FinePlate() {
 
   const handleSelectAllChange = (event) => {
     if (event.target.checked) {
-      setInputs({ ...inputs, bolt_diameter: checkboxLabels });
       const allLabels = checkboxLabels;
       setSelectedItems(allLabels);
     } else {
       setSelectedItems([]);
-      setInputs({ ...inputs, bolt_diameter: [] });
     }
   };
 
@@ -270,6 +277,7 @@ function FinePlate() {
   const handleSubmit = () => {
     console.log('Submit button clicked');
     console.log(inputs);
+    console.log(allSelected)
   }
 
 
@@ -437,7 +445,7 @@ function FinePlate() {
                 <div>
                   <Select
                     style={{ width: '100%' }}
-                    onChange={handleSelectChangeBoltBeam}
+                    onSelect={handleSelectChangeBoltBeam}
                   >
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
@@ -475,7 +483,7 @@ function FinePlate() {
                 </div>
                 <div><h4>Property Class:</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onChange={handleSelectChangePropertyClass}>
+                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -488,9 +496,9 @@ function FinePlate() {
                   <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
                   <div style={{ height: '200px', overflowY: 'scroll', display: 'flex', alignItems: 'center' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      {checkboxLabelspropertyClassList.map((label) => (
+                      {checkboxLabelspropertyClassList.map((label, index) => (
                         <Checkbox
-                          key={label}
+                          key={index}
                           checked={selectItemspropertyClassList.includes(label)}
                           onChange={handleCheckboxChangePropertyClass(label)}
                         >
