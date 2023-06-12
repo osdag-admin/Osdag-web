@@ -27,16 +27,17 @@ class InputData(APIView) :
     Example : 
         moduleName = Fin Plate Connection
         connectivity = Beam-Beam
-
         boltDiameter = Customized 
         propertyClass = Customized
-    
+        thickness = Customized
+        
     Example URL would look like this : 
-        1. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&connectivity=Column-Flange-Beam-Web
-        2. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&boltDiameter=Customized
-        3. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&propertyClass=Customized
-        4. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection&connectivity=Column-Web-Beam-Web
-        5. http://127.0.0.1:8000/populate?moduleName=FIn-Plate-Connection ( REQUEST NOT HANDLED YET )
+        1. http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=Column-Flange-Beam-Web
+        2. http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized
+        3. http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&propertyClass=Customized
+        4. http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=Column-Web-Beam-Web
+        5. http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection
+        6. http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&thickness=Customized
 
     """
     def get(self , request) : 
@@ -44,14 +45,16 @@ class InputData(APIView) :
         connectivity = request.GET.get("connectivity")
         boltDiameter = request.GET.get("boltDiameter")
         propertyClass = request.GET.get("propertyClass")
+        thickness = request.GET.get('thickness')
 
         if (moduleName!='Fin-Plate-Connection') : 
             return Response({"error" : "Bad Query Parameter"} , status = status.HTTP_400_BAD_REQUEST)
         
         if (moduleName=='Fin-Plate-Connection' and ( connectivity is None and boltDiameter is None and propertyClass is None)) :
-            return Response({"error" : "This request is not handled"} , status = status.HTTP_400_BAD_REQUEST)
-        
-        if ( connectivity=='Column-Flange-Beam-Web' or connectivity=='Column-Web-Beam-Web') : 
+            # fetch the list of all the connectivity options for Fin-Plate-Connection
+            pass
+
+        if( connectivity=='Column-Flange-Beam-Web' or connectivity=='Column-Web-Beam-Web') : 
             print('connectivity : ' , connectivity)
 
             try : 
@@ -126,7 +129,24 @@ class InputData(APIView) :
             
             except : 
                 return Response({"error" : "Something went wrong"} , status = status.HTTP_400_BAD_REQUEST)
+            
+        
+        elif (thickness=='Customized') : 
+            print('thickness : ' , thickness) 
 
+            try : 
+                # standard as per SAIL's product brochure
+                PLATE_THICKNESS_SAIL = ['8', '10', '12', '14', '16', '18', '20', '22', '25', '28', '32', '36', '40', '45', '50', '56', '63', '75', '80', '90', '100',
+                        '110', '120']
+
+                response = {
+                    'thicknessList' : PLATE_THICKNESS_SAIL
+                }
+
+                return Response(response , status = status.HTTP_200_OK)
+
+            except :
+                return Response({'error' : 'Something went wrong'} , status = status.HTTP_400_BAD_REQUEST)
 
 
 class DesignView(APIView) : 
