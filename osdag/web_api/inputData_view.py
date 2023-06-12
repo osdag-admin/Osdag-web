@@ -52,7 +52,11 @@ class InputData(APIView) :
         
         if (moduleName=='Fin-Plate-Connection' and ( connectivity is None and boltDiameter is None and propertyClass is None)) :
             # fetch the list of all the connectivity options for Fin-Plate-Connection
-            pass
+            connectivityList = ['Column-Web-Beam-Web' , 'Column-Flange-Beam-Web' , 'Beam-Beam']
+            response = {
+                'connectivityList' : connectivityList
+            }
+            return Response(response , status = status.HTTP_200_OK)
 
         if( connectivity=='Column-Flange-Beam-Web' or connectivity=='Column-Web-Beam-Web') : 
             print('connectivity : ' , connectivity)
