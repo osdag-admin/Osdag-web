@@ -11,6 +11,7 @@ import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
 import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
 import ErrorImg from '../../assets/notSelected.png'
+import OutputDock from '../OutputDock';
 
 const { Option } = Select;
 
@@ -668,66 +669,7 @@ function FinePlate() {
 
           {/* Right */}
           <div>
-            <h5>Output Dock</h5>
-            <div className='subMainBody scroll-data'>
-              {/* {data.sections.map((section) => (
-                <div key={section.title}>
-                  <h3>{section.title}</h3>
-                  <div className='component-grid'>
-                    {section.components.map((component, index) => (
-                      <div key={index}>
-                        <div key={component.label}>
-                          <h4>{component.label}</h4> </div>
-                        <div>
-                          {component.inputType === "button" ? (
-                            <Input
-                              type={component.inputType}
-                              name={`${section.title.replace(/[^a-zA-Z0-9]/g, "_")}_${component.label.replace(/[^a-zA-Z0-9]/g, "_")}`}
-                              value={component.label}
-                              disabled
-                            />
-                          ) : (
-                            <Input
-                              type={component.inputType}
-                              name={`${section.title.replace(/[^a-zA-Z0-9]/g, "_")}_${component.label.replace(/[^a-zA-Z0-9]/g, "_")}`}
-                              disabled
-                            />
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))} */}
-
-              {output && Object.keys(output).map((key, index) => {
-                return (
-                  <div key={index}>
-                    <h3>{key}</h3>
-                    <div className='component-grid'>
-                      {Object.values(output[key]).map((elm, index1) => {
-                        console.log(elm)
-                        return (
-                          <div key={index1}>
-                            <div>
-                              <h4>{elm.label}</h4>
-                            </div>
-                            <div>
-                              <Input
-                                type="text"
-                                name={`${key}_${elm.lable}`}
-                                value={elm.val}
-                                disabled
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {<OutputDock output={output} />}
             <div className='outputdock-btn'>
               <Input type="button" value="Create Design Report" />
               <Input type="button" value="Save Output" />
