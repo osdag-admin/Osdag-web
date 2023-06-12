@@ -333,7 +333,7 @@ function FinePlate() {
           "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
           "Bolt.Slip_Factor": "0.3",
           "Bolt.TensionType": "Pre-tensioned",
-          "Bolt.Type": inputs.bolt_type,
+          "Bolt.Type": inputs.bolt_type?.replaceAll("_", " "),
           "Connectivity": conn_map[selectedOption],
           "Connector.Material": inputs.connector_material,
           "Design.Design_Method": "Limit State Design",
@@ -350,7 +350,7 @@ function FinePlate() {
           "Module": "Fin Plate Connection",
           "Weld.Fab": "Shop Weld",
           "Weld.Material_Grade_OverWrite": "410",
-          "Connector.Plate.Thickness_List": allSelected ? thicknessLabels : inputs.plate_thickness,
+          "Connector.Plate.Thickness_List": allSelected.thicknessLabels ? thicknessLabels : inputs.plate_thickness,
           "KEY_CONNECTOR_MATERIAL": "E 250 (Fe 410 W)A",
           "KEY_DP_WELD_MATERIAL_G_O": "E 250 (Fe 410 W)A"
         })
