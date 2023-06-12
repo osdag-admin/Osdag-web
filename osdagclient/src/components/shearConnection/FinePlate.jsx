@@ -274,10 +274,58 @@ function FinePlate() {
     ]
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('Submit button clicked');
     console.log(inputs);
     console.log(allSelected)
+
+    const conn_map = {
+      "Column-Flange-Beam-Web": "Flang-Beam Web",
+      "Column-Web-Beam-Web": "Web-Beam Web",
+      "Beam-Beam": "Beam-Beam"
+    }
+
+    // the mapping of API fields is not clear, so I have used dummy values for some fields.
+    try {
+      const response = await fetch('http://127.0.0.1:8000/calculate-output/fin-plate-connection', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "Bolt.Bolt_Hole_Type": "Standard",
+          "Bolt.Diameter": allSelected.bolt_diameter ? checkboxLabels : inputs.bolt_diameter,
+          "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
+          "Bolt.Slip_Factor": "0.3",
+          "Bolt.TensionType": "Pre-tensioned",
+          "Bolt.Type": inputs.bolt_type,
+          "Connectivity": conn_map[selectedOption],
+          "Connector.Material": inputs.connector_material,
+          "Design.Design_Method": "Limit State Design",
+          "Detailing.Corrosive_Influences": "No",
+          "Detailing.Edge_type": "Rolled",
+          "Detailing.Gap": "15",
+          "Load.Axial": inputs.load_axial,
+          "Load.Shear": inputs.load_shear,
+          "Material": "E 250 (Fe 410 W)A",
+          "Member.Supported_Section.Designation": inputs.beam_section,
+          "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+          "Member.Supporting_Section.Designation": 'MB 350',
+          "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
+          "Module": "Fin Plate Connection",
+          "Weld.Fab": "Shop Weld",
+          "Weld.Material_Grade_OverWrite": "410",
+          "Connector.Plate.Thickness_List": ["10", "12", "16", "18", "20"],
+          "KEY_CONNECTOR_MATERIAL": "E 250 (Fe 410 W)A",
+          "KEY_DP_WELD_MATERIAL_G_O": "E 250 (Fe 410 W)A"
+        })
+      })
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -452,7 +500,7 @@ function FinePlate() {
                   </Select>
                 </div>
                 <Modal
-                  visible={isModalOpen}
+                  open={isModalOpen}
                   onCancel={() => setModalOpen(false)}
                   footer={null}
                 >
@@ -489,7 +537,7 @@ function FinePlate() {
                   </Select>
                 </div>
                 <Modal
-                  visible={isModalpropertyClassListOpen}
+                  open={isModalpropertyClassListOpen}
                   onCancel={() => setModalpropertyClassListOpen(false)}
                   footer={null}
                 >
