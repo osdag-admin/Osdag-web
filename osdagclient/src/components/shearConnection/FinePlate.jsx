@@ -31,7 +31,7 @@ function FinePlate() {
     load_shear: "",
     load_axial: "",
     module: "Fin Plate Connection",
-    plate_thickness: ["10", "12", "16", "18", "20"],
+    plate_thickness: [],
     beam_section: "",
     column_section: "",
   })
@@ -39,7 +39,9 @@ function FinePlate() {
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
+  const [thicknessLabels, setThicknessLabels] = useState([])
   const [plateThicknessModal, setPlateThicknessModal] = useState(false)
+  const [selectedThickness, setSelectedThickness] = useState([])
   const [allSelected, setAllSelected] = useState({
     plate_thickness: false,
     bolt_diameter: false,
@@ -59,8 +61,10 @@ function FinePlate() {
   const handlePlateThicknessChange = (label) => (e) => {
     if (e.target.checked) {
       setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
+      setSelectedThickness([...selectedThickness, label])
     } else {
       setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
+      setSelectedThickness(selectedThickness.filter((item) => item !== label))
     }
   }
 
@@ -86,6 +90,18 @@ function FinePlate() {
   };
 
   useEffect(() => {
+
+    const fetchThicknessData = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&thickness=Customized');
+        const data = await response.json();
+        setThicknessLabels(data.thicknessList);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchThicknessData();
 
     const fetchBoltData = async () => {
       try {
@@ -148,6 +164,15 @@ function FinePlate() {
       setSelectedItems(allLabels);
     } else {
       setSelectedItems([]);
+    }
+  };
+  const handleAllSelectCheckboxThickness = (event) => {
+    if (event.target.checked) {
+      setInputs({ ...inputs, plate_thickness: thicknessLabels });
+      setSelectedThickness(thicknessLabels);
+    } else {
+      setSelectedThickness([]);
+      setInputs({ ...inputs, plate_thickness: [] });
     }
   };
 
@@ -325,7 +350,7 @@ function FinePlate() {
           "Module": "Fin Plate Connection",
           "Weld.Fab": "Shop Weld",
           "Weld.Material_Grade_OverWrite": "410",
-          "Connector.Plate.Thickness_List": ["10", "12", "16", "18", "20"],
+          "Connector.Plate.Thickness_List": allSelected ? thicknessLabels : inputs.plate_thickness,
           "KEY_CONNECTOR_MATERIAL": "E 250 (Fe 410 W)A",
           "KEY_DP_WELD_MATERIAL_G_O": "E 250 (Fe 410 W)A"
         })
@@ -576,6 +601,26 @@ function FinePlate() {
                     <Option value="All">All</Option>
                   </Select>
                 </div>
+                <Modal
+                  open={plateThicknessModal}
+                  onCancel={() => setPlateThicknessModal(false)}
+                  footer={null}
+                >
+                  <Checkbox onChange={handleAllSelectCheckboxThickness}>Select All</Checkbox>
+                  <div style={{ height: '200px', overflowY: 'scroll' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {thicknessLabels.map((label) => (
+                        <Checkbox
+                          key={label}
+                          checked={selectedThickness.includes(label)}
+                          onChange={handlePlateThicknessChange(label)}
+                        >
+                          {label}
+                        </Checkbox>
+                      ))}
+                    </div>
+                  </div>
+                </Modal>
               </div>
             </div>
             <div className='inputdock-btn'>
