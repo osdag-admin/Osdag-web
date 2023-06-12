@@ -39,7 +39,7 @@ function FinePlate() {
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
-  // const [plateThicknessModal, setPlateThicknessModal] = useState(false)
+  const [plateThicknessModal, setPlateThicknessModal] = useState(false)
   const [allSelected, setAllSelected] = useState({
     plate_thickness: false,
     bolt_diameter: false,
@@ -56,13 +56,13 @@ function FinePlate() {
     }
   };
 
-  // const handlePlateThicknessChange = (label) => (e) => {
-  //   if (e.target.checked) {
-  //     setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
-  //   } else {
-  //     setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
-  //   }
-  // }
+  const handlePlateThicknessChange = (label) => (e) => {
+    if (e.target.checked) {
+      setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
+    } else {
+      setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
+    }
+  }
 
   const handleCheckboxChangePropertyClass = (label) => (event) => {
     if (event.target.checked) {
@@ -120,6 +120,15 @@ function FinePlate() {
     } else {
       setAllSelected({ ...allSelected, bolt_diameter: true });
       setModalOpen(false);
+    }
+  };
+  const handleAllSelectPT = (value) => {
+    if (value === 'Customized') {
+      setAllSelected({ ...allSelected, plate_thickness: false });
+      setPlateThicknessModal(true);
+    } else {
+      setAllSelected({ ...allSelected, plate_thickness: true });
+      setPlateThicknessModal(false);
     }
   };
 
@@ -562,7 +571,7 @@ function FinePlate() {
               <div className='component-grid    '>
                 <div><h4>Thickness(mm)</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }}>
+                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
