@@ -22,6 +22,8 @@ function FinePlate() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [checkboxLabels, setCheckboxLabels] = useState([]);
+  const [output, setOutput] = useState(null)
+  const [outputFields, setOutputFields] = useState(null)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -310,8 +312,8 @@ function FinePlate() {
 
   const handleSubmit = async () => {
     console.log('Submit button clicked');
-    console.log(inputs);
-    console.log(allSelected)
+    // console.log(inputs);
+    // console.log(allSelected)
 
     const conn_map = {
       "Column-Flange-Beam-Web": "Flang-Beam Web",
@@ -355,8 +357,28 @@ function FinePlate() {
           "KEY_DP_WELD_MATERIAL_G_O": "E 250 (Fe 410 W)A"
         })
       })
-      const data = await response.json();
-      console.log(data);
+      const res = await response.json();
+      console.log(res);
+
+      const formatedOutput = {}
+
+      for (const [key, value] of Object.entries(res.data)) {
+
+        const newKey = key.split('.')[0]
+        const label = value.label
+        const val = value.value
+
+        // console.log(newKey, label, val)
+        if (val) {
+          if (!formatedOutput[newKey])
+            formatedOutput[newKey] = [{ label, val }]
+          else
+            formatedOutput[newKey].push({ label, val })
+        }
+      }
+
+      console.log(formatedOutput)
+      setOutput(formatedOutput)
     } catch (error) {
       console.log(error)
     }
@@ -646,9 +668,9 @@ function FinePlate() {
 
           {/* Right */}
           <div>
-            <h5>{data.mainTitle}</h5>
+            <h5>Output Dock</h5>
             <div className='subMainBody scroll-data'>
-              {data.sections.map((section) => (
+              {/* {data.sections.map((section) => (
                 <div key={section.title}>
                   <h3>{section.title}</h3>
                   <div className='component-grid'>
@@ -676,7 +698,35 @@ function FinePlate() {
                     ))}
                   </div>
                 </div>
-              ))}
+              ))} */}
+
+              {output && Object.keys(output).map((key, index) => {
+                return (
+                  <div key={index}>
+                    <h3>{key}</h3>
+                    <div className='component-grid'>
+                      {Object.values(output[key]).map((elm, index1) => {
+                        console.log(elm)
+                        return (
+                          <div key={index1}>
+                            <div>
+                              <h4>{elm.label}</h4>
+                            </div>
+                            <div>
+                              <Input
+                                type="text"
+                                name={`${key}_${elm.lable}`}
+                                value={elm.val}
+                                disabled
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             <div className='outputdock-btn'>
               <Input type="button" value="Create Design Report" />

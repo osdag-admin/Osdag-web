@@ -55,4 +55,4 @@ class OutputData(APIView):
         print(module_api)
         output = module_api.generate_ouptut(request.data)
 
-        return JsonResponse(output, safe=False)
+        return JsonResponse({"data": output, "success": True}, safe=False)
