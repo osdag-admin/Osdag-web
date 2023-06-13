@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from osdag_api import get_module_api
+from django.http import HttpResponse, HttpRequest
+from osdag_api.modules.fin_plate_connection import *
 
 # importing models
 from osdag.models import Columns, Beams, Bolt, Bolt_fy_fu, Material
@@ -52,7 +54,14 @@ class OutputData(APIView):
         print("Inside post method of OutputData")
 
         module_api = get_module_api('Fin Plate Connection')
+
         print(module_api)
-        output = module_api.generate_ouptut(request.data)
+
+        # validate_input(())
+
+        try:
+            output = module_api.generate_ouptut(request.data)
+        except Exception as e:
+            return HttpResponse("Error: Internal server error: " + repr(e), status=500)
 
         return JsonResponse({"data": output, "success": True}, safe=False)

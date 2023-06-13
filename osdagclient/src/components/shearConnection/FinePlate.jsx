@@ -346,16 +346,14 @@ function FinePlate() {
           "Load.Axial": inputs.load_axial,
           "Load.Shear": inputs.load_shear,
           "Material": "E 250 (Fe 410 W)A",
-          "Member.Supported_Section.Designation": 'MB 350', // dummy value
+          "Member.Supported_Section.Designation": inputs.beam_section, // dummy value
           "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
-          "Member.Supporting_Section.Designation": inputs.beam_section,
+          "Member.Supporting_Section.Designation": inputs.column_section,
           "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
           "Module": "Fin Plate Connection",
           "Weld.Fab": "Shop Weld",
           "Weld.Material_Grade_OverWrite": "410",
-          "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness,
-          "KEY_CONNECTOR_MATERIAL": "E 250 (Fe 410 W)A",
-          "KEY_DP_WELD_MATERIAL_G_O": "E 250 (Fe 410 W)A"
+          "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness
         })
       })
       const res = await response.json();
@@ -382,6 +380,7 @@ function FinePlate() {
       setOutput(formatedOutput)
     } catch (error) {
       console.log(error)
+      setOutput(null)
     }
   }
 
