@@ -37,6 +37,8 @@ function FinePlate() {
     plate_thickness: [],
     beam_section: "",
     column_section: "",
+    primary_beam: "",
+    secondary_beam: "",
   })
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
@@ -323,6 +325,62 @@ function FinePlate() {
     }
 
     // the mapping of API fields is not clear, so I have used dummy values for some fields.
+    let param = {}
+    if (selectedOption === 'Column-Flange-Beam-Web' || selectedOption === 'Column-Web-Beam-Web') {
+      param = {
+        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Diameter": allSelected.bolt_diameter ? checkboxLabels : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
+        "Bolt.Slip_Factor": "0.3",
+        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
+        "Connectivity": conn_map[selectedOption],
+        "Connector.Material": inputs.connector_material,
+        "Design.Design_Method": "Limit State Design",
+        "Detailing.Corrosive_Influences": "No",
+        "Detailing.Edge_type": "Rolled",
+        "Detailing.Gap": "15",
+        "Load.Axial": inputs.load_axial,
+        "Load.Shear": inputs.load_shear,
+        "Material": "E 250 (Fe 410 W)A",
+        "Member.Supported_Section.Designation": inputs.beam_section,
+        "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+        "Member.Supporting_Section.Designation": inputs.column_section,
+        "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
+        "Module": "Fin Plate Connection",
+        "Weld.Fab": "Shop Weld",
+        "Weld.Material_Grade_OverWrite": "410",
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness
+      }
+    }
+    else {
+      param = {
+        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Diameter": allSelected.bolt_diameter ? checkboxLabels : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
+        "Bolt.Slip_Factor": "0.48",
+        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
+        "Connectivity": conn_map[selectedOption],
+        "Connector.Material": inputs.connector_material,
+        "Design.Design_Method": "Limit State Design",
+        "Detailing.Corrosive_Influences": "No",
+        "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
+        "Detailing.Gap": "5",
+        "Load.Axial": inputs.load_axial,
+        "Load.Shear": inputs.load_shear,
+        "Material": "E 300 (Fe 440)",
+        "Member.Supported_Section.Designation": inputs.primary_beam,
+        "Member.Supported_Section.Material": "E 300 (Fe 440)",
+        "Member.Supporting_Section.Designation": inputs.secondary_beam,
+        "Member.Supporting_Section.Material": "E 300 (Fe 440)",
+        "Module": "Fin Plate Connection",
+        "Weld.Fab": "Shop Weld",
+        "Weld.Material_Grade_OverWrite": "440",
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness,
+        "out_titles_status": ["1", "1", "1", "1"]
+      }
+    }
     try {
       const response = await fetch('http://127.0.0.1:8000/calculate-output/fin-plate-connection', {
         method: 'POST',
@@ -330,31 +388,7 @@ function FinePlate() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          "Bolt.Bolt_Hole_Type": "Standard",
-          "Bolt.Diameter": allSelected.bolt_diameter ? checkboxLabels : inputs.bolt_diameter,
-          "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
-          "Bolt.Slip_Factor": "0.3",
-          "Bolt.TensionType": "Pre-tensioned",
-          "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
-          "Connectivity": conn_map[selectedOption],
-          "Connector.Material": inputs.connector_material,
-          "Design.Design_Method": "Limit State Design",
-          "Detailing.Corrosive_Influences": "No",
-          "Detailing.Edge_type": "Rolled",
-          "Detailing.Gap": "15",
-          "Load.Axial": inputs.load_axial,
-          "Load.Shear": inputs.load_shear,
-          "Material": "E 250 (Fe 410 W)A",
-          "Member.Supported_Section.Designation": inputs.beam_section, // dummy value
-          "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
-          "Member.Supporting_Section.Designation": inputs.column_section,
-          "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
-          "Module": "Fin Plate Connection",
-          "Weld.Fab": "Shop Weld",
-          "Weld.Material_Grade_OverWrite": "410",
-          "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness
-        })
+        body: JSON.stringify(param)
       })
       const res = await response.json();
       console.log(res);
@@ -429,7 +463,10 @@ function FinePlate() {
                       <h4>Primary Beam:</h4>
                     </div>
                     <div>
-                      <Select style={{ width: '100%' }}>
+                      <Select style={{ width: '100%' }}
+                        value={inputs.primary_beam}
+                        onSelect={(value) => setInputs({ ...inputs, primary_beam: value })}
+                      >
                         {connectivity && connectivity.beamList ? (
                           connectivity.beamList.map((column, index) => (
                             <Option key={index} value={column}>
@@ -446,7 +483,10 @@ function FinePlate() {
                       <h4>Secondary Beam:</h4>
                     </div>
                     <div>
-                      <Select style={{ width: '100%' }}>
+                      <Select style={{ width: '100%' }}
+                        value={inputs.secondary_beam}
+                        onSelect={(value) => setInputs({ ...inputs, secondary_beam: value })}
+                      >
                         {connectivity && connectivity.beamList ? (
                           connectivity.beamList.map((column, index) => (
                             <Option key={index} value={column}>
