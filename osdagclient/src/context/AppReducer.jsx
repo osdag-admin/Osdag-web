@@ -48,7 +48,6 @@ export default (state, action) => {
                 leafLevelDesignType: null,
                 error_message: 'Module Under Development'
             }
-
         default:
             return state;
     }
