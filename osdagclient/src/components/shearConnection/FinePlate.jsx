@@ -1,7 +1,7 @@
 
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
@@ -12,18 +12,25 @@ import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
 import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
 import ErrorImg from '../../assets/notSelected.png'
 
+// importing context 
+import {ModuleContext} from '../../context/ModuleState'
+
 const { Option } = Select;
+
+let renderedOnce = false
 
 function FinePlate() {
 
   const [selectedOption, setSelectedOption] = useState("Column-Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
-  const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
   const [outputFields, setOutputFields] = useState(null)
+
+  // extracting the state variables and the thunks from the ModuleContext 
+  const {currentModuleName , connectivityList , columnList , beamList , materialList , getConnectivityList, getColumnBeamMaterialList} = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -49,6 +56,12 @@ function FinePlate() {
     bolt_diameter: false,
     bolt_grade: false,
   })
+
+  if(!renderedOnce){
+    // obtaining the columnList, beamList and materiaList the initial value of connectivity -> Column-Flange-Beam-Web
+    getColumnBeamMaterialList('Fin-Plate-Connection' , 'Column-Flange-Beam-Web')
+    renderedOnce = true
+  }
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
@@ -182,28 +195,32 @@ function FinePlate() {
 
     if (!selectedOption) return;
 
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=${selectedOption}`);
-        const jsonData = await response.json();
-        setConnectivity(jsonData);
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
+    const fetchData = () => {
+      console.log('inside fetchData')
+      // dispatch the thunk to fetch the data here 
+      getConnectivityList('Fin-Plate-Connection')
     };
 
     fetchData();
 
-    if (selectedOption === 'Column-Flange-Beam-Web') {
-      setImageSource(CFBW)
-    } else if (selectedOption === 'Column-Web-Beam-Web') {
-      setImageSource(CWBW);
-    } else if (selectedOption === 'Beam-Beam') {
-      setImageSource(BB);
-    } else if (selectedOption === '') {
+    if(selectedOption!==''){
+        if (selectedOption === 'Column-Flange-Beam-Web') {
+          setImageSource(CFBW)
+        } else if (selectedOption === 'Column-Web-Beam-Web') {
+          setImageSource(CWBW);
+        } else if (selectedOption === 'Beam-Beam') {
+          setImageSource(BB);
+        } 
+
+        console.log('connectivity value selected : ' , selectedOption)
+        getColumnBeamMaterialList(currentModuleName , selectedOption)
+
+    }else if (selectedOption === '') {
       setImageSource(ErrorImg);
     }
+
+
+
 
   }, [selectedOption]);
 
@@ -234,7 +251,7 @@ function FinePlate() {
     }
   ];
 
-
+/*
   const Connectivity = [
     {
       "connID": "Column-Flange-Beam-Web",
@@ -249,6 +266,7 @@ function FinePlate() {
       "Data": "Beam-Beam"
     }
   ];
+*/
 
   const MenuItems = [
     {
@@ -411,8 +429,8 @@ function FinePlate() {
                   onChange={handleSelectChange}
                   value={selectedOption}
                 >
-                  {Connectivity.map((item) => (
-                    <Option key={item.connID} value={item.connID}>{item.Data}</Option>
+                  {connectivityList.map((item , index) => (
+                    <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
                 </div>
@@ -430,15 +448,13 @@ function FinePlate() {
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}>
-                        {connectivity && connectivity.beamList ? (
-                          connectivity.beamList.map((column, index) => (
+                        {
+                          beamList.map((column, index) => (
                             <Option key={index} value={column}>
                               {column}
                             </Option>
                           ))
-                        ) : (
-                          <Option value="">No data available</Option>
-                        )}
+                        }
                       </Select>
                     </div>
 
@@ -447,15 +463,13 @@ function FinePlate() {
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}>
-                        {connectivity && connectivity.beamList ? (
-                          connectivity.beamList.map((column, index) => (
+                      {
+                          beamList.map((column, index) => (
                             <Option key={index} value={column}>
                               {column}
                             </Option>
                           ))
-                        ) : (
-                          <Option value="">No data available</Option>
-                        )}
+                        }
                       </Select>
                     </div>
                   </>
@@ -469,15 +483,13 @@ function FinePlate() {
                         value={inputs.column_section}
                         onSelect={(value) => setInputs({ ...inputs, column_section: value })}
                       >
-                        {connectivity && connectivity.columnList ? (
-                          connectivity.columnList.map((column, index) => (
+                        {
+                          columnList.map((column, index) => (
                             <Option key={index} value={column}>
                               {column}
                             </Option>
                           ))
-                        ) : (
-                          <></>
-                        )}
+                        }
                       </Select>
                     </div>
 
@@ -489,15 +501,13 @@ function FinePlate() {
                         value={inputs.beam_section}
                         onSelect={(value) => setInputs({ ...inputs, beam_section: value })}
                       >
-                        {connectivity && connectivity.beamList ? (
-                          connectivity.beamList.map((column, index) => (
+                         {
+                          beamList.map((column, index) => (
                             <Option key={index} value={column}>
                               {column}
                             </Option>
                           ))
-                        ) : (
-                          <></>
-                        )}
+                        }
                       </Select>
                     </div>
                   </>
@@ -508,9 +518,11 @@ function FinePlate() {
                     value={inputs.connector_material}
                     onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                   >
-                    {connectivity ? connectivity.materialList.map((column, index) => (
-                      <Option key={index} value={column}>{column}</Option>
-                    )) : null}
+                    {
+                        materialList.map((material, index) => (
+                        <Option key={index} value={material}>{material}</Option>
+                      ))
+                    }
                   </Select>
                 </div>
               </div>

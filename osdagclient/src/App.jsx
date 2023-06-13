@@ -6,6 +6,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterPro
 import Window from './components/Window';
 
 import { GlobalProvider } from './context/GlobalState'
+import { ModuleProvider } from './context/ModuleState';
 
 function App() {
 
@@ -20,9 +21,11 @@ function App() {
   )
   return (
     <GlobalProvider>
-      <div className="app">
-        <RouterProvider router={router} />
-      </div>
+      <ModuleProvider>
+        <div className="app">
+          <RouterProvider router={router} />
+        </div>
+      </ModuleProvider>
     </GlobalProvider>
   )
 }

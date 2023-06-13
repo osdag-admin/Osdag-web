@@ -15,7 +15,7 @@ let initialValue = {
     subDesignTypes: null,
     leafLevelDesignType: null,
     error_message: null,
-    fetch_cache: ''
+    fetch_cache: '',
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
