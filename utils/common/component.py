@@ -1361,10 +1361,8 @@ class ISection(Material):
 
     def connect_to_database_update_other_attributes(self, table, designation, material_grade=""):
         conn = sqlite3.connect(PATH_TO_DATABASE)
-        if designation == "HB 200":
-            table = 'Columns'
-        else:
-            table = 'Beams'
+        table = "Beams" if designation in connectdb(
+            "Beams", "popup") else "Columns"
         db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
         cur = conn.cursor()
         cur.execute(db_query, (designation,))
@@ -2196,6 +2194,8 @@ class HollowSection(Material):
 
     def connect_to_database_update_other_attributes(self, table, designation, material_grade=""):
         conn = sqlite3.connect(PATH_TO_DATABASE)
+        table = "Beams" if designation in connectdb(
+            "Beams", "popup") else "Columns"
         db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
         cur = conn.cursor()
         cur.execute(db_query, (designation,))

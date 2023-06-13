@@ -58,10 +58,6 @@ class OutputData(APIView):
         print(module_api)
 
         # validate_input(())
-
-        try:
-            output = module_api.generate_ouptut(request.data)
-        except Exception as e:
-            return HttpResponse("Error: Internal server error: " + repr(e), status=500)
+        output = module_api.generate_ouptut(request.data)
 
         return JsonResponse({"data": output, "success": True}, safe=False)

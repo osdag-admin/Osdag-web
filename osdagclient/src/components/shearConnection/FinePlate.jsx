@@ -211,6 +211,7 @@ function FinePlate() {
   }, [selectedOption]);
 
   const handleSelectChange = (value) => {
+    setOutput(null)
     setSelectedOption(value);
   };
 
