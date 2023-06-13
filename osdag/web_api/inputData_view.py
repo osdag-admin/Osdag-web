@@ -60,7 +60,7 @@ class InputData(APIView):
             return Response(response, status=status.HTTP_200_OK)
 
         if(connectivity == 'Column-Flange-Beam-Web' or connectivity == 'Column-Web-Beam-Web'):
-            print('connectivity : ', connectivity)
+            # print('connectivity : ', connectivity)
 
             try:
                 # fetch all records from Column table
@@ -86,7 +86,7 @@ class InputData(APIView):
                 return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (connectivity == 'Beam-Beam'):
-            print('connectivity : ', connectivity)
+            # print('connectivity : ', connectivity)
 
             # fetch all records from Beams table
             # fetch all recorsd from the Material Table
@@ -106,14 +106,14 @@ class InputData(APIView):
                 return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (boltDiameter == 'Customized'):
-            print('boltDiameter : ', boltDiameter)
+            # print('boltDiameter : ', boltDiameter)
 
             # fetch the data from Bolt table
             try:
-                print('fetching')
+                # print('fetching')
                 boltList = list(Bolt.objects.values_list(
                     'Bolt_diameter', flat=True))
-                print(boltList)
+                # print(boltList)
                 response = {
                     'boltList': boltList
                 }
@@ -124,7 +124,7 @@ class InputData(APIView):
                 return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (propertyClass == 'Customized'):
-            print('propertyClass : ', propertyClass)
+            # print('propertyClass : ', propertyClass)
 
             # fetch the data from Bolt_fy_fu table
             try:
@@ -141,7 +141,7 @@ class InputData(APIView):
                 return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (thickness == 'Customized'):
-            print('thickness : ', thickness)
+            # print('thickness : ', thickness)
 
             try:
                 # standard as per SAIL's product brochure
@@ -179,7 +179,7 @@ class DesignView(APIView):
         try:
             data = request.data
 
-            print('data : ', data)
+            # print('data : ', data)
 
             return Response({'success': 'Request made successfully'}, status=status.HTTP_200_OK)
 
