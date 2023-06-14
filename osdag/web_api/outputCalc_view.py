@@ -55,9 +55,13 @@ class OutputData(APIView):
 
         module_api = get_module_api('Fin Plate Connection')
 
-        print(module_api)
-
         # validate_input(())
-        output = module_api.generate_ouptut(request.data)
+        output = {}
+        logs = []
+        try:
+            output, logs = module_api.generate_ouptut(request.data)
+        except Exception as e:
+            return JsonResponse({"data": {}, "logs": logs,
+                                 "success": False}, safe=False)
 
-        return JsonResponse({"data": output, "success": True}, safe=False)
+        return JsonResponse({"data": output, "logs": logs, "success": True}, safe=False)
