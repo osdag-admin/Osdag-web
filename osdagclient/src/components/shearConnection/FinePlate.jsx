@@ -12,6 +12,7 @@ import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
 import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
 import ErrorImg from '../../assets/notSelected.png'
 import OutputDock from '../OutputDock';
+import Logs from '../Logs';
 
 const { Option } = Select;
 
@@ -24,7 +25,7 @@ function FinePlate() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
-  const [outputFields, setOutputFields] = useState(null)
+  const [logs, setLogs] = useState(null)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -393,7 +394,7 @@ function FinePlate() {
       })
       const res = await response.json();
       console.log(res);
-
+      setLogs(res.logs)
       const formatedOutput = {}
 
       for (const [key, value] of Object.entries(res.data)) {
@@ -411,7 +412,6 @@ function FinePlate() {
         }
       }
 
-      console.log(formatedOutput)
       setOutput(formatedOutput)
     } catch (error) {
       console.log(error)
@@ -696,14 +696,7 @@ function FinePlate() {
             <img src={img1} alt="Demo" height='300px' width='300px' />
             <br />
             <div>
-              <ul>
-                <select name="Cars" size="5" >
-                  {logData.map((item) => (
-                    <option key={item.logID} value={item.logID}> LOG ID : {item.logID}{" :  _"}
-                      LOG_Name: {item.log}  </option>
-                  ))}
-                </select>
-              </ul>
+              <Logs logs={logs} />
             </div>
           </div>
 

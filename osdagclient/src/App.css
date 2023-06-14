@@ -20,6 +20,7 @@
   justify-content: space-between;
   padding-bottom: 5px;
 }
+
 .sidebar {
   /* Other styles for the sidebar */
   transition: transform 0.3s ease;
@@ -29,7 +30,8 @@
 .sidebar.hidden {
   transform: translateX(-90%);
 }
-.hamburger{
+
+.hamburger {
   position: absolute;
   top: 0;
   right: 0;
@@ -241,8 +243,8 @@
   display: grid;
   grid-template-columns: auto auto;
   padding: 10px;
-  align-content: center; 
-  
+  align-content: center;
+
 }
 
 .conn-grid-item {
@@ -253,8 +255,7 @@
   text-align: center;
 }
 
-.conn-grid-container
-{
+.conn-grid-container {
   margin: 1rem;
 
 }
@@ -370,7 +371,7 @@
 
   
 } */
-.subMainBody{
+.subMainBody {
   padding: 1rem;
   border: 1px solid black;
   border-radius: 5px;
@@ -406,46 +407,52 @@
   border: none;
 }
 
-.component-grid{
+.component-grid {
   display: grid;
-  grid-template-columns: 0.6fr 1fr; /* Two equal columns */
+  grid-template-columns: 0.6fr 1fr;
+  /* Two equal columns */
   gap: 10px;
 }
-.component-grid div h4{
+
+.component-grid div h4 {
   margin-top: 5px;
   margin-bottom: 5px;
-  font-style:italic;
-  font-weight:100;
+  font-style: italic;
+  font-weight: 100;
   font-size: 14px;
 }
-.component-grid h3{
-  font-weight:200;
+
+.component-grid h3 {
+  font-weight: 200;
   margin-top: 5px;
   margin-bottom: 5px;
   border-bottom: 1px solid black;
 }
-.inputdock-btn{
+
+.inputdock-btn {
   display: flex;
   flex-direction: row;
   gap: 2rem;
   padding: 10px
 }
-.outputdock-btn{
+
+.outputdock-btn {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 10px;
-  margin-left : 20%;
-  margin-right : 20%;
+  margin-left: 20%;
+  margin-right: 20%;
 }
-.scroll-data{
+
+.scroll-data {
 
   width: auto;
   height: 33rem;
   overflow-y: auto;
 }
 
-.subMainBody h3{
+.subMainBody h3 {
   font-size: 16px;
   width: 50%;
   padding: 2px;
@@ -468,23 +475,45 @@
   background-color: rgb(168, 121, 121);
 }
 
-.inputdock-btn Input{
+.inputdock-btn Input {
   background-color: rgb(135, 91, 91);
   cursor: pointer;
-  color:#f1f1f1;
+  color: #f1f1f1;
 }
-.inputdock-btn Input:hover{
+
+.inputdock-btn Input:hover {
   background-color: rgb(168, 121, 121);
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
   transform: translateY(-2px);
 }
-.outputdock-btn Input{
+
+.outputdock-btn Input {
   background-color: rgb(135, 91, 91);
   cursor: pointer;
-  color:#f1f1f1;
+  color: #f1f1f1;
 }
-.outputdock-btn Input:hover{
+
+.outputdock-btn Input:hover {
   background-color: rgb(168, 121, 121);
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
   transform: translateY(-2px);
+}
+
+.log-box {
+  padding: 4px;
+  border: 1px solid black;
+  height: 150px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.log-info-text {
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.log-text {
+  font-weight: 400;
+  font-size: 12px;
 }
