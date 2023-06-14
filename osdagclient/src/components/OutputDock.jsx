@@ -10,10 +10,10 @@ const OutputDock = ({ output }) => {
 					return (
 						<div key={index}>
 							<h3>{key}</h3>
-							<div className='component-grid'>
+							<div>
 								{Object.values(output[key]).map((elm, index1) => {
 									return (
-										<div key={index1}>
+										<div key={index1} className='component-grid'>
 											<div>
 												<h4>{elm.label}</h4>
 											</div>

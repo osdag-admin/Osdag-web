@@ -216,30 +216,6 @@ function FinePlate() {
     setSelectedOption(value);
   };
 
-  const logData = [
-    {
-      "logID": 401,
-      "log": "This is log entry 1."
-    },
-    {
-      "logID": 202,
-      "log": "This is log entry 2."
-    },
-    {
-      "logID": 301,
-      "log": "This is log entry 3."
-    },
-    {
-      "logID": 404,
-      "log": "This is log entry 4."
-    },
-    {
-      "logID": 504,
-      "log": "This is log entry 5."
-    }
-  ];
-
-
   const Connectivity = [
     {
       "connID": "Column-Flange-Beam-Web",
@@ -273,48 +249,7 @@ function FinePlate() {
     },
   ];
 
-  const data = {
-    "mainTitle": "Output Dock",
-    "sections": [
-      {
-        "title": "Bolt",
-        "components": [
-          { "label": "Diameter (mm)", "inputType": "text" },
-          { "label": "Property Class", "inputType": "text" },
-          { "label": "Shear Capacity (kN)", "inputType": "text" },
-          { "label": "Capacity (kN)", "inputType": "text" },
-          { "label": "Bolt Force (kN)", "inputType": "text" },
-          { "label": "Bolt Columns (nos)", "inputType": "text" },
-          { "label": "Bolt Rows (nos)", "inputType": "text" },
-          { "label": "Spacing", "inputType": "button" }
-        ]
-      },
-      {
-        "title": "Plate",
-        "components": [
-          { "label": "Thickness (mm)", "inputType": "text" },
-          { "label": "Height (mm)", "inputType": "text" },
-          { "label": "Length (mm)", "inputType": "text" },
-          { "label": "Capacity", "inputType": "button" }
-        ]
-      },
-      {
-        "title": "Section Details",
-        "components": [
-          { "label": "Capacity", "inputType": "button" }
-        ]
-      },
-      {
-        "title": "Weld",
-        "components": [
-          { "label": "Size (mm)", "inputType": "text" },
-          { "label": "Strength (N/mm2)", "inputType": "text" },
-          { "label": "Stress (N/mm)", "inputType": "text" }
-        ]
-      }
-    ]
-  };
-
+  
   const handleSubmit = async () => {
     // console.log('Submit button clicked');
     // console.log(inputs);
@@ -693,7 +628,7 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='300px' width='300px' />
+            <img src={img1} alt="Demo" height='450px' width='450px' />
             <br />
             <div>
               <Logs logs={logs} />
