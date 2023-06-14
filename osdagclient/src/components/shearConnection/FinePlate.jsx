@@ -316,7 +316,7 @@ function FinePlate() {
   };
 
   const handleSubmit = async () => {
-    console.log('Submit button clicked');
+    // console.log('Submit button clicked');
     // console.log(inputs);
     // console.log(allSelected)
 
@@ -393,7 +393,7 @@ function FinePlate() {
         body: JSON.stringify(param)
       })
       const res = await response.json();
-      console.log(res);
+      // console.log(res);
       setLogs(res.logs)
       const formatedOutput = {}
 
