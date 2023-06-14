@@ -10,7 +10,7 @@ const OutputDock = ({ output }) => {
 					return (
 						<div key={index}>
 							<h3>{key}</h3>
-							<div>
+							<div >
 								{Object.values(output[key]).map((elm, index1) => {
 									return (
 										<div key={index1} className='component-grid'>

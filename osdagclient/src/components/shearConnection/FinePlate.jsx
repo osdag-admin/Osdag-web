@@ -628,7 +628,7 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='450px' width='450px' />
+            <img src={img1} alt="Demo" height='400px' width='400px' />
             <br />
             <div>
               <Logs logs={logs} />

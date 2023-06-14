@@ -352,7 +352,7 @@
 
 .superMainBody {
   display: grid;
-  grid-template-columns: 30% 42% 30%;
+  grid-template-columns: 30% 40% 30%;
   padding: 20px;
   margin: 20px;
 }
