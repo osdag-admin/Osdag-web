@@ -55,13 +55,17 @@ class OutputData(APIView):
 
         module_api = get_module_api('Fin Plate Connection')
 
-        # validate_input(())
         output = {}
         logs = []
         try:
             output, logs = module_api.generate_ouptut(request.data)
+            new_logs = []
+            for log in logs:
+                # removing duplicates
+                if log not in new_logs:
+                    new_logs.append(log)
         except Exception as e:
-            return JsonResponse({"data": {}, "logs": logs,
+            return JsonResponse({"data": {}, "logs": new_logs,
                                  "success": False}, safe=False)
 
-        return JsonResponse({"data": output, "logs": logs, "success": True}, safe=False)
+        return JsonResponse({"data": output, "logs": new_logs, "success": True}, safe=False)
