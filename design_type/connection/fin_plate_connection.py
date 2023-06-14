@@ -550,8 +550,10 @@ class FinPlateConnection(ShearConnection):
                            .format(round(self.supported_section.low_shear_capacity/1000, 2),
                                    round(self.supported_section.tension_yielding_capacity/1000, 2)))
             self.logs.append({
-                "msg": "The shear yielding capacity (low shear case) {} and/or tension yielding capacity {} is less "
-                "than the applied load. Define a large/larger section(s) or decrease the load.",
+                "msg": " : The shear yielding capacity (low shear case) {} and/or tension yielding capacity {} is less "
+                "than the applied load. Define a large/larger section(s) or decrease the load."
+                .format(round(self.supported_section.low_shear_capacity/1000, 2),
+                        round(self.supported_section.tension_yielding_capacity/1000, 2)),
                 "type": "warning"
             })
             print("The preliminary member check(s) have failed. Select a large/larger section(s) or decrease load and re-design.")
@@ -1265,7 +1267,9 @@ class FinPlateConnection(ShearConnection):
             logger.info('The weld stress is guiding plate dimensions, current length is {} mm, thickness is {} mm, and,'
                         ' weld size is {} mm.'.format(self.plate.height, self.plate.thickness_provided, self.weld.size))
             self.logs.append({
-                "msg": 'The weld stress is guiding plate dimensions, current length is {} mm, thickness is {} mm, and,',
+                "msg": 'The weld stress is guiding plate dimensions, current length is {} mm, thickness is {} mm, and,'
+                ' weld size is {} mm.'.format(
+                    self.plate.height, self.plate.thickness_provided, self.weld.size),
                 "type": "info"
             })
 
