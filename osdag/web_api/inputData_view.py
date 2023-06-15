@@ -3,10 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 
-
 # importing models
 from osdag.models import Columns, Beams, Bolt, Bolt_fy_fu, Material
-
+from osdag.models import Design
 
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
@@ -46,6 +45,12 @@ class InputData(APIView):
         boltDiameter = request.GET.get("boltDiameter")
         propertyClass = request.GET.get("propertyClass")
         thickness = request.GET.get('thickness')
+        cookie_id = request.COOKIES.get('design_session')
+        print('cookie_id : ' , cookie_id)
+        if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
+            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.
+        if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
+            return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND) # Return error response.
 
         if (moduleName != 'Fin-Plate-Connection'):
             return Response({"error": "Bad Query Parameter"}, status=status.HTTP_400_BAD_REQUEST)

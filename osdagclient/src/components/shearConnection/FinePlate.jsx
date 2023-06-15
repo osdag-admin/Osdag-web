@@ -1,7 +1,7 @@
 
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
@@ -14,7 +14,12 @@ import ErrorImg from '../../assets/notSelected.png'
 import OutputDock from '../OutputDock';
 import Logs from '../Logs';
 
+// importing Module Context 
+import { ModuleContext } from '../../context/ModuleState';
+
 const { Option } = Select;
+
+let renderedOnce = false
 
 function FinePlate() {
 
@@ -42,6 +47,8 @@ function FinePlate() {
     secondary_beam: "",
   })
 
+  const {sessionCreated  , createSession , deleteSession} = useContext(ModuleContext)
+
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
@@ -53,6 +60,12 @@ function FinePlate() {
     bolt_diameter: false,
     bolt_grade: false,
   })
+
+  if(!renderedOnce){
+    // create a session cookie
+    createSession()
+    renderedOnce = true
+  }
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
@@ -99,7 +112,11 @@ function FinePlate() {
 
     const fetchThicknessData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&thickness=Customized');
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&thickness=Customized' , {
+          method : 'GET',
+          mode : 'cors',
+          credentials : 'include'
+        });
         const data = await response.json();
         setThicknessLabels(data.thicknessList);
       } catch (error) {
@@ -111,7 +128,11 @@ function FinePlate() {
 
     const fetchBoltData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized');
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized' , {
+          method : 'GET',
+          mode : 'cors',
+          credentials : 'include'
+        });
         const data = await response.json();
         setCheckboxLabels(data.boltList);
       } catch (error) {
@@ -123,7 +144,11 @@ function FinePlate() {
 
     const fetchClassListData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&propertyClass=Customized');
+        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&propertyClass=Customized' , {
+          method : 'GET',
+          mode : 'cors',
+          credentials : 'include'
+        });
         const data = await response.json();
         setCheckboxLabelspropertyClassList(data.propertyClassList.map(String));
       } catch (error) {
@@ -132,7 +157,7 @@ function FinePlate() {
     };
 
     fetchClassListData();
-  }, []);
+  }, [sessionCreated]);
 
 
   const handleSelectChangeBoltBeam = (value) => {
@@ -188,7 +213,11 @@ function FinePlate() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=${selectedOption}`);
+        const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=${selectedOption}` , {
+          method : 'GET',
+          mode : 'cors',
+          credentials : 'include'
+        });
         const jsonData = await response.json();
         setConnectivity(jsonData);
 
@@ -209,7 +238,7 @@ function FinePlate() {
       setImageSource(ErrorImg);
     }
 
-  }, [selectedOption]);
+  }, [selectedOption , sessionCreated]);
 
   const handleSelectChange = (value) => {
     setOutput(null)
@@ -260,6 +289,7 @@ function FinePlate() {
       "Column-Web-Beam-Web": "Web-Beam Web",
       "Beam-Beam": "Beam-Beam"
     }
+
 
     // the mapping of API fields is not clear, so I have used dummy values for some fields.
     let param = {}
@@ -318,13 +348,16 @@ function FinePlate() {
         "out_titles_status": ["1", "1", "1", "1"]
       }
     }
+    
     try {
       const response = await fetch('http://127.0.0.1:8000/calculate-output/fin-plate-connection', {
         method: 'POST',
+        mode : 'cors',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
+        credentials : 'include',
         body: JSON.stringify(param)
       })
       const res = await response.json();
@@ -352,6 +385,7 @@ function FinePlate() {
       console.log(error)
       setOutput(null)
     }
+    
   }
 
 

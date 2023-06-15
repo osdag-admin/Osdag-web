@@ -32,7 +32,23 @@ HOST = get_host()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['127.0.0.1' , 'localhost']
+
+CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:5173' , 'http://localhost:5173']  # 5173 -> port for Vite App
+
+CORS_ALLOW_METHODS = ['POST' , 'GET' , 'OPTIONS']
+
+CORS_ALLOW_HEADERS = ["accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",'access-control-allow-origin']
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5173' , 'http://localhost:5173']
 
 
 # Application definition

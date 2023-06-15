@@ -22,10 +22,13 @@ from django.utils.decorators import method_decorator
 from osdag_api import developed_modules
 import typing
 
+from rest_framework.views import APIView
+
+
 # Author: Aaranyak Ghosh
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CreateSession(View):
+
+class CreateSession(APIView):
     """
         Create a session in database and set session cookie.
             Create Session API (class CreateSession(View)):
@@ -34,27 +37,27 @@ class CreateSession(View):
                 Request body must include module id.
                 Creates a session object in db and returns session id as cookie.
     """
-    def post(self,request: HttpRequest) -> HttpResponse:
-        module_id = request.POST.get("module_id") # Type of Osdag Module
+
+    def post(self,request) :
+        module_id = request.data.get('module_id')
         if module_id == None or module_id == '': # Error Checking: If module id provided.
             return HttpResponse("Error: Please specify module id", status=400) # Returns error response.
         if request.COOKIES.get("design_session") is not None: # Error Checking: Already editing design.
-            return HttpResponse("Error: Already editing module", status=400) # Returns error response.
+            return HttpResponse("Error: Already editing module", status=200) # Returns error response.
         if module_id not in developed_modules: # Error Checking: Does module api exist
             return HttpResponse("Error: This module has not been developed yet", status=501) # Return error response.
         response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
         cookie_id = get_random_string(length=32) # Session Id - random string.
-        response.set_cookie("design_session", cookie_id) # Set session id cookie.
+        response.set_cookie(key = "design_session", value = cookie_id , samesite = 'None' , secure = 'True') # Set session id cookie.
         try: # Try creating session.
             session = Design(cookie_id = cookie_id, module_id = module_id) # Create design session object in db
             session.save()
         except Exception as e: # Error Checking: While saving design.
             return HttpResponse("Inernal Server Error: " + repr(e), status=500) # Return error response.
-        response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
-        response.set_cookie("design_session", cookie_id) # Set session id cookie
+        
         return response
 
-@method_decorator(csrf_exempt, name='dispatch')
+
 class DeleteSession(View):
     """
         Delete session cookie and session data in db.

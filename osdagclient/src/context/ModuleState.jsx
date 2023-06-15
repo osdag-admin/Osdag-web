@@ -16,7 +16,8 @@ let initialValue = {
     connectivityList : [],
     columnList : [],
     beamList : [],
-    materialList : []
+    materialList : [],
+    sessionCreated : false
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -62,6 +63,59 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const createSession = async () => {
+        try{
+            const requestData = {'module_id' : 'Fin Plate Connection'}
+            const response = await fetch(`${BASE_URL}sessions/create` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                credentials : 'include',
+                body : JSON.stringify(requestData)
+            })
+
+            if (response.status==201){
+                console.log('The Session has been set in the cookie')
+                state.sessionCreated = true
+            }else if(response.status==200){
+                console.log('Already in the editing module')
+                state.sessionCreated = true
+            }else{
+                console.log('There is an error in setting a session in the cookie')
+                state.sessionCreated = false
+            }
+        }catch(err){
+            console.log('Error in creating a session')
+            state.sessionCreated = false
+        }
+    }
+
+    const deleteSession = async() => {
+        try{
+            console.log('deleting the session')
+            const response = await fetch(`${BASE_URL}sessions/delete` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                credentials : 'include'
+            })
+
+            const data = await response?.data
+            console.log('data : ' , data)
+            if(response.status==200){
+                console.log('The session has been deleted')
+            }else{
+                console.log('Error in deleting the session')
+            }
+        }catch(err){
+            console.log('Error in deleting the session from the catch block')
+        }
+    }
+
     return (
         <ModuleContext.Provider value={{
             // State variables 
@@ -70,11 +124,14 @@ export const ModuleProvider = ({ children }) => {
             columnList : state.columnList,
             materialList : state.materialList,
             currentModuleName : state.currentModuleName,
+            sessionCreated : state.sessionCreated,
             error_msg : state.error_msg,
             
             // Thunks
             getConnectivityList,
-            getColumnBeamMaterialList
+            getColumnBeamMaterialList,
+            createSession,
+            deleteSession
         }}>
             {children}
         </ModuleContext.Provider>
