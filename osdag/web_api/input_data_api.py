@@ -21,6 +21,111 @@ import json
 
 # Author: Aaranyak Ghosh
 
+""" 
+Bolt.Bolt_Hole_Type: Standard
+Bolt.Diameter:
+- '12'
+- '16'
+- '20'
+- '24'
+- '30'
+Bolt.Grade:
+- '4.6'
+- '4.8'
+- '5.6'
+- '6.8'
+- '8.8'
+Bolt.Slip_Factor: '0.3'
+Bolt.TensionType: Pre-tensioned
+Bolt.Type: Friction Grip Bolt
+Connectivity: Column Flange-Beam Web
+Connector.Material: E 350 (Fe 490)
+Connector.Plate.Thickness_List:
+- '10'
+- '12'
+- '16'
+- '18'
+- '20'
+Design.Design_Method: Limit State Design
+Detailing.Corrosive_Influences: 'No'
+Detailing.Edge_type: Rolled, machine-flame cut, sawn and planed
+Detailing.Gap: '15'
+Load.Axial: '50'
+Load.Shear: '180'
+Material: E 250 (Fe 410 W)A
+Member.Supported_Section.Designation: MB 350
+Member.Supported_Section.Material: E 250 (Fe 410 W)A
+Member.Supporting_Section.Designation: HB 450
+Member.Supporting_Section.Material: E 250 (Fe 410 W)A
+Module: Fin Plate Connection
+Weld.Fab: Shop Weld
+Weld.Material_Grade_OverWrite: '410'
+out_titles_status:
+- 1
+- 1
+- 1
+- 1
+ """
+
+
+""" 
+{
+    "Bolt.Bolt_Hole_Type" : "Stanard",
+    "Bolt.Diameter" : "12",
+    "Bolt.Grade" : "4.6",
+    "Bolt.Slip_Factor" : "0.3",
+    "Bolt.TensionType" : "Pre-tensioned",
+    "Bolt.Type" : "Grip Bolt",
+    "Connectivity" : "Flange-Beam Web",
+    "Connector.Material" : "E 350 (Fe 490)",
+    "Design.Design_Method" : "Limit State Design",
+    "Detailing.Corrosive_Influences" : "No",
+    "Detailing.Edge_type" : "Rolled",
+    "Detailing.Gap" : "15",
+    "Load.Axial" : "50",
+    "Load.Shear" : "50",
+    "Material" : "E 250 (Fe 410 W)A",
+    "Member.Supported_Section.Designation" : "MB 350",
+    "Member.Supported_Section.Material" : "E 250 (Fe 410 W)A",
+    "Member.Supporting_Section.Designation" : "HB 450",
+    "Member.Supporting_Section.Material" : "E 250 (Fe 410 W)A",
+    "Module" : "Fin Plate Connection",
+    "Weld.Fab" : "Shop Weld",
+    "Weld.Material_Grade_OverWrite" : "410",
+    "Connector.Plate.Thickness_List" : "10",
+} 
+"""
+
+"""
+{
+    "Bolt.Bolt_Hole_Type" : "Standard",
+    "Bolt.Diameter" : ["12" , "16" , "20" , "24" , "30"],
+    "Bolt.Grade" : ["4.6" , "4.8" , "5.6" , "6.8" , "8.8"],
+    "Bolt.Slip_Factor" : "0.3",
+    "Bolt.TensionType" : "Pre-tensioned",
+    "Bolt.Type" : "Grip Bolt",
+    "Connectivity" : "Flange-Beam Web",
+    "Connector.Material" : "E 350 (Fe 490)",
+    "Design.Design_Method" : "Limit State Design",
+    "Detailing.Corrosive_Influences" : "No",
+    "Detailing.Edge_type" : "Rolled",
+    "Detailing.Gap" : "15",
+    "Load.Axial" : "50",
+    "Load.Shear" : "50",
+    "Material" : "E 250 (Fe 410 W)A",
+    "Member.Supported_Section.Designation" : "MB 350",
+    "Member.Supported_Section.Material" : "E 250 (Fe 410 W)A",
+    "Member.Supporting_Section.Designation" : "HB 450",
+    "Member.Supporting_Section.Material" : "E 250 (Fe 410 W)A",
+    "Module" : "Fin Plate Connection",
+    "Weld.Fab" : "Shop Weld",
+    "Weld.Material_Grade_OverWrite" : "410",
+    "Connector.Plate.Thickness_List" : ["10" , "12" , "16" , "18" , "20"]
+}
+
+"""
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class InputValues(View):
     """
@@ -62,4 +167,3 @@ class InputValues(View):
             return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response
         response = HttpResponse(status=200) # Status code 200 - Success!
         return response
-
