@@ -78,9 +78,11 @@ const Window = () => {
     useEffect(() => {
         if (!results || !subDesignTypes) return;
 
-        const { name: prev_item } = results.data[activeTab - 1]
-        const { name } = subDesignTypes.data[subActiveTab - 1]
-        getLeafLevelDesignType(designType, prev_item, name)
+        if (subDesignTypes.has_subtypes === true) {
+            const { name: prev_item } = results.data[activeTab - 1]
+            const { name } = subDesignTypes.data[subActiveTab - 1]
+            getLeafLevelDesignType(designType, prev_item, name)
+        }
 
     }, [subActiveTab])
 
