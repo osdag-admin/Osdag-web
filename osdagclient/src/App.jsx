@@ -15,7 +15,7 @@ function App() {
       <Route path="/" element={<Root />}>
         <Route index element={<Mainwindow />} />
         <Route path='/design-type/:designType' element={<Window />} />
-        <Route path='/fin_plate' element={<FinePlate />} />
+        <Route path='/design/:designType/:item' element={<FinePlate />} />
       </Route>
     )
   )

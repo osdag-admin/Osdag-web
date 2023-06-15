@@ -42,6 +42,7 @@ const Window = () => {
     const { designType } = useParams();
     const [activeTab, setActiveTab] = useState(1)
     const [subActiveTab, setSubActiveTab] = useState(1)
+    const [selectedDesign, setSelectedDesign] = useState(null)
 
     const { results, getDesignTypes, getSubDesignTypes, subDesignTypes, leafLevelDesignType, getLeafLevelDesignType, error_message } = useContext(GlobalContext)
 
@@ -133,7 +134,7 @@ const Window = () => {
                                         <div key={item.id}>
                                             <div className='conn-grid-container'>
                                                 <div className='conn-grid-item'>
-                                                    <input type="radio" value={item.name} name="shear-conn"></input>
+                                                    <input type="radio" value={item.name} name="shear-conn" onClick={() => setSelectedDesign(item.name.toLowerCase())}></input>
                                                     <b>{item.name.replaceAll("_", " ")}</b><br />
                                                     <img src={image_map[item.image_name]} alt={item.name} />
                                                 </div>
@@ -144,7 +145,7 @@ const Window = () => {
                                 })}
 
                             </div>
-                            <center><div className=''><button className='start-btn'>Start</button></div></center>
+                            <center><div className=''><button className='start-btn' onClick={() => { }}>Start</button></div></center>
                         </>
                     }
                     {subDesignTypes && !subDesignTypes.has_subtypes &&
@@ -156,7 +157,7 @@ const Window = () => {
                                             <div className='conn-grid-container'>
 
                                                 <div className='conn-grid-item'>
-                                                    <input type="radio" value={item.name} name="shear-conn"></input>
+                                                    <input type="radio" value={item.name} name="shear-conn" onClick={() => setSelectedDesign(item.name.toLowerCase())}></input>
                                                     <b>{item.name.replaceAll("_", " ")}</b><br />
                                                     <img src={image_map[item.image_name]} alt={item.name} />
                                                 </div>
@@ -167,7 +168,9 @@ const Window = () => {
                                 })}
 
                             </div>
-                            <center><div className=''><button className='start-btn'>Start</button></div></center>
+                            <center><div className=''><button className='start-btn' onClick={() => {
+                                if (selectedDesign === 'fin_plate') navigate(`/design/${designType}/${selectedDesign}`)
+                            }}>Start</button></div></center>
                         </>
                     }
                     {leafLevelDesignType && !leafLevelDesignType.has_subtypes &&
@@ -178,7 +181,7 @@ const Window = () => {
                                         <div key={item.id}>
                                             <div className='conn-grid-container'>
                                                 <div className='conn-grid-item'>
-                                                    <input type="radio" value={item.name} name="shear-conn"></input>
+                                                    <input type="radio" value={item.name} name="shear-conn" onClick={() => setSelectedDesign(item.name.toLowerCase())}></input>
                                                     <b>{item.name.replaceAll("_", " ")}</b><br />
                                                     <img src={image_map[item.image_name]} alt={item.name} />
                                                 </div>
@@ -191,7 +194,7 @@ const Window = () => {
                             </div>
                             <center>
                                 <div className=''>
-                                    <button className='start-btn'>Start</button>
+                                    <button className='start-btn' onClick={() => { }}>Start</button>
                                 </div>
                             </center>
                         </>
