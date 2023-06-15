@@ -29,7 +29,6 @@ design_dict = {
     "Weld.Fab": "Shop Weld",
     "Weld.Material_Grade_OverWrite": '410',
     "Connector.Plate.Thickness_List":['8','10','12','14','16','18','20','22','25','28','32','36','40','45','50','56','63','75','80','90','100','110','120']
-
 }
 
 inputval = fp.set_input_values(design_dict)
@@ -43,7 +42,7 @@ for i in outputval:
 caps = fp.capacities(True)
 for i in caps:
     print(i)
-# popup_summary = {'ProfileSummary': {'CompanyName': 'Daredevil Developers', 'CompanyLogo': '', 'Group/TeamName':
-#     'Web Development Teams', 'Designer': 'Gyrnaskha Aahoa'},'ProjectTitle': 'Osdag on Web', 'Subtitle': '', 'JobNumber': '0',
-#                  'AdditionalComments': 'No comments', 'Client': 'The No Name Guy', "filename": "/home/aaranyak/School_Work_Grade_9/Internship/Osdag_Dev/Osdag/Developer_Notes/report_test.pdf", "does_design_exist": False, "logger_messages": ""}
-# fp.save_design(popup_summary=popup_summary)
+popup_summary = {'ProfileSummary': {'CompanyName': 'Daredevil Developers', 'CompanyLogo': '', 'Group/TeamName':
+    'Web Development Teams', 'Designer': 'Gyrnaskha Aahoa'},'ProjectTitle': 'Osdag on Web', 'Subtitle': '', 'JobNumber': '0',
+                 'AdditionalComments': 'No comments', 'Client': 'The No Name Guy', "filename": "/home/aaranyak/School_Work_Grade_9/Internship/Osdag_Dev/osdag_web/file_storage/design_reports/report_tes", "does_design_exist": False, "logger_messages": ""}
+fp.save_design(popup_summary=popup_summary)
