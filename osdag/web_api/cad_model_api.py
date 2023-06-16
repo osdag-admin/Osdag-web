@@ -36,7 +36,7 @@ class CADGeneration(View):
 
     def get(self, request: HttpRequest):
         # Get design session id.
-        cookie_id = request.COOKIES.get("design_session")
+        cookie_id = request.COOKIES.get("fin_plate_connection_session")
         print(cookie_id)
         # Error Checking: If design session id provided.
         if cookie_id == None or cookie_id == '':
@@ -48,21 +48,36 @@ class CADGeneration(View):
             return HttpResponse("Error: This design session does not exist", status=404)
         try:  # Error checking while loading input data
             # Get session object from db.
-            design_session = Design.objects.get(cookie_id=cookie_id)
-            module_api = get_module_api(
-                design_session.module_id)  # Get module api
+            try : 
+                design_session = Design.objects.get(cookie_id=cookie_id)
+            except : 
+                print('Error in obtaining the fin_plate_connection_session')
+            
+            try : 
+                module_api = get_module_api(
+                    design_session.module_id)  # Get module api
+            except : 
+                print('error in obtaining modele_api from the design_session')
             # Error Checking: If input data not entered.
-            if not design_session.current_state:
-                # Return error response.
-                return HttpResponse("Error: Please enter input data first", status=409)
+
+
+            #if not design_session.current_state:
+            #    # Return error response.
+            #    return HttpResponse("Error: Please enter input data first", status=409)
             # Load input data into dictionary.
-            input_values = json.loads(design_session.input_values)
+            
+            try : 
+                input_values = design_session.input_values
+            except : 
+                print('error in loading the input_values from the design_session instance')
         except Exception as e:
             # Return error response.
+            print('first erorr')
             return HttpResponse("Error: Internal server error: " + repr(e), status=500)
         section = "Model"  # Section of model to generate (default full model).
         if request.GET.get("section") != None:  # If section is specified,
             section = request.GET["section"]  # Set section
+            print('section : ' , section)
         try:  # Error checking while Generating BREP File.
             # Generate CAD Model.
             path = module_api.create_cad_model(

@@ -19,11 +19,10 @@ import { ModuleContext } from '../../context/ModuleState';
 
 const { Option } = Select;
 
-let renderedOnce = false
 
 function FinePlate() {
 
-  const [selectedOption, setSelectedOption] = useState("Column-Flange-Beam-Web");
+  const [selectedOption, setSelectedOption] = useState("Column Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
   // const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -31,6 +30,7 @@ function FinePlate() {
   // const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
+  const [displayOutput , setDisplayOutput] = useState(false)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -47,7 +47,7 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, createSession } = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , createSession , createDesign } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -197,22 +197,63 @@ function FinePlate() {
     },
   ];
 
+  useEffect(() => {
+    if(displayOutput){
+      try{
+        setLogs(designLogs)
+      }catch(error){
+        console.log(error)
+          setOutput(null)
+      }
+    }
+  } , [designLogs])
 
+  useEffect(() => {
+      if(displayOutput){
+          try{
+            const formatedOutput = {}
+
+          for (const [key, value] of Object.entries(designData)) {
+
+            const newKey = key.split('.')[0]
+            const label = value.label
+            const val = value.value
+
+            // console.log(newKey, label, val)
+            if (val) {
+              if (!formatedOutput[newKey])
+                formatedOutput[newKey] = [{ label, val }]
+              else
+                formatedOutput[newKey].push({ label, val })
+            }
+          }
+
+          setOutput(formatedOutput)
+        } catch (error) {
+          console.log(error)
+          setOutput(null)
+        }
+      }
+  } , [designData])
+
+  
   const handleSubmit = async () => {
     // console.log('Submit button clicked');
     // console.log(inputs);
     // console.log(allSelected)
 
     const conn_map = {
-      "Column-Flange-Beam-Web": "Column Flange-Beam Web",
-      "Column-Web-Beam-Web": "Column Web-Beam Web",
+      "Column Flange-Beam-Web": "Column Flange-Beam Web",
+      "Column Web-Beam-Web": "Column Web-Beam Web",
       "Beam-Beam": "Beam-Beam"
     }
 
 
+    console.log('selectedOption : ' , selectedOption)
+
     // the mapping of API fields is not clear, so I have used dummy values for some fields.
     let param = {}
-    if (selectedOption === 'Column-Flange-Beam-Web' || selectedOption === 'Column-Web-Beam-Web') {
+    if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
@@ -268,23 +309,17 @@ function FinePlate() {
       }
     }
 
+    createDesign(param)
+    setDisplayOutput(true)
+    
+    /*
     try {
-      const response = await fetch('http://127.0.0.1:8000/calculate-output/fin-plate-connection', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(param)
-      })
-      const res = await response.json();
-      // console.log(res);
-      setLogs(res.logs)
+      // creaing teh design
+      createDesign(param)
+      // setLogs(designLogs)
       const formatedOutput = {}
 
-      for (const [key, value] of Object.entries(res.data)) {
+      for (const [key, value] of Object.entries(designData)) {
 
         const newKey = key.split('.')[0]
         const label = value.label
@@ -304,7 +339,8 @@ function FinePlate() {
       console.log(error)
       setOutput(null)
     }
-
+    */
+    
   }
 
 
@@ -333,11 +369,9 @@ function FinePlate() {
                   onSelect={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((item, index) => {
-                    return (
-                      <Option key={index} value={item}>{item}</Option>
-                    )
-                  })}
+                  {connectivityList.map((item , index) => (
+                    <Option key={index} value={item}>{item}</Option>
+                  ))}
                 </Select>
                 </div>
 

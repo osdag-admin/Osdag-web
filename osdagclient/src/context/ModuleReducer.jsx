@@ -51,6 +51,12 @@ export default (state, action) => {
                 ...state,
                 propertyClassList : action.payload.propertyClassList
             }
+        case 'SET_DESIGN_DATA_AND_LOGS' :   
+            return{
+                ...state,
+                designData : action.payload.data,
+                designLogs : action.payload.logs
+            }
 
         default:
             return state;

@@ -4,6 +4,7 @@ from utils.common.component import *
 from utils.common.material import *
 from Report_functions import *
 import logging
+import os
 
 
 class FinPlateConnection(ShearConnection):
@@ -151,6 +152,7 @@ class FinPlateConnection(ShearConnection):
 
         handler.setFormatter(formatter)
         logger.addHandler(handler)
+        # os.chmod('/home' , 0o775)
         handler = logging.FileHandler('logging_text.log')
 
         formatter = logging.Formatter(

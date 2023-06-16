@@ -50,6 +50,7 @@ class InputData(APIView):
         if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
             return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.
         if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
+            print('The design session does not exists')
             return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND) # Return error response.
 
         if (moduleName != 'Fin-Plate-Connection'):
@@ -60,7 +61,7 @@ class InputData(APIView):
             print("\n\n")
             print('inside connectivtityList handling ')
             print("\n\n")
-            connectivityList = ['Column-Flange-Beam-Web' , 'Column-Web-Beam-Web', 'Beam-Beam']
+            connectivityList = ['Column Flange-Beam-Web' , 'Column Web-Beam-Web', 'Beam-Beam']
             response = {
                 'connectivityList': connectivityList
             }

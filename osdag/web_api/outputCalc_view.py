@@ -95,8 +95,8 @@ class OutputData(APIView):
         try:
             try:
                 output, logs = module_api.generate_output(input_values)
-            except Exception as e:
-                print(e)
+            except Exception as e : 
+                print('e : ' , e)
                 print('Error in generating the output and logs')
             # print('output : ', output)
             # new_logs = []
