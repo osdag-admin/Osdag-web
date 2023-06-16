@@ -13,6 +13,7 @@ import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
 import ErrorImg from '../../assets/notSelected.png'
 import OutputDock from '../OutputDock';
 import Logs from '../Logs';
+import Model from './threerender'
 
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
@@ -605,8 +606,11 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='400px' width='400px' />
-            <br />
+            {/* <img src={img1} alt="Demo" height='400px' width='400px' />
+            <br /> */}
+            <Canvas>
+            <Model />
+            </Canvas>
             <div>
               <Logs logs={logs} />
             </div>
