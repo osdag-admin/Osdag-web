@@ -204,8 +204,8 @@ function FinePlate() {
     // console.log(allSelected)
 
     const conn_map = {
-      "Column-Flange-Beam-Web": "Column Flang-Beam-Web",
-      "Column-Web-Beam-Web": "Column Web-Beam-Web",
+      "Column-Flange-Beam-Web": "Column Flange-Beam Web",
+      "Column-Web-Beam-Web": "Column Web-Beam Web",
       "Beam-Beam": "Beam-Beam"
     }
 
@@ -329,14 +329,15 @@ function FinePlate() {
               <h3>Connecting Members</h3>
               <div className='component-grid'>
                 <div><h4>Connectivity</h4></div>
-
                 <div><Select style={{ width: '100%' }}
-                  onChange={handleSelectChange}
+                  onSelect={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((index, item) => (
-                    <Option key={index} value={item}>{item}</Option>
-                  ))}
+                  {connectivityList.map((item, index) => {
+                    return (
+                      <Option key={index} value={item}>{item}</Option>
+                    )
+                  })}
                 </Select>
                 </div>
 
