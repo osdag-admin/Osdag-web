@@ -1,5 +1,6 @@
 from django.urls import path
 from django.urls import include
+from osdag import views
 from osdag.web_api.session_api import CreateSession
 from osdag.web_api.session_api import DeleteSession
 from osdag.web_api.input_data_api import InputValues
@@ -19,4 +20,9 @@ urlpatterns = [
     path('design/cad', CADGeneration.as_view()),
     path('modules', GetModules.as_view()),
     path('modules/', GetModules.as_view()),
+    path('model/input/',views.input_view),
+    path('model/cad/',views.cad_view),
+    path('cookie/delete/',views.del_view),
+    path('cookie/create/',views.create_view),
+    path('model/render/',views.render_view)
 ]

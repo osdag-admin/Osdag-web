@@ -21,6 +21,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from osdag_api import developed_modules
 import typing
+import json
 
 # Author: Aaranyak Ghosh
 
@@ -29,13 +30,17 @@ class CreateSession(View):
     """
         Create a session in database and set session cookie.
             Create Session API (class CreateSession(View)):
-                Accepts POST requests..
-                Accepts content-type/form-data.
+                Accepts POST requests.
+                Accepts content-type application/json.
                 Request body must include module id.
                 Creates a session object in db and returns session id as cookie.
     """
     def post(self,request: HttpRequest) -> HttpResponse:
-        module_id = request.POST.get("module_id") # Type of Osdag Module
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+        except json.JSONDecodeError:
+            return HttpResponse("Error: Invalid JSON", status=400) # Returns error response if JSON is invalid.
+        module_id = data.get("module_id") # Type of Osdag Module
         if module_id == None or module_id == '': # Error Checking: If module id provided.
             return HttpResponse("Error: Please specify module id", status=400) # Returns error response.
         if request.COOKIES.get("design_session") is not None: # Error Checking: Already editing design.
@@ -43,6 +48,7 @@ class CreateSession(View):
         if module_id not in developed_modules: # Error Checking: Does module api exist
             return HttpResponse("Error: This module has not been developed yet", status=501) # Return error response.
         response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
+        response['Referrer-Policy'] = 'origin-when-cross-origin'
         cookie_id = get_random_string(length=32) # Session Id - random string.
         response.set_cookie("design_session", cookie_id) # Set session id cookie.
         try: # Try creating session.
@@ -51,8 +57,10 @@ class CreateSession(View):
         except Exception as e: # Error Checking: While saving design.
             return HttpResponse("Inernal Server Error: " + repr(e), status=500) # Return error response.
         response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
+        response['Referrer-Policy'] = 'origin-when-cross-origin'
         response.set_cookie("design_session", cookie_id) # Set session id cookie
         return response
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteSession(View):
