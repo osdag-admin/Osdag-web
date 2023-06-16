@@ -19,7 +19,7 @@ import { ModuleContext } from '../../context/ModuleState';
 
 const { Option } = Select;
 
-let renderedOnce = false
+// let renderedOnce = false
 
 function FinePlate() {
 
@@ -570,7 +570,7 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='400px' width='400px' />
+            <img src={img1} alt="Demo" height='300px' width='300px' />
             <br />
             <div>
               <Logs logs={logs} />

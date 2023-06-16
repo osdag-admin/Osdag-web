@@ -358,7 +358,7 @@
 
 .superMainBody {
   display: grid;
-  grid-template-columns: 30% 40% 30%;
+  grid-template-columns: 45vh 50vh 50vh;
   padding: 20px;
   margin: 20px;
 }
@@ -383,6 +383,7 @@
   border-radius: 5px;
   margin: 3px;
   width: max(1rem);
+  
 }
 
 
@@ -395,7 +396,7 @@
 
 .superMainBody_mid {
   padding: 20px;
-  width: auto;
+
 }
 
 .superMainBody_right {
@@ -404,6 +405,7 @@
   gap: 30px;
   padding: 10px;
   margin: 10px;
+  margin-left: 2rem;
 }
 
 .superMainBody_right input {
