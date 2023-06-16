@@ -605,7 +605,7 @@ function FinePlate() {
             </div>
           </div>
           {/* Middle */}
-          <div className='superMainBody_mid'>
+          <div id="context-conatiner">
             {/* <img src={img1} alt="Demo" height='400px' width='400px' />
             <br /> */}
             <Canvas>
