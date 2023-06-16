@@ -56,4 +56,7 @@ urlpatterns = [
     # output generation from input
     path('calculate-output/fin-plate-connection',
          OutputData.as_view(), name='fin-plate-connection'),
+
+    # design report
+    path('design-report', views.design_report, name='design-report'),
 ]
