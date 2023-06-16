@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+
+# Macro Begin: /home/aditya/snap/freecad/common/open_brep_file.FCMacro +++++++++++++++++++++++++++++++++++++++++++++++++
+import FreeCAD
+import Part
+import Mesh
+import sys
+import os
+if len(sys.argv) < 3:
+   print('Error: No output path argument provided')
+   sys.exit()
+
+# Retrieve the path argument
+path = sys.argv[2]
+output_filename = sys.argv[3]
+
+#print(type(path))
+print('The path of the brep file',path)
+Part.open(path)
+
+doc = FreeCAD.activeDocument()
+print(doc.Label)
+doc_name = doc.Label
+__objs__=[]
+for objz in doc.Objects:
+    print(objz.Name)
+    print(doc_name)
+    print("Inside For")
+    #if objz.Name == doc_name:
+    print("Inside if")
+        # Export the object to gltf for
+    __objs__.append(objz)
+    break  # Stop looping once you find the object
+print('This is the file to which we export',output_filename)
+Mesh.export(__objs__,output_filename)
+del __objs__
