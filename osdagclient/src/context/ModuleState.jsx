@@ -22,7 +22,9 @@ let initialValue = {
     sessionCreated : false,
     sendNextRequests : false,
     setTheCookie : false,
-    connectivityListObtained : false
+    connectivityListObtained : false,
+    designLogs : [],
+    designData : {}
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -190,6 +192,57 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const createCADModel = async() => {
+        try{
+            const response = await fetch(`${BASE_URL}design/cad` , {
+                method : 'GET',
+                mode : 'cors',
+                credentials : 'include'
+            })
+            if (await response.status==200){
+                console.log('CAD model created')
+                console.log('response.json() : ' , await response.json())
+                console.log('response : ' , await response)
+            }else{
+                console.log('CAD model not created')
+            }
+
+        }catch(error){
+            console.log('Error in creating CAD model')
+        }
+    }
+
+    const createDesign = async(param) => {
+        try{
+            const response = await fetch(`${BASE_URL}calculate-output/fin-plate-connection`, {
+            method: 'POST',
+            mode : 'cors',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            credentials : 'include',
+            body: JSON.stringify(param)
+            })
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse fro createDesign : ' , jsonResponse)
+            console.log('response : ' , response)
+            dispatch({type : 'SET_DESIGN_DATA_AND_LOGS' , payload : jsonResponse})
+
+            if(jsonResponse.success==true){
+                // call the thunk to create the CAD Model
+                try{
+                    createCADModel()
+                }catch(error){
+                    console.log('error in creating the CAD model from createDesign')
+                }
+            }
+
+        }catch(error){
+            console.log('Error in creating the design')
+        }
+    }
+
     return (
         <ModuleContext.Provider value={{
             // State variables 
@@ -205,6 +258,8 @@ export const ModuleProvider = ({ children }) => {
             sendNextRequests : state.sendNextRequests,
             setTheCookie : state.setTheCookie,
             error_msg : state.error_msg,
+            designData : state.designData,
+            designLogs : state.designLogs,
 
             // actions
             cookieSetter,
@@ -215,8 +270,10 @@ export const ModuleProvider = ({ children }) => {
             getThicknessList,
             getBoltDiameterList,
             getPropertyClassList,
+            createCADModel,
             createSession,
-            deleteSession
+            deleteSession,
+            createDesign
         }}>
             {children}
         </ModuleContext.Provider>

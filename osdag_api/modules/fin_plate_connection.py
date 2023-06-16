@@ -312,9 +312,19 @@ def create_module() -> FinPlateConnection:
 def create_from_input(input_values: Dict[str, Any]) -> FinPlateConnection:
     """Create an instance of the fin plate connection module design class from input values."""
     # validate_input(input_values)
-    module = create_module()  # Create module instance.
+    try : 
+        module = create_module()  # Create module instance.
+    except Exception as e : 
+        print('e in create_module : ' , e) 
+        print('error in creating module')
+    
     # Set the input values on the module instance.
-    module.set_input_values(input_values)
+    try : 
+        module.set_input_values(input_values)
+    except Exception as e : 
+        print('e in set_input_values : ' , e)
+        print('error in setting the input values')
+
     return module
 
 
@@ -339,7 +349,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     raw_output_capacities = module.capacities(True)
     logs = module.logs
     raw_output = raw_output_capacities + raw_output_spacing + raw_output_text
-    os.system("clear")
+    # os.system("clear")
     # Loop over all the text values and add them to ouptut dict.
     for param in raw_output:
         if param[2] == "TextBox":  # If the parameter is a text output,
@@ -367,7 +377,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     # The section of the module that will be generated.
     cld.component = section
     model = cld.create2Dcad()  # Generate CAD Model.
-    os.system("clear")  # clear the terminal
+    # os.system("clear")  # clear the terminal
     file_name = session + "_" + section + ".brep"
     file_path = "file_storage/cad_models/" + file_name
 
