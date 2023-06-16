@@ -1314,11 +1314,11 @@ class Plate(Material):
 class ISection(Material):
 
     def __init__(self, designation, material_grade="", table=""):
-        # if table == "":
-        #     table = "Beams" if designation in connectdb(
-        #         "Beams", "popup") else "Columns"
-        table = "Beams" if designation in connectdb(
-            "Beams", "popup") else "Columns"
+        if table == "":
+            table = "Beams" if designation in connectdb(
+                "Beams", "popup") else "Columns"
+        # table = "Beams" if designation in connectdb(
+        #     "Beams", "popup") else "Columns"
         self.connect_to_database_update_other_attributes(
             table, designation, material_grade)
         self.design_status = True
@@ -1361,8 +1361,9 @@ class ISection(Material):
 
     def connect_to_database_update_other_attributes(self, table, designation, material_grade=""):
         conn = sqlite3.connect(PATH_TO_DATABASE)
-        table = "Beams" if designation in connectdb(
-            "Beams", "popup") else "Columns"
+        if table == "":
+            table = "Beams" if designation in connectdb(
+                "Beams", "popup") else "Columns"
         db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
         cur = conn.cursor()
         cur.execute(db_query, (designation,))
