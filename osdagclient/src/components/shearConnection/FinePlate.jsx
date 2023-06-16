@@ -2,7 +2,7 @@
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useContext, useEffect, useState } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
 import { Select, Input, Modal, Checkbox } from 'antd';
@@ -14,7 +14,7 @@ import ErrorImg from '../../assets/notSelected.png'
 import OutputDock from '../OutputDock';
 import Logs from '../Logs';
 import Model from './threerender'
-
+import { Canvas } from '@react-three/fiber'
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
 
