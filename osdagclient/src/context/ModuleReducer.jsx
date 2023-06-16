@@ -28,7 +28,30 @@ export default (state, action) => {
                 materialList : action.payload.materialList,
                 error_msg : 'Error in fetching Beam and Material List'
             }
-    
+        case 'SET_COOKIE_FETCH' : 
+            return{
+                ...state,
+                setTheCookie : !state.setTheCookie
+            }
+        
+        case 'SET_BOLT_DIAMETER_LIST' : 
+            return{
+                ...state,
+                boltDiameterList : action.payload.boltList
+            }
+           
+        case 'SET_THICKNESS_LIST' : 
+            return{
+                ...state,
+                thicknessList : action.payload.thicknessList
+            }
+        
+        case 'SET_PROPERTY_CLASS_LIST' : 
+            return{
+                ...state,
+                propertyClassList : action.payload.propertyClassList
+            }
+
         default:
             return state;
     }

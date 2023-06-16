@@ -246,10 +246,13 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
 
     # Check if all required keys exist
     required_keys = get_required_keys()
+    print('required_keys : ' , required_keys)
     # Check if input_values contains all required keys.
     missing_keys = contains_keys(input_values, required_keys)
+    print('missing keys : ' , missing_keys)
     if missing_keys != None:  # If keys are missing.
         # Raise error for the first missing key.
+        print("missing keys is not None")
         raise MissingKeyError(missing_keys[0])
 
     # Validate key types using loops.
@@ -270,7 +273,13 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
                 "Module",
                 "Weld.Fab"]
     for key in str_keys:  # Loop through all keys.
-        validate_string(key)  # Check if key is a string. If not, raise error.
+        print('validating string key')
+        
+        try : 
+            validate_string(key)  # Check if key is a string. If not, raise error.
+        except : 
+            print('error in validating string keys')
+            print('string key passed  : ' , key )
 
     # Validate for keys that are numbers
     num_keys = [("Bolt.Slip_Factor", True)  # List of all parameters that are numbers (key, is_float)
@@ -280,6 +289,7 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
                 ("Weld.Material_Grade_OverWrite", False)]
     for key in num_keys:  # Loop through all keys.
         # Check if key is a number. If not, raise error.
+        print('validating num keys')
         validate_num(key[0], key[1])
 
     # Validate for keys that are arrays
@@ -287,6 +297,7 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
                 ("Bolt.Grade", True),
                 ("Connector.Plate.Thickness_List", False)]
     for key in arr_keys:
+        print('validating arr key')
         # Check if key is a list where all items can be converted to numbers. If not, raise error.
         validate_arr(key[0], key[1])
 
@@ -300,14 +311,14 @@ def create_module() -> FinPlateConnection:
 
 def create_from_input(input_values: Dict[str, Any]) -> FinPlateConnection:
     """Create an instance of the fin plate connection module design class from input values."""
-    validate_input(input_values)
+    # validate_input(input_values)
     module = create_module()  # Create module instance.
     # Set the input values on the module instance.
     module.set_input_values(input_values)
     return module
 
 
-def generate_ouptut(input_values: Dict[str, Any]) -> Dict[str, Any]:
+def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """
     Generate, format and return the input values from the given output values.
     Output format (json): {
@@ -320,6 +331,7 @@ def generate_ouptut(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """
     output = {}  # Dictionary for formatted values
     module = create_from_input(input_values)  # Create module from input.
+    print('module : ' , module)
 
     # Generate output values in unformatted form.
     raw_output_text = module.output_values(True)
@@ -386,6 +398,7 @@ def generate_report(input_values: Dict[str, Any], metadata: Dict[str, Any], repo
                 profile[key] = metadata_profile[key]
     else: # Otherwise, stick to default metadata
         profile = metadata_profile
+    file_path = "file_storage/design_report/" + report_id
     metadata_final = {"ProfileSummary": profile, "filename": file_path}
     # Add other metadata
     for key in metadata_other.keys(): # Go through all metadata keys
@@ -393,7 +406,7 @@ def generate_report(input_values: Dict[str, Any], metadata: Dict[str, Any], repo
             metadata_final[key] = metadata[key] # Use key
         else: # if not, use default value
             metadata_final[key] = metadata_other[key]
-    file_path = "file_storage/design_report/" + report_id
+    
     module = create_from_input(input_values) # Create module from input
     module.save_design(metadata_final) # Create design report
     return file_path

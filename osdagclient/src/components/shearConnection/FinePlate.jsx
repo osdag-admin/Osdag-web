@@ -25,10 +25,10 @@ function FinePlate() {
 
   const [selectedOption, setSelectedOption] = useState("Column-Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
-  const [connectivity, setConnectivity] = useState();
+  // const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [checkboxLabels, setCheckboxLabels] = useState([]);
+  // const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
 
@@ -47,12 +47,12 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {sessionCreated  , createSession , deleteSession} = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, createSession } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
-  const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
-  const [thicknessLabels, setThicknessLabels] = useState([])
+  // const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
+  // const [thicknessLabels, setThicknessLabels] = useState([])
   const [plateThicknessModal, setPlateThicknessModal] = useState(false)
   const [selectedThickness, setSelectedThickness] = useState([])
   const [allSelected, setAllSelected] = useState({
@@ -61,12 +61,12 @@ function FinePlate() {
     bolt_grade: false,
   })
 
-  if(!renderedOnce){
-    // create a session cookie
-    createSession()
-    renderedOnce = true
-  }
 
+  useEffect(() => {
+    createSession()
+  } , [])
+
+  
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
       setAllSelected({ ...allSelected, bolt_grade: false })
@@ -81,9 +81,11 @@ function FinePlate() {
     if (e.target.checked) {
       setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
       setSelectedThickness([...selectedThickness, label])
+      console.log('selectedThickenssList : ' , selectedThickness)
     } else {
       setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
       setSelectedThickness(selectedThickness.filter((item) => item !== label))
+      console.log('selectedThickness : ' , selectedThickness)
     }
   }
 
@@ -99,7 +101,7 @@ function FinePlate() {
 
   const handleSelectAllChangePropertyClass = (event) => {
     if (event.target.checked) {
-      const allLabels = checkboxLabelspropertyClassList;
+      const allLabels = propertyClassList;
       setInputs({ ...inputs, bolt_grade: allLabels });
       setSelectItemspropertyClassList(allLabels);
     } else {
@@ -107,58 +109,6 @@ function FinePlate() {
       setSelectItemspropertyClassList([]);
     }
   };
-
-  useEffect(() => {
-
-    const fetchThicknessData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&thickness=Customized' , {
-          method : 'GET',
-          mode : 'cors',
-          credentials : 'include'
-        });
-        const data = await response.json();
-        setThicknessLabels(data.thicknessList);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-
-    fetchThicknessData();
-
-    const fetchBoltData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&boltDiameter=Customized' , {
-          method : 'GET',
-          mode : 'cors',
-          credentials : 'include'
-        });
-        const data = await response.json();
-        setCheckboxLabels(data.boltList);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchBoltData();
-
-    const fetchClassListData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&propertyClass=Customized' , {
-          method : 'GET',
-          mode : 'cors',
-          credentials : 'include'
-        });
-        const data = await response.json();
-        setCheckboxLabelspropertyClassList(data.propertyClassList.map(String));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchClassListData();
-  }, [sessionCreated]);
-
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
@@ -191,7 +141,7 @@ function FinePlate() {
 
   const handleSelectAllChange = (event) => {
     if (event.target.checked) {
-      const allLabels = checkboxLabels;
+      const allLabels = boltDiameterList;
       setSelectedItems(allLabels);
     } else {
       setSelectedItems([]);
@@ -199,8 +149,8 @@ function FinePlate() {
   };
   const handleAllSelectCheckboxThickness = (event) => {
     if (event.target.checked) {
-      setInputs({ ...inputs, plate_thickness: thicknessLabels });
-      setSelectedThickness(thicknessLabels);
+      setInputs({ ...inputs, plate_thickness: thicknessList });
+      setSelectedThickness(thicknessList);
     } else {
       setSelectedThickness([]);
       setInputs({ ...inputs, plate_thickness: [] });
@@ -210,23 +160,6 @@ function FinePlate() {
   useEffect(() => {
 
     if (!selectedOption) return;
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:8000/populate?moduleName=Fin-Plate-Connection&connectivity=${selectedOption}` , {
-          method : 'GET',
-          mode : 'cors',
-          credentials : 'include'
-        });
-        const jsonData = await response.json();
-        setConnectivity(jsonData);
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
 
     if (selectedOption === 'Column-Flange-Beam-Web') {
       setImageSource(CFBW)
@@ -238,27 +171,13 @@ function FinePlate() {
       setImageSource(ErrorImg);
     }
 
-  }, [selectedOption , sessionCreated]);
+  }, [selectedOption ]);
 
   const handleSelectChange = (value) => {
     setOutput(null)
     setSelectedOption(value);
   };
 
-  const Connectivity = [
-    {
-      "connID": "Column-Flange-Beam-Web",
-      "Data": "Column-Flange-Beam-Web"
-    },
-    {
-      "connID": "Column-Web-Beam-Web",
-      "Data": "Column-Web-Beam-Web"
-    },
-    {
-      "connID": "Beam-Beam",
-      "Data": "Beam-Beam"
-    }
-  ];
 
   const MenuItems = [
     {
@@ -296,8 +215,8 @@ function FinePlate() {
     if (selectedOption === 'Column-Flange-Beam-Web' || selectedOption === 'Column-Web-Beam-Web') {
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
-        "Bolt.Diameter": allSelected.bolt_diameter ? checkboxLabels : inputs.bolt_diameter,
-        "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
+        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
         "Bolt.Slip_Factor": "0.3",
         "Bolt.TensionType": "Pre-tensioned",
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
@@ -317,14 +236,14 @@ function FinePlate() {
         "Module": "Fin Plate Connection",
         "Weld.Fab": "Shop Weld",
         "Weld.Material_Grade_OverWrite": "410",
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
     else {
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
-        "Bolt.Diameter": allSelected.bolt_diameter ? checkboxLabels : inputs.bolt_diameter,
-        "Bolt.Grade": allSelected.bolt_grade ? checkboxLabelspropertyClassList : inputs.bolt_grade,
+        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
         "Bolt.Slip_Factor": "0.48",
         "Bolt.TensionType": "Pre-tensioned",
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
@@ -344,7 +263,7 @@ function FinePlate() {
         "Module": "Fin Plate Connection",
         "Weld.Fab": "Shop Weld",
         "Weld.Material_Grade_OverWrite": "440",
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessLabels : inputs.plate_thickness,
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness,
         "out_titles_status": ["1", "1", "1", "1"]
       }
     }
@@ -415,8 +334,8 @@ function FinePlate() {
                   onChange={handleSelectChange}
                   value={selectedOption}
                 >
-                  {Connectivity.map((item) => (
-                    <Option key={item.connID} value={item.connID}>{item.Data}</Option>
+                  {connectivityList.map((index,  item) => (
+                    <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
                 </div>
@@ -437,15 +356,11 @@ function FinePlate() {
                         value={inputs.primary_beam}
                         onSelect={(value) => setInputs({ ...inputs, primary_beam: value })}
                       >
-                        {connectivity && connectivity.beamList ? (
-                          connectivity.beamList.map((column, index) => (
-                            <Option key={index} value={column}>
-                              {column}
+                        { beamList.map((index, item) => (
+                            <Option key={index} value={item}>
+                              {item}
                             </Option>
-                          ))
-                        ) : (
-                          <Option value="">No data available</Option>
-                        )}
+                          ))}
                       </Select>
                     </div>
 
@@ -457,15 +372,13 @@ function FinePlate() {
                         value={inputs.secondary_beam}
                         onSelect={(value) => setInputs({ ...inputs, secondary_beam: value })}
                       >
-                        {connectivity && connectivity.beamList ? (
-                          connectivity.beamList.map((column, index) => (
-                            <Option key={index} value={column}>
-                              {column}
+                        {
+                         beamList.map((index , item) => (
+                            <Option key={index} value={item}>
+                              {item}
                             </Option>
                           ))
-                        ) : (
-                          <Option value="">No data available</Option>
-                        )}
+                        }
                       </Select>
                     </div>
                   </>
@@ -479,15 +392,13 @@ function FinePlate() {
                         value={inputs.column_section}
                         onSelect={(value) => setInputs({ ...inputs, column_section: value })}
                       >
-                        {connectivity && connectivity.columnList ? (
-                          connectivity.columnList.map((column, index) => (
-                            <Option key={index} value={column}>
-                              {column}
+                        {
+                         columnList.map((item , index) => (
+                            <Option key={index} value={item}>
+                              {item}
                             </Option>
                           ))
-                        ) : (
-                          <></>
-                        )}
+                          }
                       </Select>
                     </div>
 
@@ -499,15 +410,12 @@ function FinePlate() {
                         value={inputs.beam_section}
                         onSelect={(value) => setInputs({ ...inputs, beam_section: value })}
                       >
-                        {connectivity && connectivity.beamList ? (
-                          connectivity.beamList.map((column, index) => (
-                            <Option key={index} value={column}>
-                              {column}
+                          { beamList.map((item , index ) => (
+                            <Option key={index} value={item}>
+                              {item}
                             </Option>
-                          ))
-                        ) : (
-                          <></>
-                        )}
+                            ))
+                          }
                       </Select>
                     </div>
                   </>
@@ -518,9 +426,9 @@ function FinePlate() {
                     value={inputs.connector_material}
                     onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                   >
-                    {connectivity ? connectivity.materialList.map((column, index) => (
-                      <Option key={index} value={column}>{column}</Option>
-                    )) : null}
+                    {materialList.map((item , index) => (
+                      <Option key={index} value={item}>{item}</Option>
+                    ))}
                   </Select>
                 </div>
               </div>
@@ -573,7 +481,7 @@ function FinePlate() {
                   <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
                   <div style={{ height: '200px', overflowY: 'scroll' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {checkboxLabels.map((label) => (
+                      {boltDiameterList.map((label) => (
                         <Checkbox
                           key={label}
                           checked={selectedItems.includes(label)}
@@ -610,9 +518,9 @@ function FinePlate() {
                   <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
                   <div style={{ height: '200px', overflowY: 'scroll', display: 'flex', alignItems: 'center' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      {checkboxLabelspropertyClassList.map((label, index) => (
+                      {propertyClassList.map((label) => (
                         <Checkbox
-                          key={index}
+                          key={label}
                           checked={selectItemspropertyClassList.includes(label)}
                           onChange={handleCheckboxChangePropertyClass(label)}
                         >
@@ -641,7 +549,7 @@ function FinePlate() {
                   <Checkbox onChange={handleAllSelectCheckboxThickness}>Select All</Checkbox>
                   <div style={{ height: '200px', overflowY: 'scroll' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {thicknessLabels.map((label) => (
+                      {thicknessList.map((label) => (
                         <Checkbox
                           key={label}
                           checked={selectedThickness.includes(label)}
@@ -678,7 +586,7 @@ function FinePlate() {
             </div>
           </div>
         </div>
-
+      
       </div>
     </>
   )

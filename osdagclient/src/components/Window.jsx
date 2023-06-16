@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
 import { GlobalContext } from '../context/GlobalState'
+import { ModuleContext } from '../context/ModuleState'
 
 // importing images
 import bolted_to_end from '../assets/TensionMember/bolted_to_end.png'
@@ -45,6 +46,7 @@ const Window = () => {
     const [selectedDesign, setSelectedDesign] = useState(null)
 
     const { results, getDesignTypes, getSubDesignTypes, subDesignTypes, leafLevelDesignType, getLeafLevelDesignType, error_message } = useContext(GlobalContext)
+    const { setTheCookie , cookieSetter } = useContext(ModuleContext)
 
     const wrapper = () => {
         getDesignTypes(designType)
@@ -93,6 +95,7 @@ const Window = () => {
     }, [activeTab])
 
     if (!results) return <div>Module Under Development</div>
+
 
     return (
         <div>

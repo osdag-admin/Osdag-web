@@ -21,9 +21,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from osdag_api import developed_modules
 import typing
+from django.http import JsonResponse
 
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
+# importing serializers 
+from osdag.serializers import Design_Serializer
 
 # Author: Aaranyak Ghosh
 
@@ -40,25 +45,38 @@ class CreateSession(APIView):
 
     def post(self,request) :
         module_id = request.data.get('module_id')
+        print('module_id : ' , module_id)
+
         if module_id == None or module_id == '': # Error Checking: If module id provided.
-            return HttpResponse("Error: Please specify module id", status=400) # Returns error response.
-        if request.COOKIES.get("design_session") is not None: # Error Checking: Already editing design.
-            return HttpResponse("Error: Already editing module", status=200) # Returns error response.
+            return JsonResponse("Error: Please specify module id", status=400) # Returns error response.
+        if request.COOKIES.get("fin_plate_connection_session") is not None: # Error Checking: Already editing design.
+            return JsonResponse({"status" : "set"}, status=200) # Returns error response.
         if module_id not in developed_modules: # Error Checking: Does module api exist
-            return HttpResponse("Error: This module has not been developed yet", status=501) # Return error response.
-        response = HttpResponse(status=201) # Statuscode 201 - Successfully created object.
-        cookie_id = get_random_string(length=32) # Session Id - random string.
-        response.set_cookie(key = "design_session", value = cookie_id , samesite = 'None' , secure = 'True') # Set session id cookie.
-        try: # Try creating session.
-            session = Design(cookie_id = cookie_id, module_id = module_id) # Create design session object in db
-            session.save()
-        except Exception as e: # Error Checking: While saving design.
-            return HttpResponse("Inernal Server Error: " + repr(e), status=500) # Return error response.
-        
-        return response
+            return JsonResponse("Error: This module has not been developed yet", status=501) # Return error response.
+    
+        cookie_id = get_random_string(length=32) # creting a session from a random string
+        tempData = {
+            "cookie_id" : cookie_id,
+            "module_id" : module_id,
+            "input_values" : {}
+        }
+        print('tempData : ' , tempData)
+        serializer = Design_Serializer(data = tempData)
+        if serializer.is_valid() : 
+            print('serializer is valid')
+            serializer.save()
+
+            # create HTTPResponse and set the cookie
+            response = JsonResponse({"status" : "set"} , status=201)
+            response.set_cookie(key = "fin_plate_connection_session", value = cookie_id , samesite = 'None' , secure = 'True') # Set session id cookie.
+            return response
+        else : 
+            print('serializer is invalid')
+            return JsonResponse("Inernal Server Error: " , status=500) # Return error response.
 
 
-class DeleteSession(View):
+
+class DeleteSession(APIView):
     """
         Delete session cookie and session data in db.
             Delete Session API (class CreateSession(View)):
@@ -68,16 +86,16 @@ class DeleteSession(View):
                 Deletes session object in db and deletes session id cookie.
     """
     def post(self,request: HttpRequest) -> HttpResponse:
-        cookie_id = request.COOKIES.get("design_session") # Get design session id.
+        cookie_id = request.COOKIES.get("fin_plate_connection_session") # Get design session id.
         if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
             return HttpResponse("Error: Please open module", status=400) # Returns error response.
         if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
             return HttpResponse("Error: This design session does not exist", status=404) # Return error response.
         try: # Try deleting session.
-            design_session = Design.objects.get(cookie_id=cookie_id) # Design session object in db.
-            design_session.delete()
+            fin_plate_connection_session = Design.objects.get(cookie_id=cookie_id) # Design session object in db.
+            fin_plate_connection_session.delete()
         except Exception as e: # Error Checking: While saving design.
             return HttpResponse("Inernal Server Error: " + repr(e), status=500) # Return error response.
         response = HttpResponse(status=200) # Status code 200 - Successfully deleted .
-        response.delete_cookie("design_session")
+        response.delete_cookie("fin_plate_connection_session")
         return response

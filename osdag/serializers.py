@@ -2,10 +2,30 @@ from rest_framework import serializers
 
 # importing models 
 from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS 
+from osdag.models import Design
 
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
+
+class Design_Serializer(serializers.ModelSerializer) : 
+
+    class Meta : 
+        model = Design
+        fields = '__all__'
+
+    def create(self,  validated_data) : 
+        # creating an instance of the Design model 
+        return Design.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data) : 
+        # update the input_values field of the instance 
+        instance.input_values = validated_data.get('input_values' , instance.input_values)
+        
+        # save the instance 
+        instance.save()
+
+        return instance
 
 
 class Anchor_Bolt_Serializer(serializers.ModelSerializer) :

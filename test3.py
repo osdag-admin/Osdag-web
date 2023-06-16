@@ -26,4 +26,4 @@ input_values = {
     "Weld.Material_Grade_OverWrite" : "410",
     "Connector.Plate.Thickness_List" : ["10" , "12" , "16" , "18" , "20"],
 }
-print(generate_ouptut(input_values))
+print(generate_output(input_values))

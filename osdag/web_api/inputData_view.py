@@ -45,7 +45,7 @@ class InputData(APIView):
         boltDiameter = request.GET.get("boltDiameter")
         propertyClass = request.GET.get("propertyClass")
         thickness = request.GET.get('thickness')
-        cookie_id = request.COOKIES.get('design_session')
+        cookie_id = request.COOKIES.get('fin_plate_connection_session')
         print('cookie_id : ' , cookie_id)
         if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
             return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.

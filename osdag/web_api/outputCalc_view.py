@@ -10,8 +10,16 @@ from osdag_api import get_module_api
 from django.http import HttpResponse, HttpRequest
 from osdag_api.modules.fin_plate_connection import *
 
+# importing from DRF 
+from rest_framework.response import Response
+from rest_framework import status
+
 # importing models
 from osdag.models import Columns, Beams, Bolt, Bolt_fy_fu, Material
+from osdag.models import Design
+
+# importing serializers 
+from osdag.serializers import Design_Serializer
 
 """
     Author : Sai Charan ( FOSSEE'23 )
@@ -53,19 +61,54 @@ class OutputData(APIView):
     def post(self, request):
         print("Inside post method of OutputData")
 
+        # obtaining the session, module_id, input_values
+        cookie_id = request.COOKIES.get('fin_plate_connection_session')
         module_api = get_module_api('Fin Plate Connection')
+        input_values = request.data
+        tempData = {
+            'cookie_id' : cookie_id,
+            'module_id' : 'Fin Plate Connection',
+            'input_values' : input_values
+        }
+        print('tempData : ' , tempData)
+        print('type of input_values : ' , type(input_values))
+        # obtaining the record from the Design model 
+        designRecord = Design.objects.get(cookie_id = cookie_id)
+        serailizer = Design_Serializer(designRecord , data = tempData)
+        
+        # checking the validtity of the serializer 
+        if serailizer.is_valid() :
+            print('serializer is valid') 
+            try :  # try saving the serializer 
+                serailizer.save()
+                print('serializer saved')
+            except : 
+                print('Error in saving the serializer')
+        
+        else : 
+            print('serializer is invalid')
+            return Response('Serializer is invalid' , status= status.HTTP_400_BAD_REQUEST)
 
         output = {}
         logs = []
+        new_logs = []
         try:
-            output, logs = module_api.generate_ouptut(request.data)
-            new_logs = []
+            try : 
+                output, logs = module_api.generate_output(input_values)
+            except : 
+                print('Error in generating the output and logs')
+            print('output : ' , output)
+            # new_logs = []
             for log in logs:
                 # removing duplicates
                 if log not in new_logs:
                     new_logs.append(log)
+            
+            print('new_logs : ' , new_logs)
         except Exception as e:
             return JsonResponse({"data": {}, "logs": new_logs,
-                                 "success": False}, safe=False)
+                                "success": False}, safe=False)
 
         return JsonResponse({"data": output, "logs": new_logs, "success": True}, safe=False)
+    
+       

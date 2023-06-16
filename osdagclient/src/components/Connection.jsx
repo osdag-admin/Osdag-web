@@ -90,7 +90,7 @@ function Connection() {
             <div className='conn-grid-item'><input type="radio" value="Seated_Angle" name="shear-conn" /><b>Seated Angle</b><br /> <img src={sc4} /></div>
           </div>
 
-          <center><div className='conn-btn'><button>Start</button></div></center>
+          <center><div className='conn-btn'><button>Starting</button></div></center>
         </div>
 
         <div

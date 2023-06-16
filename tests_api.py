@@ -26,5 +26,5 @@ design_dict = {
     "Weld.Material_Grade_OverWrite": '410',
     "Connector.Plate.Thickness_List":['8','10','12','14','16','18','20','22','25','28','32','36','40','45','50','56','63','75','80','90','100','110','120']
 }
-out = json.dumps(generate_ouptut(design_dict), indent=4)
-print(out)
+
+generate_report(design_dict , {} , 'test')
