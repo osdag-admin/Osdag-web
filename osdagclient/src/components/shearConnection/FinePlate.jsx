@@ -1,8 +1,8 @@
 
 import '../../App.css'
-import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
+// import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useContext, useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
 import { Select, Input, Modal, Checkbox } from 'antd';
@@ -370,7 +370,7 @@ function FinePlate() {
                   onSelect={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((index,  item) => (
+                  {connectivityList.map((item, index  ) => (
                     <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
@@ -606,7 +606,13 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='400px' width='400px' />
+          <div style={{ width: '400px', height: '400px' }}>
+          <Canvas gl={{ antialias: true }} camera={{ aspect: 1 }}>
+            <Model />
+          </Canvas>
+         </div>
+            
+            {/* <img src={img1} alt="Demo" height='400px' width='400px' /> */}
             <br />
             <div>
               <Logs logs={logs} />
