@@ -24,7 +24,8 @@ let initialValue = {
     setTheCookie : false,
     connectivityListObtained : false,
     designLogs : [],
-    designData : {}
+    designData : {},
+    renderCadModel : false
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -199,16 +200,22 @@ export const ModuleProvider = ({ children }) => {
                 mode : 'cors',
                 credentials : 'include'
             })
-            if (await response.status==200){
+            console.log('fetching done')
+            if (response.status==200){
                 console.log('CAD model created')
-                console.log('response.json() : ' , await response.json())
-                console.log('response : ' , await response)
+                console.log('response : ' , response)
+
+                // set the CAD rendering to true ( to render the CAD model )
+                dispatch({type : 'SET_RENDER_CAD_MODEL_BOOLEAN' , payload : true})
             }else{
                 console.log('CAD model not created')
+
+                // set teh render CAD to false to display the default image only 
+                dispatch({type : 'SET_RENDER_CAD_MODEL_BOOLEAN' , payload : false})
             }
 
         }catch(error){
-            console.log('Error in creating CAD model')
+            console.log('Error in creating CAD model : ' , error)
         }
     }
 
@@ -243,6 +250,41 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const createDesignReport = async(params) => {
+        console.log('params : ' , params)
+        try{
+            const response = await fetch(`${BASE_URL}generate-report` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                credentials : 'include'
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse : ' , jsonResponse)
+        }catch(error){
+            console.log('error : ' , error)
+        }
+    }
+
+    const saveCSV = async() => {
+        console.log('saving CSV file')
+        try{
+            const response = await fetch(`${BASE_URL}save-csv` , {
+                method : 'GET',
+                mode : 'cors',
+                credentials : 'include'
+            })
+
+            const jsonResponse = await response?.json()
+            console.log("jsonResponse : " , jsonResponse)
+        }catch(error){
+            console.log('error : ' , error)
+        }
+    }
+
     return (
         <ModuleContext.Provider value={{
             // State variables 
@@ -260,6 +302,7 @@ export const ModuleProvider = ({ children }) => {
             error_msg : state.error_msg,
             designData : state.designData,
             designLogs : state.designLogs,
+            renderCadModel : state.renderCadModel,
 
             // actions
             cookieSetter,
@@ -273,7 +316,9 @@ export const ModuleProvider = ({ children }) => {
             createCADModel,
             createSession,
             deleteSession,
-            createDesign
+            createDesign,
+            createDesignReport,
+            saveCSV
         }}>
             {children}
         </ModuleContext.Provider>

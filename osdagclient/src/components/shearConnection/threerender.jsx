@@ -6,8 +6,10 @@ import React, {useMemo} from "react";
 function Model() {
   
     const obj = useLoader(OBJLoader,"/output-obj.obj"); //issue is here that our .obj model is not getting loaded in the objloader
+    console.log('obj loader :  ' , obj)
     //return <primitive object={obj} />
     const texture = useTexture("/texture.png");
+    console.log('texture  : ' , texture)
     const geometry = useMemo(() => {
       let g;
       obj.traverse((c) => {

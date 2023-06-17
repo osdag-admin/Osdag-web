@@ -342,6 +342,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     output = {}  # Dictionary for formatted values
     module = create_from_input(input_values)  # Create module from input.
     print('module : ' , module)
+    print('type of module : ' , type(module))
 
     # Generate output values in unformatted form.
     raw_output_text = module.output_values(True)
@@ -370,18 +371,38 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
         raise InvalidInputTypeError(
             "section", "'Model', 'Beam', 'Column' or 'Plate'")
     module = create_from_input(input_values)  # Create module from input.
+    print('module from input values : ' , module)
     # Object that will create the CAD model.
-    cld = CommonDesignLogic(None, '', module.module, module.mainmodule)
-    # Setup the calculations object for generating CAD model.
-    scc.setup_for_cad(cld, module)
+    try : 
+        cld = CommonDesignLogic(None, '', module.module, module.mainmodule)
+    except Exception as e : 
+        print('error in cld e : ' , e)
+    
+    try : 
+        # Setup the calculations object for generating CAD model.
+        scc.setup_for_cad(cld, module)
+    except Exception as e : 
+        print('Error in setting up cad e : ' , e)
+
     # The section of the module that will be generated.
     cld.component = section
-    model = cld.create2Dcad()  # Generate CAD Model.
+    
+    try : 
+        model = cld.create2Dcad()  # Generate CAD Model.
+    except Exception as e :
+        print('Error in cld.create2Dcad() e : ' , e)
+    
+    print('2d model : ' , model)
     # os.system("clear")  # clear the terminal
     file_name = session + "_" + section + ".brep"
     file_path = "file_storage/cad_models/" + file_name
+    print('brep file path in create_cad_model : ' , file_path)
 
-    BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+    try : 
+        BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+    except Exception as e : 
+        print('Writing to BREP file failed e : ' , e)
+    
     return file_path
 
 def generate_report(input_values: Dict[str, Any], metadata: Dict[str, Any], report_id: str) -> str:

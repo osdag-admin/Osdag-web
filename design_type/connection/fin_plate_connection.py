@@ -7,6 +7,7 @@ import logging
 import os
 
 
+
 class FinPlateConnection(ShearConnection):
 
     def __init__(self):
@@ -143,17 +144,34 @@ class FinPlateConnection(ShearConnection):
         # @author Arsil Zunzunia
         # super(FinPlateConnection, FinPlateConnection).set_osdaglogger(key)
         global logger
+
         logger = logging.getLogger('Osdag')
 
-        logger.setLevel(logging.DEBUG)
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        try : 
+            logger.setLevel(logging.DEBUG)
+        except Exception as e : 
+            print('error in setting level e : ' , e)
 
-        handler.setFormatter(formatter)
+        handler = logging.StreamHandler()
+
+        try : 
+            formatter = logging.Formatter(
+                fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+        except Exception as e : 
+            print('error in Formatter e : ' , e)
+
+        try :  
+            handler.setFormatter(formatter)
+        except Exception as e : 
+            print('error in setting the formatter e : ' , e)
+        
         logger.addHandler(handler)
-        # os.chmod('/home' , 0o775)
-        handler = logging.FileHandler('logging_text.log')
+        try : 
+            handler = logging.FileHandler('logging_text.log')
+
+        except Exception as e : 
+            print('exception in osdag logger e : ' , e)
 
         formatter = logging.Formatter(
             fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
