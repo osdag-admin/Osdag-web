@@ -334,7 +334,7 @@ function FinePlate() {
                   onChange={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((index,  item) => (
+                  {connectivityList.map((item,index) => (
                     <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
