@@ -243,6 +243,41 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const createDesignReport = async(params) => {
+        console.log('params : ' , params)
+        try{
+            const response = await fetch(`${BASE_URL}generate-report` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                credentials : 'include'
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse : ' , jsonResponse)
+        }catch(error){
+            console.log('error : ' , error)
+        }
+    }
+
+    const saveCSV = async() => {
+        console.log('saving CSV file')
+        try{
+            const response = await fetch(`${BASE_URL}save-csv` , {
+                method : 'GET',
+                mode : 'cors',
+                credentials : 'include'
+            })
+
+            const jsonResponse = await response?.json()
+            console.log("jsonResponse : " , jsonResponse)
+        }catch(error){
+            console.log('error : ' , error)
+        }
+    }
+
     return (
         <ModuleContext.Provider value={{
             // State variables 
@@ -273,7 +308,9 @@ export const ModuleProvider = ({ children }) => {
             createCADModel,
             createSession,
             deleteSession,
-            createDesign
+            createDesign,
+            createDesignReport,
+            saveCSV
         }}>
             {children}
         </ModuleContext.Provider>

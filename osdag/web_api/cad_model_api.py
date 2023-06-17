@@ -97,7 +97,7 @@ class CADGeneration(View):
         macro_path = os.path.join(
             parent_dir, 'freecad_utils/open_brep_file.FCMacro')
         command = '/snap/bin/freecad.cmd'
-        #path = 'file_storage/cad_models/Uv9aURCfBDmhoosxMUy2UT7P3ghXcvV3_Model.brep'
+        path = 'file_storage/cad_models/Uv9aURCfBDmhoosxMUy2UT7P3ghXcvV3_Model.brep'
         path_to_file = os.path.join(parent_dir, path)
         output_dir = os.path.join(
             parent_dir, 'osdagclient/public/output-obj.obj')
@@ -106,7 +106,7 @@ class CADGeneration(View):
         command_with_arg = f'{command} {macro_path} {path_to_file} {output_dir}'
         # Execute the command using subprocess.Popen()
         process = subprocess.Popen(command_with_arg.split())
-        os.remove(path_to_file)  # deleting the temporary cad file
+        # os.remove(path_to_file)  # deleting the temporary cad file
         response = HttpResponse(output_dir, status=200)
         response["content-type"] = "text/plain"
         return response

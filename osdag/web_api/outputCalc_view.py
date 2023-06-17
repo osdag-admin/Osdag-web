@@ -110,5 +110,14 @@ class OutputData(APIView):
             print(e)
             return JsonResponse({"data": {}, "logs": new_logs,
                                 "success": False}, safe=False)
+        
+        try : 
+            # save the logs in the Design table for that specific cookie_id
+            designObject = Design.objects.get(cookie_id = cookie_id)
+            designObject.logs = new_logs
+            designObject.save()
+        except Exception as e : 
+            print('Error in saving the logs in Design table : ' , e)
 
         return JsonResponse({"data": output, "logs": new_logs, "success": True}, safe=False)
+

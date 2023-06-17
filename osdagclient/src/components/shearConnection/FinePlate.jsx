@@ -48,7 +48,7 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , createSession , createDesign } = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , createSession , createDesign, createDesignReport , saveCSV } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -344,6 +344,11 @@ function FinePlate() {
     
   }
 
+  const createDesignReportHandler = () => {
+    console.log('inside createDesignReport Handler')
+    createDesignReport({})
+  }
+
 
   return (
 
@@ -606,21 +611,25 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div id="context-conatiner">
-            {/* <img src={img1} alt="Demo" height='400px' width='400px' />
-            <br /> */}
+            <img src={img1} alt="Demo" height='400px' width='400px' />
+            <br /> 
+            {/* 
             <Canvas>
             <Model />
             </Canvas>
             <div>
               <Logs logs={logs} />
             </div>
+                      */ }
           </div>
+                      
+          
 
           {/* Right */}
           <div>
             {<OutputDock output={output} />}
             <div className='outputdock-btn'>
-              <Input type="button" value="Create Design Report" />
+              <Input type="button" value="Create Design Report" onClick = {createDesignReportHandler}/>
               <Input type="button" value="Save Output" />
             </div>
           </div>

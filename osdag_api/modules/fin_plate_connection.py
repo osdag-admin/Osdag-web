@@ -342,6 +342,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     output = {}  # Dictionary for formatted values
     module = create_from_input(input_values)  # Create module from input.
     print('module : ' , module)
+    print('type of module : ' , type(module))
 
     # Generate output values in unformatted form.
     raw_output_text = module.output_values(True)
