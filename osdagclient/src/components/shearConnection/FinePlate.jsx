@@ -2,7 +2,7 @@
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useContext, useEffect, useState } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
 import { Select, Input, Modal, Checkbox } from 'antd';
@@ -13,17 +13,17 @@ import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
 import ErrorImg from '../../assets/notSelected.png'
 import OutputDock from '../OutputDock';
 import Logs from '../Logs';
-
+import Model from './threerender'
+import { Canvas } from '@react-three/fiber'
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
 
 const { Option } = Select;
 
-// let renderedOnce = false
 
 function FinePlate() {
 
-  const [selectedOption, setSelectedOption] = useState("Column-Flange-Beam-Web");
+  const [selectedOption, setSelectedOption] = useState("Column Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
   // const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -31,6 +31,7 @@ function FinePlate() {
   // const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
+  const [displayOutput , setDisplayOutput] = useState(false)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -47,7 +48,7 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, createSession } = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , createSession , createDesign } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -64,9 +65,9 @@ function FinePlate() {
 
   useEffect(() => {
     createSession()
-  } , [])
+  }, [])
 
-  
+
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
       setAllSelected({ ...allSelected, bolt_grade: false })
@@ -81,11 +82,11 @@ function FinePlate() {
     if (e.target.checked) {
       setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
       setSelectedThickness([...selectedThickness, label])
-      console.log('selectedThickenssList : ' , selectedThickness)
+      console.log('selectedThickenssList : ', selectedThickness)
     } else {
       setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
       setSelectedThickness(selectedThickness.filter((item) => item !== label))
-      console.log('selectedThickness : ' , selectedThickness)
+      console.log('selectedThickness : ', selectedThickness)
     }
   }
 
@@ -171,7 +172,7 @@ function FinePlate() {
       setImageSource(ErrorImg);
     }
 
-  }, [selectedOption ]);
+  }, [selectedOption]);
 
   const handleSelectChange = (value) => {
     setOutput(null)
@@ -197,6 +198,45 @@ function FinePlate() {
     },
   ];
 
+  useEffect(() => {
+    if(displayOutput){
+      try{
+        setLogs(designLogs)
+      }catch(error){
+        console.log(error)
+          setOutput(null)
+      }
+    }
+  } , [designLogs])
+
+  useEffect(() => {
+      if(displayOutput){
+          try{
+            const formatedOutput = {}
+
+          for (const [key, value] of Object.entries(designData)) {
+
+            const newKey = key.split('.')[0]
+            const label = value.label
+            const val = value.value
+
+            // console.log(newKey, label, val)
+            if (val) {
+              if (!formatedOutput[newKey])
+                formatedOutput[newKey] = [{ label, val }]
+              else
+                formatedOutput[newKey].push({ label, val })
+            }
+          }
+
+          setOutput(formatedOutput)
+        } catch (error) {
+          console.log(error)
+          setOutput(null)
+        }
+      }
+  } , [designData])
+
   
   const handleSubmit = async () => {
     // console.log('Submit button clicked');
@@ -204,15 +244,17 @@ function FinePlate() {
     // console.log(allSelected)
 
     const conn_map = {
-      "Column-Flange-Beam-Web": "Flang-Beam Web",
-      "Column-Web-Beam-Web": "Web-Beam Web",
+      "Column Flange-Beam-Web": "Column Flange-Beam Web",
+      "Column Web-Beam-Web": "Column Web-Beam Web",
       "Beam-Beam": "Beam-Beam"
     }
 
 
+    console.log('selectedOption : ' , selectedOption)
+
     // the mapping of API fields is not clear, so I have used dummy values for some fields.
     let param = {}
-    if (selectedOption === 'Column-Flange-Beam-Web' || selectedOption === 'Column-Web-Beam-Web') {
+    if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
@@ -267,24 +309,18 @@ function FinePlate() {
         "out_titles_status": ["1", "1", "1", "1"]
       }
     }
+
+    createDesign(param)
+    setDisplayOutput(true)
     
+    /*
     try {
-      const response = await fetch('http://127.0.0.1:8000/calculate-output/fin-plate-connection', {
-        method: 'POST',
-        mode : 'cors',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        credentials : 'include',
-        body: JSON.stringify(param)
-      })
-      const res = await response.json();
-      // console.log(res);
-      setLogs(res.logs)
+      // creaing teh design
+      createDesign(param)
+      // setLogs(designLogs)
       const formatedOutput = {}
 
-      for (const [key, value] of Object.entries(res.data)) {
+      for (const [key, value] of Object.entries(designData)) {
 
         const newKey = key.split('.')[0]
         const label = value.label
@@ -304,6 +340,7 @@ function FinePlate() {
       console.log(error)
       setOutput(null)
     }
+    */
     
   }
 
@@ -329,12 +366,11 @@ function FinePlate() {
               <h3>Connecting Members</h3>
               <div className='component-grid'>
                 <div><h4>Connectivity</h4></div>
-
                 <div><Select style={{ width: '100%' }}
-                  onChange={handleSelectChange}
+                  onSelect={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((item,index) => (
+                  {connectivityList.map((index,  item) => (
                     <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
@@ -356,11 +392,11 @@ function FinePlate() {
                         value={inputs.primary_beam}
                         onSelect={(value) => setInputs({ ...inputs, primary_beam: value })}
                       >
-                        { beamList.map((index, item) => (
-                            <Option key={index} value={item}>
-                              {item}
-                            </Option>
-                          ))}
+                        {beamList.map((index, item) => (
+                          <Option key={index} value={item}>
+                            {item}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
 
@@ -373,7 +409,7 @@ function FinePlate() {
                         onSelect={(value) => setInputs({ ...inputs, secondary_beam: value })}
                       >
                         {
-                         beamList.map((index , item) => (
+                          beamList.map((index, item) => (
                             <Option key={index} value={item}>
                               {item}
                             </Option>
@@ -393,12 +429,12 @@ function FinePlate() {
                         onSelect={(value) => setInputs({ ...inputs, column_section: value })}
                       >
                         {
-                         columnList.map((item , index) => (
+                          columnList.map((item, index) => (
                             <Option key={index} value={item}>
                               {item}
                             </Option>
                           ))
-                          }
+                        }
                       </Select>
                     </div>
 
@@ -410,12 +446,12 @@ function FinePlate() {
                         value={inputs.beam_section}
                         onSelect={(value) => setInputs({ ...inputs, beam_section: value })}
                       >
-                          { beamList.map((item , index ) => (
-                            <Option key={index} value={item}>
-                              {item}
-                            </Option>
-                            ))
-                          }
+                        {beamList.map((item, index) => (
+                          <Option key={index} value={item}>
+                            {item}
+                          </Option>
+                        ))
+                        }
                       </Select>
                     </div>
                   </>
@@ -426,7 +462,7 @@ function FinePlate() {
                     value={inputs.connector_material}
                     onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                   >
-                    {materialList.map((item , index) => (
+                    {materialList.map((item, index) => (
                       <Option key={index} value={item}>{item}</Option>
                     ))}
                   </Select>
@@ -570,7 +606,7 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='300px' width='300px' />
+            <img src={img1} alt="Demo" height='400px' width='400px' />
             <br />
             <div>
               <Logs logs={logs} />
@@ -586,7 +622,7 @@ function FinePlate() {
             </div>
           </div>
         </div>
-      
+
       </div>
     </>
   )
