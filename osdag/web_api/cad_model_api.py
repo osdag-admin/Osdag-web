@@ -111,7 +111,7 @@ class CADGeneration(View):
             os.remove(path_to_file)  # deleting the temporary cad file
         except Exception as e : 
             print('os.remove(path_to_file) file e : ' , e)
-        
+        #time.sleep(3)
         response = HttpResponse(output_dir, status=200)
         response["content-type"] = "text/plain"
         return response
