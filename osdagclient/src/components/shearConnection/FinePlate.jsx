@@ -221,7 +221,6 @@ function FinePlate() {
           const label = value.label
           const val = value.value
 
-          // console.log(newKey, label, val)
           if (val) {
             if (!formatedOutput[newKey])
               formatedOutput[newKey] = [{ label, val }]
@@ -240,9 +239,6 @@ function FinePlate() {
 
 
   const handleSubmit = async () => {
-
-    // console.log('selectedOption : ', selectedOption)
-
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       param = {
@@ -360,7 +356,6 @@ function FinePlate() {
     return csvData.join('\n');
   };
   const saveOutput = () => {
-
     let data = {}
 
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
@@ -420,15 +415,12 @@ function FinePlate() {
     }
 
     Object.keys(output).map((key, index) => {
-
       Object.values(output[key]).map((elm, index1) => {
         data[key + '.' + elm.label.split(' ').join('_')] = elm.val
       })
     })
 
     data = convertToCSV(data)
-    // console.log(data)
-
     const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
     const link = document.createElement('a');
     link.setAttribute('href', csvContent);
@@ -439,7 +431,6 @@ function FinePlate() {
   }
 
   return (
-
     <>
       <div>
         <div className='module_nav'>
@@ -706,35 +697,21 @@ function FinePlate() {
                 </Canvas>
               </div> :
               <img src={img1} alt="Demo" height='400px' width='400px' />}
-
-
-
-            { /* <img src={img1} alt="Demo" height='400px' width='400px' /> */}
             <br />
             <div>
               <Logs logs={logs} />
             </div>
 
           </div>
-
-
-
           {/* Right */}
           <div>
             {<OutputDock output={output} />}
             <div className='outputdock-btn'>
               <Input type="button" value="Create Design Report" onClick={createDesignReportHandler} />
               <Input type="button" value="Save Output" onClick={saveOutput} />
-              {/* <CSVLink data={csvData} headers={{
-                label: "label",
-                key: "key"
-              }}>
-                Save Output
-              </CSVLink> */}
             </div>
           </div>
         </div>
-
       </div>
     </>
   )
