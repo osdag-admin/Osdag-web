@@ -2,9 +2,7 @@
 import '../../App.css'
 import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useContext, useEffect, useState } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import {Select,Input} from 'antd'
 import { Select, Input, Modal, Checkbox } from 'antd';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
@@ -15,23 +13,26 @@ import OutputDock from '../OutputDock';
 import Logs from '../Logs';
 import Model from './threerender'
 import { Canvas } from '@react-three/fiber'
-// importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
 
 const { Option } = Select;
+
+const conn_map = {
+  "Column Flange-Beam-Web": "Column Flange-Beam Web",
+  "Column Web-Beam-Web": "Column Web-Beam Web",
+  "Beam-Beam": "Beam-Beam"
+}
 
 
 function FinePlate() {
 
   const [selectedOption, setSelectedOption] = useState("Column Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
-  // const [connectivity, setConnectivity] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  // const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
-  const [displayOutput , setDisplayOutput] = useState(false)
+  const [displayOutput, setDisplayOutput] = useState(false)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -48,12 +49,10 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , renderCadModel , createSession , createDesign, createDesignReport , saveCSV } = useContext(ModuleContext)
+  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, renderCadModel, createSession, createDesign, createDesignReport, saveCSV } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
-  // const [checkboxLabelspropertyClassList, setCheckboxLabelspropertyClassList] = useState([]);
-  // const [thicknessLabels, setThicknessLabels] = useState([])
   const [plateThicknessModal, setPlateThicknessModal] = useState(false)
   const [selectedThickness, setSelectedThickness] = useState([])
   const [allSelected, setAllSelected] = useState({
@@ -62,7 +61,7 @@ function FinePlate() {
     bolt_grade: false,
   })
 
-  const [renderBoolean , setRenderBoolean] = useState(false)
+  const [renderBoolean, setRenderBoolean] = useState(false)
 
 
   useEffect(() => {
@@ -201,60 +200,49 @@ function FinePlate() {
   ];
 
   useEffect(() => {
-    if(displayOutput){
-      try{
+    if (displayOutput) {
+      try {
         setLogs(designLogs)
-      }catch(error){
+      } catch (error) {
         console.log(error)
-          setOutput(null)
+        setOutput(null)
       }
     }
-  } , [designLogs])
+  }, [designLogs])
 
   useEffect(() => {
-      if(displayOutput){
-          try{
-            const formatedOutput = {}
+    if (displayOutput) {
+      try {
+        const formatedOutput = {}
 
-          for (const [key, value] of Object.entries(designData)) {
+        for (const [key, value] of Object.entries(designData)) {
 
-            const newKey = key.split('.')[0]
-            const label = value.label
-            const val = value.value
+          const newKey = key.split('.')[0]
+          const label = value.label
+          const val = value.value
 
-            // console.log(newKey, label, val)
-            if (val) {
-              if (!formatedOutput[newKey])
-                formatedOutput[newKey] = [{ label, val }]
-              else
-                formatedOutput[newKey].push({ label, val })
-            }
+          // console.log(newKey, label, val)
+          if (val) {
+            if (!formatedOutput[newKey])
+              formatedOutput[newKey] = [{ label, val }]
+            else
+              formatedOutput[newKey].push({ label, val })
           }
-
-          setOutput(formatedOutput)
-        } catch (error) {
-          console.log(error)
-          setOutput(null)
         }
+
+        setOutput(formatedOutput)
+      } catch (error) {
+        console.log(error)
+        setOutput(null)
       }
-  } , [designData])
-
-  
-  const handleSubmit = async () => {
-    // console.log('Submit button clicked');
-    // console.log(inputs);
-    // console.log(allSelected)
-
-    const conn_map = {
-      "Column Flange-Beam-Web": "Column Flange-Beam Web",
-      "Column Web-Beam-Web": "Column Web-Beam Web",
-      "Beam-Beam": "Beam-Beam"
     }
+  }, [designData])
 
 
-    console.log('selectedOption : ' , selectedOption)
+  const handleSubmit = async () => {
 
-    // the mapping of API fields is not clear, so I have used dummy values for some fields.
+    // console.log('selectedOption : ', selectedOption)
+
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       param = {
@@ -314,7 +302,6 @@ function FinePlate() {
 
     createDesign(param)
     setDisplayOutput(true)
-    
     /*
     try {
       // creaing teh design
@@ -343,7 +330,7 @@ function FinePlate() {
       setOutput(null)
     }
     */
-    
+
   }
 
   const createDesignReportHandler = () => {
@@ -352,15 +339,104 @@ function FinePlate() {
   }
 
   useEffect(() => {
-    if (renderCadModel){
+    if (renderCadModel) {
       console.log('renderCadModel is true')
       setRenderBoolean(true)
-    }else if(!renderCadModel){
+    } else if (!renderCadModel) {
       console.log('renderCadModel is false')
       setRenderBoolean(false)
     }
-  } , [renderCadModel])
+  }, [renderCadModel])
 
+  const convertToCSV = (data) => {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    const csvData = keys.map((key, index) => {
+      const escapedValue = values[index].toString().replace(/"/g, '\\"');
+      return `"${key}","${escapedValue}"`;
+    });
+
+    return csvData.join('\n');
+  };
+  const saveOutput = () => {
+
+    let data = {}
+
+    if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
+      data = {
+        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
+        "Bolt.Slip_Factor": "0.3",
+        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
+        "Connectivity": conn_map[selectedOption],
+        "Connector.Material": inputs.connector_material,
+        "Design.Design_Method": "Limit State Design",
+        "Detailing.Corrosive_Influences": "No",
+        "Detailing.Edge_type": "Rolled",
+        "Detailing.Gap": "15",
+        "Load.Axial": inputs.load_axial,
+        "Load.Shear": inputs.load_shear,
+        "Material": "E 250 (Fe 410 W)A",
+        "Member.Supported_Section.Designation": inputs.beam_section,
+        "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+        "Member.Supporting_Section.Designation": inputs.column_section,
+        "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
+        "Module": "Fin Plate Connection",
+        "Weld.Fab": "Shop Weld",
+        "Weld.Material_Grade_OverWrite": "410",
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
+      }
+    }
+    else {
+      data = {
+        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
+        "Bolt.Slip_Factor": "0.48",
+        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
+        "Connectivity": conn_map[selectedOption],
+        "Connector.Material": inputs.connector_material,
+        "Design.Design_Method": "Limit State Design",
+        "Detailing.Corrosive_Influences": "No",
+        "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
+        "Detailing.Gap": "5",
+        "Load.Axial": inputs.load_axial,
+        "Load.Shear": inputs.load_shear,
+        "Material": "E 300 (Fe 440)",
+        "Member.Supported_Section.Designation": inputs.primary_beam,
+        "Member.Supported_Section.Material": "E 300 (Fe 440)",
+        "Member.Supporting_Section.Designation": inputs.secondary_beam,
+        "Member.Supporting_Section.Material": "E 300 (Fe 440)",
+        "Module": "Fin Plate Connection",
+        "Weld.Fab": "Shop Weld",
+        "Weld.Material_Grade_OverWrite": "440",
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness,
+        "out_titles_status": ["1", "1", "1", "1"]
+      }
+    }
+
+    Object.keys(output).map((key, index) => {
+
+      Object.values(output[key]).map((elm, index1) => {
+        data[key + '.' + elm.label.split(' ').join('_')] = elm.val
+      })
+    })
+
+    data = convertToCSV(data)
+    // console.log(data)
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
+    const link = document.createElement('a');
+    link.setAttribute('href', csvContent);
+    link.setAttribute('download', 'output.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   return (
 
@@ -387,7 +463,7 @@ function FinePlate() {
                   onSelect={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((item, index  ) => (
+                  {connectivityList.map((item, index) => (
                     <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
@@ -623,32 +699,38 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            { renderBoolean ? 
-            <div style={{ width: '400px', height: '400px' }}>
-            <Canvas gl={{ antialias: true }} camera={{ aspect: 1 }}>
-              <Model />
-            </Canvas>
-          </div> : 
-            <img src={img1} alt="Demo" height='400px' width='400px' />  }
-            
-          
-          
-            { /* <img src={img1} alt="Demo" height='400px' width='400px' /> */ } 
+            {renderBoolean ?
+              <div style={{ width: '400px', height: '400px' }}>
+                <Canvas gl={{ antialias: true }} camera={{ aspect: 1 }}>
+                  <Model />
+                </Canvas>
+              </div> :
+              <img src={img1} alt="Demo" height='400px' width='400px' />}
+
+
+
+            { /* <img src={img1} alt="Demo" height='400px' width='400px' /> */}
             <br />
             <div>
               <Logs logs={logs} />
             </div>
-                    
+
           </div>
-                      
-          
+
+
 
           {/* Right */}
           <div>
             {<OutputDock output={output} />}
             <div className='outputdock-btn'>
-              <Input type="button" value="Create Design Report" onClick = {createDesignReportHandler}/>
-              <Input type="button" value="Save Output" />
+              <Input type="button" value="Create Design Report" onClick={createDesignReportHandler} />
+              <Input type="button" value="Save Output" onClick={saveOutput} />
+              {/* <CSVLink data={csvData} headers={{
+                label: "label",
+                key: "key"
+              }}>
+                Save Output
+              </CSVLink> */}
             </div>
           </div>
         </div>
