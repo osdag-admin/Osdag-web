@@ -9,6 +9,8 @@ import ModuleReducer from './ModuleReducer'
     ######################################################### 
 */
 
+import axios from 'axios'
+
 
 //initial state
 let initialValue = {
@@ -29,7 +31,8 @@ let initialValue = {
     designData : {},
     renderCadModel : false,
     displayPDF : false,
-    report_id : ''
+    report_id : '',
+    blobUrl : ''
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -282,36 +285,41 @@ export const ModuleProvider = ({ children }) => {
         console.log('inside getPDF function ins ModuleState')
         console.log('obj in GETPDF : ' , obj)
         try{
-            const response = await fetch(`${BASE_URL}getPDF?report_id=${obj.report_id}` , {
+            fetch(`${BASE_URL}getPDF?report_id=${obj.report_id}` , {
                 method : 'GET',
-                mode : 'cors',  
-                credentials : 'include'
+                mode : 'cors',
+                credentials : 'include',
+                headers : {
+                    Accept : 'application/pdf'
+                }
+            }).then((response) => response.blob())
+            .then((blob) => {
+                 // Create a FileReader instance
+                 const reader = new FileReader();
+
+                 reader.onloadend = () => {
+                     // Convert the loaded data to a base64 string
+                     const dataUrl = reader.result;
+ 
+                     // Create a link element
+                     const link = document.createElement('a');
+                     link.href = dataUrl;
+                     link.setAttribute('download', 'your_file_name.pdf');
+ 
+                     // Simulate a click to trigger the download
+                     link.click();
+ 
+                     // Cleanup the link element
+                     link.remove();
+                 };
+ 
+             // Read the blob as a data URL
+             reader.readAsDataURL(blob);
+                 //dispatch({type : 'SET_BLOB_URL' , payload : url})
             })
-
-            console.log('getPDF response : ' , response)
-            if(response.status==200){
-                console.log('pdfFile obtained')
-                console.log('response type : ' , response.type)
-                // console.log('response blob : ' , await response.blob())
-                // console.log('response json : ' , await response.json())
-                const jsonResponse = await response.json()
-                console.log('response json : ' , jsonResponse)
-
-                console.log('dispatching')
-                // setting the report_id 
-                dispatch({type : 'SET_REPORT_ID_AND_DISPLAY_PDF'  , payload : jsonResponse.report_id})
-
-                console.log('creating blob')
-                // creating a blob from the base64string 
-                const blob = base64toBlob(jsonResponse.reader)
-                console.log('blob : ' , blob )
-                const url = URL.createObjectURL(blob)
-                console.log('url : ' , url)
-            }else{
-                console.log('response status!=200 error in obtaining the pdf')
-            }
+        
         }catch(error){
-            console.log('Error in obtaining the pdffile form catch')
+            console.log('Error in obtaining the pdffile form catch : ' , error)
         }
     }
 
@@ -378,6 +386,7 @@ export const ModuleProvider = ({ children }) => {
             designLogs : state.designLogs,
             renderCadModel : state.renderCadModel,
             displayPDF : state.displayPDF,
+            blobUrl : state.blobUrl,
 
             // actions
             cookieSetter,

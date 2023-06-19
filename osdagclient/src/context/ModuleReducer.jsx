@@ -69,6 +69,11 @@ export default (state, action) => {
                 report_id : action.payload,
                 displayPDF : true
             }
+        case 'SET_BLOBL_URL' : 
+            return{
+                ...state,
+                blobUrl : action.payload
+            }
 
         default:
             return state;

@@ -89,7 +89,6 @@ class CADGeneration(View):
             # Return error response.
             return HttpResponse("Error: Internal server error: " + repr(e), status=500)
         
-        # print('before chdir')
         try : 
             os.chdir('/home')
         except Exception as e : 
@@ -118,11 +117,6 @@ class CADGeneration(View):
         command_with_arg = f'{command} {macro_path} {path_to_file} {output_dir}'
         # Execute the command using subprocess.Popen()
         process = subprocess.Popen(command_with_arg.split())
-
-        #try : 
-        #    os.remove(path_to_file)  # deleting the temporary cad file
-        #except Exception as e : 
-        #    print('os.remove(path_to_file) file e : ' , e)
         
         time.sleep(3)
         response = HttpResponse(output_dir, status=200)

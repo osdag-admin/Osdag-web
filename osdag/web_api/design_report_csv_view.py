@@ -155,23 +155,33 @@ class GetPDF(APIView) :
             print('e : ' , e)
 
         try : 
-            # f = open(f'/home/atharva007/Documents/GitHub/Osdag-web/file_storage/design_report/{report_id}.pdf' , 'rb')
+            #f = open(f'/home/atharva007/Documents/GitHub/Osdag-web/file_storage/design_report/{report_id}.pdf' , 'rb')
             # encoded = f.encode('ascii')
-            # print('f : ' , f)
-            # pdfFile = File(f)
-            # print('pdfFile : ' , pdfFile)
-            encoded_string = ''
-            with open(f'/home/atharva007/Documents/GitHub/Osdag-web/file_storage/design_report/{report_id}.pdf' , 'rb') as pdf_file : 
-                encoded_string = base64.b64encode(pdf_file.read())
+            #print('f : ' , f)
+            #pdfFile = File(f)
+            #print('pdfFile : ' , pdfFile)
 
-            print('encoded string : ' , encoded_string)
-            print('length of the encoded string : ' , len(encoded_string))
-            return Response({'reader' : encoded_string , 'report_id' : report_id} , status = status.HTTP_200_OK)
+
+            with open(f'/home/atharva007/Documents/GitHub/Osdag-web/file_storage/design_report/{report_id}.pdf', 'rb') as pdf_file:
+                response = HttpResponse(content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename="your_file_name.pdf"'
+                response.write(pdf_file.read())
+                return response
             
-            # response = HttpResponse(pdfFile.read())
-            # response['Content-Type'] = 'application/pdf'
-            # response['Content-Disposition'] = 'attachment'
-            # return response
+            #encoded_string = ''
+            #with open(f'/home/atharva007/Documents/GitHub/Osdag-web/file_storage/design_report/{report_id}.pdf' , 'rb') as pdf_file : 
+            #    encoded_string = base64.b64encode(pdf_file.read())
+
+            #print('encoded string : ' , encoded_string)
+            #print('length of the encoded string : ' , len(encoded_string))
+            #return Response({'reader' : encoded_string , 'report_id' : report_id} , status = status.HTTP_200_OK)
+            
+            #response = HttpResponse(pdfFile.read())
+            #response['Content-Type'] = 'application/pdf'
+            #response['Content-Disposition'] = 'attachment;filename=design_report_{report_id}.pdf'
+            #return response
+
+            #return Response({'render' : pdfFile.read()},  status = status.HTTP_200_OK)
 
             # with open(f'{report_id}.pdf' , 'rb') as pdf_file : 
             #    encoded_string = base64.b64encode(pdf_file.read())

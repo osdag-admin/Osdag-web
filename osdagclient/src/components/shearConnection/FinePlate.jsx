@@ -54,7 +54,7 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , displayPDF , report_id ,  renderCadModel , createSession , createDesign, createDesignReport , saveCSV } = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , displayPDF , report_id ,  renderCadModel , createSession , createDesign, createDesignReport , saveCSV , blobUrl} = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -725,7 +725,7 @@ function FinePlate() {
             height: '750px',
             position : 'absolute'
         }}>
-          <Viewer fileUrl={`/home/atharva007/Documents/GitHub/Osdag-web/osdagclient/public/${report_id}`} /> 
+          <Viewer fileUrl={`http://localhost:5173/00335c94-1b3f-47f1-959e-6b96475dfd38`} /> 
           </div>
           : <br/> }
     </>
