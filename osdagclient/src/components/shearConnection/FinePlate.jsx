@@ -485,7 +485,7 @@ function FinePlate() {
                         value={inputs.primary_beam}
                         onSelect={(value) => setInputs({ ...inputs, primary_beam: value })}
                       >
-                        {beamList.map((index, item) => (
+                        {beamList.map((item, index) => (
                           <Option key={index} value={item}>
                             {item}
                           </Option>
@@ -502,7 +502,7 @@ function FinePlate() {
                         onSelect={(value) => setInputs({ ...inputs, secondary_beam: value })}
                       >
                         {
-                          beamList.map((index, item) => (
+                          beamList.map((item, index) => (
                             <Option key={index} value={item}>
                               {item}
                             </Option>
