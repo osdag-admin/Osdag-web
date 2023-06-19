@@ -13,7 +13,8 @@ import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
 import ErrorImg from '../../assets/notSelected.png'
 import OutputDock from '../OutputDock';
 import Logs from '../Logs';
-
+import Model from './threerender'
+import { Canvas } from '@react-three/fiber'
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
 
@@ -47,7 +48,7 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , createSession , createDesign } = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , renderCadModel , createSession , createDesign, createDesignReport , saveCSV } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -60,6 +61,8 @@ function FinePlate() {
     bolt_diameter: false,
     bolt_grade: false,
   })
+
+  const [renderBoolean , setRenderBoolean] = useState(false)
 
 
   useEffect(() => {
@@ -343,6 +346,21 @@ function FinePlate() {
     
   }
 
+  const createDesignReportHandler = () => {
+    console.log('inside createDesignReport Handler')
+    createDesignReport({})
+  }
+
+  useEffect(() => {
+    if (renderCadModel){
+      console.log('renderCadModel is true')
+      setRenderBoolean(true)
+    }else if(!renderCadModel){
+      console.log('renderCadModel is false')
+      setRenderBoolean(false)
+    }
+  } , [renderCadModel])
+
 
   return (
 
@@ -369,7 +387,7 @@ function FinePlate() {
                   onSelect={handleSelectChange}
                   value={selectedOption}
                 >
-                  {connectivityList.map((item , index) => (
+                  {connectivityList.map((item, index  ) => (
                     <Option key={index} value={item}>{item}</Option>
                   ))}
                 </Select>
@@ -605,18 +623,31 @@ function FinePlate() {
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
-            <img src={img1} alt="Demo" height='400px' width='400px' />
+            { renderBoolean ? 
+            <div style={{ width: '400px', height: '400px' }}>
+            <Canvas gl={{ antialias: true }} camera={{ aspect: 1 }}>
+              <Model />
+            </Canvas>
+          </div> : 
+            <img src={img1} alt="Demo" height='400px' width='400px' />  }
+            
+          
+          
+            { /* <img src={img1} alt="Demo" height='400px' width='400px' /> */ } 
             <br />
             <div>
               <Logs logs={logs} />
             </div>
+                    
           </div>
+                      
+          
 
           {/* Right */}
           <div>
             {<OutputDock output={output} />}
             <div className='outputdock-btn'>
-              <Input type="button" value="Create Design Report" />
+              <Input type="button" value="Create Design Report" onClick = {createDesignReportHandler}/>
               <Input type="button" value="Save Output" />
             </div>
           </div>

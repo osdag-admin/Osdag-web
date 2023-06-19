@@ -39,4 +39,5 @@ osdag_web/secret_key.py
 db.sqlite3
 file_storage/cad_models/*
 osdagclient/node_modules
+osdag/migrations
 osdagclient/public/output-obj.obj

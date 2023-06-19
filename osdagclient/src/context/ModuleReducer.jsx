@@ -58,6 +58,12 @@ export default (state, action) => {
                 designLogs : action.payload.logs
             }
 
+        case 'SET_RENDER_CAD_MODEL_BOOLEAN' : 
+            return{
+                ...state,
+                renderCadModel : action.payload
+            }
+
         default:
             return state;
     }
