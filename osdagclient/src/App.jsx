@@ -8,6 +8,9 @@ import Window from './components/Window';
 import { GlobalProvider } from './context/GlobalState'
 import { ModuleProvider } from './context/ModuleState';
 
+// pdf viewer imports 
+import {Worker} from '@react-pdf-viewer/core'
+
 function App() {
 
   const router = createBrowserRouter(
@@ -20,13 +23,15 @@ function App() {
     )
   )
   return (
-    <GlobalProvider>
-      <ModuleProvider>
-        <div className="app">
-          <RouterProvider router={router} />
-        </div>
-      </ModuleProvider>
-    </GlobalProvider>
+    <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
+      <GlobalProvider>
+        <ModuleProvider>
+          <div className="app">
+            <RouterProvider router={router} />
+          </div>
+        </ModuleProvider>
+      </GlobalProvider>
+    </Worker>
   )
 }
 const Root = () => {

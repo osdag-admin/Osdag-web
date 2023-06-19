@@ -4,7 +4,6 @@ import { useLoader } from '@react-three/fiber';
 import React, {useMemo} from "react";
 //import mdl from  
 function Model() {
-  
     const obj = useLoader(OBJLoader,"/output-obj.obj"); //issue is here that our .obj model is not getting loaded in the objloader
     console.log('obj loader :  ' , obj)
     //return <primitive object={obj} />

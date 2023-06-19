@@ -89,29 +89,42 @@ class CADGeneration(View):
             # Return error response.
             return HttpResponse("Error: Internal server error: " + repr(e), status=500)
         
-
-        os.chdir('/home')
-        # Pass the path variable as a command-line argument to the FreeCAD macro
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        # Get the path of the parent directory
-        parent_dir = os.path.dirname(os.path.dirname(current_dir))
-        macro_path = os.path.join(
-            parent_dir, 'freecad_utils/open_brep_file.FCMacro')
-        command = '/snap/bin/freecad.cmd'
-        # path = 'file_storage/cad_models/Uv9aURCfBDmhoosxMUy2UT7P3ghXcvV3_Model.brep'
-        path_to_file = os.path.join(parent_dir, path)
-        output_dir = os.path.join(
-            parent_dir, 'osdagclient/public/output-obj.obj')
+        # print('before chdir')
+        try : 
+            os.chdir('/home')
+        except Exception as e : 
+            print('chdir e : ' , e)
+        
+        try : 
+            # Pass the path variable as a command-line argument to the FreeCAD macro
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            # Get the path of the parent directory
+            parent_dir = os.path.dirname(os.path.dirname(current_dir))
+            macro_path = os.path.join(
+                parent_dir, 'freecad_utils/open_brep_file.FCMacro')
+            command = '/snap/bin/freecad.cmd'
+            # path = 'file_storage/cad_models/Uv9aURCfBDmhoosxMUy2UT7P3ghXcvV3_Model.brep'
+            path_to_file = os.path.join(parent_dir, path)
+            output_dir = os.path.join(
+                parent_dir, 'osdagclient/public/output-obj.obj')
+        except Exception as e : 
+            print('output dir e : ' , e)
         # Call the subprocess to create the empty output file
-        subprocess.run(["touch", output_dir])
+        try : 
+            subprocess.run(["touch", output_dir])
+        except Exception as e : 
+            print('subprocess run e : ' , e)
+        
         command_with_arg = f'{command} {macro_path} {path_to_file} {output_dir}'
         # Execute the command using subprocess.Popen()
         process = subprocess.Popen(command_with_arg.split())
-        try : 
-            os.remove(path_to_file)  # deleting the temporary cad file
-        except Exception as e : 
-            print('os.remove(path_to_file) file e : ' , e)
+
+        #try : 
+        #    os.remove(path_to_file)  # deleting the temporary cad file
+        #except Exception as e : 
+        #    print('os.remove(path_to_file) file e : ' , e)
         
+        time.sleep(3)
         response = HttpResponse(output_dir, status=200)
         response["content-type"] = "text/plain"
         return response

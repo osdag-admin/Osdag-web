@@ -63,6 +63,12 @@ export default (state, action) => {
                 ...state,
                 renderCadModel : action.payload
             }
+        case 'SET_REPORT_ID_AND_DISPLAY_PDF' : 
+            return{
+                ...state,
+                report_id : action.payload,
+                displayPDF : true
+            }
 
         default:
             return state;

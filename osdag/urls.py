@@ -8,7 +8,7 @@ from osdag.web_api.cad_model_api import CADGeneration
 from osdag.web_api.modules_api import GetModules
 from osdag.web_api.inputData_view import InputData, DesignView
 from osdag.web_api.outputCalc_view import OutputData
-from osdag.web_api.design_report_csv_view import CreateDesignReport, SaveCSV
+from osdag.web_api.design_report_csv_view import CreateDesignReport, SaveCSV , GetPDF
 from . import views
 
 # temporary
@@ -55,6 +55,7 @@ urlpatterns = [
     path('design', DesignView.as_view()),
     path('generate-report' , CreateDesignReport.as_view()),
     path('save-csv' , SaveCSV.as_view()),
+    path('getPDF' , GetPDF.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',

@@ -1,6 +1,8 @@
 import { createContext, useReducer } from 'react';
 import ModuleReducer from './ModuleReducer'
 
+
+
 /* 
     ######################################################### 
     # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) # 
@@ -25,7 +27,9 @@ let initialValue = {
     connectivityListObtained : false,
     designLogs : [],
     designData : {},
-    renderCadModel : false
+    renderCadModel : false,
+    displayPDF : false,
+    report_id : ''
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -204,6 +208,7 @@ export const ModuleProvider = ({ children }) => {
             if (response.status==200){
                 console.log('CAD model created')
                 console.log('response : ' , response)
+                console.log('response data : ' , response.data)
 
                 // set the CAD rendering to true ( to render the CAD model )
                 dispatch({type : 'SET_RENDER_CAD_MODEL_BOOLEAN' , payload : true})
@@ -250,6 +255,66 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const base64toBlob = (data) => {
+        // Cut the prefix `data:application/pdf;base64` from the raw base 64
+        // const base64WithoutPrefix = data.substr('data:application/pdf;base64,'.length);
+        try{
+            const bytes = atob(data);
+            print('bytes : ' , bytes)
+            
+            
+            let length = bytes.length;
+            console.log('length : ' , length)
+            let out = new Uint8Array(length);
+            console.log('out : ' , out)
+
+            while (length--) {
+                out[length] = bytes.charCodeAt(length);
+            }
+
+            return new Blob([out], { type: 'application/pdf' });
+        }catch(err){
+            console.log('err : ' , err)
+        }
+    }
+
+    const getPDF = async(obj) => {
+        console.log('inside getPDF function ins ModuleState')
+        console.log('obj in GETPDF : ' , obj)
+        try{
+            const response = await fetch(`${BASE_URL}getPDF?report_id=${obj.report_id}` , {
+                method : 'GET',
+                mode : 'cors',  
+                credentials : 'include'
+            })
+
+            console.log('getPDF response : ' , response)
+            if(response.status==200){
+                console.log('pdfFile obtained')
+                console.log('response type : ' , response.type)
+                // console.log('response blob : ' , await response.blob())
+                // console.log('response json : ' , await response.json())
+                const jsonResponse = await response.json()
+                console.log('response json : ' , jsonResponse)
+
+                console.log('dispatching')
+                // setting the report_id 
+                dispatch({type : 'SET_REPORT_ID_AND_DISPLAY_PDF'  , payload : jsonResponse.report_id})
+
+                console.log('creating blob')
+                // creating a blob from the base64string 
+                const blob = base64toBlob(jsonResponse.reader)
+                console.log('blob : ' , blob )
+                const url = URL.createObjectURL(blob)
+                console.log('url : ' , url)
+            }else{
+                console.log('response status!=200 error in obtaining the pdf')
+            }
+        }catch(error){
+            console.log('Error in obtaining the pdffile form catch')
+        }
+    }
+
     const createDesignReport = async(params) => {
         console.log('params : ' , params)
         try{
@@ -264,6 +329,15 @@ export const ModuleProvider = ({ children }) => {
 
             const jsonResponse = await response?.json()
             console.log('jsonResponse : ' , jsonResponse)
+            console.log('report id : ' , jsonResponse.report_id)
+            if(response.status==201){
+                console.log('design report created')
+
+                // fetching the pdf 
+                getPDF({'report_id' : jsonResponse.report_id})
+            }else{
+                console.log('response.status!=201 in createDesignReport, erorr')
+            }
         }catch(error){
             console.log('error : ' , error)
         }
@@ -303,6 +377,7 @@ export const ModuleProvider = ({ children }) => {
             designData : state.designData,
             designLogs : state.designLogs,
             renderCadModel : state.renderCadModel,
+            displayPDF : state.displayPDF,
 
             // actions
             cookieSetter,

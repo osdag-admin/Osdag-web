@@ -17,6 +17,11 @@ import Model from './threerender'
 import { Canvas } from '@react-three/fiber'
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
+import {Viewer} from '@react-pdf-viewer/core';
+
+// Import the styles
+import '@react-pdf-viewer/core/lib/styles/index.css';
+
 
 const { Option } = Select;
 
@@ -31,7 +36,7 @@ function FinePlate() {
   // const [checkboxLabels, setCheckboxLabels] = useState([]);
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
-  const [displayOutput , setDisplayOutput] = useState(false)
+  const [displayOutput , setDisplayOutput] = useState()
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -48,7 +53,7 @@ function FinePlate() {
     secondary_beam: "",
   })
 
-  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , renderCadModel , createSession , createDesign, createDesignReport , saveCSV } = useContext(ModuleContext)
+  const {connectivityList , beamList , columnList , materialList  , boltDiameterList , thicknessList , propertyClassList, designLogs , designData , displayPDF , report_id ,  renderCadModel , createSession , createDesign, createDesignReport , saveCSV } = useContext(ModuleContext)
 
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -62,7 +67,7 @@ function FinePlate() {
     bolt_grade: false,
   })
 
-  const [renderBoolean , setRenderBoolean] = useState(false)
+  const [renderBoolean , setRenderBoolean] = useState(true)
 
 
   useEffect(() => {
@@ -654,6 +659,16 @@ function FinePlate() {
         </div>
 
       </div>
+
+      { displayPDF ? 
+          <div  style={{
+            border: '1px solid rgba(0, 0, 0, 0.3)',
+            height: '750px',
+            position : 'absolute'
+        }}>
+          <Viewer fileUrl={`/home/atharva007/Documents/GitHub/Osdag-web/osdagclient/public/${report_id}`} /> 
+          </div>
+          : <br/> }
     </>
   )
 }
