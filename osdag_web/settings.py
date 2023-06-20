@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from osdag_web.secret_key import get_secret_key
-from osdag_web.postgres_credentials import get_database_name , get_host , get_password , get_port , get_username
+from osdag_web.postgres_credentials import get_database_name, get_host, get_password, get_port, get_username
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,22 +33,27 @@ HOST = get_host()
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['127.0.0.1' , 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:5173' , 'http://localhost:5173']  # 5173 -> port for Vite App
+CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:5173',
+                        'http://localhost:5173']  # 5173 -> port for Vite App
 
-CORS_ALLOW_METHODS = ['POST' , 'GET' , 'OPTIONS']
+CORS_ALLOW_METHODS = ['POST', 'GET', 'OPTIONS']
 
 CORS_ALLOW_HEADERS = ["accept",
-    "authorization",
-    "content-type",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",'access-control-allow-origin']
+                      "authorization",
+                      "content-type",
+                      "user-agent",
+                      "x-csrftoken",
+                      "x-requested-with",
+                      'access-control-allow-origin',
+                      'Cache-Control',
+                      'Pragma',
+                      ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5173' , 'http://localhost:5173']
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5173', 'http://localhost:5173']
 
 
 # Application definition
@@ -109,7 +114,7 @@ DATABASES = {
         'NAME': DATABASE_NAME,
         'USER': USER,
         'PASSWORD': PASSWORD,
-        'HOST': HOST, 
+        'HOST': HOST,
         'PORT': PORT,
     }
 }

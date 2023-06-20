@@ -163,4 +163,6 @@ class GetPDF(APIView):
         response = FileResponse(open(pdf_path, 'rb'))
         response['Content-Type'] = 'application/pdf'
         response['Content-Disposition'] = f'attachment; filename="{report_id}.pdf"'
+        for key, value in response.items():
+            print(f'{key}: {value}')
         return response

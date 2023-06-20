@@ -282,28 +282,24 @@ export const ModuleProvider = ({ children }) => {
     }
 
     const getPDF = async (obj) => {
-        console.log('inside getPDF function ins ModuleState')
-        console.log('obj in GETPDF : ', obj)
+        console.log('inside getPDF function in ModuleState');
+        console.log('obj in GETPDF:', obj);
         try {
             fetch(`${BASE_URL}getPDF?report_id=${obj.report_id}`, {
                 method: 'GET',
                 mode: 'cors',
                 credentials: 'include',
                 headers: {
-                    Accept: 'application/pdf'
+                    'Accept': 'application/json', // Set the Accept header to request PDF format
+                    'Cache-Control': 'no-cache', // Disable caching
+                    'Pragma': 'no-cache', // For older browsers
                 }
-            }).then((response) => response.blob())
-                .then((blob) => {
-                    // Create a FileReader instance
-                    const reader = new FileReader();
-
-                    reader.onloadend = () => {
-                        // Convert the loaded data to a base64 string
-                        const dataUrl = reader.result;
-                        console.log('dataUrl : ', dataUrl)
+            })
+                .then((response) => {
+                    if (response.ok) {
                         // Create a link element
                         const link = document.createElement('a');
-                        link.href = dataUrl;
+                        link.href = response.url;
                         link.setAttribute('download', 'your_file_name.pdf');
 
                         // Simulate a click to trigger the download
@@ -311,17 +307,14 @@ export const ModuleProvider = ({ children }) => {
 
                         // Cleanup the link element
                         link.remove();
-                    };
-
-                    // Read the blob as a data URL
-                    reader.readAsDataURL(blob);
-                    //dispatch({type : 'SET_BLOB_URL' , payload : url})
-                })
-
+                    } else {
+                        console.error('Error in obtaining the PDF file:', response.status, response.statusText);
+                    }
+                });
         } catch (error) {
-            console.log('Error in obtaining the pdffile form catch : ', error)
+            console.log('Error in obtaining the PDF file from catch:', error);
         }
-    }
+    };
 
     const createDesignReport = async (params) => {
         console.log('params : ', params)
