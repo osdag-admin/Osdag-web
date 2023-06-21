@@ -258,29 +258,6 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
-    const base64toBlob = (data) => {
-        // Cut the prefix `data:application/pdf;base64` from the raw base 64
-        // const base64WithoutPrefix = data.substr('data:application/pdf;base64,'.length);
-        try {
-            const bytes = atob(data);
-            print('bytes : ', bytes)
-
-
-            let length = bytes.length;
-            console.log('length : ', length)
-            let out = new Uint8Array(length);
-            console.log('out : ', out)
-
-            while (length--) {
-                out[length] = bytes.charCodeAt(length);
-            }
-
-            return new Blob([out], { type: 'application/pdf' });
-        } catch (err) {
-            console.log('err : ', err)
-        }
-    }
-
     const getPDF = async (obj) => {
         console.log('inside getPDF function in ModuleState');
         console.log('obj in GETPDF:', obj);
@@ -290,22 +267,17 @@ export const ModuleProvider = ({ children }) => {
                 mode: 'cors',
                 credentials: 'include',
                 headers: {
-                    'Accept': 'application/json', // Set the Accept header to request PDF format
+                    'Accept': 'application/json',
                     'Cache-Control': 'no-cache', // Disable caching
                     'Pragma': 'no-cache', // For older browsers
                 }
             })
                 .then((response) => {
                     if (response.ok) {
-                        // Create a link element
                         const link = document.createElement('a');
                         link.href = response.url;
                         link.setAttribute('download', 'your_file_name.pdf');
-
-                        // Simulate a click to trigger the download
                         link.click();
-
-                        // Cleanup the link element
                         link.remove();
                     } else {
                         console.error('Error in obtaining the PDF file:', response.status, response.statusText);

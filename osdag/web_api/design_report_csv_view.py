@@ -125,7 +125,7 @@ class GetPDF(APIView):
         path = os.getcwd()
         os.chdir(path)
 
-        # compile TeX file
+        # compile TeX file for different operating systems
         if platform.system().lower() == 'windows':
             subprocess.run(['cmd', '/c', 'echo', '%cd%'])
             subprocess.run(
