@@ -297,7 +297,23 @@ export const ModuleProvider = ({ children }) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include'
+                credentials: 'include',
+                body: JSON.stringify(
+                    {
+                        metadata: {
+                            ProfileSummary: {
+                                CompanyName: params.companyName,
+                                CompanyLogo: "",
+                                "Group/TeamName": params.groupTeamName,
+                                Designer: params.designer,
+                            },
+                            ProjectTitle: params.projectTitle,
+                            Subtitle: params.subtitle,
+                            JobNumber: params.jobNumber,
+                            AdditionalComments: params.additionalComments,
+                            Client: params.client,
+                        }
+                    })
             })
 
             const jsonResponse = await response?.json()

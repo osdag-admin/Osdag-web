@@ -336,12 +336,22 @@ function FinePlate() {
 
   }
   // Create design report ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  const [CreateDesignReport, setCreateDesignReport] = useState(false);
-  const [companyName, setCompanyName] = useState('');
-  // const [companyLogo, setCompanyLogo] = useState(null);
-  const [groupTeamName, setGroupTeamName] = useState('');
-  const [designer, setDesigner] = useState('');
-  const [projectTitle, setProjectTitle] = useState('');
+  const [CreateDesignReportBool, setCreateDesignReportBool] = useState(false);
+  // const [companyName, setCompanyName] = useState('');
+  // // const [companyLogo, setCompanyLogo] = useState(null);
+  // const [groupTeamName, setGroupTeamName] = useState('');
+  // const [designer, setDesigner] = useState('');
+  // const [projectTitle, setProjectTitle] = useState('');
+  const [designReportInputs, setDesignReportInputs] = useState({
+    companyName: 'Your company',
+    groupTeamName: 'Your team',
+    designer: 'You',
+    projectTitle: '',
+    subtitle: '',
+    jobNumber: '1',
+    client: 'Someone else',
+    additionalComments: 'No comments',
+  })
 
 
 
@@ -399,13 +409,13 @@ function FinePlate() {
   };
 
   const handleCreateDesignReport = () => {
-    setCreateDesignReport(true);
+    setCreateDesignReportBool(true);
   };
 
-  const createDesignReportHandler = () => {
-    console.log('inside createDesignReport Handler')
-    createDesignReport({})
-  }
+  // const createDesignReportHandler = () => {
+  //   console.log('inside createDesignReport Handler')
+  //   createDesignReport({})
+  // }
 
   useEffect(() => {
     if (renderCadModel) {
@@ -417,7 +427,7 @@ function FinePlate() {
     }
   }, [renderCadModel])
   const handleCancel = () => {
-    setCreateDesignReport(false);
+    setCreateDesignReportBool(false);
   };
   const convertToCSV = (data) => {
     const keys = Object.keys(data);
@@ -436,12 +446,23 @@ function FinePlate() {
 
   const handleOk = () => {
     // Handle OK button logic
-
+    console.log(designReportInputs)
+    createDesignReport(designReportInputs)
   };
 
   const handleCancelProfile = () => {
     // Handle Cancel button logic
-    setCreateDesignReport(false);
+    setDesignReportInputs({
+      companyName: 'Your company',
+      groupTeamName: 'Your team',
+      designer: 'You',
+      projectTitle: '',
+      subtitle: '',
+      jobNumber: '1',
+      client: 'Someone else',
+      additionalComments: 'No comments',
+    })
+    setCreateDesignReportBool(false);
   };
 
 
@@ -801,7 +822,7 @@ function FinePlate() {
               <Input type="button" value="Save Output" onClick={saveOutput} />
 
               <Modal
-                visible={CreateDesignReport}
+                open={CreateDesignReportBool}
                 onCancel={handleCancel}
                 footer={null}
                 style={{ border: '1px solid #ccc' }}
@@ -813,10 +834,10 @@ function FinePlate() {
                       <label>Company Name:</label>
                     </Col>
                     <Col span={15}>
-                      <Input id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+                      <Input id="companyName" value={designReportInputs.companyName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, companyName: e.target.value })} />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+                  {/* <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
                     <Col span={9}>
                       <label>Company Logo:</label>
                     </Col>
@@ -825,13 +846,13 @@ function FinePlate() {
                         <Button icon={<UploadOutlined />}>Select File</Button>
                       </Upload>
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
                     <Col span={9}>
                       <label>Group/Team Name:</label>
                     </Col>
                     <Col span={15}>
-                      <Input id="groupTeamName" value={groupTeamName} onChange={(e) => setGroupTeamName(e.target.value)} />
+                      <Input id="groupTeamName" value={designReportInputs.groupTeamName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, groupTeamName: e.target.value })} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
@@ -839,21 +860,21 @@ function FinePlate() {
                       <label>Designer:</label>
                     </Col>
                     <Col span={15}>
-                      <Input id="designer" value={designer} onChange={(e) => setDesigner(e.target.value)} />
+                      <Input id="designer" value={designReportInputs.designer} onChange={(e) => setDesignReportInputs({ ...designReportInputs, designer: e.target.value })} />
                     </Col>
                   </Row>
-                  <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-start', gap: '10px' }}>
+                  {/* <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-start', gap: '10px' }}>
                     <Upload beforeUpload={handleFileChange} showUploadList={false}>
                       <Button onClick={handleUseProfile} icon={<UploadOutlined />}>Select File</Button>
                     </Upload>
                     <Button type="button" onClick={handleSaveProfile}>Save Profile</Button>
-                  </div>
+                  </div> */}
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
                     <Col span={9}>
                       <label>Project Title:</label>
                     </Col>
                     <Col span={15}>
-                      <Input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} />
+                      <Input value={designReportInputs.projectTitle} onChange={(e) => setDesignReportInputs({ ...designReportInputs, projectTitle: e.target.value })} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
@@ -861,7 +882,7 @@ function FinePlate() {
                       <label>Subtitle:</label>
                     </Col>
                     <Col span={15}>
-                      <Input />
+                      <Input value={designReportInputs.subtitle} onChange={(e) => setDesignReportInputs({ ...designReportInputs, subtitle: e.target.value })} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
@@ -869,7 +890,7 @@ function FinePlate() {
                       <label>Job Number:</label>
                     </Col>
                     <Col span={15}>
-                      <Input />
+                      <Input value={designReportInputs.jobNumber} onChange={e => setDesignReportInputs({ ...designReportInputs, jobNumber: e.target.value })} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
@@ -877,7 +898,7 @@ function FinePlate() {
                       <label>Client:</label>
                     </Col>
                     <Col span={15}>
-                      <Input />
+                      <Input value={designReportInputs.client} onChange={e => setDesignReportInputs({ ...designReportInputs, client: e.target.value })} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
@@ -885,7 +906,7 @@ function FinePlate() {
                       <label>Additional Comments:</label>
                     </Col>
                     <Col span={15}>
-                      <Input.TextArea />
+                      <Input.TextArea value={designReportInputs.additionalComments} onChange={e => setDesignReportInputs({ ...designReportInputs, additionalComments: e.target.value })} />
                     </Col>
                   </Row>
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>

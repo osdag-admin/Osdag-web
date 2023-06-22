@@ -17,6 +17,7 @@ import os
 import platform
 import subprocess
 import base64
+import json
 
 
 class CreateDesignReport(APIView):
@@ -25,7 +26,7 @@ class CreateDesignReport(APIView):
         # print('request.metadata : ' , request.data)
         # metadata = request.data
         # obtain teh cookies
-        metadata = None
+        metadata = request.data.get('metadata')
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
         print('cookie_id : ', cookie_id)
 
@@ -67,7 +68,7 @@ class CreateDesignReport(APIView):
 
             metadata_final['does_design_exist'] = 'Yes'
             metadata_final['logger_messages'] = logs
-            print('metadata final : ', metadata_final)
+            print('metadata final : ', json.dumps(metadata_final, indent=4))
 
             try:
                 print('creating module from input')
@@ -90,6 +91,36 @@ class CreateDesignReport(APIView):
                     f'{os.getcwd()}/{report_id}.tex', 'rb')
 
             return Response({'success': 'Design report created', 'report_id': report_id, 'fileContents : ': f}, status=status.HTTP_201_CREATED)
+
+        # generate a random string for report id
+        report_id = get_random_string(length=16)
+        file_path = "file_storage/design_report/" + report_id
+        metadata_final = metadata
+        metadata_final['does_design_exist'] = 'Yes'
+        metadata_final['logger_messages'] = logs
+        metadata_final['filename'] = file_path
+
+        try:
+            print('creating module from input')
+            module = create_from_input(input_values)
+        except Exception as e:
+            print('e : ', e)
+
+        try:
+            print('generating the report .save_design')
+            resultBoolean = module.save_design(metadata_final)
+            if(resultBoolean):
+                print('The LaTEX file has been created successfully')
+
+        except Exception as e:
+            print('e : ', e)
+
+        if (resultBoolean):
+            # open and read the file contents
+            f = open(
+                f'{os.getcwd()}/{report_id}.tex', 'rb')
+
+        return Response({'success': 'Design report created', 'report_id': report_id, 'fileContents : ': f}, status=status.HTTP_201_CREATED)
 
 
 class SaveCSV(APIView):
