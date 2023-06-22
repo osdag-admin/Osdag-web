@@ -448,6 +448,7 @@ function FinePlate() {
     // Handle OK button logic
     console.log(designReportInputs)
     createDesignReport(designReportInputs)
+    handleCancelProfile()
   };
 
   const handleCancelProfile = () => {
