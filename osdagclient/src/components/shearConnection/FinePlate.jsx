@@ -18,7 +18,7 @@ import Model from './threerender'
 import { Canvas } from '@react-three/fiber'
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 
 const { Option } = Select;
 
@@ -348,7 +348,7 @@ function FinePlate() {
 // Create design report ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 const [CreateDesignReport, setCreateDesignReport] = useState(false);
 const [companyName, setCompanyName] = useState('');
-const [companyLogo, setCompanyLogo] = useState(null);
+// const [companyLogo, setCompanyLogo] = useState(null);
 const [groupTeamName, setGroupTeamName] = useState('');
 const [designer, setDesigner] = useState('');
 const [projectTitle, setProjectTitle] = useState('');
