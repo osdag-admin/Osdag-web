@@ -5,7 +5,8 @@ import { useContext, useEffect, useState } from 'react';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import {Select,Input} from 'antd'
-import { Select, Input, Modal, Checkbox } from 'antd';
+import { Select, Input, Modal, Checkbox, Button,Upload,Row, Col   } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
@@ -17,6 +18,7 @@ import Model from './threerender'
 import { Canvas } from '@react-three/fiber'
 // importing Module Context 
 import { ModuleContext } from '../../context/ModuleState';
+import { saveAs } from 'file-saver';
 
 const { Option } = Select;
 
@@ -343,8 +345,87 @@ function FinePlate() {
     */
     
   }
+// Create design report ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+const [CreateDesignReport, setCreateDesignReport] = useState(false);
+const [companyName, setCompanyName] = useState('');
+const [companyLogo, setCompanyLogo] = useState(null);
+const [groupTeamName, setGroupTeamName] = useState('');
+const [designer, setDesigner] = useState('');
+const [projectTitle, setProjectTitle] = useState('');
 
 
+
+const [selectedFile, setSelectedFile] = useState(null);
+
+const handleFileChange = (file) => {
+  setSelectedFile(file);
+};
+
+const handleUseProfile = () => {
+  if (selectedFile) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const contents = event.target.result;
+      const lines = contents.split('\n');
+
+      lines.forEach((line) => {
+        const [field, value] = line.split(':');
+        const trimmedField = field.trim();
+        const trimmedValue = value.trim();
+
+        if (trimmedField === 'CompanyName') {
+          setCompanyName(trimmedValue);
+        } else if (trimmedField === 'Designer') {
+          setDesigner(trimmedValue);
+        } else if (trimmedField === 'Group/TeamName') {
+          setGroupTeamName(trimmedValue);
+        }
+      });
+    };
+    reader.readAsText(selectedFile);
+  }
+};
+
+const handleSaveProfile = () => {
+  const profileSummary = `CompanyLogo: C:/Users/SURAJ/Pictures/codeup.png
+  CompanyName: ${companyName}
+  Designer: ${designer}
+  Group/TeamName: ${groupTeamName}`;
+  
+    const blob = new Blob([profileSummary], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${companyName}.txt`;
+  
+    link.style.display = "none";
+    document.body.appendChild(link);
+  
+    link.click();
+  
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+const handleCreateDesignReport = () => {
+  setCreateDesignReport(true);
+};
+
+const handleCancel = () => {
+  setCreateDesignReport(false);
+};
+
+
+const handleOk = () => {
+  // Handle OK button logic
+
+};
+
+const handleCancelProfile = () => {
+  // Handle Cancel button logic
+  setCreateDesignReport(false);
+};
   return (
 
     <>
@@ -623,8 +704,105 @@ function FinePlate() {
           <div>
             {<OutputDock output={output} />}
             <div className='outputdock-btn'>
-              <Input type="button" value="Create Design Report" />
-              <Input type="button" value="Save Output" />
+            <Input type="button" value="Create Design Report" onClick={handleCreateDesignReport} />
+          <Input type="button" value="Save Output" />
+              
+          <Modal
+        visible={CreateDesignReport}
+        onCancel={handleCancel}
+        footer={null}
+        style={{ border: '1px solid #ccc' }}
+        bodyStyle={{ padding: '20px' }}
+      >
+        <div>
+        <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+        <Col span={9}>
+          <label>Company Name:</label>
+        </Col>
+        <Col span={15}>
+          <Input id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+        <Col span={9}>
+          <label>Company Logo:</label>
+        </Col>
+        <Col span={15}>
+          <Upload beforeUpload={handleFileChange} showUploadList={false}>
+            <Button icon={<UploadOutlined />}>Select File</Button>
+          </Upload>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+        <Col span={9}>
+          <label>Group/Team Name:</label>
+        </Col>
+        <Col span={15}>
+          <Input id="groupTeamName" value={groupTeamName} onChange={(e) => setGroupTeamName(e.target.value)} />
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+        <Col span={9}>
+          <label>Designer:</label>
+        </Col>
+        <Col span={15}>
+          <Input id="designer" value={designer} onChange={(e) => setDesigner(e.target.value)} />
+        </Col>
+      </Row>
+          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-start', gap: '10px' }}>
+          <Upload beforeUpload={handleFileChange} showUploadList={false}>
+          <Button onClick={handleUseProfile} icon={<UploadOutlined />}>Select File</Button>
+        </Upload>
+            <Button type="button" onClick={handleSaveProfile}>Save Profile</Button>
+          </div>
+          <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+            <Col span={9}>
+              <label>Project Title:</label>
+            </Col>
+            <Col span={15}>
+              <Input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} />
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+            <Col span={9}>
+              <label>Subtitle:</label>
+            </Col>
+            <Col span={15}>
+              <Input />
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+            <Col span={9}>
+              <label>Job Number:</label>
+            </Col>
+            <Col span={15}>
+              <Input />
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+            <Col span={9}>
+              <label>Client:</label>
+            </Col>
+            <Col span={15}>
+              <Input />
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
+            <Col span={9}>
+              <label>Additional Comments:</label>
+            </Col>
+            <Col span={15}>
+              <Input.TextArea />
+            </Col>
+          </Row>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <Button type="button" onClick={handleOk}>OK</Button>
+            <Button type="button" onClick={handleCancelProfile}>Cancel</Button>
+          </div>
+        </div>
+      </Modal>
+
+
             </div>
           </div>
         </div>
