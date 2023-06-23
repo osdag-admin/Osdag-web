@@ -248,6 +248,12 @@ function FinePlate() {
   const handleSubmit = async () => {
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
+      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
+        || !inputs.beam_section || !inputs.column_section || (!inputs.bolt_diameter && allSelected.bolt_diameter)
+        || (!inputs.bolt_grade && allSelected.bolt_grade) || (!inputs.plate_thickness || allSelected.plate_thickness)) {
+        alert("Please input all the fields");
+        return;
+      }
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
@@ -275,6 +281,12 @@ function FinePlate() {
       }
     }
     else {
+      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
+        || !inputs.primary_beam || !inputs.secondary_beam || (!inputs.bolt_diameter && allSelected.bolt_diameter)
+        || (!inputs.bolt_grade && allSelected.bolt_grade) || (!inputs.plate_thickness || allSelected.plate_thickness)) {
+        alert("Please input all the fields");
+        return;
+      }
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
@@ -471,6 +483,12 @@ function FinePlate() {
     let data = {}
 
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
+      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
+        || !inputs.beam_section || !inputs.column_section || (!inputs.bolt_diameter && allSelected.bolt_diameter)
+        || (!inputs.bolt_grade && allSelected.bolt_grade) || (!inputs.plate_thickness || allSelected.plate_thickness)) {
+        alert("Please input all the fields");
+        return;
+      }
       data = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
@@ -498,6 +516,12 @@ function FinePlate() {
       }
     }
     else {
+      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
+        || !inputs.primary_beam || !inputs.secondary_beam || (!inputs.bolt_diameter && allSelected.bolt_diameter)
+        || (!inputs.bolt_grade && allSelected.bolt_grade) || (!inputs.plate_thickness || allSelected.plate_thickness)) {
+        alert("Please input all the fields");
+        return;
+      }
       data = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
