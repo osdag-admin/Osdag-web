@@ -1,7 +1,5 @@
-from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
-from osdag_api.modules.fin_plate_connection import generate_report
 
 # importing data
 from .data.design_types import design_type_data, connections_data, shear_connection, moment_connection, b2b_splice, b2column, c2c_splice, base_plate, tension_member
@@ -54,10 +52,3 @@ def get_base_plate(request):
 def get_tension_member(request):
     return JsonResponse({'result': tension_member}, safe=False)
 
-
-@api_view(['POST'])
-def design_report(request):
-    params = request.data
-    # path = generate_report(input_values=params.metadata_profile,
-    #                        metadata=params.metadata_other,report_id="5834720934534")
-    return JsonResponse({'result': {}}, safe=False)
