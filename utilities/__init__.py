@@ -25,18 +25,15 @@ from OCC.Core.TopAbs import (TopAbs_FACE, TopAbs_EDGE, TopAbs_VERTEX,
 from OCC.Core.Geom import Geom_Curve, Geom_Surface
 from OCC.Core.Geom2d import Geom2d_Curve
 from OCC.Core.Visualization import Display3d
-from OCC.Core.V3d import (V3d_ZBUFFER, V3d_PHONG, V3d_Zpos, V3d_Zneg, V3d_Xpos,
-                          V3d_Xneg, V3d_Ypos, V3d_Yneg, V3d_XposYnegZpos, V3d_TEX_ALL,
-                          V3d_TEX_NONE, V3d_TEX_ENVIRONMENT,
-                          V3d_LayerMgr)
+from OCC.Core.V3d import (V3d_ZBUFFER, V3d_Zpos, V3d_Zneg, V3d_Xpos,
+                          V3d_Xneg, V3d_Ypos, V3d_Yneg, V3d_XposYnegZpos)
 from OCC.Core.TCollection import TCollection_ExtendedString, TCollection_AsciiString
 from OCC.Core.Quantity import (Quantity_Color, Quantity_TOC_RGB, Quantity_NOC_WHITE,
                                Quantity_NOC_BLACK, Quantity_NOC_BLUE1,
                                Quantity_NOC_CYAN1, Quantity_NOC_RED,
                                Quantity_NOC_GREEN, Quantity_NOC_ORANGE, Quantity_NOC_YELLOW)
 from OCC.Core.Prs3d import Prs3d_Arrow, Prs3d_Presentation, Prs3d_Text, Prs3d_TextAspect
-from OCC.Core.Graphic3d import (Graphic3d_NOM_NEON_GNC, Graphic3d_NOT_ENV_CLOUDS,
-                                Handle_Graphic3d_TextureEnv, Graphic3d_TextureEnv,
+from OCC.Core.Graphic3d import (Graphic3d_NOM_NEON_GNC, Graphic3d_NOT_ENV_CLOUDS, Graphic3d_TextureEnv,
                                 Graphic3d_Camera, Graphic3d_RM_RAYTRACING,
                                 Graphic3d_RM_RASTERIZATION,
                                 Graphic3d_StereoMode_QuadBuffer,
@@ -60,14 +57,17 @@ def color_the_edges(shp, display, color, width):
 def set_default_edge_style(shp, display):
     color_the_edges(shp, display, Quantity_NOC_BLACK, 0.5)
     # return shps
-    
-    
+
+
 def osdag_display_shape(display, shapes, material=None, texture=None, color=None, transparency=None, update=False):
     set_default_edge_style(shapes, display)
-    display.DisplayShape(shapes, material, texture, color, transparency, update=update)
+    display.DisplayShape(shapes, material, texture, color,
+                         transparency, update=update)
+
 
 def rgb_color(r, g, b):
     return Quantity_Color(r, g, b, Quantity_NOC_BLACK)
+
 
 def to_string(_string):
     return TCollection_ExtendedString(_string)
