@@ -832,7 +832,7 @@ function FinePlate() {
           <div className='superMainBody_mid'>
             {renderBoolean ?
               <div style={{ width: '400px', height: '400px' }}>
-                <Canvas gl={{ antialias: true }} camera={{ aspect: 1 }}>
+                <Canvas gl={{ antialias: true }} camera={{ aspect: 1,fov: 1500, position: [10,10,10] }}>
                   <Model />
                 </Canvas>
               </div> :
