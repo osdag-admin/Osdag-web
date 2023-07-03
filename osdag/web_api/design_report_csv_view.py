@@ -2,8 +2,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.utils.crypto import get_random_string
-from django.core.files import File
-from django.http import HttpResponse
 from django.http import FileResponse
 
 from osdag_api.modules.fin_plate_connection import create_from_input
@@ -16,7 +14,6 @@ from osdag.models import Design
 import os
 import platform
 import subprocess
-import base64
 import json
 
 
@@ -70,35 +67,14 @@ class CreateDesignReport(APIView):
             metadata_final['logger_messages'] = logs
             print('metadata final : ', json.dumps(metadata_final, indent=4))
 
-            try:
-                print('creating module from input')
-                module = create_from_input(input_values)
-            except Exception as e:
-                print('e : ', e)
-
-            try:
-                print('generating the report .save_design')
-                resultBoolean = module.save_design(metadata_final)
-                if(resultBoolean):
-                    print('The LaTEX file has been created successfully')
-
-            except Exception as e:
-                print('e : ', e)
-
-            if (resultBoolean):
-                # open and read the file contents
-                f = open(
-                    f'{os.getcwd()}/{report_id}.tex', 'rb')
-
-            return Response({'success': 'Design report created', 'report_id': report_id, 'fileContents : ': f}, status=status.HTTP_201_CREATED)
-
-        # generate a random string for report id
-        report_id = get_random_string(length=16)
-        file_path = "file_storage/design_report/" + report_id
-        metadata_final = metadata
-        metadata_final['does_design_exist'] = 'Yes'
-        metadata_final['logger_messages'] = logs
-        metadata_final['filename'] = file_path
+        else : 
+            # generate a random string for report id
+            report_id = get_random_string(length=16)
+            file_path = "file_storage/design_report/" + report_id
+            metadata_final = metadata
+            metadata_final['does_design_exist'] = 'Yes'
+            metadata_final['logger_messages'] = logs
+            metadata_final['filename'] = file_path
 
         try:
             print('creating module from input')
@@ -117,16 +93,13 @@ class CreateDesignReport(APIView):
 
         if (resultBoolean):
             # open and read the file contents
-            f = open(
-                f'{os.getcwd()}/{report_id}.tex', 'rb')
+            f = open(f'{os.getcwd()}/{report_id}.tex', 'rb')
 
-        return Response({'success': 'Design report created', 'report_id': report_id, 'fileContents : ': f}, status=status.HTTP_201_CREATED)
+            return Response({'success': 'Design report created', 'report_id': report_id, 'fileContents : ': f}, status=status.HTTP_201_CREATED)
 
-
-class SaveCSV(APIView):
-
-    def get(self, request):
-        pass
+        elif(not resultBoolean): 
+            print('Error in generating the desing_report')
+            return Response({"message" : "Error in generating the design report"})
 
 
 class GetPDF(APIView):

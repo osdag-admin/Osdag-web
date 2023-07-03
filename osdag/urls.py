@@ -1,5 +1,4 @@
 from django.urls import path
-from django.urls import include
 from osdag.web_api.session_api import CreateSession
 from osdag.web_api.session_api import DeleteSession
 from osdag.web_api.input_data_api import InputValues
@@ -8,7 +7,7 @@ from osdag.web_api.cad_model_api import CADGeneration
 from osdag.web_api.modules_api import GetModules
 from osdag.web_api.inputData_view import InputData, DesignView
 from osdag.web_api.outputCalc_view import OutputData
-from osdag.web_api.design_report_csv_view import CreateDesignReport, SaveCSV , GetPDF
+from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF
 from . import views
 
 # temporary
@@ -54,13 +53,10 @@ urlpatterns = [
     path('populate', InputData.as_view()),
     path('design', DesignView.as_view()),
     path('generate-report' , CreateDesignReport.as_view()),
-    path('save-csv' , SaveCSV.as_view()),
     path('getPDF' , GetPDF.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',
          OutputData.as_view(), name='fin-plate-connection'),
 
-    # design report
-    path('design-report', views.design_report, name='design-report'),
 ]

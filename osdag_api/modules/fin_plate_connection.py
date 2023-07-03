@@ -405,40 +405,4 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     
     return file_path
 
-def generate_report(input_values: Dict[str, Any], metadata: Dict[str, Any], report_id: str) -> str:
-    """Generate the design report from the input values as a PDF file. Return file path."""
-    metadata_profile = { # List of all the required metadata (key: default value)
-        "CompanyName": "Your Company",
-        "CompanyLogo": "",
-        "Group/TeamName": "Your Team",
-        "Designer": "You",
-    }
-    metadata_other = { # List of all the required metadata (key: default value)
-        "ProjectTitle": "Fin Plate Connection",
-        "Subtitle": "",
-        "JobNumber": "1",
-        "AdditionalComments": "No Comments",
-        "Client": "Someone Else",
-    }
-    if "Profile_Summary" in metadata.keys(): # Check if profile is provided
-        profile = {}
-        for key in metadata_profile.keys(): # Go through all the keys in given profile
-            if key in metadata["ProfileSummary"].keys(): # if key exists
-                profile[key] = metadata["ProfileSummary"][key] # use value
-            else: # Otherwise, stick to default value.
-                profile[key] = metadata_profile[key]
-    else: # Otherwise, stick to default metadata
-        profile = metadata_profile
-    file_path = "file_storage/design_report/" + report_id
-    metadata_final = {"ProfileSummary": profile, "filename": file_path}
-    # Add other metadata
-    for key in metadata_other.keys(): # Go through all metadata keys
-        if key in metadata.keys(): # if key exists
-            metadata_final[key] = metadata[key] # Use key
-        else: # if not, use default value
-            metadata_final[key] = metadata_other[key]
-    
-    module = create_from_input(input_values) # Create module from input
-    module.save_design(metadata_final) # Create design report
-    return file_path
 

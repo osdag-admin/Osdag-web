@@ -43,3 +43,4 @@ osdag/migrations
 osdagclient/public/output-obj.obj
 file_storage/design_report/*.pdf
 file_storage/design_report/*.log
+file_storage/design_report/*.tex
