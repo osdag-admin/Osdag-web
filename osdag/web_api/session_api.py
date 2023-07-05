@@ -45,23 +45,29 @@ class CreateSession(APIView):
 
     def post(self,request) :
         module_id = request.data.get('module_id')
-        print('module_id : ' , module_id)
+        print('module_id in session : ' , module_id)
 
         if module_id == None or module_id == '': # Error Checking: If module id provided.
+            print('module is None or Empty')
             return JsonResponse("Error: Please specify module id", status=400) # Returns error response.
         if request.COOKIES.get("fin_plate_connection_session") is not None: # Error Checking: Already editing design.
+            print('fin_plate_connection is there')
             return JsonResponse({"status" : "set"}, status=200) # Returns error response.
         if module_id not in developed_modules: # Error Checking: Does module api exist
+            print('module_id not developed')
             return JsonResponse("Error: This module has not been developed yet", status=501) # Return error response.
     
         cookie_id = get_random_string(length=32) # creting a session from a random string
+        print('cookie id in session : ' ,cookie_id)
         tempData = {
             "cookie_id" : cookie_id,
             "module_id" : module_id,
             "input_values" : {}
         }
         print('tempData : ' , tempData)
+        print('type of tempData  : ' , type(tempData))
         serializer = Design_Serializer(data = tempData)
+        print('serializers : ' , serializer)
         if serializer.is_valid() : 
             print('serializer is valid')
             serializer.save()
@@ -72,7 +78,8 @@ class CreateSession(APIView):
             return response
         else : 
             print('serializer is invalid')
-            return JsonResponse("Inernal Server Error: " , status=500) # Return error response.
+            print('serializer.errors : ' , serializer.errors)
+            return JsonResponse("Inernal Server Error: " , status=500, safe=False) # Return error response.
 
 
 

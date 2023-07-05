@@ -7,6 +7,15 @@
 */ 
 
 BEGIN TRANSACTION;
+
+CREATE TABLE IF NOT EXISTS public."Design" (
+	"id" SERIAL PRIMARY KEY,
+	"cookie_id" VARCHAR(32),
+	"module_id" VARCHAR(200),
+	"input_values" JSONB
+);
+
+
 CREATE TABLE IF NOT EXISTS public."Bolt" (
 	"id" INTEGER PRIMARY KEY,
 	"Bolt_diameter"	TEXT
