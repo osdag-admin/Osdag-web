@@ -92,6 +92,7 @@ class OutputData(APIView):
         output = {}
         logs = []
         new_logs = []
+        input_values['Connector.Material'] =  'E 350 (Fe 490)'
         try:
             try:
                 output, logs = module_api.generate_output(input_values)

@@ -121,7 +121,8 @@ class InputData(APIView):
                 # print('fetching')
                 boltList = list(Bolt.objects.values_list(
                     'Bolt_diameter', flat=True))
-                # print(boltList)
+                boltList.sort()
+                print('boltList : ' , boltList)
                 response = {
                     'boltList': boltList
                 }
@@ -132,16 +133,19 @@ class InputData(APIView):
                 return Response({"error": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (propertyClass == 'Customized'):
-            # print('propertyClass : ', propertyClass)
+            print('propertyClass : ', propertyClass)
 
             # fetch the data from Bolt_fy_fu table
             try:
-                boltFyFuList = list(Bolt_fy_fu.objects.values_list(
-                    'Property_Class', flat=True))
+                #boltFyFuList = list(Bolt_fy_fu.objects.values_list(
+                #    'Property_Class', flat=True))
+                boltFyFuList = ['3.6', '4.6', '4.8', '5.6', '5.8', '6.8', '8.8', '9.8', '10.9', '12.9']
+                # boltFyFuList.sort()
 
                 response = {
                     'propertyClassList': boltFyFuList
                 }
+                print('propertyFyFuList : ', boltFyFuList)
 
                 return Response(response, status=status.HTTP_200_OK)
 
