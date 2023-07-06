@@ -6,6 +6,7 @@ class Design(models.Model):
     cookie_id = models.CharField(unique=True, max_length=32)
     module_id = models.CharField(max_length=200)
     input_values = models.JSONField(blank=True)
+    logs = models.TextField(blank=True)
     
     class Meta : 
         db_table = "Design"

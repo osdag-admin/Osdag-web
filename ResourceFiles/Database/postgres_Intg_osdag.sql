@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 	"id" SERIAL PRIMARY KEY,
 	"cookie_id" VARCHAR(32),
 	"module_id" VARCHAR(200),
-	"input_values" JSONB
+	"input_values" JSONB,
+	"logs" TEXT
 );
 
 
