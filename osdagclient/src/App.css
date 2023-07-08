@@ -44,6 +44,7 @@
   gap: 11px;
   align-content: center;
   padding: 1rem;
+  padding-top: 3rem;
 }
 
 .sidebar-item-logo img {
@@ -382,8 +383,8 @@
   border: 1px solid black;
   border-radius: 5px;
   margin: 3px;
-  
-  
+
+
 }
 
 
@@ -409,7 +410,7 @@
   position: relative;
   bottom: 1;
   right: 200px;
-  
+
 }
 
 .superMainBody_right input {

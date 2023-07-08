@@ -61,10 +61,6 @@ function Sidebar() {
         </svg>
 
         <div className="sidebar-container">
-
-          <div className="sidebar-item-logo">
-            <center> <img src={Osdag_logo} alt="Logo" height="50px" onClick={() => navigate("/")} /></center>
-          </div>
           {
             data && data.data && data.data.map((item) => {
               return (
