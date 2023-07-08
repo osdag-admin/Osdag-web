@@ -24,7 +24,6 @@ function Sidebar() {
 
   function handleSelectChange(event) {
     const selectedOptionValue = event.target.value;
-    console.log('selectedOptionValue');
     if (selectedOptionValue === "1") {
       window.open("https://osdag.fossee.in/resources/videos", "_blank");
     }
