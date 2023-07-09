@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar'
 import Mainwindow from './components/Mainwindow'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
 import Window from './components/Window';
+import { useLocation } from 'react-router-dom';
 
 import { GlobalProvider } from './context/GlobalState'
 import { ModuleProvider } from './context/ModuleState';
@@ -35,11 +36,15 @@ function App() {
   )
 }
 const Root = () => {
+  const location = useLocation();
+  const isDesignRoute = location.pathname.includes('/design/');
   return (
     <>
-      <div>
-        <Sidebar />
-      </div>
+      {!isDesignRoute && (
+        <div>
+          <Sidebar />
+        </div>
+      )}
       <div>
         <Outlet />
       </div>

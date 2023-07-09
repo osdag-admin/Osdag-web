@@ -18,9 +18,7 @@ function Sidebar() {
     initialRender = true;
   }
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!isSidebarVisible);
-  };
+ 
 
   function handleSelectChange(event) {
     const selectedOptionValue = event.target.value;
@@ -41,23 +39,8 @@ function Sidebar() {
   const navigate = useNavigate();
   return (
     <>
-      <div className={`sidebar ${isSidebarVisible ? '' : 'hidden'}`}>
-        <svg onClick={toggleSidebar}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          width="20px"
-          height="20px"
-          className='hamburger'
-        >
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
+      <div className={'sidebar'}>
+        
 
         <div className="sidebar-container">
           {

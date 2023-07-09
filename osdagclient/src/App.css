@@ -13,7 +13,7 @@
 /* Sidebar- */
 .sidebar {
   height: 100vh;
-  width: auto;
+  width: 40vh;
   background-color: #91b014;
   display: flex;
   flex-direction: column;
@@ -118,7 +118,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100px;
+  width: 150px;
   height: 100px;
 }
 
@@ -126,6 +126,10 @@
   position: absolute;
   bottom: 0;
   right: 0;
+  margin: 1rem;
+  height: auto;
+  width: auto;
+ 
 }
 
 @media screen and (max-width: 1009px) {
@@ -254,22 +258,30 @@
   padding: 20px;
   font-size: 20px;
   text-align: center;
+  
 }
-
+.conn-grid-item.selected {
+  background-color: #91b014;
+}
 .conn-grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 1rem;
-
 }
 
 .conn-grid-item {
-  border-radius: 10px;
+  /* border-radius: 10px; */
   width: 65%;
 }
 
 .conn-grid-item img {
   width: 100%;
   height: 100%;
+  max-width: 300px;
+  max-height: 300px;
   object-fit: contain;
+  padding-bottom: 2rem;
 }
 
 
@@ -359,7 +371,7 @@
 
 .superMainBody {
   display: grid;
-  grid-template-columns: 50vh 60vh 40vh;
+  grid-template-columns: 50vh 80vh 40vh;
   padding: 20px;
   margin: 20px;
 }
@@ -463,7 +475,8 @@
 .scroll-data {
 
   width: auto;
-  height: 33rem;
+  height: 40rem;
+  max-height: 43rem;
   overflow-y: auto;
 }
 

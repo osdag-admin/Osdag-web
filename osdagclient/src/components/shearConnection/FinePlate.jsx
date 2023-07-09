@@ -836,7 +836,7 @@ function FinePlate() {
                   <Model />
                 </Canvas>
               </div> :
-              <img src={img1} alt="Demo" height='400px' width='400px' />}
+              <img src={img1} alt="Demo" height='550px' width='550px' />}
             <br />
             <div>
               <Logs logs={logs} />
