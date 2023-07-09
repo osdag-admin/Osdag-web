@@ -58,6 +58,8 @@ const placeholderOutput = {
 	]
 }
 
+const platePopUpFields = ['Shear Yielding Capacity (kN)', 'Rupture Capacity (kN)', 'Block Shear Capacity (kN)', 'Tension Yielding Capacity (kN)', 'Tension Rupture Capacity (kN)', 'Axial Block Shear Capacity (kN)', 'Moment Demand (kNm)', 'Moment Capacity (kNm)']
+const boltPopUpFields = ['Pitch Distance (mm)', 'End Distance (mm)', 'Edge Distance (mm)']
 
 const OutputDock = ({ output }) => {
 
@@ -73,6 +75,10 @@ const OutputDock = ({ output }) => {
 							<h3>{key}</h3>
 							<div >
 								{Object.values(output[key]).map((elm, index1) => {
+									if(key == "Plate" && platePopUpFields.includes(elm.label))
+										return (<></>)
+									else if(key == "Bolt" && boltPopUpFields.includes(elm.label))
+										return (<></>)
 									return (
 										<div key={index1} className='component-grid'>
 											<div>
@@ -87,6 +93,15 @@ const OutputDock = ({ output }) => {
 													disabled
 												/>
 											</div>
+											{(key !== "Weld" && index1 == (Object.values(output[key])?.length-1)) &&
+											<>
+											<div>
+												<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
+											</div>
+											<div>
+												<Input className='btn' type="button" value={key == "Bolt" ? "Spacing" : "Capacity"} />
+											</div> 
+											</>}
 										</div>
 									);
 								})}
@@ -101,6 +116,10 @@ const OutputDock = ({ output }) => {
 									<h3>{key}</h3>
 									<div >
 										{Object.values(placeholderOutput[key]).map((elm, index1) => {
+											if(key == "Plate" && platePopUpFields.includes(elm.label))
+												return (<></>)
+											else if(key == "Bolt" && boltPopUpFields.includes(elm.label))
+												return (<></>)
 											return (
 												<div key={index1} className='component-grid' style={{userSelect: 'none'}}>
 													<div>
@@ -115,6 +134,15 @@ const OutputDock = ({ output }) => {
 															disabled
 														/>
 													</div>
+													{(key !== "Weld" && index1 == (Object.values(placeholderOutput[key])?.length-1)) &&
+													<>
+													<div>
+														<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
+													</div>
+													<div>
+														<Input className='btn' type="button" value={key == "Bolt" ? "Spacing" : "Capacity"} />
+													</div> 
+													</>}
 												</div>
 											);
 										})}
