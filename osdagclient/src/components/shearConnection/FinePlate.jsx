@@ -653,8 +653,10 @@ function FinePlate() {
     handleSelectChangeBoltBeam("All") // for bolt diameter
 
     // reset CAD model 
+    setRenderBoolean(false)
 
     // reset Output values dock
+    setOutput(null)
 
     
     
