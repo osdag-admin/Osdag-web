@@ -741,9 +741,11 @@ function FinePlate() {
                   footer={null}
                 >
                   <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
-                  <div style={{ height: '200px', overflowY: 'scroll' }}>
+                  <div style={{ height: '500px', overflowY: 'scroll' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {boltDiameterList.map((label) => (
+                      {boltDiameterList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => (
                         <Checkbox
                           key={label}
                           checked={selectedItems.includes(label)}
@@ -753,6 +755,7 @@ function FinePlate() {
                         </Checkbox>
                       ))}
                     </div>
+                    <Input type="button" value="Submit" onClick={() => setModalOpen(false)}/>
                   </div>
                 </Modal>
                 <div><h4>Type:</h4></div>
@@ -779,18 +782,21 @@ function FinePlate() {
                   footer={null}
                 >
                   <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
-                  <div style={{ height: '200px', overflowY: 'scroll', display: 'flex', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      {propertyClassList.map((label) => (
-                        <Checkbox
-                          key={label}
-                          checked={selectItemspropertyClassList.includes(label)}
-                          onChange={handleCheckboxChangePropertyClass(label)}
-                        >
-                          {label}
-                        </Checkbox>
+                  <div style={{ height: '400px', overflowY: 'scroll',alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start',gap:'10px', marginTop:'10px',marginBottom:'10px' }}>
+                      {propertyClassList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => (
+                          <Checkbox
+                            key={label}
+                            checked={selectItemspropertyClassList.includes(label)}
+                            onChange={handleCheckboxChangePropertyClass(label)}
+                          >
+                            {label}
+                          </Checkbox>
                       ))}
                     </div>
+                    <Input type="button" value="Submit" onClick={() => setModalpropertyClassListOpen(false)}/>
                   </div>
                 </Modal>
               </div>
@@ -810,18 +816,21 @@ function FinePlate() {
                   footer={null}
                 >
                   <Checkbox onChange={handleAllSelectCheckboxThickness}>Select All</Checkbox>
-                  <div style={{ height: '200px', overflowY: 'scroll' }}>
+                  <div style={{ height: '550px', overflowY: 'scroll' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {thicknessList.map((label) => (
-                        <Checkbox
-                          key={label}
-                          checked={selectedThickness.includes(label)}
-                          onChange={handlePlateThicknessChange(label)}
-                        >
-                          {label}
-                        </Checkbox>
+                      {thicknessList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => (
+                          <Checkbox
+                            key={label}
+                            checked={selectedThickness.includes(label)}
+                            onChange={handlePlateThicknessChange(label)}
+                          >
+                            {label}
+                          </Checkbox>
                       ))}
                     </div>
+                    <Input type="button" value="Submit" onClick={() => setPlateThicknessModal(false)}/>
                   </div>
                 </Modal>
               </div>
