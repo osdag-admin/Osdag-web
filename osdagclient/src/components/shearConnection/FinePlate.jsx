@@ -638,31 +638,42 @@ function FinePlate() {
       beam_section: "Select Section",
       column_section: "Select Section",
     })
-    // reset setAllSelected
-    setAllSelected({
-      plate_thickness: true,
-      bolt_diameter: true,
-      bolt_grade: true,
-    })
-
-    setBoltDiameterSelect("All")
-    setPropertyClassSelect("All")
-    setThicknessSelect("All")
-    handleAllSelectPT("All") // for thickness
-    handleSelectChangePropertyClass("All")  // for property Class
-    handleSelectChangeBoltBeam("All") // for bolt diameter
-
-    // reset CAD model 
-    setRenderBoolean(false)
-
-    // reset Output values dock
-    setOutput(null)
-
-    
     
    }else if(conn_map[selectedOption]=='Beam-Beam'){
     console.log('beam-beam reset')
+    setInputs({
+      bolt_diameter: boltDiameterList,
+      bolt_grade: propertyClassList,
+      bolt_type: "Bearing Bolt",
+      connector_material: inputs.connector_material,
+      load_shear: "",
+      load_axial: "",
+      module: "Fin Plate Connection",
+      plate_thickness: thicknessList,
+      primary_beam: "JB 200",
+      secondary_beam: "JB 150",
+    })
    }
+
+   // reset setAllSelected
+   setAllSelected({
+    plate_thickness: true,
+    bolt_diameter: true,
+    bolt_grade: true,
+  })
+
+  setBoltDiameterSelect("All")
+  setPropertyClassSelect("All")
+  setThicknessSelect("All")
+  handleAllSelectPT("All") // for thickness
+  handleSelectChangePropertyClass("All")  // for property Class
+  handleSelectChangeBoltBeam("All") // for bolt diameter
+
+  // reset CAD model 
+  setRenderBoolean(false)
+
+  // reset Output values dock
+  setOutput(null)
 
   }
   return (
