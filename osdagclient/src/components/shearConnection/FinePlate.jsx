@@ -41,32 +41,38 @@ function FinePlate() {
   const [logs, setLogs] = useState(null)
   const [displayOutput, setDisplayOutput] = useState()
 
-  const [inputs, setInputs] = useState({
-    bolt_diameter: [],
-    bolt_grade: [],
-    bolt_type: "",
-    connector_material: "",
-    load_shear: "",
-    load_axial: "",
-    module: "Fin Plate Connection",
-    plate_thickness: [],
-    beam_section: "",
-    column_section: "",
-    primary_beam: "",
-    secondary_beam: "",
-  })
-
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, report_id, renderCadModel, createSession, createDesign, createDesignReport, saveCSV, blobUrl } = useContext(ModuleContext)
 
-  console.log("All inputs:", JSON.stringify(inputs));
+  const [inputs, setInputs] = useState({
+    bolt_diameter: boltDiameterList,
+    bolt_grade: propertyClassList,
+    bolt_type: "Bearing Bolt",
+    connector_material: "E 250 (Fe 410 W)A",
+    load_shear: "70",
+    load_axial: "30",
+    module: "Fin Plate Connection",
+    plate_thickness: thicknessList,
+    beam_section: "MB 300",
+    column_section: "HB 150",
+    primary_beam: "JB 200",
+    secondary_beam: "JB 150",
+  })
+
+  console.log('bol_diameter : ' , inputs?.bolt_diameter)
+  console.log('bolt_grade : ' , inputs?.bolt_grade)
+  console.log('boltDiameterList : ' , boltDiameterList)
+
+
+
+  // console.log("All inputs:", JSON.stringify(inputs));
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [plateThicknessModal, setPlateThicknessModal] = useState(false)
   const [selectedThickness, setSelectedThickness] = useState([])
   const [allSelected, setAllSelected] = useState({
-    plate_thickness: false,
-    bolt_diameter: false,
-    bolt_grade: false,
+    plate_thickness: true,
+    bolt_diameter: true,
+    bolt_grade: true,
   })
 
   const [renderBoolean, setRenderBoolean] = useState(false)
@@ -247,6 +253,7 @@ function FinePlate() {
 
 
   const handleSubmit = async () => {
+    console.log('inside handle submit')
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
@@ -255,12 +262,13 @@ function FinePlate() {
         alert("Please input all the fields");
         return;
       }
+      console.log('bolt_diameter in design buttin : ' , boltDiameterList)
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
         "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
         "Bolt.Slip_Factor": "0.3",
-        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.TensionType": "Pretensioned",
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity": conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
@@ -270,11 +278,11 @@ function FinePlate() {
         "Detailing.Gap": "15",
         "Load.Axial": inputs.load_axial,
         "Load.Shear": inputs.load_shear,
-        "Material": "E 250 (Fe 410 W)A",
+        "Material": inputs.connector_material,
         "Member.Supported_Section.Designation": inputs.beam_section,
-        "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+        "Member.Supported_Section.Material": inputs.connector_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
-        "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
+        "Member.Supporting_Section.Material": inputs.connector_material,
         "Module": "Fin Plate Connection",
         "Weld.Fab": "Shop Weld",
         "Weld.Material_Grade_OverWrite": "410",
@@ -311,10 +319,10 @@ function FinePlate() {
         "Module": "Fin Plate Connection",
         "Weld.Fab": "Shop Weld",
         "Weld.Material_Grade_OverWrite": "440",
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness,
-        "out_titles_status": ["1", "1", "1", "1"]
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
+    console.log('input values in handle submit : ' , param)
 
     createDesign(param)
     setDisplayOutput(true)
@@ -491,7 +499,7 @@ function FinePlate() {
       if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
         || !inputs.beam_section || !inputs.column_section || (!inputs.bolt_diameter && !allSelected.bolt_diameter)
         || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness) || !output) {
-        lert('Please submit the design first.')
+        alert('Please submit the design first.')
         return;
       }
       data = {
