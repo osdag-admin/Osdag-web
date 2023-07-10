@@ -265,10 +265,7 @@ function FinePlate() {
     console.log('inside handle submit')
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
-      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
-        || !inputs.beam_section || !inputs.column_section || (!inputs.bolt_diameter && !allSelected.bolt_diameter)
-        || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness) || (inputs.beam_section ==='Select Section') ||
-          (inputs.column_section==='Select Section')) {
+      if (!inputs.beam_section || !inputs.column_section ) {
         alert("Please input all the fields");
         return;
       }
@@ -286,8 +283,8 @@ function FinePlate() {
         "Detailing.Corrosive_Influences": "No",
         "Detailing.Edge_type": "Rolled",
         "Detailing.Gap": "15",
-        "Load.Axial": inputs.load_axial,
-        "Load.Shear": inputs.load_shear,
+        "Load.Axial": inputs.load_axial || '',
+        "Load.Shear": inputs.load_shear || '',
         "Material": inputs.connector_material,
         "Member.Supported_Section.Designation": inputs.beam_section,
         "Member.Supported_Section.Material": inputs.connector_material,
@@ -300,9 +297,7 @@ function FinePlate() {
       }
     }
     else {
-      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
-        || !inputs.primary_beam || !inputs.secondary_beam || (!inputs.bolt_diameter && !allSelected.bolt_diameter)
-        || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness)) {
+      if (!inputs.primary_beam || !inputs.secondary_beam ) {
         alert("Please input all the fields");
         return;
       }
@@ -319,8 +314,8 @@ function FinePlate() {
         "Detailing.Corrosive_Influences": "No",
         "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
         "Detailing.Gap": "5",
-        "Load.Axial": inputs.load_axial,
-        "Load.Shear": inputs.load_shear,
+        "Load.Axial": inputs.load_axial || '',
+        "Load.Shear": inputs.load_shear || '',
         "Material": "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.primary_beam,
         "Member.Supported_Section.Material": "E 300 (Fe 440)",
@@ -506,9 +501,7 @@ function FinePlate() {
     let data = {}
 
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
-      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
-        || !inputs.beam_section || !inputs.column_section || (!inputs.bolt_diameter && !allSelected.bolt_diameter)
-        || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness) || !output) {
+      if (!inputs.beam_section || !inputs.column_section || !output) {
         alert('Please submit the design first.')
         return;
       }
@@ -525,8 +518,8 @@ function FinePlate() {
         "Detailing.Corrosive_Influences": "No",
         "Detailing.Edge_type": "Rolled",
         "Detailing.Gap": "15",
-        "Load.Axial": inputs.load_axial,
-        "Load.Shear": inputs.load_shear,
+        "Load.Axial": inputs.load_axial || '',
+        "Load.Shear": inputs.load_shear || '',
         "Material": "E 250 (Fe 410 W)A",
         "Member.Supported_Section.Designation": inputs.beam_section,
         "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
@@ -539,9 +532,7 @@ function FinePlate() {
       }
     }
     else {
-      if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
-        || !inputs.primary_beam || !inputs.secondary_beam || (!inputs.bolt_diameter && !allSelected.bolt_diameter)
-        || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness) || !output) {
+      if (!inputs.primary_beam || !inputs.secondary_beam || !output) {
         alert('Please submit the design first.')
         return;
       }
@@ -558,8 +549,8 @@ function FinePlate() {
         "Detailing.Corrosive_Influences": "No",
         "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
         "Detailing.Gap": "5",
-        "Load.Axial": inputs.load_axial,
-        "Load.Shear": inputs.load_shear,
+        "Load.Axial": inputs.load_axial || '',
+        "Load.Shear": inputs.load_shear || '',
         "Material": "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.primary_beam,
         "Member.Supported_Section.Material": "E 300 (Fe 440)",
@@ -715,7 +706,7 @@ function FinePlate() {
                 {selectedOption === 'Beam-Beam' ? (
                   <>
                     <div>
-                      <h4>Primary Beam:</h4>
+                      <h4>Primary Beam*</h4>
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
@@ -731,7 +722,7 @@ function FinePlate() {
                     </div>
 
                     <div>
-                      <h4>Secondary Beam:</h4>
+                      <h4>Secondary Beam*</h4>
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
@@ -751,7 +742,7 @@ function FinePlate() {
                 ) : (
                   <>
                     <div>
-                      <h4>Column Section:</h4>
+                      <h4>Column Section*</h4>
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
@@ -769,7 +760,7 @@ function FinePlate() {
                     </div>
 
                     <div>
-                      <h4>Beam Section:</h4>
+                      <h4>Beam Section*</h4>
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
@@ -786,7 +777,7 @@ function FinePlate() {
                     </div>
                   </>
                 )}
-                <div><h4>Material:</h4></div>
+                <div><h4>Material</h4></div>
                 <div>
                   <Select style={{ width: '100%' }}
                     value={inputs.connector_material || materialList[0]}
@@ -802,7 +793,7 @@ function FinePlate() {
               {/* Section Start  */}
               <h3>Factored Loads</h3>
               <div className='component-grid    '>
-                <div><h4>Shear Force(kN) :</h4></div>
+                <div><h4>Shear Force(kN)</h4></div>
                 <div>
                   <Input
                     type="text"
@@ -812,7 +803,7 @@ function FinePlate() {
                     onChange={(event) => setInputs({ ...inputs, load_shear: event.target.value })}
                   />
                 </div>
-                <div><h4>Axial Force(kN) :</h4></div>
+                <div><h4>Axial Force(kN)</h4></div>
                 <div>
                   <Input
                     type="text"
@@ -828,7 +819,7 @@ function FinePlate() {
               <h3>Bolt</h3>
               <div className='component-grid    '>
                 <div>
-                  <h4>Diameter(mm):</h4>
+                  <h4>Diameter(mm)</h4>
                 </div>
                 <div>
                   <Select
@@ -863,7 +854,7 @@ function FinePlate() {
                     <Input type="button" value="Submit" onClick={() => setModalOpen(false)}/>
                   </div>
                 </Modal>
-                <div><h4>Type:</h4></div>
+                <div><h4>Type</h4></div>
                 <div>
                   <Select style={{ width: '100%' }}
                     value={inputs.bolt_type}
@@ -874,7 +865,7 @@ function FinePlate() {
                     <Option value="Friction_Grip_Bolt">Friction Grip Bolt</Option>
                   </Select>
                 </div>
-                <div><h4>Property Class:</h4></div>
+                <div><h4>Property Class</h4></div>
                 <div>
                   <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} value = {propertyClassSelect}>
                     <Option value="Customized">Customized</Option>
