@@ -552,3 +552,68 @@
   font-weight: 400;
   font-size: 12px;
 }
+
+/* Pop Up Spacing - Finplate */
+.spacing-main-body {
+	display: flex;
+  border: 1px solid #ccc;
+}
+
+.spacing-left-body {
+  margin: 5vh;
+	display: grid;
+	grid-template-columns: repeat(2, 2fr);
+	grid-template-rows: repeat(4, 2fr);
+	justify-items: center;
+	align-items: center;
+}
+
+.spacing-right-body {
+	flex-grow: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+  margin: 5vh;
+}
+
+.grid-container {
+	width: 100%;
+}
+
+/* End */
+/* Capacity popups */
+.Capacity-main-body {
+  
+}
+
+.Capacity-sub-body-title {
+  margin: 1vh;
+}
+
+.Capacity-sub-body {
+	display: flex;
+  border: 1px solid #ccc;
+}
+
+.Capacity-left-body {
+  margin: 5vh;
+	display: grid;
+	grid-template-columns: repeat(2, 2fr);
+	grid-template-rows: repeat(3, 2fr);
+	justify-items: center;
+	align-items: center;
+}
+
+.Capacity-left-body div{
+
+}
+.Capacity-right-body {
+  flex-grow: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+  margin: 5vh;
+  flex-direction: column;
+}
+
+/* end */

@@ -1,7 +1,9 @@
 import React from 'react'
 import { useState } from 'react';
 import { Input, Modal } from 'antd';
-
+import spacingIMG from '../assets/spacing_3.png'
+import capacityIMG1 from '../assets/L_shear1.png'
+import capacityIMG2 from '../assets/L.png'
 const placeholderOutput = {
 	Bolt: [
 		{
@@ -115,7 +117,10 @@ const OutputDock = ({ output }) => {
 												<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
 											</div>
 											<div>
-												<Input className='btn' type="button" value={key == "Bolt" ? "Spacing" : "Capacity"} />
+												<Input className='btn' 
+												type="button" 
+												value={key == "Bolt" ? "Spacing" : "Capacity"} 
+												onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}/>
 											</div> 
 											</>}
 										</div>
@@ -160,7 +165,8 @@ const OutputDock = ({ output }) => {
 															className='btn'
 															type="button"
 															value={key === "Bolt" ? "Spacing" : "Capacity"}
-															onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}
+															// onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}
+															disabled
 														/>
 
 													</div> 
@@ -180,16 +186,269 @@ const OutputDock = ({ output }) => {
 				visible={spacingModel}
 				onCancel={() => setSpacingModel(false)}
 				footer={null}
+				width= {'100vh'}
 				>
-				<h1> Spacing Dialog Content</h1>
+					<>
+						<div
+						style={{
+							textAlign: 'center',
+							// backgroundColor: 'black',
+							// color: 'white',
+							// padding: '10px'
+						}}
+						>
+						<h3>Spacing Details</h3>
+						</div>
+
+						<div>
+						<p 
+							style={{ 
+								padding: '20px',
+								
+							}}>
+							Note: Representative image for Spacing Details -3 x 3  pattern considered </p>
+							{/* <Input
+								className='btn'
+								type="button"
+								value={"Close"}
+								onClick={() => setSpacingModel(false)}
+								style={{
+									maxWidth: '10vh',
+									maxHight: 'vh',
+									marginLeft: "50vh"
+								}}
+								/> */}
+						</div>
+						<div className='spacing-main-body'>
+							<div className='spacing-left-body'>
+								<div>
+									<h4>Pitch Distance (mm)</h4>
+								</div>
+								<div>
+									<Input
+										type="text"
+										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+										value={""}
+									/>
+								</div>
+								<div>
+									<h4>End Distance (mm)</h4>
+								</div>
+								<div>
+									<Input
+										type="text"
+										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+										value={""}
+									/>
+								</div>
+								<div>
+									<h4>Gauge Distance (mm)</h4>
+								</div>
+								<div>
+									<Input
+										type="text"
+										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+										value={""}
+									/>
+								</div>
+								<div>
+									<h4>Edge Distance (mm)</h4>
+								</div>
+								<div>
+									<Input
+										type="text"
+										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+										value={""}
+									/>
+								</div>
+
+
+							
+							</div>
+							<div className='spacing-right-body'> 
+								<img src={spacingIMG} alt='SpacingImage'/>
+							</div>
+
+						</div>
+{/*  */}
+					</>
 				</Modal>
 				{/* Capacity */}
 				<Modal
 					visible={capacityModel}
 					onCancel={() => setCapacityModel(false)}
 					footer={null}
+					width= {'120vh'}
+					style={{ maxHeight: '800px', overflow: 'auto' }}
 				>
-					<h1>Capacity Dialog Content</h1>
+					<>
+						<div
+						style={{
+							textAlign: 'center',
+							// backgroundColor: 'black',
+							// color: 'white',
+							// padding: '10px'
+							
+						}}
+						>
+						<h3>Capacity Details</h3>
+						</div>
+
+						<div>
+						<p 
+							style={{ 
+								padding: '20px',
+								
+							}}>
+							Note: Representative image for Failure Pattern (Half Pate) - 2 x 3 Bolt pattern considered </p>
+							{/* <Input
+								className='btn'
+								type="button"
+								value={"Close"}
+								onClick={() => setSpacingModel(false)}
+								style={{
+									maxWidth: '10vh',
+									maxHight: 'vh',
+									marginLeft: "50vh"
+								}}
+								/> */}
+						</div>
+						<div className='Capacity-main-body'>
+								
+							<div >
+								<div className='Capacity-sub-body-title'> 
+									<h4>Failure due Shear in Plate</h4>
+								</div>
+								<div className='Capacity-sub-body'>
+								<div className='Capacity-left-body'> 
+									<div>
+										<h4>Shear Yielding Capacity (kN)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									<div>
+										<h4>Rupture Capacity (kN)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									<div>
+										<h4>Block Shear Capacity (kN)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									
+															
+								</div>
+								<div className='Capacity-right-body'> 
+									<img src={capacityIMG1} alt='capacityIMG1'/>
+									
+									<h5>Block Shear Pattern</h5>
+								</div>
+								</div>
+							</div>
+							{/* section 2 */}
+							<div >
+								<div className='Capacity-sub-body-title'> 
+									<h4>Failure due Tension in Plate</h4>
+								</div>
+								<div className='Capacity-sub-body'>
+								<div className='Capacity-left-body'> 
+									<div>
+										<h4>Tension Yielding Capacity (kN)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									<div>
+										<h4>Tension Rupture Capacity (kN)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									<div>
+										<h4>Axial Block Shear Capacity (kN)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									
+															
+								</div>
+								<div className='Capacity-right-body'> 
+									<img src={capacityIMG2} alt='capacityIMG2'/>
+									
+									<h5>Block Shear Pattern</h5>
+								</div>
+								</div>
+							</div>
+							{/* Section 3 */}
+							<div >
+								<div className='Capacity-sub-body-title'> 
+									<h4>Section 3</h4>
+								</div>
+								<div className='Capacity-sub-body'>
+								<div className='Capacity-left-body'> 
+									<div>
+										<h4>Moment Demand(kNm)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500', marginBottom: '20px' }}
+											value={""}
+										/>
+									</div>
+									<div>
+										<h4>Moment Capacity(kNm)</h4>
+									</div>
+									<div>
+										<Input
+											type="text"
+											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+											value={""}
+										/>
+									</div>
+									
+															
+								</div>
+								<div className='Capacity-right-body'> 
+									{/* <img src={capacityIMG2} alt='capacityIMG2'/>
+									
+									<h5>Block Shear Pattern</h5> */}
+								</div>
+								</div>
+							</div>
+						</div>
+
+{/*  */}
+					</>
 				</Modal>
 		</div>
 	)
