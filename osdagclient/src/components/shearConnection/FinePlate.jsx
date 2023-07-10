@@ -51,14 +51,14 @@ function FinePlate() {
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, report_id, renderCadModel, createSession, createDesign, createDesignReport, saveCSV, blobUrl } = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
-    bolt_diameter: boltDiameterList,
-    bolt_grade: propertyClassList,
+    bolt_diameter: [],
+    bolt_grade: [],
     bolt_type: "Bearing Bolt",
     connector_material: "E 250 (Fe 410 W)A",
     load_shear: "70",
     load_axial: "30",
     module: "Fin Plate Connection",
-    plate_thickness: thicknessList,
+    plate_thickness: [],
     beam_section: "MB 300",
     column_section: "HB 150",
     primary_beam: "JB 200",
@@ -92,6 +92,7 @@ function FinePlate() {
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
+      setInputs({...inputs , bolt_grade : []})
       setPropertyClassSelect("Customized")
       setAllSelected({ ...allSelected, bolt_grade: false })
       setModalpropertyClassListOpen(true);
@@ -137,6 +138,7 @@ function FinePlate() {
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
+      setInputs({...inputs , bolt_diameter : []})
       setBoltDiameterSelect("Customized")
       setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
@@ -148,6 +150,7 @@ function FinePlate() {
   };
   const handleAllSelectPT = (value) => {
     if (value === 'Customized') {
+      setInputs({...inputs , plate_thickness : []})
       setThicknessSelect("Customized")
       setAllSelected({ ...allSelected, plate_thickness: false });
       setPlateThicknessModal(true);
@@ -160,11 +163,15 @@ function FinePlate() {
 
   const handleCheckboxChange = (label) => (event) => {
     if (event.target.checked) {
+      console.log('label diameter : ' , label)
       setSelectedItems([...selectedItems, label]);
       setInputs({ ...inputs, bolt_diameter: [...inputs.bolt_diameter, label] });
+      console.log('bolt diameter selected : ' , selectedItems)
     } else {
+      console.log('label diameter unchecked : ' , label)
       setSelectedItems(selectedItems.filter((item) => item !== label));
       setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter.filter((item) => item !== label) });
+      console.log('bolt diameter selected : ' , selectedItems)
     }
   };
 
@@ -269,7 +276,7 @@ function FinePlate() {
     console.log('inside handle submit')
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
-      if (!inputs.beam_section || !inputs.column_section ) {
+      if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section==='Select Section') || (inputs.column_section==='Select Section')) {
         alert("Please input all the fields");
         return;
       }
