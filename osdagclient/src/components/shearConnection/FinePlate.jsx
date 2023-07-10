@@ -21,6 +21,10 @@ import { Viewer } from '@react-pdf-viewer/core';
 // Import the styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
 
+// import assets 
+import cad_background from '../../assets/cad_empty_image.png'
+
+
 
 const { Option } = Select;
 
@@ -948,14 +952,14 @@ function FinePlate() {
           {/* Middle */}
           <div className='superMainBody_mid'>
             {renderBoolean ?
-              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
-              <Canvas gl={{ antialias: true }} camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }}>
+              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' , backgroundImage : `url(${cad_background})`}}>
+              <Canvas gl={{ antialias: true }} camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }} >
                 <Model />
               </Canvas>
             </div> :
              <>
              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
-              {/* <img src={img1} alt="Demo" height='550px' width='550px' /> */}
+              { <img src={cad_background} alt="Demo" height='100%' width='100%' /> }
               </div>
              </> 
               }
