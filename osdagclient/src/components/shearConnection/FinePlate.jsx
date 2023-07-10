@@ -40,6 +40,9 @@ function FinePlate() {
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
   const [displayOutput, setDisplayOutput] = useState()
+  const [boltDiameterSelect , setBoltDiameterSelect] = useState("All")
+  const [thicknessSelect , setThicknessSelect] = useState("All")
+  const [propertyClassSelect , setPropertyClassSelect] = useState("All")
 
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, report_id, renderCadModel, createSession, createDesign, createDesignReport, saveCSV, blobUrl } = useContext(ModuleContext)
 
@@ -85,9 +88,11 @@ function FinePlate() {
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
+      setPropertyClassSelect("Customized")
       setAllSelected({ ...allSelected, bolt_grade: false })
       setModalpropertyClassListOpen(true);
     } else {
+      setPropertyClassSelect("All")
       setAllSelected({ ...allSelected, bolt_grade: true })
       setModalpropertyClassListOpen(false);
     }
@@ -128,18 +133,22 @@ function FinePlate() {
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
+      setBoltDiameterSelect("Customized")
       setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
     } else {
+      setBoltDiameterSelect("All")
       setAllSelected({ ...allSelected, bolt_diameter: true });
       setModalOpen(false);
     }
   };
   const handleAllSelectPT = (value) => {
     if (value === 'Customized') {
+      setThicknessSelect("Customized")
       setAllSelected({ ...allSelected, plate_thickness: false });
       setPlateThicknessModal(true);
     } else {
+      setThicknessSelect("All")
       setAllSelected({ ...allSelected, plate_thickness: true });
       setPlateThicknessModal(false);
     }
@@ -258,7 +267,8 @@ function FinePlate() {
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       if (!inputs.bolt_type || !inputs.connector_material || !inputs.load_axial || !inputs.load_shear
         || !inputs.beam_section || !inputs.column_section || (!inputs.bolt_diameter && !allSelected.bolt_diameter)
-        || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness)) {
+        || (!inputs.bolt_grade && !allSelected.bolt_grade) || (!inputs.plate_thickness && !allSelected.plate_thickness) || (inputs.beam_section ==='Select Section') ||
+          (inputs.column_section==='Select Section')) {
         alert("Please input all the fields");
         return;
       }
@@ -592,6 +602,67 @@ function FinePlate() {
 		setSpacingModel(false);
 	  }
 	};
+
+  const handleReset = () => {
+    console.log('inside reset function handler')
+    /*
+    bolt_diameter: boltDiameterList,
+    bolt_grade: propertyClassList,
+    bolt_type: "Bearing Bolt",
+    connector_material: "E 250 (Fe 410 W)A",
+    load_shear: "70",
+    load_axial: "30",
+    module: "Fin Plate Connection",
+    plate_thickness: thicknessList,
+    beam_section: "MB 300",
+    column_section: "HB 150",
+    primary_beam: "JB 200",
+    secondary_beam: "JB 150",
+    */
+   /*
+   plate_thickness: true,
+    bolt_diameter: true,
+    bolt_grade: true,
+    */
+   if(conn_map[selectedOption]=='Column Flange-Beam Web' || conn_map[selectedOption]=='Column Web-Beam Web'){
+    // resetting the inputs
+    setInputs({
+      bolt_diameter: boltDiameterList,
+      bolt_grade: propertyClassList,
+      bolt_type: "Bearing Bolt",
+      connector_material: inputs.connector_material,
+      load_shear: "",
+      load_axial: "",
+      module: "Fin Plate Connection",
+      plate_thickness: thicknessList,
+      beam_section: "Select Section",
+      column_section: "Select Section",
+    })
+    // reset setAllSelected
+    setAllSelected({
+      plate_thickness: true,
+      bolt_diameter: true,
+      bolt_grade: true,
+    })
+
+    setBoltDiameterSelect("All")
+    setPropertyClassSelect("All")
+    setThicknessSelect("All")
+    handleAllSelectPT("All") // for thickness
+    handleSelectChangePropertyClass("All")  // for property Class
+    handleSelectChangeBoltBeam("All") // for bolt diameter
+
+    // reset CAD model 
+
+    // reset Output values dock
+
+    
+    
+   }else if(conn_map[selectedOption]=='Beam-Beam'){
+    console.log('beam-beam reset')
+   }
+
+  }
   return (
     <>
       <div>
@@ -750,7 +821,7 @@ function FinePlate() {
                   <Select
                     style={{ width: '100%' }}
                     onSelect={handleSelectChangeBoltBeam}
-                    defaultValue="All"
+                    value = {boltDiameterSelect}
                   >
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
@@ -792,7 +863,7 @@ function FinePlate() {
                 </div>
                 <div><h4>Property Class:</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} defaultValue="All">
+                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} value = {propertyClassSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -826,7 +897,7 @@ function FinePlate() {
               <div className='component-grid    '>
                 <div><h4>Thickness(mm)</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT} defaultValue="All">
+                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT} value = {thicknessSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -857,7 +928,7 @@ function FinePlate() {
               </div>
             </div>
             <div className='inputdock-btn'>
-              <Input type="button" value="Reset" />
+              <Input type="button" value="Reset" onClick ={() => handleReset()}/>
               <Input type="button" value="Design" onClick={() => handleSubmit()} />
             </div>
           </div>
