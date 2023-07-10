@@ -571,6 +571,19 @@ function FinePlate() {
     document.body.removeChild(link);
   }
 
+  // Spacing model
+  const [spacingModel, setSpacingModel] = useState(true);
+
+	const handleDialogSpacing = (value) => {
+
+		alert("ji")
+
+	  if (value === 'Spacing') {
+		setSpacingModel(true);
+	  } else {
+		setSpacingModel(false);
+	  }
+	};
   return (
     <>
       <div>
@@ -703,7 +716,7 @@ function FinePlate() {
                     type="text"
                     name="ShearForce"
                     onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
-                    value={inputs.load_shear || 70} 
+                    value={inputs.load_shear } 
                     onChange={(event) => setInputs({ ...inputs, load_shear: event.target.value })}
                   />
                 </div>
@@ -713,7 +726,7 @@ function FinePlate() {
                     type="text"
                     name="AxialForce"
                     onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
-                    value={inputs.load_axial || 30}
+                    value={inputs.load_axial}
                     onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
                   />
                 </div>
@@ -961,7 +974,7 @@ function FinePlate() {
                   </div>
                 </div>
               </Modal>
-
+                    
 
             </div>
           </div>

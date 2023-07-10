@@ -371,7 +371,7 @@
 
 .superMainBody {
   display: grid;
-  grid-template-columns: 50vh 80vh 40vh;
+  grid-template-columns: 50vh 90vh 45vh;
   padding: 20px;
   margin: 20px;
 }
@@ -405,6 +405,7 @@
   grid-template-columns: auto auto;
   gap: 20px;
   margin: 20px;
+
 }
 
 .superMainBody_mid {
