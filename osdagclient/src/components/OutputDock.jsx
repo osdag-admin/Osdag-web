@@ -69,17 +69,20 @@ const OutputDock = ({ output }) => {
 
 	const [spacingModel, setSpacingModel] = useState(false);
 	const [capacityModel, setCapacityModel] = useState(false);
-	
-		const handleDialogSpacing = (value) => {
-			if (value === 'Spacing') {
-			  setSpacingModel(true);
-			} else if (value === 'Capacity') {
-			  setCapacityModel(true);
-			} else {
-			  setSpacingModel(false);
-			  setCapacityModel(false);
-			}
-		  };
+
+	// console.log('output : ' , output)
+	// console.log('output bolt pitch distance : ',  output.Bolt[0].val)
+	// const pitch_distance = output.Bolt[0].val
+	const handleDialogSpacing = (value) => {
+		if (value === 'Spacing') {
+			setSpacingModel(true);
+		} else if (value === 'Capacity') {
+			setCapacityModel(true);
+		} else {
+			setSpacingModel(false);
+			setCapacityModel(false);
+		}
+		};
 
 	// console.log(output)
 
@@ -228,7 +231,7 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={""}
+										value= {output ? output.Bolt[0].val : "0"}
 									/>
 								</div>
 								<div>
@@ -238,7 +241,7 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={""}
+										value={output ? output.Bolt[1].val : "0"}
 									/>
 								</div>
 								<div>
@@ -248,7 +251,7 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={""}
+										value={"0"}
 									/>
 								</div>
 								<div>
@@ -258,7 +261,7 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={""}
+										value={output ? output.Bolt[2].val : "0"}
 									/>
 								</div>
 
@@ -328,7 +331,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[0].val : "0"}
 										/>
 									</div>
 									<div>
@@ -338,7 +341,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[1].val : "0"}
 										/>
 									</div>
 									<div>
@@ -348,7 +351,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[2].val : "0"}
 										/>
 									</div>
 									
@@ -375,7 +378,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[3].val : "0"}
 										/>
 									</div>
 									<div>
@@ -385,7 +388,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[4].val : "0"}
 										/>
 									</div>
 									<div>
@@ -395,7 +398,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[5].val : "0"}
 										/>
 									</div>
 									
@@ -422,7 +425,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500', marginBottom: '20px' }}
-											value={""}
+											value={output ? output.Plate[6].val : "0"}
 										/>
 									</div>
 									<div>
@@ -432,7 +435,7 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={""}
+											value={output ? output.Plate[7].val : "0"}
 										/>
 									</div>
 									
