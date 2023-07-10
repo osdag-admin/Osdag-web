@@ -1,5 +1,6 @@
 import React from 'react'
-import { Input } from 'antd';
+import { useState } from 'react';
+import { Input, Modal } from 'antd';
 
 const placeholderOutput = {
 	Bolt: [
@@ -58,12 +59,27 @@ const placeholderOutput = {
 	]
 }
 
+
 const platePopUpFields = ['Shear Yielding Capacity (kN)', 'Rupture Capacity (kN)', 'Block Shear Capacity (kN)', 'Tension Yielding Capacity (kN)', 'Tension Rupture Capacity (kN)', 'Axial Block Shear Capacity (kN)', 'Moment Demand (kNm)', 'Moment Capacity (kNm)']
 const boltPopUpFields = ['Pitch Distance (mm)', 'End Distance (mm)', 'Edge Distance (mm)']
 
 const OutputDock = ({ output }) => {
 
-	console.log(output)
+	const [spacingModel, setSpacingModel] = useState(false);
+	const [capacityModel, setCapacityModel] = useState(false);
+	
+		const handleDialogSpacing = (value) => {
+			if (value === 'Spacing') {
+			  setSpacingModel(true);
+			} else if (value === 'Capacity') {
+			  setCapacityModel(true);
+			} else {
+			  setSpacingModel(false);
+			  setCapacityModel(false);
+			}
+		  };
+
+	// console.log(output)
 
 	return (
 		<div>
@@ -140,7 +156,13 @@ const OutputDock = ({ output }) => {
 														<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
 													</div>
 													<div>
-														<Input className='btn' type="button" value={key == "Bolt" ? "Spacing" : "Capacity"} />
+														<Input
+															className='btn'
+															type="button"
+															value={key === "Bolt" ? "Spacing" : "Capacity"}
+															onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}
+														/>
+
 													</div> 
 													</>}
 												</div>
@@ -152,6 +174,23 @@ const OutputDock = ({ output }) => {
 						})}
 					</div>}
 			</div>
+
+				{/* Spacing  */}
+				<Modal
+				visible={spacingModel}
+				onCancel={() => setSpacingModel(false)}
+				footer={null}
+				>
+				<h1> Spacing Dialog Content</h1>
+				</Modal>
+				{/* Capacity */}
+				<Modal
+					visible={capacityModel}
+					onCancel={() => setCapacityModel(false)}
+					footer={null}
+				>
+					<h1>Capacity Dialog Content</h1>
+				</Modal>
 		</div>
 	)
 }
