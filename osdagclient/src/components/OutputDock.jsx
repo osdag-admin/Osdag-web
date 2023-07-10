@@ -231,7 +231,8 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value= {output ? output.Bolt[0].val : "0"}
+										readOnly={true}
+										value= {output?.Bolt[output?.Bolt.findIndex(val => val.label == "Pitch Distance (mm)")]?.val || "0"}
 									/>
 								</div>
 								<div>
@@ -241,7 +242,8 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={output ? output.Bolt[1].val : "0"}
+										readOnly={true}
+										value= {output?.Bolt[output?.Bolt.findIndex(val => val.label == "End Distance (mm)")]?.val || "0"}
 									/>
 								</div>
 								<div>
@@ -251,7 +253,8 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={"0"}
+										readOnly={true}
+										value= {output?.Bolt[output?.Bolt.findIndex(val => val.label == "Gauge Distance (mm)")]?.val || "0"}
 									/>
 								</div>
 								<div>
@@ -261,7 +264,8 @@ const OutputDock = ({ output }) => {
 									<Input
 										type="text"
 										style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-										value={output ? output.Bolt[2].val : "0"}
+										readOnly={true}
+										value= {output?.Bolt[output?.Bolt.findIndex(val => val.label == "Edge Distance (mm)")]?.val || "0"}
 									/>
 								</div>
 
@@ -331,7 +335,8 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[0].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Shear Yielding Capacity (kN)")]?.val || "0"}
 										/>
 									</div>
 									<div>
@@ -341,7 +346,8 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[1].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Rupture Capacity (kN)")]?.val || "0"}
 										/>
 									</div>
 									<div>
@@ -351,7 +357,8 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[2].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Block Shear Capacity (kN)")]?.val || "0"}
 										/>
 									</div>
 									
@@ -378,7 +385,8 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[3].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Tension Yielding Capacity (kN)")]?.val || "0"}
 										/>
 									</div>
 									<div>
@@ -388,7 +396,8 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[4].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Tension Rupture Capacity (kN)")]?.val || "0"}
 										/>
 									</div>
 									<div>
@@ -398,7 +407,8 @@ const OutputDock = ({ output }) => {
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[5].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Axial Block Shear Capacity (kN)")]?.val || "0"}
 										/>
 									</div>
 									
@@ -419,23 +429,25 @@ const OutputDock = ({ output }) => {
 								<div className='Capacity-sub-body'>
 								<div className='Capacity-left-body'> 
 									<div>
-										<h4>Moment Demand(kNm)</h4>
+										<h4>Moment Demand (kNm)</h4>
 									</div>
 									<div>
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500', marginBottom: '20px' }}
-											value={output ? output.Plate[6].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Moment Demand (kNm)")]?.val || "0"}
 										/>
 									</div>
 									<div>
-										<h4>Moment Capacity(kNm)</h4>
+										<h4>Moment Capacity (kNm)</h4>
 									</div>
 									<div>
 										<Input
 											type="text"
 											style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-											value={output ? output.Plate[7].val : "0"}
+											readOnly={true}
+											value= {output?.Plate[output?.Plate.findIndex(val => val.label == "Moment Capacity (kNm)")]?.val || "0"}
 										/>
 									</div>
 									
