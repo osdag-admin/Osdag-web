@@ -58,6 +58,7 @@ function FinePlate() {
 
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, report_id, renderCadModel, createSession, createDesign, createDesignReport, saveCSV, blobUrl } = useContext(ModuleContext)
 
+  console.log("All inputs:", JSON.stringify(inputs));
   const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [plateThicknessModal, setPlateThicknessModal] = useState(false)
@@ -170,9 +171,9 @@ function FinePlate() {
 
     if (!selectedOption) return;
 
-    if (selectedOption === 'Column-Flange-Beam-Web') {
+    if (selectedOption === 'Column Flange-Beam-Web') {
       setImageSource(CFBW)
-    } else if (selectedOption === 'Column-Web-Beam-Web') {
+    } else if (selectedOption === 'Column Web-Beam-Web') {
       setImageSource(CWBW);
     } else if (selectedOption === 'Beam-Beam') {
       setImageSource(BB);
@@ -613,7 +614,7 @@ function FinePlate() {
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
-                        value={inputs.primary_beam}
+                        value={inputs.primary_beam || beamList[2]}
                         onSelect={(value) => setInputs({ ...inputs, primary_beam: value })}
                       >
                         {beamList.map((item, index) => (
@@ -629,7 +630,7 @@ function FinePlate() {
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
-                        value={inputs.secondary_beam}
+                        value={inputs.secondary_beam || beamList[0]}
                         onSelect={(value) => setInputs({ ...inputs, secondary_beam: value })}
                       >
                         {
@@ -649,7 +650,7 @@ function FinePlate() {
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
-                        value={inputs.column_section}
+                        value={inputs.column_section || columnList[0]}
                         onSelect={(value) => setInputs({ ...inputs, column_section: value })}
                       >
                         {
@@ -667,7 +668,7 @@ function FinePlate() {
                     </div>
                     <div>
                       <Select style={{ width: '100%' }}
-                        value={inputs.beam_section}
+                        value={inputs.beam_section || beamList[28]}
                         onSelect={(value) => setInputs({ ...inputs, beam_section: value })}
                       >
                         {beamList.map((item, index) => (
@@ -683,7 +684,7 @@ function FinePlate() {
                 <div><h4>Material:</h4></div>
                 <div>
                   <Select style={{ width: '100%' }}
-                    value={inputs.connector_material}
+                    value={inputs.connector_material || materialList[0]}
                     onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                   >
                     {materialList.map((item, index) => (
@@ -702,7 +703,7 @@ function FinePlate() {
                     type="text"
                     name="ShearForce"
                     onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
-                    value={inputs.load_shear}
+                    value={inputs.load_shear || 70} 
                     onChange={(event) => setInputs({ ...inputs, load_shear: event.target.value })}
                   />
                 </div>
@@ -712,7 +713,7 @@ function FinePlate() {
                     type="text"
                     name="AxialForce"
                     onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
-                    value={inputs.load_axial}
+                    value={inputs.load_axial || 30}
                     onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
                   />
                 </div>
@@ -728,6 +729,7 @@ function FinePlate() {
                   <Select
                     style={{ width: '100%' }}
                     onSelect={handleSelectChangeBoltBeam}
+                    defaultValue="All"
                   >
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
@@ -758,6 +760,7 @@ function FinePlate() {
                   <Select style={{ width: '100%' }}
                     value={inputs.bolt_type}
                     onSelect={(value) => setInputs({ ...inputs, bolt_type: value })}
+                    
                   >
                     <Option value="Bearing_Bolt">Bearing Bolt</Option>
                     <Option value="Friction_Grip_Bolt">Friction Grip Bolt</Option>
@@ -765,7 +768,7 @@ function FinePlate() {
                 </div>
                 <div><h4>Property Class:</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass}>
+                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} defaultValue="All">
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -796,7 +799,7 @@ function FinePlate() {
               <div className='component-grid    '>
                 <div><h4>Thickness(mm)</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT}>
+                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT} defaultValue="All">
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -831,13 +834,13 @@ function FinePlate() {
           {/* Middle */}
           <div className='superMainBody_mid'>
             {renderBoolean ?
-              <div style={{ width: '740px', height: '600px', border: '1px solid black' }}>
+              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
               <Canvas gl={{ antialias: true }} camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }}>
                 <Model />
               </Canvas>
             </div> :
              <>
-             <div style={{ width: '740px', height: '600px', border: '1px solid black' }}>
+             <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
               {/* <img src={img1} alt="Demo" height='550px' width='550px' /> */}
               </div>
              </> 

@@ -27,7 +27,7 @@ function Model() {
     return (
       <group name='scene'>
           <axesHelper args={[200]}/> 
-          <mesh geometry={geometry} scale={0.003}>
+          <mesh geometry={geometry} scale={0.008}>
             <meshPhysicalMaterial attach = "material" color={'#FF0000'} metalness={0.25} roughness={0.1} opacity={2.0} transparent = {true} transmission={0.99} clearcoat={1.0} clearcoatRoughness={0.25}/>
           </mesh>
           <OrbitControls />
