@@ -23,6 +23,13 @@ import os
 import subprocess
 import time
 
+# rest_framework
+from rest_framework import status
+from rest_framework.response import Response
+
+# importing models 
+from osdag.models import Design
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CADGeneration(View):
@@ -83,16 +90,34 @@ class CADGeneration(View):
             print('creating cad model')
             path = module_api.create_cad_model(
                 input_values, section, cookie_id)
+            print('path : ' , path)
+            designObject = Design.objects.get(cookie_id = cookie_id)
+            try : 
+                if(not path) : 
+                    print('path is false')
+                    # set the cad_design_status to False
+                    designObject.cad_design_status = False
+                    designObject.save()
+
+                    return HttpResponse('CAD model generation failed' , status = 400)
+                if(path) : 
+                    # set the cad_design_status to True 
+                    print('path is valid')
+                    designObject.cad_design_status = True
+                    designObject.save()
+            except Exception as e :
+                print('Exception found while saving the CAD design status : ' , e) 
+
         except OsdagApiException as e:  # If section does no exist
             return HttpResponse(repr(e), status=400)  # Return error response.
         except Exception as e:
             # Return error response.
             return HttpResponse("Error: Internal server error: " + repr(e), status=500)
         
-        try : 
-            os.chdir('/home')
-        except Exception as e : 
-            print('chdir e : ' , e)
+        #try : 
+        #    os.chdir('/home')
+        #except Exception as e : 
+        #    print('chdir e : ' , e)
         
         try : 
             # Pass the path variable as a command-line argument to the FreeCAD macro
@@ -119,6 +144,6 @@ class CADGeneration(View):
         process = subprocess.Popen(command_with_arg.split())
         
         time.sleep(3)
-        response = HttpResponse(output_dir, status=200)
+        response = HttpResponse(output_dir, status=201)
         response["content-type"] = "text/plain"
         return response

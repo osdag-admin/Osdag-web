@@ -7,6 +7,9 @@ class Design(models.Model):
     module_id = models.CharField(max_length=200)
     input_values = models.JSONField(blank=True)
     logs = models.TextField(blank=True)
+    output_values = models.JSONField(blank=True)
+    design_status = models.BooleanField(blank=True)
+    cad_design_status = models.BooleanField(blank=True)
     
     class Meta : 
         db_table = "Design"

@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 	"cookie_id" VARCHAR(32),
 	"module_id" VARCHAR(200),
 	"input_values" JSONB,
-	"logs" TEXT
+	"logs" TEXT,
+	"output_values" JSONB,
+	"design_status" BOOLEAN,
+	"cad_design_status" BOOLEAN
 );
 
 

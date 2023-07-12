@@ -391,6 +391,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
         model = cld.create2Dcad()  # Generate CAD Model.
     except Exception as e :
         print('Error in cld.create2Dcad() e : ' , e)
+        return False
     
     print('2d model : ' , model)
     # os.system("clear")  # clear the terminal

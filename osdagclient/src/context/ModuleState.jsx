@@ -9,7 +9,6 @@ import ModuleReducer from './ModuleReducer'
     ######################################################### 
 */
 
-import axios from 'axios'
 
 
 //initial state
@@ -208,7 +207,7 @@ export const ModuleProvider = ({ children }) => {
                 credentials: 'include'
             })
             console.log('fetching done')
-            if (response.status == 200) {
+            if (response.status == 201) {
                 console.log('CAD model created')
                 console.log('response : ', response)
                 console.log('response data : ', response.data)
@@ -243,14 +242,18 @@ export const ModuleProvider = ({ children }) => {
             console.log('jsonResponse fro createDesign : ', jsonResponse)
             console.log('response : ', response)
             dispatch({ type: 'SET_DESIGN_DATA_AND_LOGS', payload: jsonResponse })
-
-            if (jsonResponse.success == true) {
+            if (response.status == 201) {
                 // call the thunk to create the CAD Model
                 try {
                     createCADModel()
                 } catch (error) {
                     console.log('error in creating the CAD model from createDesign')
                 }
+            }else if(response.status == 400){
+                console.log('BAD input values')
+
+                // set teh render CAD to false to display the default image only 
+                dispatch({ type: 'SET_RENDER_CAD_MODEL_BOOLEAN', payload: false })
             }
 
         } catch (error) {

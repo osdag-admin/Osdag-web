@@ -15,7 +15,7 @@ import os
 import platform
 import subprocess
 import json
-
+import time
 
 class CreateDesignReport(APIView):
 
@@ -27,14 +27,21 @@ class CreateDesignReport(APIView):
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
         print('cookie_id : ', cookie_id)
 
-        # obtain the input_values from using the cookie_id
+        # obtain the currenct working directory as it gets changed in the osdag desktop code, then 
+        # we will use the same value to bring it back to the current directory 
+        current_directory = os.getcwd()
+        print('current_directory : '  , current_directory)
+
+        # obtain the input_values, logs, design_status from using the cookie_id
         designObject = Design.objects.get(cookie_id=cookie_id)
         input_values = designObject.input_values
+        design_status = designObject.design_status
         logs = designObject.logs
         print('input_values : ', input_values)
         print('type of input_values : ', type(input_values))
         print('logs : ', logs)
         print('logs type ; ', type(logs))
+        print('design_status : ' , design_status )
 
         if (metadata is None or metadata is ''):
             print('The metadata is None ')
@@ -63,7 +70,7 @@ class CreateDesignReport(APIView):
             for key in metadata_other.keys():
                 metadata_final[key] = metadata_other[key]
 
-            metadata_final['does_design_exist'] = 'Yes'
+            metadata_final['does_design_exist'] = design_status
             metadata_final['logger_messages'] = logs
             print('metadata final : ', json.dumps(metadata_final, indent=4))
 
@@ -72,7 +79,7 @@ class CreateDesignReport(APIView):
             report_id = get_random_string(length=16)
             file_path = "file_storage/design_report/" + report_id
             metadata_final = metadata
-            metadata_final['does_design_exist'] = 'Yes'
+            metadata_final['does_design_exist'] = design_status
             metadata_final['logger_messages'] = logs
             metadata_final['filename'] = file_path
 
@@ -90,10 +97,18 @@ class CreateDesignReport(APIView):
 
         except Exception as e:
             print('e : ', e)
+        
+        os.chdir(current_directory)
+        print('cwd after chdir : ' , os.getcwd())
 
         if (resultBoolean):
+            print('inside sleep')
+            # time.sleep(10)
+            isExists = os.path.exists(f'{os.getcwd()}/file_storage/design_report/{report_id}.tex')
+            print('report path : ' , f'{os.getcwd()}/{report_id}.tex')
+            print('isExists : ' , isExists)
             # open and read the file contents
-            f = open(f'{os.getcwd()}/{report_id}.tex', 'rb')
+            f = open(f'{os.getcwd()}/file_storage/design_report/{report_id}.tex', 'rb')
 
             return Response({'success': 'Design report created', 'report_id': report_id, 'fileContents : ': f}, status=status.HTTP_201_CREATED)
 
@@ -127,7 +142,11 @@ class GetPDF(APIView):
 
         # change the working directory
         path = os.getcwd()
+        print('pdf path : ' , pdf_filename)
         os.chdir(path)
+        print('current path after chdir : ' , path)
+        pdfFilePath = f'{os.getcwd()}/file_storage/design_report/{report_id}.pdf'
+        print('pdfFilePath : ' , pdfFilePath)
 
         # compile TeX file for different operating systems
         if platform.system().lower() == 'windows':
@@ -140,16 +159,16 @@ class GetPDF(APIView):
                 ['pdflatex', '-interaction=nonstopmode', tex_filename])
 
         # check if PDF is successfully generated
-        if not os.path.exists(pdf_filename):
+        if not os.path.exists(pdfFilePath):
             raise RuntimeError('PDF output not found')
 
         # open PDF with platform-specific command
         if platform.system().lower() == 'darwin':
-            subprocess.run(['open', pdf_filename])
+            subprocess.run(['open', pdfFilePath])
         elif platform.system().lower() == 'windows':
-            os.startfile(pdf_filename)
+            os.startfile(pdfFilePath)
         elif platform.system().lower() == 'linux':
-            subprocess.run(['xdg-open', pdf_filename])
+            subprocess.run(['xdg-open', pdfFilePath])
         else:
             raise RuntimeError(
                 'Unknown operating system "{}"'.format(platform.system()))
@@ -163,8 +182,8 @@ class GetPDF(APIView):
             print('e:', e)
 
         # Return the PDF file as a response
-        pdf_path = f'{os.getcwd()}/{report_id}.pdf'
-        response = FileResponse(open(pdf_path, 'rb'))
+        # pdf_path = f'{os.getcwd()}/{report_id}.pdf'
+        response = FileResponse(open(pdfFilePath, 'rb'))
         response['Content-Type'] = 'application/pdf'
         response['Content-Disposition'] = f'attachment; filename="{report_id}.pdf"'
         for key, value in response.items():
