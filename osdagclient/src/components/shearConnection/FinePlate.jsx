@@ -17,7 +17,7 @@ import Model from './threerender'
 import { Canvas } from '@react-three/fiber'
 import { ModuleContext } from '../../context/ModuleState';
 import { Viewer } from '@react-pdf-viewer/core';
-
+import { Transfer } from 'antd';
 // Import the styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
 
@@ -678,6 +678,17 @@ function FinePlate() {
   setOutput(null)
 
   }
+
+
+  // Diameter mm 
+  //  const [selectedItems, setSelectedItems] = useState([]);
+const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
+
+  const handleTransferChange = (nextTargetKeys) => {
+    setSelectedDiameterNewItems(nextTargetKeys);
+  };
+  // 
+
   return (
     <>
       <div>
@@ -842,12 +853,15 @@ function FinePlate() {
                     <Option value="All">All</Option>
                   </Select>
                 </div>
+{/* Diameter(mm) Pop up  */}
                 <Modal
                   open={isModalOpen}
                   onCancel={() => setModalOpen(false)}
                   footer={null}
+                  width={700}
+                  height={700}
                 >
-                  <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
+                  {/* <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
                   <div style={{ height: '500px', overflowY: 'scroll' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       {boltDiameterList
@@ -863,8 +877,32 @@ function FinePlate() {
                       ))}
                     </div>
                     <Input type="button" value="Submit" onClick={() => setModalOpen(false)}/>
-                  </div>
+                  </div> */}
+      <div>
+      <div style={{ display: 'flex' }}>
+        <div style={{ marginRight: '20px' }}>
+          <h3> Select Diameter</h3>
+          <Transfer
+      dataSource={boltDiameterList
+        .sort((a, b) => Number(a) - Number(b))
+        .map((label) => ({
+          key: label,
+          label: <h5>{label}</h5>,
+        }))
+      }
+      targetKeys={selectedDiameterNewItems}
+      onChange={handleTransferChange}
+      render={(item) => item.label}
+      titles={['Available', 'Selected']}
+      showSearch
+      listStyle={{ height: 600 , width: 300 }}
+    />
+        </div>
+      </div>
+    </div>
                 </Modal>
+
+
                 <div><h4>Type</h4></div>
                 <div>
                   <Select style={{ width: '100%' }}
