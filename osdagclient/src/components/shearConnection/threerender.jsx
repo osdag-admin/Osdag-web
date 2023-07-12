@@ -5,10 +5,10 @@ import React, {useMemo} from "react";
 //import mdl from  
 function Model() {
     const obj = useLoader(OBJLoader,"/output-obj.obj"); //issue is here that our .obj model is not getting loaded in the objloader
-    console.log('obj loader :  ' , obj)
+    //console.log('obj loader :  ' , obj)
     //return <primitive object={obj} />
     const texture = useTexture("/texture.png");
-    console.log('texture  : ' , texture)
+    //console.log('texture  : ' , texture)
     const geometry = useMemo(() => {
       let g;
       obj.traverse((c) => {
@@ -17,7 +17,7 @@ function Model() {
           g = _c.geometry;
         }
       });
-      console.log("Done Loading")
+      //console.log("Done Loading")
       return g;
     }, [obj]);
     
