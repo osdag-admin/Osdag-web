@@ -92,94 +92,131 @@ const OutputDock = ({ output }) => {
 			<div className='subMainBody scroll-data'>
 				{output ? Object.keys(output).map((key, index) => {
 					return (
-						<div key={index}>
-							<h3>{key}</h3>
-							<div >
-								{Object.values(output[key]).map((elm, index1) => {
-									if(key == "Plate" && platePopUpFields.includes(elm.label))
-										return (<></>)
-									else if(key == "Bolt" && boltPopUpFields.includes(elm.label))
-										return (<></>)
-									return (
-										<div key={index1} className='component-grid'>
-											<div>
-												<h4>{elm.label}</h4>
+						<>
+							<div key={index}>
+								<h3>{key}</h3>
+								<div >
+									{Object.values(output[key]).map((elm, index1) => {
+										if(key == "Plate" && platePopUpFields.includes(elm.label))
+											return (<></>)
+										else if(key == "Bolt" && boltPopUpFields.includes(elm.label))
+											return (<></>)
+										return (
+											<div key={index1} className='component-grid'>
+												<div>
+													<h4>{elm.label}</h4>
+												</div>
+												<div>
+													<Input
+														type="text"
+														style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+														name={`${key}_${elm.lable}`}
+														value={elm.val}
+														disabled
+													/>
+												</div>
+												{(key !== "Weld" && index1 == (Object.values(output[key])?.length-1)) &&
+												<>
+												<div>
+													<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
+												</div>
+												<div>
+													<Input className='btn' 
+													type="button" 
+													value={key == "Bolt" ? "Spacing" : "Capacity"} 
+													onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}/>
+												</div> 
+												</>}
 											</div>
-											<div>
-												<Input
-													type="text"
-													style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-													name={`${key}_${elm.lable}`}
-													value={elm.val}
-													disabled
-												/>
-											</div>
-											{(key !== "Weld" && index1 == (Object.values(output[key])?.length-1)) &&
-											<>
-											<div>
-												<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
-											</div>
-											<div>
-												<Input className='btn' 
-												type="button" 
-												value={key == "Bolt" ? "Spacing" : "Capacity"} 
-												onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}/>
-											</div> 
-											</>}
-										</div>
-									);
-								})}
+										);
+									})}
+								</div>
 							</div>
-						</div>
-					);
+							{
+								(key === "Bolt") &&
+								<div style={{marginTop: '7px', marginBottom: '7px'}}>
+									<h4>Section Details</h4>
+									<div className='component-grid'>
+										<div>
+											<h4>Capacity</h4>
+										</div>
+										<div>
+											<Input className='btn' 
+											type="button" 
+											value={"Capacity"} 
+											onClick={() => handleDialogSpacing("Capacity")}/>
+										</div> 
+									</div>
+								</div>
+							}
+						</>);
 				}) :
 					<div>
 						{Object.keys(placeholderOutput).map((key, index) => {
 							return (
-								<div key={index}>
-									<h3>{key}</h3>
-									<div >
-										{Object.values(placeholderOutput[key]).map((elm, index1) => {
-											if(key == "Plate" && platePopUpFields.includes(elm.label))
-												return (<></>)
-											else if(key == "Bolt" && boltPopUpFields.includes(elm.label))
-												return (<></>)
-											return (
-												<div key={index1} className='component-grid' style={{userSelect: 'none'}}>
-													<div>
-														<h4>{elm.label}</h4>
-													</div>
-													<div>
-														<Input
-															type="text"
-															style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
-															name={`${key}_${elm.lable}`}
-															value={' '}
-															disabled
-														/>
-													</div>
-													{(key !== "Weld" && index1 == (Object.values(placeholderOutput[key])?.length-1)) &&
-													<>
-													<div>
-														<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
-													</div>
-													<div>
-														<Input
-															className='btn'
-															type="button"
-															value={key === "Bolt" ? "Spacing" : "Capacity"}
-															// onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}
-															disabled
-														/>
+								<>
+									<div key={index}>
+										<h3>{key}</h3>
+										<div >
+											{Object.values(placeholderOutput[key]).map((elm, index1) => {
+												if(key == "Plate" && platePopUpFields.includes(elm.label))
+													return (<></>)
+												else if(key == "Bolt" && boltPopUpFields.includes(elm.label))
+													return (<></>)
+												return (
+													<div key={index1} className='component-grid' style={{userSelect: 'none'}}>
+														<div>
+															<h4>{elm.label}</h4>
+														</div>
+														<div>
+															<Input
+																type="text"
+																style={{ color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '500' }}
+																name={`${key}_${elm.lable}`}
+																value={' '}
+																disabled
+															/>
+														</div>
+														{(key !== "Weld" && index1 == (Object.values(placeholderOutput[key])?.length-1)) &&
+														<>
+														<div>
+															<h4>{key == "Bolt" ? "Spacing" : "Capacity"}</h4>
+														</div>
+														<div>
+															<Input
+																className='btn'
+																type="button"
+																value={key === "Bolt" ? "Spacing" : "Capacity"}
+																// onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}
+																disabled
+															/>
 
-													</div> 
-													</>}
-												</div>
-											);
-										})}
+														</div> 
+														</>}
+													</div>
+												);
+											})}
+										</div>
+									</div>
+									{
+								(key === "Plate") &&
+								<div style={{marginTop: '7px', marginBottom: '7px'}}>
+									<h4>Section Details</h4>
+									<div className='component-grid'>
+										<div>
+											<h4>Capacity</h4>
+										</div>
+										<div>
+											<Input className='btn' 
+											type="button" 
+											value={"Capacity"} 
+											disabled
+											/>
+										</div> 
 									</div>
 								</div>
-							);
+							}
+								</>);
 						})}
 					</div>}
 			</div>
