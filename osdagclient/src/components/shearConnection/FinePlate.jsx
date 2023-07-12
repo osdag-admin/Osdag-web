@@ -686,6 +686,27 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
 
   const handleTransferChange = (nextTargetKeys) => {
     setSelectedDiameterNewItems(nextTargetKeys);
+    setInputs({...inputs, bolt_diameter: nextTargetKeys})
+    // setInputs({...inputs, bolt_diameter: nextTargetKeys})
+    console.log("This is Diameter"+ nextTargetKeys);
+  };
+  // 
+  // propertyClassList
+  const [selectedpropertyClassListItems, setSelectedpropertyClassListItems] = useState([]);
+
+  const handleTransferChangeInPropertyClassList = (nextTargetKeys) => {
+    setSelectedDiameterNewItems(nextTargetKeys);
+    setInputs({...inputs, bolt_grade: nextTargetKeys})
+    console.log("This is Property class"+ nextTargetKeys);
+  };
+  // 
+  // plate_thickness
+  const [selectedPlateThicknessItems, setSelectedPlateThicknessItems] = useState([]);
+
+  const handleTransferChangeInPlateThickness = (nextTargetKeys) => {
+    setSelectedDiameterNewItems(nextTargetKeys);
+    setInputs({...inputs, plate_thickness: nextTargetKeys})
+    console.log("This is Plate thickness :"+ nextTargetKeys);
   };
   // 
 
@@ -925,8 +946,10 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                   open={isModalpropertyClassListOpen}
                   onCancel={() => setModalpropertyClassListOpen(false)}
                   footer={null}
+                  width={700}
+                  height={700}
                 >
-                  <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
+                  {/* <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
                   <div style={{ height: '400px', overflowY: 'scroll',alignItems: 'center' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start',gap:'10px', marginTop:'10px',marginBottom:'10px' }}>
                       {propertyClassList
@@ -942,7 +965,30 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                       ))}
                     </div>
                     <Input type="button" value="Submit" onClick={() => setModalpropertyClassListOpen(false)}/>
-                  </div>
+                  </div> */}
+
+                    <div>
+                      <div style={{ display: 'flex' }}>
+                        <div style={{ marginRight: '20px' }}>
+                          <h3> Select Property class</h3>
+                          <Transfer
+                      dataSource={propertyClassList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))
+                      }
+                      targetKeys={selectedDiameterNewItems}
+                      onChange={handleTransferChangeInPropertyClassList}
+                      render={(item) => item.label}
+                      titles={['Available', 'Selected']}
+                      showSearch
+                      listStyle={{ height: 600 , width: 300 }}
+                    />
+                        </div>
+                      </div>
+                    </div>
                 </Modal>
               </div>
               {/* Section End */}
@@ -959,8 +1005,10 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                   open={plateThicknessModal}
                   onCancel={() => setPlateThicknessModal(false)}
                   footer={null}
+                  width={700}
+                  height={700}
                 >
-                  <Checkbox onChange={handleAllSelectCheckboxThickness}>Select All</Checkbox>
+                  {/* <Checkbox onChange={handleAllSelectCheckboxThickness}>Select All</Checkbox>
                   <div style={{ height: '550px', overflowY: 'scroll' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       {thicknessList
@@ -976,7 +1024,29 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                       ))}
                     </div>
                     <Input type="button" value="Submit" onClick={() => setPlateThicknessModal(false)}/>
-                  </div>
+                  </div> */}
+                   <div>
+                      <div style={{ display: 'flex' }}>
+                        <div style={{ marginRight: '20px' }}>
+                          <h3> Select Property class</h3>
+                          <Transfer
+                      dataSource={propertyClassList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))
+                      }
+                      targetKeys={selectedDiameterNewItems}
+                      onChange={handleTransferChangeInPlateThickness}
+                      render={(item) => item.label}
+                      titles={['Available', 'Selected']}
+                      showSearch
+                      listStyle={{ height: 600 , width: 300 }}
+                    />
+                        </div>
+                      </div>
+                    </div>
                 </Modal>
               </div>
             </div>
