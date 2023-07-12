@@ -65,10 +65,6 @@ function FinePlate() {
     secondary_beam: "JB 150",
   })
 
-  console.log('bol_diameter : ' , inputs?.bolt_diameter)
-  console.log('bolt_grade : ' , inputs?.bolt_grade)
-  console.log('boltDiameterList : ' , boltDiameterList)
-
 
 
   // console.log("All inputs:", JSON.stringify(inputs));
@@ -107,11 +103,9 @@ function FinePlate() {
     if (e.target.checked) {
       setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
       setSelectedThickness([...selectedThickness, label])
-      console.log('selectedThickenssList : ', selectedThickness)
     } else {
       setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
       setSelectedThickness(selectedThickness.filter((item) => item !== label))
-      console.log('selectedThickness : ', selectedThickness)
     }
   }
 
@@ -163,15 +157,11 @@ function FinePlate() {
 
   const handleCheckboxChange = (label) => (event) => {
     if (event.target.checked) {
-      console.log('label diameter : ' , label)
       setSelectedItems([...selectedItems, label]);
       setInputs({ ...inputs, bolt_diameter: [...inputs.bolt_diameter, label] });
-      console.log('bolt diameter selected : ' , selectedItems)
     } else {
-      console.log('label diameter unchecked : ' , label)
       setSelectedItems(selectedItems.filter((item) => item !== label));
       setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter.filter((item) => item !== label) });
-      console.log('bolt diameter selected : ' , selectedItems)
     }
   };
 
@@ -273,14 +263,12 @@ function FinePlate() {
 
 
   const handleSubmit = async () => {
-    console.log('inside handle submit')
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section==='Select Section') || (inputs.column_section==='Select Section')) {
         alert("Please input all the fields");
         return;
       }
-      console.log('bolt_diameter in design buttin : ' , boltDiameterList)
       param = {
         "Bolt.Bolt_Hole_Type": "Standard",
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
@@ -338,7 +326,6 @@ function FinePlate() {
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
-    console.log('input values in handle submit : ' , param)
 
     createDesign(param)
     setDisplayOutput(true)
@@ -456,10 +443,8 @@ function FinePlate() {
 
   useEffect(() => {
     if (renderCadModel) {
-      console.log('renderCadModel is true')
       setRenderBoolean(true)
     } else if (!renderCadModel) {
-      console.log('renderCadModel is false')
       setRenderBoolean(false)
     }
   }, [renderCadModel])
@@ -483,7 +468,6 @@ function FinePlate() {
 
   const handleOk = () => {
     // Handle OK button logic
-    console.log(designReportInputs)
     if (!output) {
       alert('Please submit the design first.')
       return;
@@ -606,7 +590,6 @@ function FinePlate() {
 	};
 
   const handleReset = () => {
-    console.log('inside reset function handler')
     /*
     bolt_diameter: boltDiameterList,
     bolt_grade: propertyClassList,
@@ -642,7 +625,6 @@ function FinePlate() {
     })
     
    }else if(conn_map[selectedOption]=='Beam-Beam'){
-    console.log('beam-beam reset')
     setInputs({
       bolt_diameter: boltDiameterList,
       bolt_grade: propertyClassList,

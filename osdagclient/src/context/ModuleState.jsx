@@ -129,7 +129,6 @@ export const ModuleProvider = ({ children }) => {
                 credentials: 'include'
             });
             const jsonResponse = await response?.json()
-            console.log('propertyClassList : ', jsonResponse)
             dispatch({ type: 'SET_PROPERTY_CLASS_LIST', payload: jsonResponse })
         } catch (error) {
             console.log('error : ', error)
@@ -164,17 +163,17 @@ export const ModuleProvider = ({ children }) => {
 
 
             if (response.status == 201) {
-                console.log('The Session has been set in the cookie')
+                //console.log('The Session has been set in the cookie')
                 state.sessionCreated = true
             } else if (response.status == 200) {
-                console.log('Already in the editing module')
+                //console.log('Already in the editing module')
                 state.sessionCreated = true
             } else {
-                console.log('There is an error in setting a session in the cookie')
+                //console.log('There is an error in setting a session in the cookie')
                 state.sessionCreated = false
             }
         } catch (err) {
-            console.log('Error in creating a session')
+            //console.log('Error in creating a session')
             state.sessionCreated = false
         }
     }
@@ -206,11 +205,7 @@ export const ModuleProvider = ({ children }) => {
                 mode: 'cors',
                 credentials: 'include'
             })
-            console.log('fetching done')
             if (response.status == 201) {
-                console.log('CAD model created')
-                console.log('response : ', response)
-                console.log('response data : ', response.data)
 
                 // set the CAD rendering to true ( to render the CAD model )
                 dispatch({ type: 'SET_RENDER_CAD_MODEL_BOOLEAN', payload: true })
@@ -239,8 +234,6 @@ export const ModuleProvider = ({ children }) => {
                 body: JSON.stringify(param)
             })
             const jsonResponse = await response?.json()
-            console.log('jsonResponse fro createDesign : ', jsonResponse)
-            console.log('response : ', response)
             dispatch({ type: 'SET_DESIGN_DATA_AND_LOGS', payload: jsonResponse })
             if (response.status == 201) {
                 // call the thunk to create the CAD Model
@@ -262,8 +255,6 @@ export const ModuleProvider = ({ children }) => {
     }
 
     const getPDF = async (obj) => {
-        console.log('inside getPDF function in ModuleState');
-        console.log('obj in GETPDF:', obj);
         try {
             fetch(`${BASE_URL}getPDF?report_id=${obj.report_id}`, {
                 method: 'GET',
@@ -292,7 +283,6 @@ export const ModuleProvider = ({ children }) => {
     };
 
     const createDesignReport = async (params) => {
-        console.log('params : ', params)
         try {
             const response = await fetch(`${BASE_URL}generate-report`, {
                 method: 'POST',
@@ -320,10 +310,7 @@ export const ModuleProvider = ({ children }) => {
             })
 
             const jsonResponse = await response?.json()
-            console.log('jsonResponse : ', jsonResponse)
-            console.log('report id : ', jsonResponse.report_id)
             if (response.status == 201) {
-                console.log('design report created')
 
                 // fetching the pdf 
                 getPDF({ 'report_id': jsonResponse.report_id })
@@ -336,7 +323,6 @@ export const ModuleProvider = ({ children }) => {
     }
 
     const saveCSV = async () => {
-        console.log('saving CSV file')
         try {
             const response = await fetch(`${BASE_URL}save-csv`, {
                 method: 'GET',
