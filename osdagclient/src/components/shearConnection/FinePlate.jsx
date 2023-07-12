@@ -1,10 +1,8 @@
 
 import '../../App.css'
-import img1 from '../../assets/ShearConnection/sc_fin_plate.png'
 import { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-// import {Select,Input} from 'antd'
-import { Select, Input, Modal, Checkbox, Button, Upload, Row, Col } from 'antd';
+import { Select, Input, Modal, Button, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
@@ -34,12 +32,29 @@ const conn_map = {
   "Beam-Beam": "Beam-Beam"
 }
 
+const MenuItems = [
+  {
+    label: "File",
+  },
+  {
+    label: "Edit",
+  },
+  {
+    label: "Graphics",
+  },
+  {
+    label: "Database",
+  },
+  {
+    label: "Help",
+  },
+]
+
 
 function FinePlate() {
 
   const [selectedOption, setSelectedOption] = useState("Column Flange-Beam-Web");
   const [imageSource, setImageSource] = useState("")
-  const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
@@ -48,7 +63,7 @@ function FinePlate() {
   const [thicknessSelect, setThicknessSelect] = useState("All")
   const [propertyClassSelect, setPropertyClassSelect] = useState("All")
 
-  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, report_id, renderCadModel, createSession, createDesign, createDesignReport, saveCSV, blobUrl } = useContext(ModuleContext)
+  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport } = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -65,13 +80,8 @@ function FinePlate() {
     secondary_beam: "JB 150",
   })
 
-
-
-  // console.log("All inputs:", JSON.stringify(inputs));
-  const [selectItemspropertyClassList, setSelectItemspropertyClassList] = useState([]);
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [plateThicknessModal, setPlateThicknessModal] = useState(false)
-  const [selectedThickness, setSelectedThickness] = useState([])
   const [allSelected, setAllSelected] = useState({
     plate_thickness: true,
     bolt_diameter: true,
@@ -96,37 +106,6 @@ function FinePlate() {
       setPropertyClassSelect("All")
       setAllSelected({ ...allSelected, bolt_grade: true })
       setModalpropertyClassListOpen(false);
-    }
-  };
-
-  const handlePlateThicknessChange = (label) => (e) => {
-    if (e.target.checked) {
-      setInputs({ ...inputs, plate_thickness: [...inputs.plate_thickness, label] })
-      setSelectedThickness([...selectedThickness, label])
-    } else {
-      setInputs({ ...inputs, plate_thickness: inputs.plate_thickness.filter((item) => item !== label) })
-      setSelectedThickness(selectedThickness.filter((item) => item !== label))
-    }
-  }
-
-  const handleCheckboxChangePropertyClass = (label) => (event) => {
-    if (event.target.checked) {
-      setInputs({ ...inputs, bolt_grade: [...inputs.bolt_grade, label] })
-      setSelectItemspropertyClassList([...selectItemspropertyClassList, label]);
-    } else {
-      setInputs({ ...inputs, bolt_grade: inputs.bolt_grade.filter((item) => item !== label) })
-      setSelectItemspropertyClassList(selectItemspropertyClassList.filter((item) => item !== label));
-    }
-  };
-
-  const handleSelectAllChangePropertyClass = (event) => {
-    if (event.target.checked) {
-      const allLabels = propertyClassList;
-      setInputs({ ...inputs, bolt_grade: allLabels });
-      setSelectItemspropertyClassList(allLabels);
-    } else {
-      setInputs({ ...inputs, bolt_grade: [] });
-      setSelectItemspropertyClassList([]);
     }
   };
 
@@ -155,33 +134,6 @@ function FinePlate() {
     }
   };
 
-  const handleCheckboxChange = (label) => (event) => {
-    if (event.target.checked) {
-      setSelectedItems([...selectedItems, label]);
-      setInputs({ ...inputs, bolt_diameter: [...inputs.bolt_diameter, label] });
-    } else {
-      setSelectedItems(selectedItems.filter((item) => item !== label));
-      setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter.filter((item) => item !== label) });
-    }
-  };
-
-  const handleSelectAllChange = (event) => {
-    if (event.target.checked) {
-      const allLabels = boltDiameterList;
-      setSelectedItems(allLabels);
-    } else {
-      setSelectedItems([]);
-    }
-  };
-  const handleAllSelectCheckboxThickness = (event) => {
-    if (event.target.checked) {
-      setInputs({ ...inputs, plate_thickness: thicknessList });
-      setSelectedThickness(thicknessList);
-    } else {
-      setSelectedThickness([]);
-      setInputs({ ...inputs, plate_thickness: [] });
-    }
-  };
 
   useEffect(() => {
 
@@ -205,23 +157,7 @@ function FinePlate() {
   };
 
 
-  const MenuItems = [
-    {
-      label: "File",
-    },
-    {
-      label: "Edit",
-    },
-    {
-      label: "Graphics",
-    },
-    {
-      label: "Database",
-    },
-    {
-      label: "Help",
-    },
-  ];
+;
 
   useEffect(() => {
     if (displayOutput) {
@@ -329,43 +265,9 @@ function FinePlate() {
 
     createDesign(param)
     setDisplayOutput(true)
-    /*
-    try {
-      // creaing teh design
-      createDesign(param)
-      // setLogs(designLogs)
-      const formatedOutput = {}
-
-      for (const [key, value] of Object.entries(designData)) {
-
-        const newKey = key.split('.')[0]
-        const label = value.label
-        const val = value.value
-
-        // console.log(newKey, label, val)
-        if (val) {
-          if (!formatedOutput[newKey])
-            formatedOutput[newKey] = [{ label, val }]
-          else
-            formatedOutput[newKey].push({ label, val })
-        }
-      }
-
-      setOutput(formatedOutput)
-    } catch (error) {
-      console.log(error)
-      setOutput(null)
-    }
-    */
-
   }
   // Create design report ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   const [CreateDesignReportBool, setCreateDesignReportBool] = useState(false);
-  // const [companyName, setCompanyName] = useState('');
-  // // const [companyLogo, setCompanyLogo] = useState(null);
-  // const [groupTeamName, setGroupTeamName] = useState('');
-  // const [designer, setDesigner] = useState('');
-  // const [projectTitle, setProjectTitle] = useState('');
   const [designReportInputs, setDesignReportInputs] = useState({
     companyName: 'Your company',
     groupTeamName: 'Your team',
@@ -435,12 +337,6 @@ function FinePlate() {
   const handleCreateDesignReport = () => {
     setCreateDesignReportBool(true);
   };
-
-  // const createDesignReportHandler = () => {
-  //   console.log('inside createDesignReport Handler')
-  //   createDesignReport({})
-  // }
-
   useEffect(() => {
     if (renderCadModel) {
       setRenderBoolean(true)
@@ -459,9 +355,6 @@ function FinePlate() {
       const escapedValue = values[index].toString().replace(/"/g, '\\"');
       return `"${key}","${escapedValue}"`;
     });
-
-
-
 
     return csvData.join('\n');
   };
@@ -590,25 +483,6 @@ function FinePlate() {
   };
 
   const handleReset = () => {
-    /*
-    bolt_diameter: boltDiameterList,
-    bolt_grade: propertyClassList,
-    bolt_type: "Bearing Bolt",
-    connector_material: "E 250 (Fe 410 W)A",
-    load_shear: "70",
-    load_axial: "30",
-    module: "Fin Plate Connection",
-    plate_thickness: thicknessList,
-    beam_section: "MB 300",
-    column_section: "HB 150",
-    primary_beam: "JB 200",
-    secondary_beam: "JB 150",
-    */
-    /*
-    plate_thickness: true,
-     bolt_diameter: true,
-     bolt_grade: true,
-     */
     if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
       // resetting the inputs
       setInputs({
@@ -669,8 +543,6 @@ function FinePlate() {
   const handleTransferChange = (nextTargetKeys) => {
     setSelectedDiameterNewItems(nextTargetKeys);
     setInputs({ ...inputs, bolt_diameter: nextTargetKeys })
-    // setInputs({...inputs, bolt_diameter: nextTargetKeys})
-    console.log("This is Diameter" + nextTargetKeys);
   };
   // 
   // propertyClassList
@@ -679,7 +551,6 @@ function FinePlate() {
   const handleTransferChangeInPropertyClassList = (nextTargetKeys) => {
     setSelectedpropertyClassListItems(nextTargetKeys);
     setInputs({ ...inputs, bolt_grade: nextTargetKeys })
-    console.log("This is Property class" + nextTargetKeys);
   };
   // 
   // plate_thickness
@@ -688,7 +559,6 @@ function FinePlate() {
   const handleTransferChangeInPlateThickness = (nextTargetKeys) => {
     setSelectedPlateThicknessItems(nextTargetKeys);
     setInputs({ ...inputs, plate_thickness: nextTargetKeys })
-    console.log("This is Plate thickness :" + nextTargetKeys);
   };
   // 
 
@@ -864,23 +734,6 @@ function FinePlate() {
                   width={700}
                   height={700}
                 >
-                  {/* <Checkbox onChange={handleSelectAllChange}>Select All</Checkbox>
-                  <div style={{ height: '500px', overflowY: 'scroll' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {boltDiameterList
-                        .sort((a, b) => Number(a) - Number(b))
-                        .map((label) => (
-                        <Checkbox
-                          key={label}
-                          checked={selectedItems.includes(label)}
-                          onChange={handleCheckboxChange(label)}
-                        >
-                          {label}
-                        </Checkbox>
-                      ))}
-                    </div>
-                    <Input type="button" value="Submit" onClick={() => setModalOpen(false)}/>
-                  </div> */}
                   <div>
                     <div style={{ display: 'flex' }}>
                       <div style={{ marginRight: '20px' }}>
@@ -904,8 +757,6 @@ function FinePlate() {
                     </div>
                   </div>
                 </Modal>
-
-
                 <div><h4>Type</h4></div>
                 <div>
                   <Select style={{ width: '100%' }}
@@ -931,24 +782,6 @@ function FinePlate() {
                   width={700}
                   height={700}
                 >
-                  {/* <Checkbox onChange={handleSelectAllChangePropertyClass}>Select All</Checkbox>
-                  <div style={{ height: '400px', overflowY: 'scroll',alignItems: 'center' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start',gap:'10px', marginTop:'10px',marginBottom:'10px' }}>
-                      {propertyClassList
-                        .sort((a, b) => Number(a) - Number(b))
-                        .map((label) => (
-                          <Checkbox
-                            key={label}
-                            checked={selectItemspropertyClassList.includes(label)}
-                            onChange={handleCheckboxChangePropertyClass(label)}
-                          >
-                            {label}
-                          </Checkbox>
-                      ))}
-                    </div>
-                    <Input type="button" value="Submit" onClick={() => setModalpropertyClassListOpen(false)}/>
-                  </div> */}
-
                   <div>
                     <div style={{ display: 'flex' }}>
                       <div style={{ marginRight: '20px' }}>
@@ -990,23 +823,6 @@ function FinePlate() {
                   width={700}
                   height={700}
                 >
-                  {/* <Checkbox onChange={handleAllSelectCheckboxThickness}>Select All</Checkbox>
-                  <div style={{ height: '550px', overflowY: 'scroll' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {thicknessList
-                        .sort((a, b) => Number(a) - Number(b))
-                        .map((label) => (
-                          <Checkbox
-                            key={label}
-                            checked={selectedThickness.includes(label)}
-                            onChange={handlePlateThicknessChange(label)}
-                          >
-                            {label}
-                          </Checkbox>
-                      ))}
-                    </div>
-                    <Input type="button" value="Submit" onClick={() => setPlateThicknessModal(false)}/>
-                  </div> */}
                   <div>
                     <div style={{ display: 'flex' }}>
                       <div style={{ marginRight: '20px' }}>
@@ -1080,16 +896,6 @@ function FinePlate() {
                       <Input id="companyName" value={designReportInputs.companyName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, companyName: e.target.value })} />
                     </Col>
                   </Row>
-                  {/* <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
-                      <label>Company Logo:</label>
-                    </Col>
-                    <Col span={15}>
-                      <Upload beforeUpload={handleFileChange} showUploadList={false}>
-                        <Button icon={<UploadOutlined />}>Select File</Button>
-                      </Upload>
-                    </Col>
-                  </Row> */}
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
                     <Col span={9}>
                       <label>Group/Team Name:</label>
