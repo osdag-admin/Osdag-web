@@ -70,9 +70,7 @@ const OutputDock = ({ output }) => {
 	const [spacingModel, setSpacingModel] = useState(false);
 	const [capacityModel, setCapacityModel] = useState(false);
 
-	// console.log('output : ' , output)
-	// console.log('output bolt pitch distance : ',  output.Bolt[0].val)
-	// const pitch_distance = output.Bolt[0].val
+	// console.log('output : ' , output, output && Object.keys(output).length)
 	const handleDialogSpacing = (value) => {
 		if (value === 'Spacing') {
 			setSpacingModel(true);
@@ -90,7 +88,7 @@ const OutputDock = ({ output }) => {
 		<div>
 			<h5>Output Dock</h5>
 			<div className='subMainBody scroll-data'>
-				{output ? Object.keys(output).map((key, index) => {
+				{(output && Object.keys(output).length) ? Object.keys(output).map((key, index) => {
 					return (
 						<>
 							<div key={index}>
