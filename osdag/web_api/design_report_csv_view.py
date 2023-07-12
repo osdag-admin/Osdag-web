@@ -174,10 +174,15 @@ class GetPDF(APIView):
                 'Unknown operating system "{}"'.format(platform.system()))
 
         # delete the extra aux, log files, tex files generated in design_report
+        print('getcwd : ' , os.getcwd())
         try:
-            os.remove(f'{report_id}.aux')
-            os.remove(f'{report_id}.log')
-            os.remove(f'{report_id}.tex')
+            # delete the following paths onyl when the pdf file is created 
+            if(os.path.exists(f'{os.getcwd()}/file_storage/design_report/{report_id}.pdf')) : 
+                os.remove(f'{os.getcwd()}/file_storage/design_report/{report_id}.aux')
+                os.remove(f'{os.getcwd()}/file_storage/design_report/{report_id}.log')
+                os.remove(f'{os.getcwd()}/file_storage/design_report/{report_id}.tex')
+            else : 
+                print('the pdf file is being created, cannot remove the other files')
         except Exception as e:
             print('e:', e)
 
