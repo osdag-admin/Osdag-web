@@ -44,9 +44,9 @@ function FinePlate() {
   const [output, setOutput] = useState(null)
   const [logs, setLogs] = useState(null)
   const [displayOutput, setDisplayOutput] = useState()
-  const [boltDiameterSelect , setBoltDiameterSelect] = useState("All")
-  const [thicknessSelect , setThicknessSelect] = useState("All")
-  const [propertyClassSelect , setPropertyClassSelect] = useState("All")
+  const [boltDiameterSelect, setBoltDiameterSelect] = useState("All")
+  const [thicknessSelect, setThicknessSelect] = useState("All")
+  const [propertyClassSelect, setPropertyClassSelect] = useState("All")
 
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, report_id, renderCadModel, createSession, createDesign, createDesignReport, saveCSV, blobUrl } = useContext(ModuleContext)
 
@@ -88,7 +88,7 @@ function FinePlate() {
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
-      setInputs({...inputs , bolt_grade : []})
+      setInputs({ ...inputs, bolt_grade: [] })
       setPropertyClassSelect("Customized")
       setAllSelected({ ...allSelected, bolt_grade: false })
       setModalpropertyClassListOpen(true);
@@ -132,7 +132,7 @@ function FinePlate() {
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
-      setInputs({...inputs , bolt_diameter : []})
+      setInputs({ ...inputs, bolt_diameter: [] })
       setBoltDiameterSelect("Customized")
       setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
@@ -144,7 +144,7 @@ function FinePlate() {
   };
   const handleAllSelectPT = (value) => {
     if (value === 'Customized') {
-      setInputs({...inputs , plate_thickness : []})
+      setInputs({ ...inputs, plate_thickness: [] })
       setThicknessSelect("Customized")
       setAllSelected({ ...allSelected, plate_thickness: false });
       setPlateThicknessModal(true);
@@ -265,7 +265,7 @@ function FinePlate() {
   const handleSubmit = async () => {
     let param = {}
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
-      if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section==='Select Section') || (inputs.column_section==='Select Section')) {
+      if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section === 'Select Section') || (inputs.column_section === 'Select Section')) {
         alert("Please input all the fields");
         return;
       }
@@ -296,7 +296,7 @@ function FinePlate() {
       }
     }
     else {
-      if (!inputs.primary_beam || !inputs.secondary_beam ) {
+      if (!inputs.primary_beam || !inputs.secondary_beam) {
         alert("Please input all the fields");
         return;
       }
@@ -578,16 +578,16 @@ function FinePlate() {
   // Spacing model
   const [spacingModel, setSpacingModel] = useState(true);
 
-	const handleDialogSpacing = (value) => {
+  const handleDialogSpacing = (value) => {
 
-		alert("ji")
+    alert("ji")
 
-	  if (value === 'Spacing') {
-		setSpacingModel(true);
-	  } else {
-		setSpacingModel(false);
-	  }
-	};
+    if (value === 'Spacing') {
+      setSpacingModel(true);
+    } else {
+      setSpacingModel(false);
+    }
+  };
 
   const handleReset = () => {
     /*
@@ -604,91 +604,91 @@ function FinePlate() {
     primary_beam: "JB 200",
     secondary_beam: "JB 150",
     */
-   /*
-   plate_thickness: true,
-    bolt_diameter: true,
-    bolt_grade: true,
-    */
-   if(conn_map[selectedOption]=='Column Flange-Beam Web' || conn_map[selectedOption]=='Column Web-Beam Web'){
-    // resetting the inputs
-    setInputs({
-      bolt_diameter: boltDiameterList,
-      bolt_grade: propertyClassList,
-      bolt_type: "Bearing Bolt",
-      connector_material: inputs.connector_material,
-      load_shear: "",
-      load_axial: "",
-      module: "Fin Plate Connection",
-      plate_thickness: thicknessList,
-      beam_section: "Select Section",
-      column_section: "Select Section",
-    })
-    
-   }else if(conn_map[selectedOption]=='Beam-Beam'){
-    setInputs({
-      bolt_diameter: boltDiameterList,
-      bolt_grade: propertyClassList,
-      bolt_type: "Bearing Bolt",
-      connector_material: inputs.connector_material,
-      load_shear: "",
-      load_axial: "",
-      module: "Fin Plate Connection",
-      plate_thickness: thicknessList,
-      primary_beam: "JB 200",
-      secondary_beam: "JB 150",
-    })
-   }
-
-   // reset setAllSelected
-   setAllSelected({
+    /*
     plate_thickness: true,
-    bolt_diameter: true,
-    bolt_grade: true,
-  })
+     bolt_diameter: true,
+     bolt_grade: true,
+     */
+    if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
+      // resetting the inputs
+      setInputs({
+        bolt_diameter: boltDiameterList,
+        bolt_grade: propertyClassList,
+        bolt_type: "Bearing Bolt",
+        connector_material: inputs.connector_material,
+        load_shear: "",
+        load_axial: "",
+        module: "Fin Plate Connection",
+        plate_thickness: thicknessList,
+        beam_section: "Select Section",
+        column_section: "Select Section",
+      })
 
-  setBoltDiameterSelect("All")
-  setPropertyClassSelect("All")
-  setThicknessSelect("All")
-  handleAllSelectPT("All") // for thickness
-  handleSelectChangePropertyClass("All")  // for property Class
-  handleSelectChangeBoltBeam("All") // for bolt diameter
+    } else if (conn_map[selectedOption] == 'Beam-Beam') {
+      setInputs({
+        bolt_diameter: boltDiameterList,
+        bolt_grade: propertyClassList,
+        bolt_type: "Bearing Bolt",
+        connector_material: inputs.connector_material,
+        load_shear: "",
+        load_axial: "",
+        module: "Fin Plate Connection",
+        plate_thickness: thicknessList,
+        primary_beam: "JB 200",
+        secondary_beam: "JB 150",
+      })
+    }
 
-  // reset CAD model 
-  setRenderBoolean(false)
+    // reset setAllSelected
+    setAllSelected({
+      plate_thickness: true,
+      bolt_diameter: true,
+      bolt_grade: true,
+    })
 
-  // reset Output values dock
-  setOutput(null)
+    setBoltDiameterSelect("All")
+    setPropertyClassSelect("All")
+    setThicknessSelect("All")
+    handleAllSelectPT("All") // for thickness
+    handleSelectChangePropertyClass("All")  // for property Class
+    handleSelectChangeBoltBeam("All") // for bolt diameter
+
+    // reset CAD model 
+    setRenderBoolean(false)
+
+    // reset Output values dock
+    setOutput(null)
 
   }
 
 
   // Diameter mm 
   //  const [selectedItems, setSelectedItems] = useState([]);
-const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
+  const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
 
   const handleTransferChange = (nextTargetKeys) => {
     setSelectedDiameterNewItems(nextTargetKeys);
-    setInputs({...inputs, bolt_diameter: nextTargetKeys})
+    setInputs({ ...inputs, bolt_diameter: nextTargetKeys })
     // setInputs({...inputs, bolt_diameter: nextTargetKeys})
-    console.log("This is Diameter"+ nextTargetKeys);
+    console.log("This is Diameter" + nextTargetKeys);
   };
   // 
   // propertyClassList
   const [selectedpropertyClassListItems, setSelectedpropertyClassListItems] = useState([]);
 
   const handleTransferChangeInPropertyClassList = (nextTargetKeys) => {
-    setSelectedDiameterNewItems(nextTargetKeys);
-    setInputs({...inputs, bolt_grade: nextTargetKeys})
-    console.log("This is Property class"+ nextTargetKeys);
+    setSelectedpropertyClassListItems(nextTargetKeys);
+    setInputs({ ...inputs, bolt_grade: nextTargetKeys })
+    console.log("This is Property class" + nextTargetKeys);
   };
   // 
   // plate_thickness
   const [selectedPlateThicknessItems, setSelectedPlateThicknessItems] = useState([]);
 
   const handleTransferChangeInPlateThickness = (nextTargetKeys) => {
-    setSelectedDiameterNewItems(nextTargetKeys);
-    setInputs({...inputs, plate_thickness: nextTargetKeys})
-    console.log("This is Plate thickness :"+ nextTargetKeys);
+    setSelectedPlateThicknessItems(nextTargetKeys);
+    setInputs({ ...inputs, plate_thickness: nextTargetKeys })
+    console.log("This is Plate thickness :" + nextTargetKeys);
   };
   // 
 
@@ -824,7 +824,7 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                     type="text"
                     name="ShearForce"
                     onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
-                    value={inputs.load_shear } 
+                    value={inputs.load_shear}
                     onChange={(event) => setInputs({ ...inputs, load_shear: event.target.value })}
                   />
                 </div>
@@ -850,13 +850,13 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                   <Select
                     style={{ width: '100%' }}
                     onSelect={handleSelectChangeBoltBeam}
-                    value = {boltDiameterSelect}
+                    value={boltDiameterSelect}
                   >
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
                 </div>
-{/* Diameter(mm) Pop up  */}
+                {/* Diameter(mm) Pop up  */}
                 <Modal
                   open={isModalOpen}
                   onCancel={() => setModalOpen(false)}
@@ -881,28 +881,28 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                     </div>
                     <Input type="button" value="Submit" onClick={() => setModalOpen(false)}/>
                   </div> */}
-      <div>
-      <div style={{ display: 'flex' }}>
-        <div style={{ marginRight: '20px' }}>
-          <h3> Select Diameter</h3>
-          <Transfer
-      dataSource={boltDiameterList
-        .sort((a, b) => Number(a) - Number(b))
-        .map((label) => ({
-          key: label,
-          label: <h5>{label}</h5>,
-        }))
-      }
-      targetKeys={selectedDiameterNewItems}
-      onChange={handleTransferChange}
-      render={(item) => item.label}
-      titles={['Available', 'Selected']}
-      showSearch
-      listStyle={{ height: 600 , width: 300 }}
-    />
-        </div>
-      </div>
-    </div>
+                  <div>
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ marginRight: '20px' }}>
+                        <h3>Customized</h3>
+                        <Transfer
+                          dataSource={boltDiameterList
+                            .sort((a, b) => Number(a) - Number(b))
+                            .map((label) => ({
+                              key: label,
+                              label: <h5>{label}</h5>,
+                            }))
+                          }
+                          targetKeys={selectedDiameterNewItems}
+                          onChange={handleTransferChange}
+                          render={(item) => item.label}
+                          titles={['Available', 'Selected']}
+                          showSearch
+                          listStyle={{ height: 600, width: 300 }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </Modal>
 
 
@@ -911,7 +911,7 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                   <Select style={{ width: '100%' }}
                     value={inputs.bolt_type}
                     onSelect={(value) => setInputs({ ...inputs, bolt_type: value })}
-                    
+
                   >
                     <Option value="Bearing_Bolt">Bearing Bolt</Option>
                     <Option value="Friction_Grip_Bolt">Friction Grip Bolt</Option>
@@ -919,7 +919,7 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                 </div>
                 <div><h4>Property Class</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} value = {propertyClassSelect}>
+                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} value={propertyClassSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -949,28 +949,28 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                     <Input type="button" value="Submit" onClick={() => setModalpropertyClassListOpen(false)}/>
                   </div> */}
 
-                    <div>
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ marginRight: '20px' }}>
-                          <h3> Select Property class</h3>
-                          <Transfer
-                      dataSource={propertyClassList
-                        .sort((a, b) => Number(a) - Number(b))
-                        .map((label) => ({
-                          key: label,
-                          label: <h5>{label}</h5>,
-                        }))
-                      }
-                      targetKeys={selectedDiameterNewItems}
-                      onChange={handleTransferChangeInPropertyClassList}
-                      render={(item) => item.label}
-                      titles={['Available', 'Selected']}
-                      showSearch
-                      listStyle={{ height: 600 , width: 300 }}
-                    />
-                        </div>
+                  <div>
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ marginRight: '20px' }}>
+                        <h3>Customized</h3>
+                        <Transfer
+                          dataSource={propertyClassList
+                            .sort((a, b) => Number(a) - Number(b))
+                            .map((label) => ({
+                              key: label,
+                              label: <h5>{label}</h5>,
+                            }))
+                          }
+                          targetKeys={selectedpropertyClassListItems}
+                          onChange={handleTransferChangeInPropertyClassList}
+                          render={(item) => item.label}
+                          titles={['Available', 'Selected']}
+                          showSearch
+                          listStyle={{ height: 600, width: 300 }}
+                        />
                       </div>
                     </div>
+                  </div>
                 </Modal>
               </div>
               {/* Section End */}
@@ -978,7 +978,7 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
               <div className='component-grid    '>
                 <div><h4>Thickness(mm)</h4></div>
                 <div>
-                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT} value = {thicknessSelect}>
+                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT} value={thicknessSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -1007,50 +1007,50 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                     </div>
                     <Input type="button" value="Submit" onClick={() => setPlateThicknessModal(false)}/>
                   </div> */}
-                   <div>
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ marginRight: '20px' }}>
-                          <h3> Select Property class</h3>
-                          <Transfer
-                      dataSource={propertyClassList
-                        .sort((a, b) => Number(a) - Number(b))
-                        .map((label) => ({
-                          key: label,
-                          label: <h5>{label}</h5>,
-                        }))
-                      }
-                      targetKeys={selectedDiameterNewItems}
-                      onChange={handleTransferChangeInPlateThickness}
-                      render={(item) => item.label}
-                      titles={['Available', 'Selected']}
-                      showSearch
-                      listStyle={{ height: 600 , width: 300 }}
-                    />
-                        </div>
+                  <div>
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ marginRight: '20px' }}>
+                        <h3>Customized</h3>
+                        <Transfer
+                          dataSource={propertyClassList
+                            .sort((a, b) => Number(a) - Number(b))
+                            .map((label) => ({
+                              key: label,
+                              label: <h5>{label}</h5>,
+                            }))
+                          }
+                          targetKeys={selectedPlateThicknessItems}
+                          onChange={handleTransferChangeInPlateThickness}
+                          render={(item) => item.label}
+                          titles={['Available', 'Selected']}
+                          showSearch
+                          listStyle={{ height: 600, width: 300 }}
+                        />
                       </div>
                     </div>
+                  </div>
                 </Modal>
               </div>
             </div>
             <div className='inputdock-btn'>
-              <Input type="button" value="Reset" onClick ={() => handleReset()}/>
+              <Input type="button" value="Reset" onClick={() => handleReset()} />
               <Input type="button" value="Design" onClick={() => handleSubmit()} />
             </div>
           </div>
           {/* Middle */}
           <div className='superMainBody_mid'>
             {renderBoolean ?
-              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' , backgroundImage : `url(${cad_background})`}}>
-              <Canvas gl={{ antialias: true }} camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }} >
-                <Model />
-              </Canvas>
-            </div> :
-             <>
-             <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
-              { <img src={cad_background} alt="Demo" height='100%' width='100%' /> }
-              </div>
-             </> 
-              }
+              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black', backgroundImage: `url(${cad_background})` }}>
+                <Canvas gl={{ antialias: true }} camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }} >
+                  <Model />
+                </Canvas>
+              </div> :
+              <>
+                <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
+                  {<img src={cad_background} alt="Demo" height='100%' width='100%' />}
+                </div>
+              </>
+            }
             <br />
             <div>
               <Logs logs={logs} />
@@ -1158,7 +1158,7 @@ const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
                   </div>
                 </div>
               </Modal>
-                    
+
 
             </div>
           </div>
