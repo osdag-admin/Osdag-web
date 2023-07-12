@@ -98,7 +98,14 @@ function FinePlate() {
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === 'Customized') {
-      setInputs({ ...inputs, bolt_grade: [] })
+      // check, if the bolt_grade already has a value, then set it to that value 
+      // else, set it to an empty list 
+      if(inputs.bolt_grade.length!=0){
+        setInputs({...inputs , bolt_grade : inputs.bolt_grade})
+      }else{
+        // if the length is 0 , then set it to an empty array 
+        setInputs({...inputs , bolt_grade : []})
+      }
       setPropertyClassSelect("Customized")
       setAllSelected({ ...allSelected, bolt_grade: false })
       setModalpropertyClassListOpen(true);
@@ -111,7 +118,14 @@ function FinePlate() {
 
   const handleSelectChangeBoltBeam = (value) => {
     if (value === 'Customized') {
-      setInputs({ ...inputs, bolt_diameter: [] })
+      // check, if the bolt_diameter already has a value, then set it to that value 
+      // else, set it to an empty list 
+      if(inputs.bolt_diameter.length!=0){
+        setInputs({...inputs , bolt_diameter : inputs.bolt_diameter})
+      }else{
+        // if the length is 0 , then set it to an empty array 
+        setInputs({...inputs , bolt_diameter : []})
+      }
       setBoltDiameterSelect("Customized")
       setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
@@ -123,7 +137,14 @@ function FinePlate() {
   };
   const handleAllSelectPT = (value) => {
     if (value === 'Customized') {
-      setInputs({ ...inputs, plate_thickness: [] })
+      // check, if the plate_thickness already has a value, then set it to that value 
+      // else, set it to an empty list 
+      if(inputs.plate_thickness.length!=0){
+        setInputs({...inputs , plate_thickness : inputs.plate_thickness})
+      }else{
+        // if the length is 0 , then set it to an empty array 
+        setInputs({...inputs , plate_thickness : []})
+      }
       setThicknessSelect("Customized")
       setAllSelected({ ...allSelected, plate_thickness: false });
       setPlateThicknessModal(true);
@@ -262,7 +283,6 @@ function FinePlate() {
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
-
     createDesign(param)
     setDisplayOutput(true)
   }
@@ -486,28 +506,28 @@ function FinePlate() {
     if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
       // resetting the inputs
       setInputs({
-        bolt_diameter: boltDiameterList,
-        bolt_grade: propertyClassList,
+        bolt_diameter: inputs.bolt_diameter,
+        bolt_grade: inputs.bolt_grade,
         bolt_type: "Bearing Bolt",
         connector_material: inputs.connector_material,
         load_shear: "",
         load_axial: "",
         module: "Fin Plate Connection",
-        plate_thickness: thicknessList,
+        plate_thickness: inputs.plate_thickness,
         beam_section: "Select Section",
         column_section: "Select Section",
       })
 
     } else if (conn_map[selectedOption] == 'Beam-Beam') {
       setInputs({
-        bolt_diameter: boltDiameterList,
-        bolt_grade: propertyClassList,
+        bolt_diameter: inputs.bolt_diameter,
+        bolt_grade: inputs.bolt_grade,
         bolt_type: "Bearing Bolt",
         connector_material: inputs.connector_material,
         load_shear: "",
         load_axial: "",
         module: "Fin Plate Connection",
-        plate_thickness: thicknessList,
+        plate_thickness: inputs.plate_thickness,
         primary_beam: "JB 200",
         secondary_beam: "JB 150",
       })

@@ -120,12 +120,18 @@ class OutputData(APIView):
             designObject = Design.objects.get(cookie_id = cookie_id)
             designObject.logs = finalLogsString
             designObject.output_values = output
-            if(output is not "") :
+            print('output outside the condition  : ', output)
+            output_result = self.check_non_zero_output(output)
+            print('output_result : ' , output_result)
+
+            if(output is "" or output is 0 or output_result is False) :
+                print('output is empty string or output_result is False')
+                print('output : ' , output)
+                designObject.design_status = False
+            else : 
                 print('output is true')
                 # if the output is successfully generated, then set the design_status to True 
                 designObject.design_status = True
-            else : 
-                designObject.design_status = False
 
             designObject.save()
         except Exception as e : 
@@ -150,4 +156,14 @@ class OutputData(APIView):
 
         print('finalLogsString : ' , finalLogsString)
         return finalLogsString 
+
+    def check_non_zero_output(self , output): 
+        flag = False
+        for item in output : 
+            # comparing the float values 
+            if(abs(output[item]['value'] - 0.0 ) > 1e-9) : 
+                flag = True
+                break
+        
+        return flag
 
