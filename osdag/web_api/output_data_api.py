@@ -58,7 +58,7 @@ class OutputValues(View):
         except Exception as e:
             return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response.
         try: # Error checking while calculating output data.
-            output_values = module_api.generate_ouptut(input_values)
+            output_values = module_api.generate_output(input_values)
         except Exception as e:
             return HttpResponse("Error: Internal server error: " + repr(e), status=500) # Return error response.
         try: # Error checking while formatting output as json.

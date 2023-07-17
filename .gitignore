@@ -38,3 +38,9 @@ ResourceFiles/html_page/*
 osdag_web/secret_key.py
 db.sqlite3
 file_storage/cad_models/*
+osdagclient/node_modules
+osdag/migrations
+osdagclient/public/output-obj.obj
+file_storage/design_report/*.pdf
+file_storage/design_report/*.log
+file_storage/design_report/*.tex

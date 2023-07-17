@@ -24,7 +24,7 @@ class GetModules(View):
                 Returns all developed modules in json format.
     """
     def get(self,request: HttpRequest) -> HttpResponse:
-        if request.COOKIES.get("design_session") is not None: # Error Checking: Already editing design.
+        if request.COOKIES.get("fin_plate_connection_session") is not None: # Error Checking: Already editing design.
             return HttpResponse("Error: Already editing module", status=400) # Returns error response.
         module_data = json.dumps(module_dict) # Convert module data to json.
         response = HttpResponse(status=200) # Status code 200 - success.

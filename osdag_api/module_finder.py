@@ -15,7 +15,7 @@ class ModuleApiType(_Protocol):
     def create_from_input(self, input_values: Dict[str, Any]) -> Any:
         """Create an instance of the module design class from input values."""
         pass
-    def generate_ouptut(self, input_values: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_output(self, input_values: Dict[str, Any]) -> Dict[str, Any]:
         """
         Generate, format and return the input values from the given output values.
         Output format (json): {
