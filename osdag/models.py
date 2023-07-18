@@ -78,7 +78,7 @@ class Beams(models.Model):
     B = models.DecimalField(max_digits=10, decimal_places=2)
     tw = models.DecimalField(max_digits=10, decimal_places=2)
     T = models.DecimalField(max_digits=10, decimal_places=2)
-    FlangeScope = models.IntegerField()
+    FlangeSlope = models.IntegerField()
     R1 = models.DecimalField(max_digits=10, decimal_places=2)
     R2 = models.DecimalField(max_digits=10, decimal_places=2)
     Iz = models.DecimalField(max_digits=10, decimal_places=2)
