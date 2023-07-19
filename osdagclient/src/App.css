@@ -651,9 +651,7 @@
 
 /* End */
 /* Capacity popups */
-.Capacity-main-body {
-  
-}
+
 
 .Capacity-sub-body-title {
   margin: 1vh;
@@ -673,9 +671,7 @@
 	align-items: center;
 }
 
-.Capacity-left-body div{
 
-}
 .Capacity-right-body {
   flex-grow: 1;
 	display: flex;
