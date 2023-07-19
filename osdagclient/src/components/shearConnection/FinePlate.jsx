@@ -89,7 +89,7 @@ const MenuItems = [
 ];
 
 // Dropdown Navbar
-const DropdownMenu = ({ label, dropdown }) => {
+const DropdownMenu = ({ label, dropdown, setDesignPrefModalStatus }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
@@ -133,7 +133,7 @@ const DropdownMenu = ({ label, dropdown }) => {
       // Edit Start
       case `Design Preferences`: 
       console.log(`Design Preferences ${option.name}`);
-      setDesignPreferencesModel(true);
+      setDesignPrefModalStatus(true);
         break;
       // Edit End
       // Graphics Start
@@ -802,7 +802,7 @@ function FinePlate() {
       <div style={{width: '100%'}}>
       <div className="module_nav">
       {MenuItems.map((item, index) => (
-        <DropdownMenu key={index} label={item.label} dropdown={item.dropdown} />
+        <DropdownMenu key={index} label={item.label} dropdown={item.dropdown} setDesignPrefModalStatus={setDesignPrefModalStatus}/>
       ))}
     </div>
     {/* <KeyPressListener />
@@ -1201,10 +1201,10 @@ function FinePlate() {
               </Modal>
 
               {/* Nav Bar Model list */}
-              {isDesignPreferencesModelOpen && (
+              {designPrefModalStatus && (
               <Modal
-                visible={isDesignPreferencesModelOpen}
-                onCancel={() => setDesignPreferencesModel(false)}
+                open={designPrefModalStatus}
+                onCancel={() => setDesignPrefModalStatus(false)}
                 footer={null}
                 width={700}
                 height={700}
