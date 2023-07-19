@@ -21,6 +21,7 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 // import assets 
 import cad_background from '../../assets/cad_empty_image.png'
 import { Tube } from '@react-three/drei';
+import DesignPrefSections from '../DesignPrefSections';
 
 
 
@@ -1209,9 +1210,7 @@ function FinePlate() {
                 width={700}
                 height={700}
               >
-                <div>
-                  <h1>Design pref</h1>
-                </div>
+                <DesignPrefSections />
               </Modal>
     )}
 

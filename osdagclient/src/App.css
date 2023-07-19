@@ -184,6 +184,19 @@
   outline: none;
 }
 
+.tabs-design-pref {
+  padding: 0 5px;
+  text-align: center;
+  width: 120%;
+  background: rgba(128, 128, 128, 0.075);
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.274);
+  box-sizing: content-box;
+  position: relative;
+  outline: none;
+  margin: 0 5px;
+}
+
 .design-types-cont {
   background-color: rgba(128, 128, 128, 0.075);
   padding: 10px;
@@ -673,3 +686,9 @@
 }
 
 /* end */
+
+
+/* Design pref container*/
+.design-pref-cont{
+  margin-top: 30px;
+}
