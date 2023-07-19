@@ -3,7 +3,6 @@ import '../../App.css'
 import { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { Select, Input, Modal, Button, Row, Col } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
 
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
@@ -62,7 +61,7 @@ function FinePlate() {
   const [boltDiameterSelect, setBoltDiameterSelect] = useState("All")
   const [thicknessSelect, setThicknessSelect] = useState("All")
   const [propertyClassSelect, setPropertyClassSelect] = useState("All")
-
+  const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false)
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport } = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
@@ -582,9 +581,25 @@ function FinePlate() {
   };
   // 
 
+  // menu actions 
+  useEffect(() => {
+
+    const designPrefHandler = (e) => {
+      if(e.altKey && e.key == 'p'){
+        setDesignPrefModalStatus(true)
+      }
+    }
+
+    window.addEventListener('keydown', designPrefHandler)
+    return () => {
+      setDesignPrefModalStatus(false)
+      window.removeEventListener('keydown', designPrefHandler)
+    }
+  }, [])
+
   return (
     <>
-      <div>
+      <div style={{width: '100%'}}>
         <div className='module_nav'>
 
           {MenuItems.map((item, index) => (
