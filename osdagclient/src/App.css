@@ -343,7 +343,7 @@
 
 
 /* Fine Plate */
-
+/* 
 .module_nav {
   margin-top: 0.1rem;
   padding-left: 2rem;
@@ -352,7 +352,9 @@
   gap: 20px;
   background-color: #d2d4d2;
   width: 100%;
-  /* padding-right: ; */
+  
+  display: flex;
+  justify-content: space-between;
 }
 
 .module_nav div {
@@ -363,6 +365,60 @@
 .module_nav div:hover {
   background-color: #91b014;
   cursor: pointer;
+} */
+.module_nav {
+  margin-top: 0.1rem;
+  padding-left: 2rem;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background-color: #d2d4d2;
+  width: 100%;
+ 
+}
+
+.module_nav div {
+  padding: 0.6rem;
+}
+
+.module_nav div:hover {
+  background-color: #91b014;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-label {
+  font-weight: bold;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  min-width: 350px;
+  z-index: 1;
+}
+
+.dropdown-menu div {
+  padding: 0.6rem;
+}
+
+.dropdown-menu div:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+.dropdown-items{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font-size: small;
 }
 
 
