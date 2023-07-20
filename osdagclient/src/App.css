@@ -688,3 +688,30 @@
 .design-pref-cont{
   margin-top: 30px;
 }
+
+/* Column and Beam Section */
+.col-beam-cont{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.input-cont{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+}
+.input-cont h5{
+  font-weight: 400;
+}
+.input-design-pref{
+  width: 100px;
+  height: 25px;
+  font-size: 12px;
+}
+.sub-container{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}

@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import ColumnSectionModal from './ColumnSectionModal'
 
 const tabs = [
     {
@@ -25,7 +26,7 @@ const tabs = [
     }
 ]
 
-const DesignPrefSections = () => {
+const DesignPrefSections = ({inputs, setInputs}) => {
 
     const [activeTab, setActiveTab] = useState(0)
 
@@ -49,7 +50,7 @@ const DesignPrefSections = () => {
         </div>
         <div className='design-pref-cont'>
             {activeTab == 0 &&
-                <h2>Column Section</h2>
+                <ColumnSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 1 &&
                 <h2>Beam Section</h2>

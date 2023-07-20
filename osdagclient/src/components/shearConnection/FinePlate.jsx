@@ -24,7 +24,7 @@ import { Tube } from '@react-three/drei';
 import DesignPrefSections from '../DesignPrefSections';
 
 // drop down 
-import DropdownMenu from './FinePlate/DropdownMenu';
+import DropdownMenu from '../DropdownMenu';
 
 
 const { Option } = Select;
@@ -1091,7 +1091,7 @@ function FinePlate() {
                 width={700}
                 height={700}
               >
-                <DesignPrefSections />
+                <DesignPrefSections inputs={inputs} setInputs={setInputs}/>
               </Modal>
     )}
 
