@@ -145,7 +145,7 @@ class OutputData(APIView):
         # this function extracts the objects to string and combines them into a single string 
         # also converting the type key value to upper case 
         finalLogsString = ""
-        print('temp :  ', logs[0])
+        #print('temp :  ', logs[0])
 
         for item in logs : 
             print('item : ' , item)

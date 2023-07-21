@@ -15,8 +15,8 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
                                 value={inputs.bolt_tension_type}
                                 onSelect={value => setInputs({...inputs, bolt_tension_type: value})}
                             >
-                                    <Option value="PreTensioned">Pre-tensioned</Option>
-                                    <Option value="NonPreTensioned">Non Pre-tensioned</Option>
+                                    <Option value="Pretensioned">Pre-tensioned</Option>
+                                    <Option value="Non pre-tensioned">Non Pre-tensioned</Option>
                             </Select>
                         </div>
                     </div>
@@ -28,7 +28,7 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
                                 onSelect={value => setInputs({...inputs, bolt_hole_type: value})}
                             >
                                     <Option value="Standard">Standard</Option>
-                                    <Option value="OverSized">Over-Sized</Option>
+                                    <Option value="0ver-Sized">Over-Sized</Option>
                             </Select>
                         </div>
                     </div>
@@ -42,11 +42,11 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
                                 value={inputs.bolt_slip_factor}
                                 onSelect={value => setInputs({...inputs, bolt_slip_factor: value})}
                             >
-                                    <Option value="Standard">0.5</Option>
-                                    <Option value="Standard">0.3</Option>
-                                    <Option value="Standard">0.2</Option>
-                                    <Option value="Standard">0.25</Option>
-                                    <Option value="Standard">0.1</Option>
+                                    <Option value="0.5">0.5</Option>
+                                    <Option value="0.3">0.3</Option>
+                                    <Option value="o.2">0.2</Option>
+                                    <Option value="o.25">0.25</Option>
+                                    <Option value="0.1">0.1</Option>
                             </Select>
                         </div>
                     </div>

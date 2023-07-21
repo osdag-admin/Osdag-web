@@ -15,9 +15,9 @@ const DesignSectionModal = ({ inputs, setInputs }) => {
                                 value={inputs.design_method}
                                 onSelect={value => setInputs({...inputs, design_method: value})}
                             >
-                                    <Option value="LimitedSD">Limited State Design</Option>
-                                    <Option value="LimitedCD" disabled> Limited State (capacity based) Design</Option>
-                                    <Option value="WStressedD" disabled>Working Stressed Design</Option>
+                                    <Option value="Limited State Design">Limited State Design</Option>
+                                    <Option value="Limited State (capacity based) Design" disabled>Limited State (capacity based) Design</Option>
+                                    <Option value="Working Stressed Design" disabled>Working Stressed Design</Option>
                             </Select>
                         </div>
                     </div>

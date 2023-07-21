@@ -15,8 +15,8 @@ const WeldSectionModal = ({ inputs, setInputs }) => {
                                 value={inputs.weld_fab}
                                 onSelect={value => setInputs({...inputs, weld_fab: value})}
                             >
-                                    <Option value="ShopWeld">Shop Weld</Option>
-                                    <Option value="FieldWeld">Field Weld</Option>
+                                    <Option value="Shop Weld">Shop Weld</Option>
+                                    <Option value="Field Weld">Field Weld</Option>
                             </Select>
                         </div>
                     </div>

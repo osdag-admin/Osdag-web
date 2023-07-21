@@ -15,8 +15,8 @@ const DetailingSectionModal = ({ inputs, setInputs }) => {
                                 value={inputs.detailing_edge_type}
                                 onSelect={value => setInputs({...inputs, detailing_edge_type: value})}
                             >
-                                    <Option value="HandFlame">Sheared or hand flame cut</Option>
-                                    <Option value="MachineFlame">Rolled, machine-flame cut, sawn and planed</Option>
+                                    <Option value="Sheared or hand flame cut">Sheared or hand flame cut</Option>
+                                    <Option value="Rolled, machine-flame cut, sawn and planed">Rolled, machine-flame cut, sawn and planed</Option>
                             </Select>
                         </div>
                     </div>

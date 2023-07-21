@@ -305,7 +305,7 @@ function FinePlate() {
 
   const handleSubmit = async () => {
     let param = {}
-    console.log(inputs)
+    console.log(allSelected, boltDiameterList)
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section === 'Select Section') || (inputs.column_section === 'Select Section')) {
         alert("Please input all the fields");
