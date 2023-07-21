@@ -1,10 +1,6 @@
-import { useContext } from 'react'
-import { ModuleContext } from '../context/ModuleState'
 import { Select,Input } from 'antd'
 
 const DetailingSectionModal = ({ inputs, setInputs }) => {
-
-    const { materialList } = useContext(ModuleContext)
 
     return (
 <>
@@ -16,10 +12,11 @@ const DetailingSectionModal = ({ inputs, setInputs }) => {
                         <h5>Edge Preparation Method</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'HandFlame'}
+                                value={inputs.detailing_edge_type}
+                                onSelect={value => setInputs({...inputs, detailing_edge_type: value})}
                             >
                                     <Option value="HandFlame">Sheared or hand flame cut</Option>
-                                    <Option value="MachineFlame">Rolled, machine-flame cut , sawn and planed</Option>
+                                    <Option value="MachineFlame">Rolled, machine-flame cut, sawn and planed</Option>
                             </Select>
                         </div>
                     </div>
@@ -30,7 +27,8 @@ const DetailingSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="source"
                             className='input-design-pref'
-                            value={'0'}
+                            value={inputs.detailing_gap}
+                            onChange={e => setInputs({...inputs, detailing_gap: e.target.value})}
                         />
                         </div>
                     </div>
@@ -38,7 +36,8 @@ const DetailingSectionModal = ({ inputs, setInputs }) => {
                         <h5>Are the Member Exposed to Corrosive influences?</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'No'}
+                                value={inputs.detailing_corr_status}
+                                onSelect={value => setInputs({...inputs, detailing_corr_status: value})}
                             >
                                     <Option value="No">No</Option>
                                     <Option value="Yes">Yes</Option>

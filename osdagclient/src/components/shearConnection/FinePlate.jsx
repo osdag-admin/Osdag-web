@@ -151,6 +151,17 @@ function FinePlate() {
     column_section: "HB 150",
     primary_beam: "JB 200",
     secondary_beam: "JB 150",
+    supported_material: "E 250 (Fe 410 W)A",
+    supporting_material: "E 250 (Fe 410 W)A",
+    bolt_hole_type: "Standard",
+    bolt_slip_factor: "0.3",
+    weld_fab: "Shop Weld",
+    weld_material_grade: "290",
+    detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
+    detailing_gap: "10",
+    detailing_corr_status: "No",
+    design_method: "Limit State Design",
+    bolt_tension_type: "Pre-tensioned"
   })
 
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
@@ -294,34 +305,35 @@ function FinePlate() {
 
   const handleSubmit = async () => {
     let param = {}
+    console.log(inputs)
     if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
       if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section === 'Select Section') || (inputs.column_section === 'Select Section')) {
         alert("Please input all the fields");
         return;
       }
       param = {
-        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
         "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
-        "Bolt.Slip_Factor": "0.3",
-        "Bolt.TensionType": "Pretensioned",
+        "Bolt.Slip_Factor": inputs.bolt_slip_factor,
+        "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity": conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
-        "Design.Design_Method": "Limit State Design",
-        "Detailing.Corrosive_Influences": "No",
-        "Detailing.Edge_type": "Rolled",
-        "Detailing.Gap": "15",
+        "Design.Design_Method": inputs.design_method,
+        "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
+        "Detailing.Edge_type": inputs.detailing_edge_type,
+        "Detailing.Gap": inputs.detailing_gap,
         "Load.Axial": inputs.load_axial || '',
         "Load.Shear": inputs.load_shear || '',
         "Material": inputs.connector_material,
         "Member.Supported_Section.Designation": inputs.beam_section,
-        "Member.Supported_Section.Material": inputs.connector_material,
+        "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
-        "Member.Supporting_Section.Material": inputs.connector_material,
+        "Member.Supporting_Section.Material": inputs.supporting_material,
         "Module": "Fin Plate Connection",
-        "Weld.Fab": "Shop Weld",
-        "Weld.Material_Grade_OverWrite": "410",
+        "Weld.Fab": inputs.weld_fab,
+        "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
@@ -331,28 +343,28 @@ function FinePlate() {
         return;
       }
       param = {
-        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
         "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
-        "Bolt.Slip_Factor": "0.48",
-        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Slip_Factor": inputs.bolt_slip_factor,
+        "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity": conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
-        "Design.Design_Method": "Limit State Design",
-        "Detailing.Corrosive_Influences": "No",
-        "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
-        "Detailing.Gap": "5",
+        "Design.Design_Method": inputs.design_method,
+        "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
+        "Detailing.Edge_type": inputs.detailing_edge_type,
+        "Detailing.Gap": inputs.detailing_gap,
         "Load.Axial": inputs.load_axial || '',
         "Load.Shear": inputs.load_shear || '',
         "Material": "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.secondary_beam,
-        "Member.Supported_Section.Material": "E 300 (Fe 440)",
+        "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
-        "Member.Supporting_Section.Material": "E 300 (Fe 440)",
+        "Member.Supporting_Section.Material": inputs.supporting_material,
         "Module": "Fin Plate Connection",
-        "Weld.Fab": "Shop Weld",
-        "Weld.Material_Grade_OverWrite": "440",
+        "Weld.Fab": inputs.weld_fab,
+        "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
@@ -487,28 +499,28 @@ function FinePlate() {
         return;
       }
       data = {
-        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
         "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
-        "Bolt.Slip_Factor": "0.3",
-        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Slip_Factor": inputs.bolt_slip_factor,
+        "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity": conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
-        "Design.Design_Method": "Limit State Design",
-        "Detailing.Corrosive_Influences": "No",
-        "Detailing.Edge_type": "Rolled",
-        "Detailing.Gap": "15",
+        "Design.Design_Method": inputs.design_method,
+        "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
+        "Detailing.Edge_type": inputs.detailing_edge_type,
+        "Detailing.Gap": inputs.detailing_gap,
         "Load.Axial": inputs.load_axial || '',
         "Load.Shear": inputs.load_shear || '',
         "Material": "E 250 (Fe 410 W)A",
         "Member.Supported_Section.Designation": inputs.beam_section,
-        "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+        "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
-        "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
+        "Member.Supporting_Section.Material": inputs.supporting_material,
         "Module": "Fin Plate Connection",
-        "Weld.Fab": "Shop Weld",
-        "Weld.Material_Grade_OverWrite": "410",
+        "Weld.Fab": inputs.weld_fab,
+        "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
       }
     }
@@ -518,30 +530,29 @@ function FinePlate() {
         return;
       }
       data = {
-        "Bolt.Bolt_Hole_Type": "Standard",
+        "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
         "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
         "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
-        "Bolt.Slip_Factor": "0.48",
-        "Bolt.TensionType": "Pre-tensioned",
+        "Bolt.Slip_Factor": inputs.bolt_slip_factor,
+        "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity": conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
-        "Design.Design_Method": "Limit State Design",
-        "Detailing.Corrosive_Influences": "No",
-        "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
-        "Detailing.Gap": "5",
+        "Design.Design_Method": inputs.design_method,
+        "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
+        "Detailing.Edge_type": inputs.detailing_edge_type,
+        "Detailing.Gap": inputs.detailing_gap,
         "Load.Axial": inputs.load_axial || '',
         "Load.Shear": inputs.load_shear || '',
         "Material": "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.secondary_beam,
-        "Member.Supported_Section.Material": "E 300 (Fe 440)",
+        "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
-        "Member.Supporting_Section.Material": "E 300 (Fe 440)",
+        "Member.Supporting_Section.Material": inputs.supporting_material,
         "Module": "Fin Plate Connection",
-        "Weld.Fab": "Shop Weld",
-        "Weld.Material_Grade_OverWrite": "440",
+        "Weld.Fab": inputs.weld_fab,
+        "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness,
-        "out_titles_status": ["1", "1", "1", "1"]
       }
     }
 
@@ -1112,7 +1123,7 @@ function FinePlate() {
                 width={1400}
                 maxHeight={1200}
               >
-                <DesignPrefSections inputs={inputs} setInputs={setInputs}/>
+                <DesignPrefSections inputs={inputs} setInputs={setInputs} selectedOption={selectedOption}/>
               </Modal>
     )}
 

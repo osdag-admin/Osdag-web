@@ -14,7 +14,7 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                         <h5>Material</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.connector_material || materialList[0]}
+                                value={inputs.connector_material}
                                 onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                             >
                                 {materialList.map((item, index) => (

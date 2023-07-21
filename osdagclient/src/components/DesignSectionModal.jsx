@@ -1,10 +1,6 @@
-import { useContext } from 'react'
-import { ModuleContext } from '../context/ModuleState'
 import { Select,Input } from 'antd'
 
 const DesignSectionModal = ({ inputs, setInputs }) => {
-
-    const { materialList } = useContext(ModuleContext)
 
     return (
 <>
@@ -16,7 +12,8 @@ const DesignSectionModal = ({ inputs, setInputs }) => {
                         <h5>Design Method</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'LimitedSD'}
+                                value={inputs.design_method}
+                                onSelect={value => setInputs({...inputs, design_method: value})}
                             >
                                     <Option value="LimitedSD">Limited State Design</Option>
                                     <Option value="LimitedCD" disabled> Limited State (capacity based) Design</Option>

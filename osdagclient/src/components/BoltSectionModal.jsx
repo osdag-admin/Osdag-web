@@ -1,10 +1,6 @@
-import { useContext } from 'react'
-import { ModuleContext } from '../context/ModuleState'
 import { Select,Input } from 'antd'
 
 const BoltSectionModal = ({ inputs, setInputs }) => {
-
-    const { materialList } = useContext(ModuleContext)
 
     return (
 <>
@@ -16,10 +12,11 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
                         <h5>Type</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'PreTensioned'}
+                                value={inputs.bolt_tension_type}
+                                onSelect={value => setInputs({...inputs, bolt_tension_type: value})}
                             >
-                                    <Option value="PreTensioned">Pre-Tensioned</Option>
-                                    <Option value="NonPreTensioned">Non Pre-Tensioned</Option>
+                                    <Option value="PreTensioned">Pre-tensioned</Option>
+                                    <Option value="NonPreTensioned">Non Pre-tensioned</Option>
                             </Select>
                         </div>
                     </div>
@@ -27,7 +24,8 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
                     <h5>Hole Type</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'Standard'}
+                                value={inputs.bolt_hole_type}
+                                onSelect={value => setInputs({...inputs, bolt_hole_type: value})}
                             >
                                     <Option value="Standard">Standard</Option>
                                     <Option value="OverSized">Over-Sized</Option>
@@ -41,10 +39,14 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
                     </h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'Standard'}
+                                value={inputs.bolt_slip_factor}
+                                onSelect={value => setInputs({...inputs, bolt_slip_factor: value})}
                             >
-                                    <Option value="Standard">Standard</Option>
-                                    <Option value="OverSized">Over-Sized</Option>
+                                    <Option value="Standard">0.5</Option>
+                                    <Option value="Standard">0.3</Option>
+                                    <Option value="Standard">0.2</Option>
+                                    <Option value="Standard">0.25</Option>
+                                    <Option value="Standard">0.1</Option>
                             </Select>
                         </div>
                     </div>

@@ -15,7 +15,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                         type="text"
                         name="Designation"
                         className='input-design-pref'
-                        value={'HB 150'}
+                        value={supportedSectionData.Designation}
                     />
                 </div>
                 <div className='sub-container'>
@@ -24,8 +24,8 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                         <h5>Material</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.connector_material || materialList[0]}
-                                onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
+                                value={inputs.supporting_material}
+                                onSelect={(value) => setInputs({ ...inputs, supporting_material: value })}
                             >
                                 {materialList.map((item, index) => (
                                     <Option key={index} value={item}>{item}</Option>

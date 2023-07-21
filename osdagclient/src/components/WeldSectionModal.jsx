@@ -1,10 +1,6 @@
-import { useContext } from 'react'
-import { ModuleContext } from '../context/ModuleState'
 import { Select,Input } from 'antd'
 
 const WeldSectionModal = ({ inputs, setInputs }) => {
-
-    const { materialList } = useContext(ModuleContext)
 
     return (
 <>
@@ -16,9 +12,10 @@ const WeldSectionModal = ({ inputs, setInputs }) => {
                         <h5>Type of Weld Fabrication</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                            defaultValue={'PreTensioned'}
+                                value={inputs.weld_fab}
+                                onSelect={value => setInputs({...inputs, weld_fab: value})}
                             >
-                                    <Option value="ShopWeld">ShopWeld</Option>
+                                    <Option value="ShopWeld">Shop Weld</Option>
                                     <Option value="FieldWeld">Field Weld</Option>
                             </Select>
                         </div>
@@ -30,7 +27,8 @@ const WeldSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="source"
                             className='input-design-pref'
-                            value={'0'}
+                            value={inputs.weld_material_grade}
+                            onChange={e => setInputs({...inputs, weld_material_grade: e.target.value})}
                         />
                         </div>
                     </div>

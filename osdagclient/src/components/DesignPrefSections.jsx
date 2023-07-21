@@ -34,7 +34,7 @@ const tabs = [
     }
 ]
 
-const DesignPrefSections = ({inputs, setInputs}) => {
+const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
 
     const [activeTab, setActiveTab] = useState(0)
     const {designPrefData} = useContext(ModuleContext) 
@@ -53,7 +53,9 @@ const DesignPrefSections = ({inputs, setInputs}) => {
                         className={activeTab == item.id ? "tab-btn tabs-design-pref active-tabs" : "tab-btn tabs-design-pref"}
                         onClick={() => setActiveTab(item.id)}
                     >
-                        {item.name}
+                        {(selectedOption === "Beam-Beam" && item.name === "Column Section*" || item.name == "Beam Section*") ? 
+                            (item.name === 'Column Section*' ? "Primary Beam*" : "Secondary Beam*")
+                        : item.name}
                     </button>
                 )
             })}
