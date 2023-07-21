@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { ModuleContext } from '../context/ModuleState'
 import { Input, Select } from 'antd'
 import ISection from '../assets/ISection.png'
-const ColumnSectionModal = ({ inputs, setInputs }) => {
+const BeamSectionModal = ({ inputs, setInputs }) => {
 
     const { materialList } = useContext(ModuleContext)
 
@@ -296,4 +296,4 @@ const ColumnSectionModal = ({ inputs, setInputs }) => {
     )
 }
 
-export default ColumnSectionModal
+export default BeamSectionModal

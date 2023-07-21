@@ -1088,8 +1088,9 @@ function FinePlate() {
                 open={designPrefModalStatus}
                 onCancel={() => setDesignPrefModalStatus(false)}
                 footer={null}
-                width={700}
-                height={700}
+                minWidth={1200}
+                width={1400}
+                maxHeight={1200}
               >
                 <DesignPrefSections inputs={inputs} setInputs={setInputs}/>
               </Modal>

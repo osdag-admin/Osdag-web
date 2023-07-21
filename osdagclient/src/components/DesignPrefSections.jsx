@@ -1,5 +1,12 @@
 import React, {useState} from 'react'
 import ColumnSectionModal from './ColumnSectionModal'
+import BeamSectionModal from './BeamSectionModal'
+import ConnectorSectionModal from './ConnectorSectionModal'
+import BoltSectionModal from './BoltSectionModal'
+import WeldSectionModal from './WeldSectionModal'
+import DetailingSectionModal from './DetailingSectionModal'
+import DesignSectionModal from './DesignSectionModal'
+import { Button , Input} from 'antd';
 
 const tabs = [
     {
@@ -39,6 +46,7 @@ const DesignPrefSections = ({inputs, setInputs}) => {
             {tabs.map(item => {
                 return (
                     <button 
+                   
                         key={item.id}
                         className={activeTab == item.id ? "tab-btn tabs-design-pref active-tabs" : "tab-btn tabs-design-pref"}
                         onClick={() => setActiveTab(item.id)}
@@ -53,24 +61,45 @@ const DesignPrefSections = ({inputs, setInputs}) => {
                 <ColumnSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 1 &&
-                <h2>Beam Section</h2>
+                // <h2>Beam Section</h2>
+                <BeamSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 2 &&
-                <h2>Connector</h2>
+                <ConnectorSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 3 && 
-                <h2>Bolt</h2>
+                <BoltSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 4 && 
-                <h2>Weld</h2>
+                <WeldSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 5 && 
-                <h2>Detailing</h2>
+                <DetailingSectionModal inputs={inputs} setInputs={setInputs}/>
             }
             {activeTab == 6 && 
-                <h2>Design</h2>
+                <DesignSectionModal inputs={inputs} setInputs={setInputs}/>
             }
         </div>
+
+        { activeTab ==  0 || activeTab ==  1 
+        ?  
+        <div className='DesignPrefFooter DesignPrefFooter-btn'>
+            
+            <Button type="button" onClick={() => null}>Add</Button>
+            <Button type="button" onClick={() => null}>Clear</Button>  
+            <Button type="button" onClick={() => null}>import xlxs file </Button>
+            <Button type="button" onClick={() => null}>Download xlxs file </Button>            
+        </div> 
+        : 
+        null 
+        }
+        <div className='subDesignPrefFooter subDesignPrefFooter-btn'>
+            
+            <Button type="button" onClick={() => null}>Default</Button>
+            
+            <Button type="button" onClick={() => null}>Save </Button>            
+        </div> 
+        
     </div>
   )
 }

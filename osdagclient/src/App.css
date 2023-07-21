@@ -147,7 +147,7 @@
   margin-left: 3px;
   margin-top: 4px;
   margin-bottom: 0;
-  border: 2px solid #000;
+  border: 2px solid rgba(0, 0, 0, 0.274);
   text-align: center;
 }
 
@@ -169,6 +169,13 @@
 
 .bloc-tabs {
   display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.274);
+  
+  padding: 10px;
+  
+}
+.bloc-tabs button{
+  height: 20px;
 }
 
 .tabs {
@@ -573,11 +580,6 @@
   background-color: rgb(168, 121, 121);
 }
 
-.inputdock-btn Input {
-  background-color: rgb(135, 91, 91);
-  cursor: pointer;
-  color: #f1f1f1;
-}
 
 .btn{
   background-color: rgb(135, 91, 91);
@@ -585,6 +587,11 @@
   color: #f1f1f1;
 }
 
+.inputdock-btn Input {
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+}
 .inputdock-btn Input:hover {
   background-color: rgb(168, 121, 121);
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
@@ -686,7 +693,10 @@
 
 /* Design pref container*/
 .design-pref-cont{
-  margin-top: 30px;
+  margin-top: 10px;
+  border: 1px solid #000; 
+  min-height: 600px;
+  padding: 10px;
 }
 
 /* Column and Beam Section */
@@ -695,17 +705,26 @@
   flex-direction: row;
   justify-content: space-around;
 }
+.Connector-col-beam-cont{
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  gap: 20px;
+}
 
 .input-cont{
   display: flex;
   align-items: center;
   column-gap: 5px;
+  justify-content: space-between;
 }
 .input-cont h5{
   font-weight: 400;
+  width: 150px;
+  margin-right: 10px;
 }
 .input-design-pref{
-  width: 100px;
+  width: 200px;
   height: 25px;
   font-size: 12px;
 }
@@ -714,4 +733,54 @@
   display: flex;
   flex-direction: column;
   row-gap: 8px;
+}
+.DesignPrefFooter{
+  /* border-top: 1px solid #000; Change the color and thickness as desired */
+  margin-top: 5px; 
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 5px;
+  font-size: 12px;
+  
+}
+
+.DesignPrefFooter-btn Button {
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+  min-width: 200px;
+  font-size: 12px;
+}
+.DesignPrefFooter-btn Button:hover {
+  background-color: rgb(168, 121, 121);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+.subDesignPrefFooter-btn Button {
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+  min-width: 200px;
+  font-size: 12px;
+}
+.subDesignPrefFooter-btn Button:hover {
+  background-color: rgb(168, 121, 121);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+.subDesignPrefFooter{
+  border-top: 1px solid #000; /* Change the color and thickness as desired */
+  margin-top: 5px; 
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: 6rem;
+  font-size: 12px;
+  
 }
