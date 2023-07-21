@@ -31,7 +31,8 @@ let initialValue = {
     renderCadModel: false,
     displayPDF: false,
     report_id: '',
-    blobUrl: ''
+    blobUrl: '',
+    designPrefData: {}
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -254,6 +255,17 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const getSupportedSectionData = async(param) => {
+        try {
+            const response = await fetch(`${BASE_URL}design-preferences/?supported_section=${param.supported_section}&supporting_section=${param.supporting_section}`)
+            const data = await response?.json()
+            //console.log(data)
+            dispatch({type: 'SAVE_DESIGN_PREF_DATA', payload: data})
+        } catch (error) {
+            console.log("Something went wrong")
+        }
+    }
+
     const getPDF = async (obj) => {
         try {
             fetch(`${BASE_URL}getPDF?report_id=${obj.report_id}`, {
@@ -357,6 +369,7 @@ export const ModuleProvider = ({ children }) => {
             renderCadModel: state.renderCadModel,
             displayPDF: state.displayPDF,
             blobUrl: state.blobUrl,
+            designPrefData: state.designPrefData,
 
             // actions
             cookieSetter,
@@ -372,7 +385,8 @@ export const ModuleProvider = ({ children }) => {
             deleteSession,
             createDesign,
             createDesignReport,
-            saveCSV
+            saveCSV,
+            getSupportedSectionData
         }}>
             {children}
         </ModuleContext.Provider>

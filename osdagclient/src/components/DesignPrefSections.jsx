@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, {useState, useContext} from 'react'
+import { ModuleContext } from '../context/ModuleState'
 import ColumnSectionModal from './ColumnSectionModal'
 import BeamSectionModal from './BeamSectionModal'
 import ConnectorSectionModal from './ConnectorSectionModal'
@@ -36,6 +37,7 @@ const tabs = [
 const DesignPrefSections = ({inputs, setInputs}) => {
 
     const [activeTab, setActiveTab] = useState(0)
+    const {designPrefData} = useContext(ModuleContext) 
 
   return (
     <div >
@@ -58,11 +60,19 @@ const DesignPrefSections = ({inputs, setInputs}) => {
         </div>
         <div className='design-pref-cont'>
             {activeTab == 0 &&
-                <ColumnSectionModal inputs={inputs} setInputs={setInputs}/>
+                <ColumnSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs} 
+                    supportingSectionData={designPrefData.supporting_section_results.length > 0 ? designPrefData.supporting_section_results[0] : designPrefData.supporting_section_results}
+                />
             }
             {activeTab == 1 &&
                 // <h2>Beam Section</h2>
-                <BeamSectionModal inputs={inputs} setInputs={setInputs}/>
+                <BeamSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs} 
+                    supportedSectionData={designPrefData.supported_section_results.length > 0 ? designPrefData.supported_section_results[0] : designPrefData.supported_section_results}
+                />
             }
             {activeTab == 2 &&
                 <ConnectorSectionModal inputs={inputs} setInputs={setInputs}/>

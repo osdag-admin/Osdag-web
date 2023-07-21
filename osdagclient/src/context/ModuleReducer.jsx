@@ -74,7 +74,11 @@ export default (state, action) => {
                 ...state,
                 blobUrl : action.payload
             }
-
+        case 'SAVE_DESIGN_PREF_DATA':
+            return {
+                ...state,
+                designPrefData: action.payload
+            }
         default:
             return state;
     }

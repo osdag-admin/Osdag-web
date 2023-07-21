@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { ModuleContext } from '../context/ModuleState'
 import { Input, Select } from 'antd'
 import ISection from '../assets/ISection.png'
-const BeamSectionModal = ({ inputs, setInputs }) => {
+const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
 
     const { materialList } = useContext(ModuleContext)
 
@@ -106,7 +106,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="source"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Source || 0}
                         />
                     </div>
                 </div>
@@ -121,7 +121,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="depth"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.D || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -130,7 +130,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="flange-widht"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.B || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -139,7 +139,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="flange-thickness"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.T || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -148,7 +148,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="web-thickness"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.tw || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -157,7 +157,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="flange-slope"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.FlangeSlope || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -166,7 +166,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="depth"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.R1 || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -175,7 +175,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="tow-radius"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.R2 || 0}
                         />
                     </div>
                 </div>
@@ -187,7 +187,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="mass"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Mass || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -196,7 +196,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="sectional-area"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Area || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -205,7 +205,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="2nd-moment-area-Iz"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Iz || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -214,7 +214,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="2nd-moment-area-Iy"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Iy || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -223,7 +223,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="radius-gyration-Rz"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.rz || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -232,7 +232,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="radius-gyration-Ry"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.ry || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -241,7 +241,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="elastic-modulus"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Zz || 0}
                         />
                     </div>
                 </div>
@@ -260,7 +260,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="plastic-modulus-pz"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Zpz || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -269,7 +269,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="plastic-modulus-pv"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Zpy || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -278,7 +278,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="torsion-constant"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.It || 0}
                         />
                     </div>
                     <div className='input-cont'>
@@ -287,7 +287,7 @@ const BeamSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="warping-constant"
                             className='input-design-pref'
-                            value={'0'}
+                            value={supportedSectionData.Iw || 0}
                         />
                     </div>
                 </div>
