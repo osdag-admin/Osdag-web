@@ -694,14 +694,16 @@ function FinePlate() {
       if(inputs.column_section != "" && inputs.beam_section != ""){
         getSupportedSectionData({
           supported_section: inputs.beam_section,
-          supporting_section: inputs.column_section
+          supporting_section: inputs.column_section,
+          connectivity: conn_map[selectedOption].split(' ').join('-')
         })
       }
     }
     else if (conn_map[selectedOption] == 'Beam-Beam'){
       getSupportedSectionData({
         supported_section: inputs.secondary_beam,
-        supporting_section: inputs.primary_beam
+        supporting_section: inputs.primary_beam,
+        connectivity: conn_map[selectedOption]
       })
     }
   
