@@ -255,14 +255,18 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
-    const getSupportedSectionData = async(param) => {
+    const getDesingPrefData = async(param) => {
         try {
-            const response = await fetch(`${BASE_URL}design-preferences/?supported_section=${param.supported_section}&supporting_section=${param.supporting_section}&connectivity=${param.connectivity}`)
+            const response = await fetch(`${BASE_URL}design-preferences/?supported_section=${param.supported_section}&supporting_section=${param.supporting_section}&connectivity=${param.connectivity}`, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include'
+            })
             const data = await response?.json()
             //console.log(data)
             dispatch({type: 'SAVE_DESIGN_PREF_DATA', payload: data})
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             console.log("Something went wrong")
         }
     }
@@ -387,7 +391,7 @@ export const ModuleProvider = ({ children }) => {
             createDesign,
             createDesignReport,
             saveCSV,
-            getSupportedSectionData
+            getDesingPrefData
         }}>
             {children}
         </ModuleContext.Provider>

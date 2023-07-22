@@ -136,7 +136,7 @@ function FinePlate() {
   const [thicknessSelect, setThicknessSelect] = useState("All")
   const [propertyClassSelect, setPropertyClassSelect] = useState("All")
   const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false)
-  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getSupportedSectionData } = useContext(ModuleContext)
+  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getDesingPrefData } = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -692,7 +692,7 @@ function FinePlate() {
     
     if(conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web'){
       if(inputs.column_section != "" && inputs.beam_section != ""){
-        getSupportedSectionData({
+        getDesingPrefData({
           supported_section: inputs.beam_section,
           supporting_section: inputs.column_section,
           connectivity: conn_map[selectedOption].split(' ').join('-')
@@ -700,7 +700,7 @@ function FinePlate() {
       }
     }
     else if (conn_map[selectedOption] == 'Beam-Beam'){
-      getSupportedSectionData({
+      getDesingPrefData({
         supported_section: inputs.secondary_beam,
         supporting_section: inputs.primary_beam,
         connectivity: conn_map[selectedOption]

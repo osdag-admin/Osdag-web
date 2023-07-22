@@ -14,10 +14,10 @@ class DesignPreference(APIView):
         connectivity = request.GET.get("connectivity")
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
 
-        #if cookie_id == None or cookie_id == '': 
-            #return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 
-        #if not Design.objects.filter(cookie_id=cookie_id).exists(): 
-            #return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
+        if cookie_id == None or cookie_id == '': 
+            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 
+        if not Design.objects.filter(cookie_id=cookie_id).exists(): 
+            return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
 
         if connectivity == 'Beam-Beam':
             supported_section_results = Beams.objects.filter(Designation=supported_section).values()
