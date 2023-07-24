@@ -16,6 +16,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                         name="Designation"
                         className='input-design-pref'
                         value={supportingSectionData.Designation}
+                        disabled
                     />
                 </div>
                 <div className='sub-container'>
@@ -26,6 +27,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
                                 value={inputs.supported_material}
                                 onSelect={(value) => setInputs({ ...inputs, supported_material: value })}
+                                disabled
                             >
                                 {materialList.map((item, index) => (
                                     <Option key={index} value={item}>{item}</Option>
@@ -40,6 +42,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="ultimate-strength"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -49,6 +52,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="yield-strength"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -58,6 +62,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="modulus-elasticity"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -67,6 +72,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="modulus-rigidity"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -76,6 +82,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="poisson-ratio"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -85,6 +92,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="thermal-coefficient"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -92,6 +100,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                         <div>
                             <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
                                 value={'Rolled'}
+                                disabled
                             //onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                             >
                                 {['Rolled', 'Welded'].map((item, index) => (
@@ -107,6 +116,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="source"
                             className='input-design-pref'
                             value={supportingSectionData.Source || 0}
+                            disabled
                         />
                     </div>
                 </div>
@@ -122,6 +132,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="depth"
                             className='input-design-pref'
                             value={supportingSectionData.D || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -131,6 +142,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="flange-widht"
                             className='input-design-pref'
                             value={supportingSectionData.B || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -140,6 +152,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="flange-thickness"
                             className='input-design-pref'
                             value={supportingSectionData.T || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -149,6 +162,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="web-thickness"
                             className='input-design-pref'
                             value={supportingSectionData.tw || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -158,6 +172,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="flange-slope"
                             className='input-design-pref'
                             value={supportingSectionData.FlangeSlope || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -167,6 +182,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="depth"
                             className='input-design-pref'
                             value={supportingSectionData.R1 || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -176,6 +192,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="tow-radius"
                             className='input-design-pref'
                             value={supportingSectionData.R2 || 0}
+                            disabled
                         />
                     </div>
                 </div>
@@ -188,6 +205,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="mass"
                             className='input-design-pref'
                             value={supportingSectionData.Mass || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -197,6 +215,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="sectional-area"
                             className='input-design-pref'
                             value={supportingSectionData.Area || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -206,6 +225,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="2nd-moment-area-Iz"
                             className='input-design-pref'
                             value={supportingSectionData.Iz || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -215,6 +235,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="2nd-moment-area-Iy"
                             className='input-design-pref'
                             value={supportingSectionData.Iy || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -224,6 +245,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="radius-gyration-Rz"
                             className='input-design-pref'
                             value={supportingSectionData.rz || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -233,6 +255,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="radius-gyration-Ry"
                             className='input-design-pref'
                             value={supportingSectionData.ry || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -242,6 +265,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="elastic-modulus"
                             className='input-design-pref'
                             value={supportingSectionData.Zz || 0}
+                            disabled
                         />
                     </div>
                 </div>
@@ -261,6 +285,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="plastic-modulus-pz"
                             className='input-design-pref'
                             value={supportingSectionData.Zpz || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -270,6 +295,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="plastic-modulus-pv"
                             className='input-design-pref'
                             value={supportingSectionData.Zpy || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -279,6 +305,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="torsion-constant"
                             className='input-design-pref'
                             value={supportingSectionData.It || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -288,6 +315,8 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             name="warping-constant"
                             className='input-design-pref'
                             value={supportingSectionData.Iw || 0}
+                            disabled
+                            style={{cursor: 'blocked'}}
                         />
                     </div>
                 </div>

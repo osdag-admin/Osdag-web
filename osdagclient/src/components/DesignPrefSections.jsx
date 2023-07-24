@@ -53,7 +53,7 @@ const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
                         className={activeTab == item.id ? "tab-btn tabs-design-pref active-tabs" : "tab-btn tabs-design-pref"}
                         onClick={() => setActiveTab(item.id)}
                     >
-                        {(selectedOption === "Beam-Beam" && item.name === "Column Section*" || item.name == "Beam Section*") ? 
+                        {(selectedOption === "Beam-Beam" && (item.name === "Column Section*" || item.name == "Beam Section*")) ? 
                             (item.name === 'Column Section*' ? "Primary Beam*" : "Secondary Beam*")
                         : item.name}
                     </button>

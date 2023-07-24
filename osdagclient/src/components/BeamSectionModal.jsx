@@ -16,6 +16,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                         name="Designation"
                         className='input-design-pref'
                         value={supportedSectionData.Designation}
+                        disabled
                     />
                 </div>
                 <div className='sub-container'>
@@ -26,6 +27,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
                                 value={inputs.supporting_material}
                                 onSelect={(value) => setInputs({ ...inputs, supporting_material: value })}
+                                disabled
                             >
                                 {materialList.map((item, index) => (
                                     <Option key={index} value={item}>{item}</Option>
@@ -40,6 +42,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="ultimate-strength"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -49,6 +52,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="yield-strength"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -58,6 +62,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="modulus-elasticity"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -67,6 +72,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="modulus-rigidity"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -76,6 +82,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="poisson-ratio"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -85,6 +92,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="thermal-coefficient"
                             className='input-design-pref'
                             value={'0'}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -93,6 +101,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
                                 value={'Rolled'}
                             //onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
+                        disabled
                             >
                                 {['Rolled', 'Welded'].map((item, index) => (
                                     <Option key={index} value={item}>{item}</Option>
@@ -107,6 +116,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="source"
                             className='input-design-pref'
                             value={supportedSectionData.Source || 0}
+                            disabled
                         />
                     </div>
                 </div>
@@ -122,6 +132,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="depth"
                             className='input-design-pref'
                             value={supportedSectionData.D || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -131,6 +142,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="flange-widht"
                             className='input-design-pref'
                             value={supportedSectionData.B || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -140,6 +152,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="flange-thickness"
                             className='input-design-pref'
                             value={supportedSectionData.T || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -149,6 +162,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="web-thickness"
                             className='input-design-pref'
                             value={supportedSectionData.tw || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -158,6 +172,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="flange-slope"
                             className='input-design-pref'
                             value={supportedSectionData.FlangeSlope || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -167,6 +182,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="depth"
                             className='input-design-pref'
                             value={supportedSectionData.R1 || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -176,6 +192,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="tow-radius"
                             className='input-design-pref'
                             value={supportedSectionData.R2 || 0}
+                            disabled
                         />
                     </div>
                 </div>
@@ -188,6 +205,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="mass"
                             className='input-design-pref'
                             value={supportedSectionData.Mass || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -197,6 +215,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="sectional-area"
                             className='input-design-pref'
                             value={supportedSectionData.Area || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -206,6 +225,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="2nd-moment-area-Iz"
                             className='input-design-pref'
                             value={supportedSectionData.Iz || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -215,6 +235,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="2nd-moment-area-Iy"
                             className='input-design-pref'
                             value={supportedSectionData.Iy || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -224,6 +245,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="radius-gyration-Rz"
                             className='input-design-pref'
                             value={supportedSectionData.rz || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -233,6 +255,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="radius-gyration-Ry"
                             className='input-design-pref'
                             value={supportedSectionData.ry || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -242,6 +265,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="elastic-modulus"
                             className='input-design-pref'
                             value={supportedSectionData.Zz || 0}
+                            disabled
                         />
                     </div>
                 </div>
@@ -261,6 +285,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="plastic-modulus-pz"
                             className='input-design-pref'
                             value={supportedSectionData.Zpz || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -270,6 +295,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="plastic-modulus-pv"
                             className='input-design-pref'
                             value={supportedSectionData.Zpy || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -279,6 +305,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="torsion-constant"
                             className='input-design-pref'
                             value={supportedSectionData.It || 0}
+                            disabled
                         />
                     </div>
                     <div className='input-cont'>
@@ -288,6 +315,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             name="warping-constant"
                             className='input-design-pref'
                             value={supportedSectionData.Iw || 0}
+                            disabled
                         />
                     </div>
                 </div>
