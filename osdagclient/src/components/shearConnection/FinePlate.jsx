@@ -41,7 +41,7 @@ const MenuItems = [
   {
     label: "File",
     dropdown: [
-      { name: "Load", shortcut: "Ctrl+L" },
+      { name: "Load Input", shortcut: "Ctrl+L" },
       { name: "Save Input", shortcut: "Ctrl+S" },
       { name: "Save Log Messages", shortcut: "Alt+M" },
       { name: "Create Design Report", shortcut: "Alt+C" },
@@ -717,7 +717,15 @@ function FinePlate() {
       <div style={{width: '100%'}}>
       <div className="module_nav">
       {MenuItems.map((item, index) => (
-        <DropdownMenu key={index} label={item.label} dropdown={item.dropdown} setDesignPrefModalStatus={setDesignPrefModalStatus}/>
+        <DropdownMenu 
+          key={index} 
+          label={item.label} 
+          dropdown={item.dropdown} 
+          setDesignPrefModalStatus={setDesignPrefModalStatus} 
+          inputs={inputs} 
+          allSelected={allSelected}
+          selectedOption={selectedOption}
+        />
       ))}
     </div>
     {/* <KeyPressListener /> */}
