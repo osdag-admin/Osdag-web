@@ -1,6 +1,23 @@
 import { Select,Input } from 'antd'
 
 const BoltSectionModal = ({ inputs, setInputs }) => {
+    const Bolt_discription = `
+IS 800 Table 20 Typical Average Values for Coefficient of Friction (µf)
+
+Treatment of Surfaces     µ_f
+i) Surfaces not treated   0.2
+ii) Surfaces blasted with short or grit with any loose rust removed, no pitting   0.5
+iii) Surfaces blasted with short or grit and hot-dip galvanized   0.1
+iv) Surfaces blasted with short or grit and spray - metallized with zinc (thickness 50-70 µm)     0.25
+v) Surfaces blasted with shot or grit and painted with ethylzinc silicate coat (thickness 30-60 µm)   0.3
+vi) Sand blasted surface, after light rusting     0.52
+vii) Surfaces blasted with shot or grit and painted with ethylzinc silicate coat (thickness 60-80 µm)     0.3
+viii) Surfaces blasted with shot or grit and painted with alcalizinc silicate coat (thickness 60-80 µm)   0.3
+ix) Surfaces blasted with shot or grit and spray metallized with aluminium (thickness >50 µm)     0.5
+x) Clean mill scale   0.33
+xi) Sand blasted surface      0.48
+xii) Red lead painted surface     0.1
+`;
 
     return (
 <>
@@ -56,7 +73,7 @@ const BoltSectionModal = ({ inputs, setInputs }) => {
             <div>
                 <div className="sub-container">
                     <h4>Discription</h4>
-                    <Input.TextArea rows={20} cols={150} />
+                    <Input.TextArea  rows={20} cols={150} value={Bolt_discription} readOnly/>
                 </div>
             </div>
            

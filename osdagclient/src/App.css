@@ -784,3 +784,9 @@
   font-size: 12px;
   
 }
+.readonly-textarea {
+  border: 1px solid #ccc; /* Add a border to indicate it's a textarea */
+  background-color: #f9f9f9; /* Set a light gray background color */
+  resize: none; /* Disable textarea resizing */
+  cursor: default; /* Set cursor to default (non-editable) */
+}

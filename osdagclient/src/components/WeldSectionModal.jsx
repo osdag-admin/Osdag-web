@@ -2,6 +2,10 @@ import { Select,Input } from 'antd'
 
 const WeldSectionModal = ({ inputs, setInputs }) => {
 
+    const Weld_text=`Shop weld takes a material safety factor of 1.25
+Field weld takes a material safety factor of 1.5
+(IS 800 - cl. 5. 4. 1 or Table 5)`
+
     return (
 <>
         <div className='Connector-col-beam-cont'>
@@ -38,7 +42,7 @@ const WeldSectionModal = ({ inputs, setInputs }) => {
             <div>
                 <div className="sub-container">
                     <h4>Discription</h4>
-                    <Input.TextArea rows={25} cols={150} />
+                    <Input.TextArea rows={25} cols={150} value={Weld_text} readOnly/>
                 </div>
             </div>
            

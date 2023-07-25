@@ -25,12 +25,12 @@ const DesignSectionModal = ({ inputs, setInputs }) => {
                 </div>
             </div>
             {/*  */}
-            <div>
+            {/* <div>
                 <div className="sub-container">
                     <h4>Discription</h4>
                     <Input.TextArea rows={25} cols={150} />
                 </div>
-            </div>
+            </div> */}
            
 
         </div>
