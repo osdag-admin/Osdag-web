@@ -1,5 +1,5 @@
 import React from 'react'
-import { useContext, useRef, useState } from 'react';
+import { useContext, useRef, useState, useEffect } from 'react';
 import { ModuleContext } from '../context/ModuleState';
 
 const conn_map = {
@@ -8,7 +8,13 @@ const conn_map = {
   "Beam-Beam": "Beam-Beam"
 }
 
-function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption }) {
+const conn_map_inv = {
+  "Column Flange-Beam Web": "Column Flange-Beam-Web",
+  "Column Web-Beam Web": "Column Web-Beam-Web",
+  "Beam-Beam": "Beam-Beam"
+}
+
+function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption }) {
 
   const { boltDiameterList, propertyClassList, thicknessList } = useContext(ModuleContext)
 
@@ -20,17 +26,106 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
   };
 
   const loadInput = () => {
-    console.log('load input called')
+    let element = document.createElement('input');
+    element.setAttribute('type', 'file');
+    parentRef.current.appendChild(element)
+    element.click()
+
+    element.addEventListener('change', e => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(event){
+        const fileContent = event.target.result;
+        const fileArr = fileContent.split('\n');
+        let inputFromFileObj = {}
+        for(const item of fileArr){
+          //console.log(item)
+          const arr = item.split(":")
+          //console.log(arr)
+          if(arr[0].includes("Bolt.Diameter") || arr[0].includes("Bolt.Grade") || arr[0].includes("Thickness_List"))
+            continue;
+
+          if(arr.length <= 1) continue;
+          
+          let val = arr[1].trim();
+          switch(arr[0]){
+            case "Bolt.Bolt_Hole_Type":
+              inputFromFileObj.bolt_hole_type = val;
+              break;
+            case "Bolt.Slip_Factor":
+              inputFromFileObj.bolt_slip_factor = val;
+              break;
+            case "Bolt.TensionType":
+              inputFromFileObj.bolt_tension_type = val;
+              break;
+            case "Bolt.Type":
+              inputFromFileObj.bolt_type = val;
+              break;
+            case "Connectivity":
+              setSelectedOption(conn_map_inv[val]);
+              break;
+            case "Connector.Material":
+              inputFromFileObj.connector_material = val;
+              break;
+            case "Design.Design_Method":
+              inputFromFileObj.design_method = val;
+              break;
+            case "Detailing.Corrosive_Influences":
+              inputFromFileObj.detailing_corr_status = val;
+              break;
+            case "Detailing.Edge_type":
+              inputFromFileObj.detailing_edge_type = val;
+              break;
+            case "Detailing.Gap":
+              inputFromFileObj.detailing_gap = val;
+              break;
+            case "Load.Axial":
+              inputFromFileObj.load_axial = val;
+              break;
+            case "Load.Shear":
+              inputFromFileObj.load_shear = val;
+              break;
+            case "Material":
+              inputFromFileObj.connector_material = val;
+              break;
+            case "Member.Supported_Section.Designation":
+              inputFromFileObj.beam_section = val;
+              break;
+            case "Member.Supported_Section.Material":
+              inputFromFileObj.supported_material = val;
+              break;
+            case "Member.Supporting_Section.Designation":
+              inputFromFileObj.column_section = val;
+              break;
+            case "Member.Supporting_Section.Material":
+              inputFromFileObj.supporting_material = val;
+              break;
+            case "Module":
+              inputFromFileObj.module = val;
+              break;
+            case "Weld.Fab":
+              inputFromFileObj.weld_fab = val;
+              break;
+            case "Weld.Material_Grade_OverWrite":
+              inputFromFileObj.weld_material_grade = val;
+              break;
+          }
+        }
+        
+        inputFromFileObj.bolt_diameter = [];
+        inputFromFileObj.bolt_grade = [];
+        inputFromFileObj.plate_thickness = [];
+        console.log(inputFromFileObj)
+        setInputs(inputFromFileObj)
+      }
+
+      reader.readAsText(file)
+    })
+    
+    parentRef.current.removeChild(element)
   }
 
-  const formatArrayForText = (arr) => {
-    let text = "";
-    for(let i=0; i<arr.length; i++){
-      if(i !== arr.length-1) text += `- '${arr[i]}'\n`
-      else text += `- '${arr[i]}'`
-    }
-    return text;
-  }
 
   const saveInput = () => {
     let content
@@ -143,6 +238,16 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     }
 
   };
+
+  // UTILITY FUNCTIONS
+  const formatArrayForText = (arr) => {
+    let text = "";
+    for(let i=0; i<arr.length; i++){
+      if(i !== arr.length-1) text += `- '${arr[i]}'\n`
+      else text += `- '${arr[i]}'`
+    }
+    return text;
+  }
 
 
   return (

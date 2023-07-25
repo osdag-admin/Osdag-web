@@ -723,8 +723,10 @@ function FinePlate() {
           dropdown={item.dropdown} 
           setDesignPrefModalStatus={setDesignPrefModalStatus} 
           inputs={inputs} 
+          setInputs={setInputs}
           allSelected={allSelected}
           selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
         />
       ))}
     </div>
