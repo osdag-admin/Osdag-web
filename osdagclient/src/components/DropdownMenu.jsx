@@ -282,6 +282,22 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     return res;
   }
 
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (parentRef.current && !parentRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('click', handleOutsideClick);
+
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+
   return (
     <div className="dropdown" ref={parentRef}>
       <div className="dropdown-label" onClick={handleToggle}>
