@@ -725,6 +725,7 @@ function FinePlate() {
           inputs={inputs} 
           setInputs={setInputs}
           allSelected={allSelected}
+          setAllSelected={setAllSelected}
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
         />

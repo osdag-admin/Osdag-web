@@ -14,7 +14,7 @@ const conn_map_inv = {
   "Beam-Beam": "Beam-Beam"
 }
 
-function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption }) {
+function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected }) {
 
   const { boltDiameterList, propertyClassList, thicknessList } = useContext(ModuleContext)
 
@@ -39,12 +39,25 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
         const fileContent = event.target.result;
         const fileArr = fileContent.split('\n');
         let inputFromFileObj = {}
-        for(const item of fileArr){
+        let boltDiameterIndex = -1;
+        let boltGradeIndex = -1;
+        let plateThicknessIndex = -1;
+
+        for(let i=0; i<fileArr.length; i++){
           //console.log(item)
+          const item = fileArr[i]
           const arr = item.split(":")
           //console.log(arr)
-          if(arr[0].includes("Bolt.Diameter") || arr[0].includes("Bolt.Grade") || arr[0].includes("Thickness_List"))
-            continue;
+
+          if(arr[0].includes("Bolt.Diameter")){
+            boltDiameterIndex = i; continue;
+          }
+          if(arr[0].includes("Bolt.Grade")){
+            boltGradeIndex = i; continue;
+          }
+          if(arr[0].includes("Thickness_List")){
+            plateThicknessIndex = i; continue;
+          }
 
           if(arr.length <= 1) continue;
           
@@ -112,12 +125,35 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
               break;
           }
         }
-        
-        inputFromFileObj.bolt_diameter = [];
-        inputFromFileObj.bolt_grade = [];
-        inputFromFileObj.plate_thickness = [];
+
+        let diaArr = []
+        for(let i=boltDiameterIndex+1; i<fileArr.length; i++){
+          if(!fileArr[i].includes("-")) break;
+          diaArr.push(fileArr[i].split(" ")[1].split("'")[1])
+        }
+
+        let gradeArr = []
+        for(let i=boltGradeIndex+1; i<fileArr.length; i++){
+          if(!fileArr[i].includes("-")) break;
+          gradeArr.push(fileArr[i].split(" ")[1].split("'")[1])
+        }
+
+        let thicknessArr = []
+        for(let i=plateThicknessIndex+1; i<fileArr.length; i++){
+          if(!fileArr[i].includes("-")) break;
+          thicknessArr.push(fileArr[i].split(" ")[1].split("'")[1])
+        }
+
+        inputFromFileObj.bolt_diameter = diaArr
+        inputFromFileObj.bolt_grade = gradeArr;
+        inputFromFileObj.plate_thickness = thicknessArr;
         console.log(inputFromFileObj)
         setInputs(inputFromFileObj)
+        setAllSelected({
+          plate_thickness: false,
+          bolt_diameter: false,
+          bolt_grade: false,
+        })
       }
 
       reader.readAsText(file)
@@ -248,7 +284,6 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     }
     return text;
   }
-
 
   return (
     <div className="dropdown" ref={parentRef}>
