@@ -43,8 +43,8 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     }
 
     let element = document.createElement('a')
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', 'untitled');
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', 'untitled.osi');
     element.style.display = 'none'
     parentRef.current.appendChild(element)
     element.click();
