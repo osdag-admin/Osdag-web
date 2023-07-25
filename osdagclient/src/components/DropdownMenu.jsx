@@ -103,13 +103,19 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
               inputFromFileObj.connector_material = val;
               break;
             case "Member.Supported_Section.Designation":
-              inputFromFileObj.beam_section = val;
+              if(selectedOption == "Beam-Beam") 
+                inputFromFileObj.secondary_beam = val;
+              else 
+                inputFromFileObj.beam_section = val;
               break;
             case "Member.Supported_Section.Material":
               inputFromFileObj.supported_material = val;
               break;
             case "Member.Supporting_Section.Designation":
-              inputFromFileObj.column_section = val;
+              if(selectedOption == "Beam-Beam") 
+                inputFromFileObj.primary_beam = val;
+              else
+                inputFromFileObj.column_section = val;
               break;
             case "Member.Supporting_Section.Material":
               inputFromFileObj.supporting_material = val;
@@ -126,28 +132,10 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
           }
         }
 
-        let diaArr = []
-        for(let i=boltDiameterIndex+1; i<fileArr.length; i++){
-          if(!fileArr[i].includes("-")) break;
-          diaArr.push(fileArr[i].split(" ")[1].split("'")[1])
-        }
-
-        let gradeArr = []
-        for(let i=boltGradeIndex+1; i<fileArr.length; i++){
-          if(!fileArr[i].includes("-")) break;
-          gradeArr.push(fileArr[i].split(" ")[1].split("'")[1])
-        }
-
-        let thicknessArr = []
-        for(let i=plateThicknessIndex+1; i<fileArr.length; i++){
-          if(!fileArr[i].includes("-")) break;
-          thicknessArr.push(fileArr[i].split(" ")[1].split("'")[1])
-        }
-
-        inputFromFileObj.bolt_diameter = diaArr
-        inputFromFileObj.bolt_grade = gradeArr;
-        inputFromFileObj.plate_thickness = thicknessArr;
-        console.log(inputFromFileObj)
+        inputFromFileObj.bolt_diameter = getFormatedArrayFields(fileArr, boltDiameterIndex)
+        inputFromFileObj.bolt_grade = getFormatedArrayFields(fileArr, boltGradeIndex);
+        inputFromFileObj.plate_thickness = getFormatedArrayFields(fileArr, plateThicknessIndex);
+        // console.log(inputFromFileObj)
         setInputs(inputFromFileObj)
         setAllSelected({
           plate_thickness: false,
@@ -283,6 +271,15 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
       else text += `- '${arr[i]}'`
     }
     return text;
+  }
+
+  const getFormatedArrayFields = (arr, index) => {
+    let res = []
+    for(let i=index+1; i<arr.length; i++){
+      if(!arr[i].includes("-")) break;
+      res.push(arr[i].split(" ")[1].split("'")[1])
+    }
+    return res;
   }
 
   return (
