@@ -382,6 +382,8 @@ function FinePlate() {
     jobNumber: '1',
     client: 'Someone else',
     additionalComments: 'No comments',
+    companyLogo : null,
+    companyLogoName : ""
   })
 
 
@@ -470,6 +472,7 @@ function FinePlate() {
       alert('Please submit the design first.')
       return;
     }
+    console.log('designreportInputs : ' , designReportInputs)
     createDesignReport(designReportInputs)
     handleCancelProfile()
   };
@@ -485,6 +488,8 @@ function FinePlate() {
       jobNumber: '1',
       client: 'Someone else',
       additionalComments: 'No comments',
+      companyLogo : null,
+      companyLogoName : ""
     })
     setCreateDesignReportBool(false);
   };
@@ -664,7 +669,13 @@ function FinePlate() {
     setSelectedPlateThicknessItems(nextTargetKeys);
     setInputs({ ...inputs, plate_thickness: nextTargetKeys })
   };
-  // 
+  // Image file changehandler 
+  const handleImageFileChange = (event) => {
+    // get the selected file from the event 
+    const imageFile = event.target.files[0]
+    const imageFileName = event.target.files[0].name
+    setDesignReportInputs({...designReportInputs , companyLogo : imageFile , companyLogoName : imageFileName})
+  }
 
   // menu actions 
   useEffect(() => {
@@ -710,6 +721,7 @@ function FinePlate() {
 
   }, [inputs.column_section, inputs.beam_section, inputs.primary_beam, inputs.secondary_beam, selectedOption])
   
+
 
 
   return (
@@ -1057,6 +1069,14 @@ function FinePlate() {
                     </Col>
                     <Col span={15}>
                       <Input id="companyName" value={designReportInputs.companyName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, companyName: e.target.value })} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={9}>
+                      <label>Company Logo : </label>
+                    </Col>
+                    <Col span={15}>
+                      <input type="file" accept = "image/png , image/jpeg , image/jpg" onChange={handleImageFileChange} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>

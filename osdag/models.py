@@ -18,7 +18,6 @@ class Design(models.Model):
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
-
 class Anchor_Bolt(models.Model):
     Diameter = models.TextField()
 

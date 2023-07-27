@@ -13,6 +13,7 @@ class DesignPreference(APIView):
         supporting_section = request.GET.get("supporting_section")
         connectivity = request.GET.get("connectivity")
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
+        
 
         if cookie_id == None or cookie_id == '': 
             return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 

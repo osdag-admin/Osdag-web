@@ -299,7 +299,41 @@ export const ModuleProvider = ({ children }) => {
         }
     };
 
+    const fetchCompanyLogo = async(companyLogo , companyLogoName , reportID) => {
+        console.log('companyLogo : ' , companyLogo)
+        console.log('companyLogoName : ' , companyLogoName)
+
+        // creting a formData and appending the image in the formData 
+        let formData = new FormData()
+        formData.append('file' , companyLogo , companyLogoName)
+        console.log('final formData ; ' , formData)
+        try{
+            const response = await fetch(`${BASE_URL}company-logo/` , {
+                method : 'POST',
+                mode : 'cors',
+                credentials : 'include',
+                body : formData
+            })
+
+            if(response.status==201){
+                console.log('logo successfully fetched')
+                
+                // call the getPDF API adn fetch the PDF
+                // getPDF({'report_id' : reportID})
+            }else{
+                console.log('response.status !=201, there is some error')
+            }
+        }catch(err){
+            console.log('There was an error in fetching the company Logo')
+        }
+
+    }
+
     const createDesignReport = async (params) => {
+        console.log('params  : ' , params)
+        // extract the companylogo and fetch it as a separate request 
+        const companyLogo = params.companyLogo
+        const companyLogoName = params.companyLogoName
         try {
             const response = await fetch(`${BASE_URL}generate-report`, {
                 method: 'POST',
@@ -313,7 +347,7 @@ export const ModuleProvider = ({ children }) => {
                         metadata: {
                             ProfileSummary: {
                                 CompanyName: params.companyName,
-                                CompanyLogo: "",
+                                CompanyLogo : "",
                                 "Group/TeamName": params.groupTeamName,
                                 Designer: params.designer,
                             },
@@ -328,9 +362,9 @@ export const ModuleProvider = ({ children }) => {
 
             const jsonResponse = await response?.json()
             if (response.status == 201) {
+                // request to send the company logo
+                fetchCompanyLogo(companyLogo , companyLogoName , jsonResponse.report_id)
 
-                // fetching the pdf 
-                getPDF({ 'report_id': jsonResponse.report_id })
             } else {
                 console.log('response.status!=201 in createDesignReport, erorr')
             }

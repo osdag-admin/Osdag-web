@@ -8,6 +8,7 @@ from osdag.models import Design
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
 
+
 class Design_Serializer(serializers.ModelSerializer) : 
 
     class Meta : 
