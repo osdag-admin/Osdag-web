@@ -674,7 +674,7 @@ function FinePlate() {
   const handleImageFileChange = (event) => {
     // get the selected file from the event 
     const imageFile = event.target.files[0]
-    const imageFileName = event.target.files[0].name
+    let imageFileName = event.target.files[0].name
     setDesignReportInputs({...designReportInputs , companyLogo : imageFile , companyLogoName : imageFileName})
   }
 
@@ -1072,12 +1072,12 @@ function FinePlate() {
                       <Input id="companyName" value={designReportInputs.companyName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, companyName: e.target.value })} />
                     </Col>
                   </Row>
-                  <Row>
+                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
                     <Col span={9}>
                       <label>Company Logo : </label>
                     </Col>
                     <Col span={15}>
-                      <input type="file" accept = "image/png , image/jpeg , image/jpg" onChange={handleImageFileChange} />
+                      <input type="file" accept = "image/png , image/jpeg , image/jpg" value = {setDesignReportInputs.companyLogoName} onChange={handleImageFileChange} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>

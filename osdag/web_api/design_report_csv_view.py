@@ -214,7 +214,7 @@ class CompanyLogoView(APIView) :
     parser_classes = (MultiPartParser , FormParser)
 
     def post(self, request):
-        print('insdie company logo post') 
+        print('inside company logo post') 
         # check cookie
         try:
             cookie_id = request.COOKIES.get('fin_plate_connection_session')
@@ -245,12 +245,9 @@ class CompanyLogoView(APIView) :
                     destination.write(chunk)
             print('file saved')
 
-            time.sleep(4)
             # full path of the company logo w.r.t the Project 
             logoFullPath = currentDirectory+"/file_storage/company_logo/"+fileName
             print('logoFullPath : ' , logoFullPath)
-            print('fileName : ' , fileName )
-            print('type fileName : ' , type(fileName))
             return Response({'message' : 'successfully saved file' , 'logoFullPath' : logoFullPath} , status = status.HTTP_201_CREATED)
         except : 
             print('Error in saving the file ')
