@@ -8,7 +8,7 @@ from osdag.models import Design, User
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
 
-class UserSerializer(serializers.ModelSerializer) : 
+class User_Serializer(serializers.ModelSerializer) : 
     class Meta : 
         model = User
         fields = '__all__'
