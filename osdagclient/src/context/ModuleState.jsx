@@ -299,7 +299,7 @@ export const ModuleProvider = ({ children }) => {
         }
     };
 
-    const fetchCompanyLogo = async(companyLogo , companyLogoName , reportID) => {
+    const fetchCompanyLogo = async(companyLogo , companyLogoName) => {
         console.log('companyLogo : ' , companyLogo)
         console.log('companyLogoName : ' , companyLogoName)
 
@@ -315,11 +315,10 @@ export const ModuleProvider = ({ children }) => {
                 body : formData
             })
 
-            if(response.status==201){
-                console.log('logo successfully fetched')
-                
-                // call the getPDF API adn fetch the PDF
-                // getPDF({'report_id' : reportID})
+            if(response?.status==201){
+                const jsonResponse = await response?.json()
+                // return the logogFullPath
+                return jsonResponse.logoFullPath
             }else{
                 console.log('response.status !=201, there is some error')
             }
@@ -331,9 +330,11 @@ export const ModuleProvider = ({ children }) => {
 
     const createDesignReport = async (params) => {
         console.log('params  : ' , params)
-        // extract the companylogo and fetch it as a separate request 
-        const companyLogo = params.companyLogo
-        const companyLogoName = params.companyLogoName
+
+        // store the companyLogo in the server fileSystem 
+        const logoFullPath = await fetchCompanyLogo(params.companyLogo , params.companyLogoName)
+        console.log('fileName received : ' , logoFullPath)
+        
         try {
             const response = await fetch(`${BASE_URL}generate-report`, {
                 method: 'POST',
@@ -347,7 +348,7 @@ export const ModuleProvider = ({ children }) => {
                         metadata: {
                             ProfileSummary: {
                                 CompanyName: params.companyName,
-                                CompanyLogo : "",
+                                CompanyLogo : logoFullPath ? logoFullPath : "",
                                 "Group/TeamName": params.groupTeamName,
                                 Designer: params.designer,
                             },
@@ -361,9 +362,10 @@ export const ModuleProvider = ({ children }) => {
             })
 
             const jsonResponse = await response?.json()
+            console.log('jsonresponse : ' , jsonResponse)
             if (response.status == 201) {
-                // request to send the company logo
-                fetchCompanyLogo(companyLogo , companyLogoName , jsonResponse.report_id)
+                // obtain the report_id and fetch the pdf file 
+                getPDF({'report_id' : jsonResponse.report_id})
 
             } else {
                 console.log('response.status!=201 in createDesignReport, erorr')

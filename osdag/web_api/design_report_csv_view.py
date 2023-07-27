@@ -32,6 +32,7 @@ class CreateDesignReport(APIView):
         # metadata = request.data
         # obtain teh cookies
         metadata = request.data.get('metadata')
+        print('metadata : ' , metadata)
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
         print('cookie_id : ', cookie_id)
 
@@ -91,6 +92,8 @@ class CreateDesignReport(APIView):
             metadata_final['does_design_exist'] = design_status
             metadata_final['logger_messages'] = logs
             metadata_final['filename'] = file_path
+            print('metadata final : ' , metadata_final)
+            # print('LogoFullPath : ' , metadata_final['CompanyLogo'])
 
         try:
             print('creating module from input')
@@ -225,10 +228,11 @@ class CompanyLogoView(APIView) :
         
         # generate a unique name for the file 
         fileName = ''.join(str(uuid.uuid4()).split('-')) + ".png"
+        print('fileName created : ' , fileName)
         currentDirectory = os.getcwd()
         
         # create the png file 
-        try : 
+        try :       
             with open(currentDirectory+"/file_storage/company_logo/"+fileName , 'w') as fp : 
                 pass 
         except : 
@@ -240,7 +244,14 @@ class CompanyLogoView(APIView) :
                 for chunk in file.chunks() :                 
                     destination.write(chunk)
             print('file saved')
-            return Response({'message' : 'successfully saved file'} , status = status.HTTP_201_CREATED)
+
+            time.sleep(4)
+            # full path of the company logo w.r.t the Project 
+            logoFullPath = currentDirectory+"/file_storage/company_logo/"+fileName
+            print('logoFullPath : ' , logoFullPath)
+            print('fileName : ' , fileName )
+            print('type fileName : ' , type(fileName))
+            return Response({'message' : 'successfully saved file' , 'logoFullPath' : logoFullPath} , status = status.HTTP_201_CREATED)
         except : 
             print('Error in saving the file ')
 

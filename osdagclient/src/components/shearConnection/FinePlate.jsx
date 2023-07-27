@@ -669,6 +669,7 @@ function FinePlate() {
     setSelectedPlateThicknessItems(nextTargetKeys);
     setInputs({ ...inputs, plate_thickness: nextTargetKeys })
   };
+
   // Image file changehandler 
   const handleImageFileChange = (event) => {
     // get the selected file from the event 
