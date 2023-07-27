@@ -728,6 +728,7 @@ function FinePlate() {
           setAllSelected={setAllSelected}
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
+          logs={logs}
         />
       ))}
     </div>

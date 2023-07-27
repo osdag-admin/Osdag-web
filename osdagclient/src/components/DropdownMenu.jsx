@@ -14,7 +14,7 @@ const conn_map_inv = {
   "Beam-Beam": "Beam-Beam"
 }
 
-function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected }) {
+function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected, logs }) {
 
   const { boltDiameterList, propertyClassList, thicknessList } = useContext(ModuleContext)
 
@@ -170,6 +170,34 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     parentRef.current.removeChild(element)
   }
 
+  const saveLogMessages = () => {
+    if(!logs){
+      alert("No logs to save.");
+      return;
+    }
+
+    let logsArr = []
+    let flag = false;
+
+    for(const log of logs){
+      if(log.msg === "=== End Of Design ==="){
+        flag = true; continue;
+      }
+
+      logsArr.push(`${log.type}: ${log.msg}`)
+    }
+    if(flag) logsArr.push(`INFO: === End Of Design ===`)
+
+    const content = logsArr.join('\n')
+    let element = document.createElement('a')
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', 'untitled.osi');
+    element.style.display = 'none'
+    parentRef.current.appendChild(element)
+    element.click();
+    parentRef.current.removeChild(element)
+  }
+
   const handleClick = (option) => {
     // Handle specific code for the clicked option here
     // console.log(`Clicked option: ${option.name}`);
@@ -182,7 +210,8 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
         saveInput();
         break;
 
-      case `Save Log Messages`: console.log(`Save log val ${option.name}`);
+      case `Save Log Messages`: 
+        saveLogMessages();
         break;
 
       case `Create Design Report`: console.log(`Create report val ${option.name}`);
