@@ -14,7 +14,7 @@ const conn_map_inv = {
   "Beam-Beam": "Beam-Beam"
 }
 
-function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected, logs }) {
+function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected, logs, setCreateDesignReportBool }) {
 
   const { boltDiameterList, propertyClassList, thicknessList } = useContext(ModuleContext)
 
@@ -214,7 +214,8 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
         saveLogMessages();
         break;
 
-      case `Create Design Report`: console.log(`Create report val ${option.name}`);
+      case `Create Design Report`: 
+        setCreateDesignReportBool(true);
         break;
 
       case `Save 3D Model`: console.log(`Save 3D model val ${option.name}`);

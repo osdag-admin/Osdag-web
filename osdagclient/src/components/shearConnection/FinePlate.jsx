@@ -729,6 +729,7 @@ function FinePlate() {
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           logs={logs}
+          setCreateDesignReportBool={setCreateDesignReportBool}
         />
       ))}
     </div>
