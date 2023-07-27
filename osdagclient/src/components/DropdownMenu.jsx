@@ -44,10 +44,8 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
         let plateThicknessIndex = -1;
 
         for(let i=0; i<fileArr.length; i++){
-          //console.log(item)
           const item = fileArr[i]
           const arr = item.split(":")
-          //console.log(arr)
 
           if(arr[0].includes("Bolt.Diameter")){
             boltDiameterIndex = i; continue;
@@ -163,7 +161,7 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
 
     let element = document.createElement('a')
     element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', 'untitled.osi');
+    element.setAttribute('download', 'input_osdag.osi');
     element.style.display = 'none'
     parentRef.current.appendChild(element)
     element.click();
@@ -191,7 +189,7 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     const content = logsArr.join('\n')
     let element = document.createElement('a')
     element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', 'untitled.osi');
+    element.setAttribute('download', 'logs_osdag.osi');
     element.style.display = 'none'
     parentRef.current.appendChild(element)
     element.click();
@@ -199,8 +197,6 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
   }
 
   const handleClick = (option) => {
-    // Handle specific code for the clicked option here
-    // console.log(`Clicked option: ${option.name}`);
     switch (option.name) {
       case `Load Input`:
         loadInput();
@@ -238,7 +234,6 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
       // File End
       // Edit Start
       case `Design Preferences`:
-        console.log(`Design Preferences ${option.name}`);
         setDesignPrefModalStatus(true);
         break;
       // Edit End
