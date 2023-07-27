@@ -19,6 +19,19 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 	"cad_design_status" BOOLEAN
 );
 
+CREATE TABLE IF NOT EXISTS public."User" (
+	"id" SERIAL PRIMARY KEY,
+	"username" TEXT[],
+	"password" JSONB,
+	"email" JSONB,
+	"allReports" JSONB
+	/* An array of username that can store multiple users */ 
+	/* each password will be matched to username in JSONB */ 
+	/* each email will be mapped to one username in JSONB */ 
+	/* allReports will mappings of the username and the report names ( unique ) */ 
+	/* each report is mapped to a unique user */ 
+);
+
 
 CREATE TABLE IF NOT EXISTS public."Bolt" (
 	"id" INTEGER PRIMARY KEY,

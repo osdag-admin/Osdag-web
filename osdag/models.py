@@ -1,5 +1,7 @@
 from django.db import models
 
+# postgres imports 
+from django.contrib.postgres.fields import ArrayField
 
 class Design(models.Model):
     """Design Session object in Database."""
@@ -18,6 +20,15 @@ class Design(models.Model):
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
+class User(models.Model) : 
+    username = ArrayField(ArrayField(models.TextField(blank=True)))
+    password = models.JSONField(blank=True)
+    email = models.JSONField(blank=True)
+    allReports = models.JSONField(blank=True)
+
+    class Meta : 
+        db_table = "User"
+
 class Anchor_Bolt(models.Model):
     Diameter = models.TextField()
 
