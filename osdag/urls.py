@@ -9,7 +9,8 @@ from osdag.web_api.inputData_view import InputData, DesignView
 from osdag.web_api.outputCalc_view import OutputData
 from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF, CompanyLogoView
 from osdag.web_api.design_pref_api import DesignPreference
-from osdag.web_api.user_view import SignupView, ForgetPasswordView
+from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView
+from osdag.web_api.jwt_api import JWTHomeView
 from . import views
 
 # temporary
@@ -62,6 +63,8 @@ urlpatterns = [
     # authentications nad authorozation URL mappings
     path('user/signup/' , SignupView.as_view()),
     path('user/forgetpassword/' , ForgetPasswordView.as_view()),
+    path('user/logout/' ,  LogoutView.as_view()),
+    path('jwt/home' , JWTHomeView.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',

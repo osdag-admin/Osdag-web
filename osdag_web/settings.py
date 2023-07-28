@@ -68,8 +68,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'osdag',
+    # cors headers 
+    'corsheaders',
+
+    # DRF
     'rest_framework',
-    'rest_framework_simplejwt'
+
+    # simpleJWT
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True

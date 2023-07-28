@@ -1,9 +1,16 @@
+#########################################################
+# Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
+#########################################################
 
 # DRF imports 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated
+
+# simpleJWT imports 
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # django imports 
 from django.conf import settings
@@ -111,3 +118,16 @@ class ForgetPasswordView(APIView) :
 
         return Response({'message' , 'Something goes here'} , status = status.HTTP_200_OK)
         
+class LogoutView(APIView) : 
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request): 
+        try : 
+            refresh_token = request.data['refresh_token']
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status = status.HTTP_205_RESET_CONTENT)
+        
+        except Exception as e : 
+            return Response(status = status.HTTP_400_BAD_REQUEST)
+
