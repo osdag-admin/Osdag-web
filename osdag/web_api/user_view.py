@@ -9,8 +9,17 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 
+# email imports
+from osdag_web import mailing
+
+# importing serializers 
+from osdag.serializers import User_Serializer
+
 # simpleJWT imports 
 from rest_framework_simplejwt.tokens import RefreshToken
+
+# importing Django models 
+from osdag.models import User
 
 # django imports 
 from django.conf import settings
@@ -20,6 +29,9 @@ from osdag.serializers import User_Serializer
 
 # other imports 
 from cryptography.fernet import Fernet
+import string
+import os
+import random
 
 
 # obtain the attributes 
@@ -28,7 +40,7 @@ SECRET_ROOT = getattr(settings, 'SECRET_ROOT' , "")
 
 class SignupView(APIView) :
     def post(self , request) : 
-        print('inside the suerview post')
+        print('inside the signup post')
 
         # check for cookies 
         cookie_id = request.data.get('fin_plate_connection_session')
@@ -39,6 +51,10 @@ class SignupView(APIView) :
         # obtain the useranme and password 
         username = request.data.get("username")
         password = request.data.get("password")
+        email = request.data.get('email')
+
+        # store the username, password and the email in the database using a serializer 
+
         
         # encrypt the password
         key = Fernet.generate_key()
@@ -130,4 +146,59 @@ class LogoutView(APIView) :
         
         except Exception as e : 
             return Response(status = status.HTTP_400_BAD_REQUEST)
+        
+
+class CheckEmailView(APIView): 
+    def post(self , request) : 
+        print('inside check email get')
+
+        # obtain teh email 
+        email = request.data.get('email')
+
+        # check if the email exists in the database or not 
+        # database query for checking if the email is present in the database or not 
+        try : 
+            pass 
+        except : 
+            # the email is not present in the the database 
+            print('email is not present in the database')
+
+            return Response({'message' , "Email is not registered"} , status = status.HTTP_400_BAD_REQUEST)
+
+        # GENERATE AN OTP
+        # K -> is the number of digits in the OTP
+        OTP = ''.join(random.choices(string.digits, k = 6))   
+        print('OTP : ' , OTP)
+        
+        # save the OTP somewhere in the FS
+        # generate a file with the same name as teh email and store the OTP in the FILE 
+        fileName = email.split('@')[0]
+        print('fileName : ' ,fileName)
+        fileName = fileName + ".txt"
+        currentDirectory = os.getcwd()
+        print('currentDirectory : ' , currentDirectory)
+
+        # create the file 
+        try :       
+            with open(currentDirectory+"/file_storage/emails/"+fileName , 'w') as fp : 
+                pass 
+        except : 
+            print('Error in creating the image file')
+
+        # send a mail to this email
+        # generate a random OTP and verify if the OTP generated is valid or not 
+        try : 
+            mailing.send_mail(OTP)
+            return Response({'message' : 'OTP Sent'} , status = status.HTTP_200_OK)
+        except : 
+            return Response({'message' : 'Failed to send the mail'} , status = status.HTTP_400_BAD_REQUEST)
+        
+
+    def get(self , request) : 
+        print('inside check email post')
+
+        return Response({'message' : 'Under development'} , status = status.HTTP_201_CREATED)
+
+
+
 

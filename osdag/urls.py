@@ -11,6 +11,7 @@ from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF, Com
 from osdag.web_api.design_pref_api import DesignPreference
 from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView
 from osdag.web_api.jwt_api import JWTHomeView
+from osdag.web_api.google_sso_api import GoogleSSOView
 from . import views
 
 # temporary
@@ -64,7 +65,8 @@ urlpatterns = [
     path('user/signup/' , SignupView.as_view()),
     path('user/forgetpassword/' , ForgetPasswordView.as_view()),
     path('user/logout/' ,  LogoutView.as_view()),
-    path('jwt/home' , JWTHomeView.as_view()),
+    path('jwt/home' , JWTHomeView.as_view()),     # view for testing purpose
+    path('googlesso/' , GoogleSSOView.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',
