@@ -11,6 +11,7 @@ from rest_framework import status
 class JWTHomeView(APIView) : 
 
     permission_classes = (IsAuthenticated,)
+    # add this permission class to authenticate the user for all the views of the project
 
     def get(self,  request) : 
         print('inside the JWTHomeView get')

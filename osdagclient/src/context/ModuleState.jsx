@@ -390,6 +390,46 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    // USER AUTHENTICATION AND AUTHORAZATION 
+    const createJWTToken = async(username , password) => {
+        try{
+            const response = await fetch(`${BASE_URL}api/token` , {
+                method : 'POST',
+                mode : 'cors',
+                credentials : 'include',
+                body : {
+                    'username' : username,
+                    'password' : password
+                }
+            })
+
+            const jsonResponse = await response?.json()
+            if(response.status==201){
+                console.log('token has been created')
+
+                // obtain the refresh and the access token 
+                const refresh_token =jsonResponse.refresh_token
+                const access_token = jsonResponse.access_token
+                
+                console.log('refresh_token ; ' , refresh_token)
+                console.log('access_token : ' , access_token)
+                
+                // set the refresh token and the access token in teh localstorage 
+                localStorage.setItem('access_token' , access_token)
+                localStorage.setItem('refresh_token' , refresh_token)
+                // now for every next request, set the Authentication header and the access_token
+                // headers : {Authentication : 'Bearer {access_token}'}
+
+            }else{
+                console.log('response status !=201 for creating token')
+            }
+
+        }catch(error){
+            console.log('There was an error in obtainin the token')
+            console.log('error : ' , error)
+        }
+    }
+
     return (
         <ModuleContext.Provider value={{
             // State variables 
