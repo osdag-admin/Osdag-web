@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './Auth.css'
 import icon from '../../assets/logo-osdag.png'
 
+
 const LoginPage = ({ onLogin }) => {
     const [isSignup, setIsSignup] = useState(false)
     const [name, setName] = useState('')
@@ -20,6 +21,7 @@ const LoginPage = ({ onLogin }) => {
         if(isSignup){
             if(!name){
                 alert("Enter a name to continue")
+                return;
             }
             // dispatch(signup({ name, email, password }, navigate))
             // register
@@ -56,7 +58,11 @@ const LoginPage = ({ onLogin }) => {
 //   const handlePasswordChange = (event) => {
 //     setPassword(event.target.value);
 //   };
+  const handleGoogleSignIn = () => {
 
+    console.log('Google Sign-In button clicked!');
+
+  };
 
 
   return (
@@ -65,6 +71,10 @@ const LoginPage = ({ onLogin }) => {
             { isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={180} width={500}/>}
             <div class='auth-container-2'>
                 { !isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>}
+                <button className="google-signin-button" onClick={handleGoogleSignIn}>
+                    <img className="google-logo" src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
+                    Sign in with Google
+                </button>
                 <form onSubmit={handleSubmit}>
                     {
                         isSignup && (
