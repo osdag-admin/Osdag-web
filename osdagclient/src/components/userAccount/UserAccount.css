@@ -1,0 +1,41 @@
+/* UserAccount.css */
+.dashboard-container {
+  display: flex;
+  height: 100vh; /* Adjust the height as needed */
+  
+}
+
+.side-navigation {
+  width: 250px;
+  background-color: #f0f0f0;
+  padding: 20px;
+
+}
+
+.side-navigation h2 {
+  margin-bottom: 20px;
+}
+
+.side-navigation ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-navigation li {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.side-navigation li:hover {
+  color: #007bff;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.main-content h1 {
+  margin-bottom: 20px;
+}

@@ -670,11 +670,21 @@ function FinePlate() {
     setInputs({ ...inputs, plate_thickness: nextTargetKeys })
   };
 
+// Get local Stored Items
+
+// const storedCompanyLogo = JSON.parse(localStorage.getItem('companyLogo'));
+// const storedCompanyLogoName = localStorage.getItem('companyLogoName');
   // Image file changehandler 
   const handleImageFileChange = (event) => {
+
     // get the selected file from the event 
     const imageFile = event.target.files[0]
     let imageFileName = event.target.files[0].name
+
+    // Add local storage code 
+    // localStorage.setItem('companyLogo',imageFile);
+    // localStorage.setItem('companyLogoName', imageFileName);
+
     setDesignReportInputs({...designReportInputs , companyLogo : imageFile , companyLogoName : imageFileName})
   }
 

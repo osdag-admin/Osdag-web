@@ -1,46 +1,80 @@
-import './App.css'
-import FinePlate from './components/shearConnection/FinePlate';
-import Sidebar from './components/Sidebar'
-import Mainwindow from './components/Mainwindow'
-import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
+import React, { useState } from 'react';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  Outlet,
+  RouterProvider,
+  Navigate,
+  useNavigate,
+} from 'react-router-dom';
+import { Worker } from '@react-pdf-viewer/core';
+
+import Sidebar from './components/Sidebar';
+import Mainwindow from './components/Mainwindow';
 import Window from './components/Window';
-import { useLocation } from 'react-router-dom';
-
-import { GlobalProvider } from './context/GlobalState'
+import FinePlate from './components/shearConnection/FinePlate';
+import { GlobalProvider } from './context/GlobalState';
 import { ModuleProvider } from './context/ModuleState';
+import UserAccount from './components/userAccount/UserAccount';
 
-// pdf viewer imports 
-import {Worker} from '@react-pdf-viewer/core'
+// New component for the login page
+import LoginPage from './components/userAuth/LoginPage';
 
 function App() {
+  // State to track user authentication status
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Function to handle successful login
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<Root />}>
+      <Route path="/" element={<Root isAuthenticated={isAuthenticated} />}>
         <Route index element={<Mainwindow />} />
         <Route path='/design-type/:designType' element={<Window />} />
-        <Route path='/design/:designType/:item' element={<FinePlate />} />
+        {/* Wrap FinePlate with a route that checks authentication */}
+        <Route
+          path='/design/:designType/:item'
+          element={
+            isAuthenticated ? <FinePlate /> : <Navigate to="/login" />
+          }
+        />
+      <Route path='/user' element={<UserAccount />} />
       </Route>
+      
     )
-  )
+  );
+
   return (
     <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
       <GlobalProvider>
         <ModuleProvider>
           <div className="app">
-            <RouterProvider router={router} />
+            {/* Show the login page when not authenticated */}
+            {!isAuthenticated && <LoginPage onLogin={handleLogin} />}
+            {/* Render the router when authenticated */}
+            {isAuthenticated && <RouterProvider router={router} />}
           </div>
         </ModuleProvider>
       </GlobalProvider>
     </Worker>
-  )
+  );
 }
-const Root = () => {
-  const location = useLocation();
-  const isDesignRoute = location.pathname.includes('/design/');
+
+const Root = ({ isAuthenticated }) => {
+  const navigate = useNavigate();
+
+  // Check if the current pathname matches the specified path
+  const isDesignPage = window.location.pathname.startsWith('/design/');
+  const isUserProfilePage = window.location.pathname.startsWith('/useraccount/');
+
   return (
     <>
-      {!isDesignRoute && (
+      {/* Show Sidebar when authenticated and not on a design page */}
+      {isAuthenticated && !isDesignPage && !isUserProfilePage && (
         <div>
           <Sidebar />
         </div>
@@ -49,7 +83,7 @@ const Root = () => {
         <Outlet />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

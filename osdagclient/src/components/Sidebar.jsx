@@ -41,12 +41,13 @@ function Sidebar() {
     <>
       <div className={'sidebar'}>
         
-
+      
         <div className="sidebar-container">
           {
             data && data.data && data.data.map((item) => {
               return (
                 <div key={item.id} className="sidebar-item" >
+                  
                   <button onClick={() => {
                     navigate(`design-type/${item.name.toLowerCase().replaceAll("_", "-")}`)
                   }}>{item.name.toUpperCase().replaceAll("_", " ")}</button>
@@ -54,7 +55,15 @@ function Sidebar() {
               )
             })
           }
+          
         </div>
+        <div className="sidebar-item">
+        <button onClick={()=>{
+          navigate('/user')
+        }}>
+          My account
+        </button>
+      </div>
         <div className="sidebar-setting">
           <select onChange={handleSelectChange}>
             <option value={"1"}>Help</option>
