@@ -480,6 +480,15 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const updateSourceAndMechType = (id, materialValue) => {
+        if(id === 1){
+            dispatch({type:"UPDATE_SUPPORTING_ST_DATA", payload: materialValue})
+        }
+        else if(id === 2){
+            dispatch({type:"UPDATE_SUPPORTED_ST_DATA", payload: materialValue})
+        }
+    }
+
     return (
         <ModuleContext.Provider value={{
             // State variables 
@@ -519,7 +528,8 @@ export const ModuleProvider = ({ children }) => {
             saveCSV,
             getDesingPrefData,
             createJWTToken,
-            refreshJWTToken
+            refreshJWTToken,
+            updateSourceAndMechType
         }}>
             {children}
         </ModuleContext.Provider>

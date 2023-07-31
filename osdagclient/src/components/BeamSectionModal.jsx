@@ -2,9 +2,14 @@ import React, { useContext } from 'react'
 import { ModuleContext } from '../context/ModuleState'
 import { Input, Select } from 'antd'
 import ISection from '../assets/ISection.png'
+
+const readOnlyFontStyle = {
+    color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600' 
+}
+
 const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
 
-    const { materialList } = useContext(ModuleContext)
+    const { materialList, updateSourceAndMechType } = useContext(ModuleContext)
 
     return (
         <div className='col-beam-cont'>
@@ -17,6 +22,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                         className='input-design-pref'
                         value={supportedSectionData.Designation}
                         disabled
+                        style={readOnlyFontStyle}
                     />
                 </div>
                 <div className='sub-container'>
@@ -26,8 +32,10 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
                                 value={inputs.supporting_material}
-                                onSelect={(value) => setInputs({ ...inputs, supporting_material: value })}
-                                disabled
+                                onSelect={(value) => {
+                                    setInputs({ ...inputs, supporting_material: value }),
+                                    updateSourceAndMechType(2, value)
+                                }}
                             >
                                 {materialList.map((item, index) => (
                                     <Option key={index} value={item}>{item}</Option>
@@ -43,6 +51,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={'0'}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -53,6 +62,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={'0'}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -63,6 +73,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={'0'}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -73,6 +84,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={'0'}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -83,6 +95,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={'0'}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -93,13 +106,14 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={'0'}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
                         <h5>Type</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
-                                value={'Rolled'}
+                                value={supportedSectionData.Type ? supportedSectionData.Type : "Rolled"}
                             //onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                         disabled
                             >
@@ -117,6 +131,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Source || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                 </div>
@@ -133,6 +148,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.D || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -143,6 +159,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.B || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -153,6 +170,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.T || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -163,6 +181,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.tw || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -173,6 +192,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.FlangeSlope || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -183,6 +203,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.R1 || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -193,6 +214,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.R2 || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                 </div>
@@ -206,6 +228,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Mass || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -216,6 +239,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Area || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -226,6 +250,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Iz || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -236,6 +261,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Iy || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -246,6 +272,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.rz || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -256,6 +283,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.ry || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -266,6 +294,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Zz || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                 </div>
@@ -286,6 +315,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Zpz || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -296,6 +326,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Zpy || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -306,6 +337,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.It || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -316,6 +348,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             className='input-design-pref'
                             value={supportedSectionData.Iw || 0}
                             disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                 </div>

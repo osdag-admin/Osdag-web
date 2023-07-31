@@ -79,6 +79,44 @@ export default (state, action) => {
                 ...state,
                 designPrefData: action.payload
             }
+        case 'UPDATE_SUPPORTING_ST_DATA':
+            let {supporting_section_results} = state.designPrefData
+            supporting_section_results = supporting_section_results[0]
+
+            if(action.payload === "Custom"){
+                supporting_section_results.Source = 'Custom'
+                supporting_section_results.Type = 'Welded'
+                return {
+                    ...state,
+                    designPrefData: {...state.designPrefData, supporting_section_results: [supporting_section_results]}
+                }
+            }
+            
+            supporting_section_results.Source = 'IS808_Rev'
+            supporting_section_results.Type = 'Rolled'
+            return {
+                ...state,
+                designPrefData: {...state.designPrefData, supporting_section_results: [supporting_section_results]}
+            }
+        case 'UPDATE_SUPPORTED_ST_DATA':
+            let {supported_section_results} = state.designPrefData
+            supported_section_results = supported_section_results[0]
+
+            if(action.payload === "Custom"){
+                supported_section_results.Source = 'Custom'
+                supported_section_results.Type = 'Welded'
+                return {
+                    ...state,
+                    designPrefData: {...state.designPrefData, supported_section_results: [supported_section_results]}
+                }
+            }
+            
+            supported_section_results.Source = 'IS808_Rev'
+            supported_section_results.Type = 'Rolled'
+            return {
+                ...state,
+                designPrefData: {...state.designPrefData, supported_section_results: [supported_section_results]}
+            }
         default:
             return state;
     }
