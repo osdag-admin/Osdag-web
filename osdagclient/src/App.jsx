@@ -16,6 +16,7 @@ import Window from './components/Window';
 import FinePlate from './components/shearConnection/FinePlate';
 import { GlobalProvider } from './context/GlobalState';
 import { ModuleProvider } from './context/ModuleState';
+import { UserProvider } from './context/UserState';
 import UserAccount from './components/userAccount/UserAccount';
 
 // New component for the login page
@@ -50,16 +51,18 @@ function App() {
 
   return (
     <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
-      <GlobalProvider>
-        <ModuleProvider>
-          <div className="app">
-            {/* Show the login page when not authenticated */}
-            {!isAuthenticated && <LoginPage onLogin={handleLogin} />}
-            {/* Render the router when authenticated */}
-            {isAuthenticated && <RouterProvider router={router} />}
-          </div>
-        </ModuleProvider>
-      </GlobalProvider>
+      <UserProvider>
+        <GlobalProvider>
+          <ModuleProvider>
+            <div className="app">
+              {/* Show the login page when not authenticated */}
+              {!isAuthenticated && <LoginPage onLogin={handleLogin} />}
+              {/* Render the router when authenticated */}
+              {isAuthenticated && <RouterProvider router={router} />}
+            </div>
+          </ModuleProvider>
+        </GlobalProvider>
+      </UserProvider>
     </Worker>
   );
 }
