@@ -17,6 +17,7 @@ Django==3.2.19
 django-cors-headers==4.0.0
 django-rest-framework==0.1.0
 djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
 et-xmlfile==1.1.0
 idna==2.8
 jdcal==1.4.1
@@ -50,6 +51,7 @@ pytz==2023.3
 PyYAML==5.3.1
 requests==2.22.0
 ruamel-yaml==0.15.87
+secure-smtplib==0.1.1
 six==1.14.0
 sqlparse==0.4.4
 svgwrite==1.4
