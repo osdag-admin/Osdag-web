@@ -41,17 +41,14 @@ SECRET_ROOT = getattr(settings, 'SECRET_ROOT' , "")
 class SignupView(APIView) :
     def post(self , request) : 
         print('inside the signup post')
-
-        # check for cookies 
-        cookie_id = request.data.get('fin_plate_connection_session')
-        print('cookie_id : ' , cookie_id)
-        if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
-            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.
         
         # obtain the useranme and password 
         username = request.data.get("username")
         password = request.data.get("password")
         email = request.data.get('email')
+        print('username : ' , username)
+        print('email : ' , email)
+        print('password : ' , password)
 
         # store the username, password and the email in the database using a serializer 
 
@@ -101,12 +98,6 @@ class ForgetPasswordView(APIView) :
     def post(self , request) : 
         print('sindie teh forget password post')
         
-        # checking cookies 
-        cookie_id = request.data.get('fin_plate_connection_session')
-        print('cookie_id : ' , cookie_id)
-        if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
-            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.
-        
         # obtain the new passwrod 
         password = request.data.get('password')
 
@@ -116,12 +107,6 @@ class ForgetPasswordView(APIView) :
 
     def get(self , request) : 
         print('inside the forget password get')
-
-        # checking cookies
-        cookie_id = request.data.get('fin_plate_connection_session')
-        print('cookie_id : ' , cookie_id)
-        if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
-            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.
         
         # 1. Send the current username to the browser 
         # 2. send the email attached to the username
