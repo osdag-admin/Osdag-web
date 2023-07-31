@@ -38,6 +38,7 @@
     box-shadow: 0 10px 25px rgb(0 0 0 / 5%),
      0 20px 48px rgb(0 0 0 / 5%),
      0 1px 4px rgb(0 0 0 / 10%);
+     margin: 1rem;
 }
 
 .auth-container-2 form label input{
@@ -108,4 +109,34 @@
     height: 20px;
     margin-right: 8px;
   }
+  /* Styling for the guest sign-in button */
+.guest-signin-button {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #91b014;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: solid 1px #000000;
+  }
   
+  .guest-signin-button:hover {
+    background-color: #7f9915;
+  }
+  
+  .guest-signin-button:focus {
+    outline: none;
+  }
+  
+  .guest-signin-button:active {
+    background-color: #7f9915;
+  }
+.google-guest-container{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}  

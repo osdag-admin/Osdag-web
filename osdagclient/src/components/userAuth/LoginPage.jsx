@@ -87,18 +87,17 @@ const LoginPage = ({ onLogin }) => {
         }
     }
 
-//   const handleUsernameChange = (event) => {
-//     setUsername(event.target.value);
-//   };
-
-//   const handlePasswordChange = (event) => {
-//     setPassword(event.target.value);
-//   };
+    // Google Auth
   const handleGoogleSignIn = () => {
 
     console.log('Google Sign-In button clicked!');
 
   };
+    // Guest 
+    const handleGuestSignIn = () => {
+        
+        console.log("Guest sign-in activated");
+      };
 
 
   return (
@@ -107,10 +106,16 @@ const LoginPage = ({ onLogin }) => {
             { isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={180} width={500}/>}
             <div class='auth-container-2'>
                 { !isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>}
+
+                <div className='google-guest-container'> 
                 <button className="google-signin-button" onClick={handleGoogleSignIn}>
                     <img className="google-logo" src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
                     Sign in with Google
                 </button>
+                <button className="guest-signin-button" onClick={handleGuestSignIn}>
+                    Guest Mode
+                </button>
+                </div>
                 <form onSubmit={handleSubmit}>
                     {
                         isSignup && (
