@@ -48,17 +48,21 @@ const LoginPage = ({ onLogin }) => {
                 }
                 
                 // register
-                const encryptedData = encryptData({ name, email, password });
+                const encUsername = encryptData({name});
+                const encEmail = encryptData({email});
+                const encPassword = encryptData({password});
 
-                // Call the createJWTToken function with the encrypted data
-                jsonResponse = await createJWTToken({ name, password });
+                // jsonResponse = await createJWTToken({ name, email, password });
+                console.log("\n Username"+encUsername+"\n Email "+encEmail+"\n Password"+encPassword);
+             
+                //     onLogin();
 
-                if (jsonResponse) {
-                    // Check if login/signup was successful
-                    onLogin();
-                  } else {
-                    alert('Invalid Credentials');
-                  }
+
+                // if (jsonResponse) {
+                //     // Check if login/signup was successful
+                //   } else {
+                //     alert('Invalid Credentials');
+                //   }
                 // dispatch(signup({ name, email, password }, navigate))
 
             }else{

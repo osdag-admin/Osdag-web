@@ -81,11 +81,11 @@ class InputData(APIView):
                     'Designation', flat=True))
                 materialList = list(
                     Material.objects.values_list('Grade', flat=True))
-
+                materialList.append('Custom')
                 response = {
                     'columnList': columnList,
                     'beamList': beamList,
-                    'materialList': materialList
+                    'materialList': materialList 
                 }
 
                 return Response(response, status=status.HTTP_200_OK)
