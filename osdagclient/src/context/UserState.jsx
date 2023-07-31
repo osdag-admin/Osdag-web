@@ -115,11 +115,14 @@ export const UserProvider = ({children}) => {
             const response = await fetch(`${BASE_URL}user/signup/` , {
                 method : 'POST',
                 mode : 'cors',
-                body : {
+                headers: {
+                    'Content-Type': 'application/json', // Set the Content-Type header to JSON
+                  },
+                body : JSON.stringify({
                     username : encrypted_username,
                     email : encrypted_email,
                     password : encrypted_password
-                }
+                })
             })
 
             const jsonResponse = await response?.json()
@@ -150,11 +153,14 @@ export const UserProvider = ({children}) => {
             const response = await fetch(`${BASE_URL}user/login/` , {
                 method : 'POST',
                 mode : 'cors',
-                body : {
+                headers: {
+                    'Content-Type': 'application/json', // Set the Content-Type header to JSON
+                  },
+                body : JSON.stringify({
                     username : encrypted_username,
                     password : encrypted_password,
                     isGuest : isGuest
-                }
+                })
             })
 
             const jsonResponse = await response?.json()

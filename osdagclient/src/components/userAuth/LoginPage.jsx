@@ -3,7 +3,7 @@ import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { AES, enc } from 'crypto-js';
-import { ModuleContext } from '../../context/ModuleState';
+import { UserContext } from '../../context/UserState';
 
 const secretKey = 'YourSecretKeyHere';
 
@@ -14,15 +14,25 @@ const encryptData = (data) => {
     return encrypted;
   };
   
-  const decryptData = (encryptedData) => {
-    const decryptedBytes = AES.decrypt(encryptedData, secretKey);
-    const decryptedString = decryptedBytes.toString(enc.Utf8);
-    return JSON.parse(decryptedString);
+//   const decryptData = (encryptedData) => {
+//     const decryptedBytes = AES.decrypt(encryptedData, secretKey);
+//     const decryptedString = decryptedBytes.toString(enc.Utf8);
+//     return JSON.parse(decryptedString);
+//   };
+
+const generateRandomString = (length) => {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      result += charset[randomIndex];
+    }
+    return result;
   };
 
 const LoginPage = ({ onLogin }) => {
 
-    const { userSignup } = useContext(ModuleContext)
+    const { userSignup, userLogin } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -38,6 +48,7 @@ const LoginPage = ({ onLogin }) => {
             alert('Enter email and password')
             return;
         }
+    
 
         try{
             let jsonResponse;
@@ -53,27 +64,16 @@ const LoginPage = ({ onLogin }) => {
                 const encPassword = encryptData({password});
 
                 console.log("\n Username"+encUsername+"\n Email "+encEmail+"\n Password"+encPassword);
-                userSignup({ encUsername, encEmail, encPassword });
+                userSignup(  encUsername, encEmail, encPassword  ).then(()=> {onLogin(); })
              
-                //     onLogin();
+                    
 
-
-                // if (jsonResponse) {
-                //     // Check if login/signup was successful
-                //   } else {
-                //     alert('Invalid Credentials');
-                //   }
-                // dispatch(signup({ name, email, password }, navigate))
 
             }else{
-           
-               
-            if (jsonResponse) {
-                // Check if login/signup was successful
-                onLogin();
-              } else {
-                alert('Invalid Credentials');
-              }
+                const Guestlog = false;
+                const encUsername = encryptData({name});
+                const encPassword = encryptData({password});
+                userLogin( { encUsername, encPassword, Guestlog } ).then(()=> {onLogin(); })
 
             }
         }
@@ -91,16 +91,19 @@ const LoginPage = ({ onLogin }) => {
   };
     // Guest 
     const handleGuestSignIn = () => {
-        
-        console.log("Guest sign-in activated");
+        const GuestUserName = `GUEST.${generateRandomString(10)}`;
+        const GuestUserPassword = generateRandomString(12);
+        const Guestlog = true;
+        console.log("\n Guest Name: "+GuestUserName+"\n Password:"+GuestUserPassword)
+        userLogin( { GuestUserName, GuestUserPassword, Guestlog } ).then(()=> {onLogin(); })
       };
 
 
   return (
     <>
-   <section class='auth-section'>
+   <section className='auth-section'>
             { isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={180} width={500}/>}
-            <div class='auth-container-2'>
+            <div className='auth-container-2'>
                 { !isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>}
 
                 <div className='google-guest-container'> 
