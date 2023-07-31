@@ -1,9 +1,28 @@
-import { useState } from 'react';
-import './Auth.css'
-import icon from '../../assets/logo-osdag.png'
+import { useState, useContext } from 'react';
+import './Auth.css';
+import icon from '../../assets/logo-osdag.png';
+// import { createJWTToken } from '../../context/ModuleState';
+import { AES, enc } from 'crypto-js';
+import { ModuleContext } from '../../context/ModuleState';
 
+const secretKey = 'YourSecretKeyHere';
+
+
+const encryptData = (data) => {
+    const dataString = JSON.stringify(data);
+    const encrypted = AES.encrypt(dataString, secretKey).toString();
+    return encrypted;
+  };
+  
+  const decryptData = (encryptedData) => {
+    const decryptedBytes = AES.decrypt(encryptedData, secretKey);
+    const decryptedString = decryptedBytes.toString(enc.Utf8);
+    return JSON.parse(decryptedString);
+  };
 
 const LoginPage = ({ onLogin }) => {
+
+    const { createJWTToken } = useContext(ModuleContext)
     const [isSignup, setIsSignup] = useState(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -13,41 +32,54 @@ const LoginPage = ({ onLogin }) => {
         setIsSignup(!isSignup)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        if(!email && !password){
+        if(!email || !password){
             alert('Enter email and password')
+            return;
         }
-        if(isSignup){
-            if(!name){
-                alert("Enter a name to continue")
-                return;
-            }
-            // dispatch(signup({ name, email, password }, navigate))
-            // register
 
-            // Temp Code
-            if(email == 'test@gmail.com' && password == 'test') 
-            {
-                onLogin();
-            }
-            else{
-                alert("Invalid Cradentials")
-            }
+        try{
+            let jsonResponse;
+            if(isSignup){
+                if(!name){
+                    alert("Enter a name to continue")
+                    return;
+                }
+                
+                // register
+                const encryptedData = encryptData({ name, email, password });
 
+                // Call the createJWTToken function with the encrypted data
+                jsonResponse = await createJWTToken({ name, password });
 
+                if (jsonResponse) {
+                    // Check if login/signup was successful
+                    onLogin();
+                  } else {
+                    alert('Invalid Credentials');
+                  }
+                // dispatch(signup({ name, email, password }, navigate))
+
+            }else{
+           
             
-        }else{
-            // dispatch(login({ email, password }, navigate))
-        // login
-         // Temp Code
-         if(email == 'test@gmail.com' && password == 'test') 
-         {
-             onLogin();
-         }
-         else{
-             alert("Invalid Cradentials")
-         }
+           const encryptedData = encryptData({ email, password });
+
+                    // Call the createJWTToken function with the encrypted data
+                jsonResponse = await createJWTToken({  email, password });
+            if (jsonResponse) {
+                // Check if login/signup was successful
+                onLogin();
+              } else {
+                alert('Invalid Credentials');
+              }
+
+            }
+        }
+        catch(error){
+            console.log('Error occurred while obtaining the token', error);
+             alert('There was an error during login/signup.');
         }
     }
 

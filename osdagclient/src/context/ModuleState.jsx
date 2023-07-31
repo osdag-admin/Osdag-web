@@ -391,14 +391,18 @@ export const ModuleProvider = ({ children }) => {
     }
 
     // USER AUTHENTICATION AND AUTHORAZATION 
-    const createJWTToken = async(username , password) => {
+    const createJWTToken = async(username, mail , password) => {
         try{
-            const response = await fetch(`${BASE_URL}api/token` , {
+            const response = await fetch(`${BASE_URL}api/token/` , {
                 method : 'POST',
                 mode : 'cors',
                 credentials : 'include',
+                headers: {
+                    'Content-Type': 'application/json', // Set the correct content type here
+                  },
                 body : {
                     'username' : username,
+                    'mail' : mail,
                     'password' : password
                 }
             })
@@ -452,9 +456,9 @@ export const ModuleProvider = ({ children }) => {
             const response = await fetch(`${BASE_URL}api/token/refresh` , {
                 method : 'POST',
                 mode : 'cors',
-                headers : {
-                    'Authorization' : `Bearer ${access_token}`
-                },
+                // headers : {
+                //     'Authorization' : `Bearer ${access_token}`
+                // },
                 body : {
                     "refresh" : refresh_token
                 },
@@ -513,7 +517,9 @@ export const ModuleProvider = ({ children }) => {
             createDesign,
             createDesignReport,
             saveCSV,
-            getDesingPrefData
+            getDesingPrefData,
+            createJWTToken,
+            refreshJWTToken
         }}>
             {children}
         </ModuleContext.Provider>
