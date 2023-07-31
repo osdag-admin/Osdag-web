@@ -142,6 +142,41 @@ export const UserProvider = ({children}) => {
         }
     }
 
+    const userLogin = async(encrypted_username , encrypted_password , isGuest) => {
+        console.log('inside user login')
+        console.log('encrypted_username : ' , encrypted_username)
+
+        try{
+            const response = await fetch(`${BASE_URL}user/login/` , {
+                method : 'POST',
+                mode : 'cors',
+                body : {
+                    username : encrypted_username,
+                    password : encrypted_password,
+                    isGuest : isGuest
+                }
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse : ' , jsonResponse)
+            if(response.status==200){
+                console.log('user logged in successfully')
+                
+                // create a new jwt token 
+                createJWTToken(encrypted_username , encrypted_password)
+
+                // set the login variable to true 
+                dispatch({type : 'SET_LOGGED_IN' , payload : true})
+            }else{
+                console.log('response.status!=200, user not logged in')
+                dispatch({type : 'SET_LOGGED_IN' , payload : false})
+            }
+        }catch(err){
+            console.log('error in logging in')
+            dispatch({type : 'SET_LOGGED_IN' , payload : false})
+        }
+    }
+
     return (
         <UserContext.Provider value = {{
             // state variables 
@@ -150,7 +185,8 @@ export const UserProvider = ({children}) => {
 
 
             // thunks
-            userSignup
+            userSignup,
+            userLogin
             
         }}>
             {children}

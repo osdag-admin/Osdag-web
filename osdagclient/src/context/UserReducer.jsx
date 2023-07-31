@@ -7,7 +7,7 @@
 
 export default (state, action) => {
     switch(action.type){
-        case 'SET_LOGIN' : 
+        case 'SET_LOGGED_IN' : 
             return {
                 ...state,
                 isLoggedIn : action.payload

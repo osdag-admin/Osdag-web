@@ -201,4 +201,26 @@ class CheckEmailView(APIView):
 
 
 
+class LoginView(APIView) : 
+    def get(self , request) :
+        print('inside login get')
+
+        return Response({'message' : 'Fucntion under developement'} , status = status.HTTP_200_OK)
+    
+
+    def post(self , request) : 
+        print('inside login post')
+
+        # obtain the encrypted username and password 
+        username = request.data.get('username')
+        password = request.data.get('password')
+        print('username : ' , username)
+        print('password : ' , password)
+
+        # authenticate the user 
+
+        
+        # return a sucess message 
+        return Response({'message' : 'User logged in'} , status = status.HTTP_200_OK)
+
 
