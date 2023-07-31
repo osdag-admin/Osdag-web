@@ -390,6 +390,7 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+<<<<<<< HEAD
     // USER AUTHENTICATION AND AUTHORAZATION 
     const createJWTToken = async(username, mail , password) => {
         try{
@@ -489,6 +490,8 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+=======
+>>>>>>> dea7b37f (user signup thunk created, shifted the user state to a separate file)
     return (
         <ModuleContext.Provider value={{
             // State variables 
