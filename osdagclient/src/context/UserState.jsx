@@ -142,7 +142,7 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const userLogin = async(encrypted_username , encrypted_password) => {
+    const userLogin = async(encrypted_username , encrypted_password , isGuest) => {
         console.log('inside user login')
         console.log('encrypted_username : ' , encrypted_username)
 
@@ -152,7 +152,8 @@ export const UserProvider = ({children}) => {
                 mode : 'cors',
                 body : {
                     username : encrypted_username,
-                    password : encrypted_password
+                    password : encrypted_password,
+                    isGuest : isGuest
                 }
             })
 
