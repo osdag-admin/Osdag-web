@@ -22,7 +22,7 @@ const encryptData = (data) => {
 
 const LoginPage = ({ onLogin }) => {
 
-    const { createJWTToken } = useContext(ModuleContext)
+    const { userSignup } = useContext(ModuleContext)
     const [isSignup, setIsSignup] = useState(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -52,8 +52,8 @@ const LoginPage = ({ onLogin }) => {
                 const encEmail = encryptData({email});
                 const encPassword = encryptData({password});
 
-                // jsonResponse = await createJWTToken({ name, email, password });
                 console.log("\n Username"+encUsername+"\n Email "+encEmail+"\n Password"+encPassword);
+                userSignup({ encUsername, encEmail, encPassword });
              
                 //     onLogin();
 
