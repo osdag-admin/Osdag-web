@@ -107,22 +107,26 @@ export const UserProvider = ({children}) => {
     }
 
 
-    const userSignup = async({encrypted_username , encrypted_email , encrypted_password }) => {
+    const userSignup = async( encrypted_username , encrypted_email , encrypted_password ) => {
         console.log("inside the user signup thunk")
         console.log('useranme : ' , encrypted_username)
+        console.log('password : ' , encrypted_password)
+        console.log('email : ' , encrypted_email)
 
         try{
             const response = await fetch(`${BASE_URL}user/signup/` , {
                 method : 'POST',
                 mode : 'cors',
                 headers: {
-                    'Content-Type': 'application/json', // Set the Content-Type header to JSON
+                    'Content-Type': 'application/json' // Set the Content-Type header to JSON
                   },
-                body : JSON.stringify({
-                    username : encrypted_username,
-                    email : encrypted_email,
-                    password : encrypted_password
-                })
+                body : JSON.stringify(
+                    {
+                        username : encrypted_username,
+                        email : encrypted_email,
+                        password : encrypted_password
+                    }
+                )
             })
 
             const jsonResponse = await response?.json()
@@ -156,11 +160,11 @@ export const UserProvider = ({children}) => {
                 headers: {
                     'Content-Type': 'application/json', // Set the Content-Type header to JSON
                   },
-                body : JSON.stringify({
+                body : {
                     username : encrypted_username,
                     password : encrypted_password,
                     isGuest : isGuest
-                })
+                }
             })
 
             const jsonResponse = await response?.json()

@@ -43,6 +43,8 @@ class SignupView(APIView) :
         print('inside the signup post')
         
         # obtain the useranme and password 
+        temp = request.data
+        print('temp : ' , temp)
         username = request.data.get("username")
         password = request.data.get("password")
         email = request.data.get('email')
@@ -55,10 +57,12 @@ class SignupView(APIView) :
         
         # encrypt the password
         key = Fernet.generate_key()
+        print('key : ' , key)
         # later use the same key to decrypt the password
         
         # save the key in a file 
         targetFilePath = SECRET_ROOT + "key.txt"
+        print('targetFilePath : ' , targetFilePath)
         try : 
             file_object = open(targetFilePath , "+bw")
             file_object.write(key)
