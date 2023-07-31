@@ -428,9 +428,7 @@ export const ModuleProvider = ({ children }) => {
             createDesignReport,
             saveCSV,
             getDesingPrefData,
-            createJWTToken,
-            refreshJWTToken,
-            updateSourceAndMechType
+            
         }}>
             {children}
         </ModuleContext.Provider>

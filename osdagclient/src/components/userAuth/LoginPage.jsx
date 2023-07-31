@@ -67,11 +67,7 @@ const LoginPage = ({ onLogin }) => {
 
             }else{
            
-            
-           const encryptedData = encryptData({ email, password });
-
-                    // Call the createJWTToken function with the encrypted data
-                jsonResponse = await createJWTToken({  email, password });
+               
             if (jsonResponse) {
                 // Check if login/signup was successful
                 onLogin();
