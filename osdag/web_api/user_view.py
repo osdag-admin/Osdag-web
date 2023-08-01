@@ -28,6 +28,7 @@ from django.conf import settings
 from osdag.serializers import User_Serializer
 
 # other imports 
+from osdag_web.aes import AESCipher
 from cryptography.fernet import Fernet
 import string
 import os
@@ -54,6 +55,12 @@ class SignupView(APIView) :
 
         # store the username, password and the email in the database using a serializer 
 
+        # aes 
+        aes = AESCipher('atharva')
+        encText = aes.encrypt("This is Atharva")
+        print('enc Text : ' , encText)
+        decUsername = aes.decrypt(username)
+        print('dec username : ' , decUsername)
         
         # encrypt the password
         key = Fernet.generate_key()

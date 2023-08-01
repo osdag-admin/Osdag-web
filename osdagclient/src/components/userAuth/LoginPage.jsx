@@ -2,16 +2,34 @@ import { useState, useContext } from 'react';
 import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
-import { AES, enc } from 'crypto-js';
 import { UserContext } from '../../context/UserState';
+import CryptoJS from 'crypto-js';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto-browserify';
 
-const secretKey = 'YourSecretKeyHere';
+const secretKey = 'atharva';
 
 
 const encryptData = (data) => {
+    /*
     const dataString = JSON.stringify(data);
     const encrypted = AES.encrypt(dataString, secretKey).toString();
-    return encrypted;
+    return JSON.stringify(encrypted);
+    */
+
+    const iv = 'asd';
+
+    const fkey = CryptoJS.enc.Utf8.parse(secretKey);
+    const fiv = CryptoJS.enc.Utf8.parse(iv);
+
+    const enc = CryptoJS.AES.encrypt(data, fkey, {
+        iv: fiv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+    });
+
+    console.log('enc : ' ,enc)
+    return JSON.stringify(enc)
+
   };
   
 //   const decryptData = (encryptedData) => {
