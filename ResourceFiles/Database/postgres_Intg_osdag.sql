@@ -98,7 +98,7 @@ INSERT INTO public."Angle_Pitch" VALUES(11,150,20,2,55,55,NULL);
 INSERT INTO public."Angle_Pitch" VALUES(13,200,30,2,75,75,NULL);
 INSERT INTO public."Angle_Pitch" VALUES(12,200,20,3,55,55,55);
 CREATE TABLE IF NOT EXISTS public."Material" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Grade"	TEXT,
 	"Yield Stress (< 20)"	INTEGER,
 	"Yield Stress (20 -40)"	INTEGER,

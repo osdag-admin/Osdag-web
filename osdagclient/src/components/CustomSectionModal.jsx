@@ -26,6 +26,36 @@ const CustomSectionModal = ({ showModal, setShowModal }) => {
         setGrade(arr.join("_"))
       
     }, [inputs])
+
+    const handleSubmit = () => {
+        if(!inputs.fy_20 && !inputs.fy_20_40 && !inputs.fy_40 && !inputs.fu){
+            alert("Please fill the fields");
+            return;
+        }
+
+        fetch(`http://127.0.0.1:8000/materialDetails/`, {
+            method : 'POST',
+            mode : 'cors',
+            credentials : 'include', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body : JSON.stringify({
+                materialName: grade, 
+                fy_20: parseInt(inputs.fy_20),
+                fy_20_40: parseInt(inputs.fy_20_40),
+                fy_40: parseInt(inputs.fy_40),
+                fu: parseInt(inputs.fu)
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
     
 
     return (
@@ -96,7 +126,7 @@ const CustomSectionModal = ({ showModal, setShowModal }) => {
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'center'}}>
-                    <Button type='button' className='primary-btn'>Add</Button>
+                    <Button type='button' className='primary-btn' onClick={handleSubmit}>Add</Button>
                 </div>
             </div>
         </Modal>

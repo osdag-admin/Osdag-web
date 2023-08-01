@@ -119,7 +119,7 @@ class Material_Serializer(serializers.ModelSerializer) :
 
     class Meta  : 
         model = Material
-        fields = '__all__'
+        fields = ["Grade", "Yield_Stress_less_than_20", "Yield_Stress_between_20_and_neg40", "Yield_Stress_greater_than_40", "Ultimate_Tensile_Stress", "Elongation"]
 
 
 class RHS_Serializer(serializers.ModelSerializer) : 
