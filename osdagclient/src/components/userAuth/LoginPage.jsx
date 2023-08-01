@@ -3,7 +3,7 @@ import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { AES, enc } from 'crypto-js';
-import { ModuleContext } from '../../context/ModuleState';
+import { UserContext } from '../../context/UserState';
 
 const secretKey = 'YourSecretKeyHere';
 
@@ -14,15 +14,25 @@ const encryptData = (data) => {
     return encrypted;
   };
   
-  const decryptData = (encryptedData) => {
-    const decryptedBytes = AES.decrypt(encryptedData, secretKey);
-    const decryptedString = decryptedBytes.toString(enc.Utf8);
-    return JSON.parse(decryptedString);
+//   const decryptData = (encryptedData) => {
+//     const decryptedBytes = AES.decrypt(encryptedData, secretKey);
+//     const decryptedString = decryptedBytes.toString(enc.Utf8);
+//     return JSON.parse(decryptedString);
+//   };
+
+const generateRandomString = (length) => {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      result += charset[randomIndex];
+    }
+    return result;
   };
 
 const LoginPage = ({ onLogin }) => {
 
-    const { createJWTToken } = useContext(ModuleContext)
+    const { userSignup, userLogin } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -38,6 +48,7 @@ const LoginPage = ({ onLogin }) => {
             alert('Enter email and password')
             return;
         }
+    
 
         try{
             let jsonResponse;
@@ -48,32 +59,21 @@ const LoginPage = ({ onLogin }) => {
                 }
                 
                 // register
-                const encryptedData = encryptData({ name, email, password });
+                const encUsername = encryptData({name});
+                const encEmail = encryptData({email});
+                const encPassword = encryptData({password});
 
-                // Call the createJWTToken function with the encrypted data
-                jsonResponse = await createJWTToken({ name, password });
+                console.log("\n Username"+encUsername+"\n Email "+encEmail+"\n Password"+encPassword);
+                userSignup(  encUsername, encEmail, encPassword  ).then(()=> {onLogin(); })
+             
+                    
 
-                if (jsonResponse) {
-                    // Check if login/signup was successful
-                    onLogin();
-                  } else {
-                    alert('Invalid Credentials');
-                  }
-                // dispatch(signup({ name, email, password }, navigate))
 
             }else{
-           
-            
-           const encryptedData = encryptData({ email, password });
-
-                    // Call the createJWTToken function with the encrypted data
-                jsonResponse = await createJWTToken({  email, password });
-            if (jsonResponse) {
-                // Check if login/signup was successful
-                onLogin();
-              } else {
-                alert('Invalid Credentials');
-              }
+                const Guestlog = false;
+                const encUsername = encryptData({name});
+                const encPassword = encryptData({password});
+                userLogin( { encUsername, encPassword, Guestlog } ).then(()=> {onLogin(); })
 
             }
         }
@@ -83,30 +83,38 @@ const LoginPage = ({ onLogin }) => {
         }
     }
 
-//   const handleUsernameChange = (event) => {
-//     setUsername(event.target.value);
-//   };
-
-//   const handlePasswordChange = (event) => {
-//     setPassword(event.target.value);
-//   };
+    // Google Auth
   const handleGoogleSignIn = () => {
 
     console.log('Google Sign-In button clicked!');
 
   };
+    // Guest 
+    const handleGuestSignIn = () => {
+        const GuestUserName = `GUEST.${generateRandomString(10)}`;
+        const GuestUserPassword = generateRandomString(12);
+        const Guestlog = true;
+        console.log("\n Guest Name: "+GuestUserName+"\n Password:"+GuestUserPassword)
+        userLogin( { GuestUserName, GuestUserPassword, Guestlog } ).then(()=> {onLogin(); })
+      };
 
 
   return (
     <>
-   <section class='auth-section'>
+   <section className='auth-section'>
             { isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={180} width={500}/>}
-            <div class='auth-container-2'>
+            <div className='auth-container-2'>
                 { !isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>}
+
+                <div className='google-guest-container'> 
                 <button className="google-signin-button" onClick={handleGoogleSignIn}>
                     <img className="google-logo" src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
                     Sign in with Google
                 </button>
+                <button className="guest-signin-button" onClick={handleGuestSignIn}>
+                    Guest Mode
+                </button>
+                </div>
                 <form onSubmit={handleSubmit}>
                     {
                         isSignup && (

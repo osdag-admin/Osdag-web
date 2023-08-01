@@ -58,7 +58,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="ultimate-strength"
                                 className='input-design-pref'
-                                value={supported_material_details ? supported_material_details[0].Ultimate_Tensile_Stress : 0}
+                                value={supported_material_details[0] ? supported_material_details[0].Ultimate_Tensile_Stress : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -69,7 +69,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="yield-strength"
                                 className='input-design-pref'
-                                value={supported_material_details ? supported_material_details[0].Yield_Stress_greater_than_40 : 0}
+                                value={supported_material_details[0] ? supported_material_details[0].Yield_Stress_greater_than_40 : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
