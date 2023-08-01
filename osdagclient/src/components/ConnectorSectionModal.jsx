@@ -11,12 +11,12 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
     const { materialList, conn_material_details, getMaterialDetails } = useContext(ModuleContext)
 
     useEffect(() => {
-        getMaterialDetails({conn_material: inputs.connector_material})
+        getMaterialDetails({material: inputs.connector_material, type: "connector"})
     }, [])
 
     const handleMaterialChange = value => {
         setInputs({ ...inputs, connector_material: value })
-        getMaterialDetails({conn_material: value})
+        getMaterialDetails({material: value, type: "connector"})
     }
     
 

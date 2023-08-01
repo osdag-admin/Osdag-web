@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { ModuleContext } from '../context/ModuleState'
 import { Input, Select } from 'antd'
 import ISection from '../assets/ISection.png'
@@ -10,8 +10,12 @@ const readOnlyFontStyle = {
 
 const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
 
-    const { materialList, updateSourceAndMechType } = useContext(ModuleContext)
+    const { materialList, updateSourceAndMechType, getMaterialDetails, supported_material_details } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
+
+    useEffect(() => {
+        getMaterialDetails({material: inputs.supported_material, type: "supported"})
+    }, [])
 
     return (
         <>
@@ -38,6 +42,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                     onSelect={(value) => {
                                         setInputs({ ...inputs, supported_material: value })
                                         updateSourceAndMechType(1, value)
+                                        getMaterialDetails({material: value, type: "supported"})
                                         if(value === 'Custom') setShowModal(true)
                                     }}
                                 >
@@ -53,7 +58,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="ultimate-strength"
                                 className='input-design-pref'
-                                value={'0'}
+                                value={supported_material_details ? supported_material_details[0].Ultimate_Tensile_Stress : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -64,7 +69,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="yield-strength"
                                 className='input-design-pref'
-                                value={'0'}
+                                value={supported_material_details ? supported_material_details[0].Yield_Stress_greater_than_40 : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />

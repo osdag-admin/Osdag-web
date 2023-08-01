@@ -123,6 +123,16 @@ export default (state, action) => {
                 ...state,
                 conn_material_details: action.payload
             }
+        case 'SAVE_SDM_DETAILS':
+            return {
+                ...state,
+                supported_material_details: action.payload
+            }
+        case 'SAVE_STM_DETAILS':
+            return {
+                ...state,
+                supporting_material_details: action.payload
+            }
         default:
             return state;
     }

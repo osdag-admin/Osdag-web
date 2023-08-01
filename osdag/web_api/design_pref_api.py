@@ -40,7 +40,7 @@ class DesignPreference(APIView):
 class MaterialDetails(APIView):
 
     def get(self, request):
-        conn_material = request.GET.get("conn_material")
+        material = request.GET.get("material")
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
 
         if cookie_id == None or cookie_id == '': 
@@ -49,6 +49,6 @@ class MaterialDetails(APIView):
             return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
 
 
-        connector_material_details = Material.objects.filter(Grade=conn_material).values()
-        return Response({"connector_material_details": connector_material_details }, status=status.HTTP_200_OK)
+        material_details = Material.objects.filter(Grade=material).values()
+        return Response({"material_details": material_details }, status=status.HTTP_200_OK)
         

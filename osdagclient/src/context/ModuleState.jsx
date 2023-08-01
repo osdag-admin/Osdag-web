@@ -33,7 +33,9 @@ let initialValue = {
     report_id: '',
     blobUrl: '',
     designPrefData: {},
-    conn_material_details: []
+    conn_material_details: [],
+    supported_material_details: [],
+    supporting_material_details: []
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -274,13 +276,18 @@ export const ModuleProvider = ({ children }) => {
 
     const getMaterialDetails = async(param) => {
         try {
-            const response = await fetch(`${BASE_URL}materialDetails/?conn_material=${param.conn_material}`, {
+            const response = await fetch(`${BASE_URL}materialDetails/?material=${param.material}`, {
                 method: 'GET',
                 mode: 'cors',
                 credentials: 'include'
             })
             const data = await response?.json()
-            dispatch({type: 'SAVE_CM_DETAILS', payload: data.connector_material_details})
+            if(param.type === 'connector')
+                dispatch({type: 'SAVE_CM_DETAILS', payload: data.material_details})
+            else if(param.type === 'supported')
+                dispatch({type: 'SAVE_SDM_DETAILS', payload: data.material_details})
+            else if(param.type === 'supporting')
+                dispatch({type: 'SAVE_STM_DETAILS', payload: data.material_details})
         } catch (error) {
             //console.log(error)
             console.log("Something went wrong")
@@ -527,6 +534,8 @@ export const ModuleProvider = ({ children }) => {
             blobUrl: state.blobUrl,
             designPrefData: state.designPrefData,
             conn_material_details: state.conn_material_details,
+            supported_material_details: state.supported_material_details,
+            supporting_material_details: state.supporting_material_details,
 
             // actions
             cookieSetter,
