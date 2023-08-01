@@ -8,7 +8,7 @@ from osdag.web_api.modules_api import GetModules
 from osdag.web_api.inputData_view import InputData, DesignView
 from osdag.web_api.outputCalc_view import OutputData
 from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF, CompanyLogoView
-from osdag.web_api.design_pref_api import DesignPreference
+from osdag.web_api.design_pref_api import DesignPreference, MaterialDetails
 from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView
 from osdag.web_api.jwt_api import JWTHomeView
 from osdag.web_api.google_sso_api import GoogleSSOView
@@ -59,6 +59,7 @@ urlpatterns = [
     path('generate-report' , CreateDesignReport.as_view()),
     path('getPDF' , GetPDF.as_view()),
     path('design-preferences/', DesignPreference.as_view(), name="design-pref"),
+    path('materialDetails/', MaterialDetails.as_view()),
     path('company-logo/' , CompanyLogoView.as_view()),
 
     # authentications nad authorozation URL mappings

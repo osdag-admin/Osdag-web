@@ -32,7 +32,8 @@ let initialValue = {
     displayPDF: false,
     report_id: '',
     blobUrl: '',
-    designPrefData: {}
+    designPrefData: {},
+    conn_material_details: []
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -265,6 +266,21 @@ export const ModuleProvider = ({ children }) => {
             const data = await response?.json()
             //console.log(data)
             dispatch({type: 'SAVE_DESIGN_PREF_DATA', payload: data})
+        } catch (error) {
+            //console.log(error)
+            console.log("Something went wrong")
+        }
+    }
+
+    const getMaterialDetails = async(param) => {
+        try {
+            const response = await fetch(`${BASE_URL}materialDetails/?conn_material=${param.conn_material}`, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include'
+            })
+            const data = await response?.json()
+            dispatch({type: 'SAVE_CM_DETAILS', payload: data.connector_material_details})
         } catch (error) {
             //console.log(error)
             console.log("Something went wrong")
@@ -510,6 +526,7 @@ export const ModuleProvider = ({ children }) => {
             displayPDF: state.displayPDF,
             blobUrl: state.blobUrl,
             designPrefData: state.designPrefData,
+            conn_material_details: state.conn_material_details,
 
             // actions
             cookieSetter,
@@ -529,7 +546,8 @@ export const ModuleProvider = ({ children }) => {
             getDesingPrefData,
             createJWTToken,
             refreshJWTToken,
-            updateSourceAndMechType
+            updateSourceAndMechType,
+            getMaterialDetails
         }}>
             {children}
         </ModuleContext.Provider>

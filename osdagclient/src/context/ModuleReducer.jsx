@@ -117,6 +117,12 @@ export default (state, action) => {
                 ...state,
                 designPrefData: {...state.designPrefData, supported_section_results: [supported_section_results]}
             }
+        
+        case 'SAVE_CM_DETAILS':
+            return {
+                ...state,
+                conn_material_details: action.payload
+            }
         default:
             return state;
     }

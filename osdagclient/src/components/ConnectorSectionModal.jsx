@@ -1,10 +1,24 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ModuleContext } from '../context/ModuleState'
 import { Input, Select } from 'antd'
 
+const readOnlyFontStyle = {
+    color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
+}
+
 const ConnectorSectionModal = ({ inputs, setInputs }) => {
 
-    const { materialList } = useContext(ModuleContext)
+    const { materialList, conn_material_details, getMaterialDetails } = useContext(ModuleContext)
+
+    useEffect(() => {
+        getMaterialDetails({conn_material: inputs.connector_material})
+    }, [])
+
+    const handleMaterialChange = value => {
+        setInputs({ ...inputs, connector_material: value })
+        getMaterialDetails({conn_material: value})
+    }
+    
 
     return (
         <div className='Connector-col-beam-cont'>
@@ -15,11 +29,14 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
                                 value={inputs.connector_material}
-                                onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
+                                onSelect={(value) => handleMaterialChange(value)}
                             >
-                                {materialList.map((item, index) => (
-                                    <Option key={index} value={item}>{item}</Option>
-                                ))}
+                                {materialList.map((item, index) => {
+                                    if(item == "Custom") return;
+                                    return (
+                                        <Option key={index} value={item}>{item}</Option>
+                                    )
+                                })}
                             </Select>
                         </div>
                     </div>
@@ -29,7 +46,9 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="ultimate-strength"
                             className='input-design-pref'
-                            value={'0'}
+                            value={conn_material_details[0] ? conn_material_details[0].Ultimate_Tensile_Stress : 0}
+                            disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -38,7 +57,9 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="yield-strength"
                             className='input-design-pref'
-                            value={'0'}
+                            value={conn_material_details[0] ? conn_material_details[0].Yield_Stress_less_than_20 : 0}
+                            disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -47,7 +68,9 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="modulus-elasticity"
                             className='input-design-pref'
-                            value={'0'}
+                            value={conn_material_details[0] ? conn_material_details[0].Yield_Stress_between_20_and_neg40 : 0}
+                            disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     <div className='input-cont'>
@@ -56,7 +79,9 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                             type="text"
                             name="modulus-rigidity"
                             className='input-design-pref'
-                            value={'0'}
+                            value={conn_material_details[0] ? conn_material_details[0].Yield_Stress_greater_than_40 : 0}
+                            disabled
+                            style={readOnlyFontStyle}
                         />
                     </div>
                     </div>

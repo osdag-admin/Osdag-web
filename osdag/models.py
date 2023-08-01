@@ -268,11 +268,11 @@ class UnequalAngle(models.Model):
 
 class Material(models.Model):
     Grade = models.TextField()
-    Yield_Stress_less_than_20 = models.IntegerField()
-    Yield_Stress_between_20_and_neg40 = models.IntegerField()
-    Yield_Stress_greater_than_40 = models.IntegerField()
-    Ultimate_Tensile_Stress = models.IntegerField()
-    Elongation = models.IntegerField()
+    Yield_Stress_less_than_20 = models.IntegerField(db_column="Yield Stress (< 20)")
+    Yield_Stress_between_20_and_neg40 = models.IntegerField(db_column="Yield Stress (20 -40)")
+    Yield_Stress_greater_than_40 = models.IntegerField(db_column="Yield Stress (> 40)")
+    Ultimate_Tensile_Stress = models.IntegerField(db_column="Ultimate Tensile Stress")
+    Elongation = models.IntegerField(db_column="Elongation ")
 
     class Meta:
         db_table = "Material"
