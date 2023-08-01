@@ -80,7 +80,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="modulus-elasticity"
                                 className='input-design-pref'
-                                value={'0'}
+                                value={200}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -91,7 +91,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="modulus-rigidity"
                                 className='input-design-pref'
-                                value={'0'}
+                                value={76.9}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -102,7 +102,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="poisson-ratio"
                                 className='input-design-pref'
-                                value={'0'}
+                                value={0.3}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -113,7 +113,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="thermal-coefficient"
                                 className='input-design-pref'
-                                value={'0'}
+                                value={12}
                                 disabled
                                 style={readOnlyFontStyle}
                             />

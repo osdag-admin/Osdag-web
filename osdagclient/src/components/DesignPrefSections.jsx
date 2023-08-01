@@ -93,7 +93,7 @@ const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
             }
         </div>
 
-        { activeTab ==  0 || activeTab ==  1 
+        {/*{ activeTab ==  0 || activeTab ==  1 
         ?  
         <div className='DesignPrefFooter DesignPrefFooter-btn'>
             
@@ -104,7 +104,7 @@ const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
         </div> 
         : 
         null 
-        }
+        }*/}
         <div className='subDesignPrefFooter subDesignPrefFooter-btn'>
             
             <Button type="button" onClick={() => null}>Default</Button>
