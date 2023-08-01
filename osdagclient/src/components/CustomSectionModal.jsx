@@ -1,22 +1,39 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Modal, Input, Button } from 'antd'
 
 const CustomSectionModal = ({ showModal, setShowModal }) => {
 
     const [inputs, setInputs] = useState({
-        grade: "Cus__",
         fy_20: '',
         fy_20_40: '',
         fy_40: '',
         fu: ''
     })
+    const [grade, setGrade] = useState("Cus____")
+
+    useEffect(() => {
+      
+        let arr = ("Cus____").split("_")
+        if(inputs.fy_20 !== '')
+            arr[1] = inputs.fy_20
+        if(inputs.fy_20_40 !== '')
+            arr[2] = inputs.fy_20_40
+        if(inputs.fy_40 !== '')
+            arr[3] = inputs.fy_40
+        if(inputs.fu !== '')
+            arr[4] = inputs.fu
+
+        setGrade(arr.join("_"))
+      
+    }, [inputs])
+    
 
     return (
         <Modal
             open={showModal}
             onCancel={() => setShowModal(false)}
             footer={null}
-            width={300}
+            width={400}
         >
             <div>
                 <div>
@@ -29,7 +46,7 @@ const CustomSectionModal = ({ showModal, setShowModal }) => {
                             type="text"
                             name="Grade"
                             className='input-design-pref'
-                            value={`Cus_${inputs.fy_20 || '_'}_${inputs.fy_20_40 || '_'}_${inputs.fy_40 || '_'}_${inputs.fu || '_'}`}
+                            value={grade}
                             disabled
                             style={{color: 'black', fontWeight: 600, fontSize: '12px'}}
                         />
