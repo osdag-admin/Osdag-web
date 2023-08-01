@@ -3,19 +3,20 @@ import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { UserContext } from '../../context/UserState';
-import CryptoJS from 'crypto-js';
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto-browserify';
+//import CryptoJS from 'crypto-js';
+//import { createCipheriv, createDecipheriv, randomBytes } from 'crypto-browserify';
+import {AES} from 'crypto-js'
 
 const secretKey = 'atharva';
 
 
 const encryptData = (data) => {
-    /*
+    
     const dataString = JSON.stringify(data);
     const encrypted = AES.encrypt(dataString, secretKey).toString();
     return JSON.stringify(encrypted);
-    */
-
+    
+    /*
     const iv = 'asd';
 
     const fkey = CryptoJS.enc.Utf8.parse(secretKey);
@@ -29,7 +30,7 @@ const encryptData = (data) => {
 
     console.log('enc : ' ,enc)
     return JSON.stringify(enc)
-
+*/
   };
   
 //   const decryptData = (encryptedData) => {

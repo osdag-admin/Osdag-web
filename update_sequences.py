@@ -9,9 +9,9 @@ from psycopg2 import sql
 conn = psycopg2.connect(database='postgres_Intg_osdag', host='127.0.0.1',
                         user='osdagdeveloper', password='password', port='5432')
 cursor = conn.cursor()
-file = open("ResourceFiles/Database/postgres_Intg_osdag.sql", "r+")
+file = open("ResourceFiles/Database/update_sequences.sql", "r+")
 
 data = file.read()
 
 cursor.execute(data)
-print('SUCCESS : Database Populated')
+print('SUCCESS : Sequences Updated')
