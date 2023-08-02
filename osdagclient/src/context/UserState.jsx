@@ -107,12 +107,9 @@ export const UserProvider = ({children}) => {
     }
 
 
-    const userSignup = async( encrypted_username , encrypted_email , encrypted_password ) => {
+    const userSignup = async( username , email , password , isGuest ) => {
         console.log("inside the user signup thunk")
-        console.log('useranme : ' , encrypted_username)
-        console.log('password : ' , encrypted_password)
-        console.log('email : ' , encrypted_email)
-
+        console.log('username : ' , username)
         try{
             const response = await fetch(`${BASE_URL}user/signup/` , {
                 method : 'POST',
@@ -122,9 +119,10 @@ export const UserProvider = ({children}) => {
                   },
                 body : JSON.stringify(
                     {
-                        username : encrypted_username,
-                        email : encrypted_email,
-                        password : encrypted_password
+                        username : username,
+                        email : email,
+                        password : password,
+                        isGuest : isGuest
                     }
                 )
             })
@@ -135,7 +133,7 @@ export const UserProvider = ({children}) => {
                 console.log('user successfully created')
 
                 // call the thunk for creating the JWT token 
-                createJWTToken(encrypted_username, encrypted_password)
+                createJWTToken(username , password)
 
                 // call the reducer action to set the Login variable
                 dispatch({type : 'SET_LOGGED_IN' , payload : true})
@@ -149,11 +147,10 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const userLogin = async(encrypted_username , encrypted_password , isGuest) => {
+    const userLogin = async(username , password ,  isGuest) => {
         console.log('inside user login')
-        console.log('encrypted_username : ' , encrypted_username)
-        console.log('encrypted_pass : ' , encrypted_password)
-        console.log('encrypted_guest : ' , isGuest)
+        console.log('encrypted_username : ' , username)
+        console.log('isGuest : ' ,isGuest)
 
         try{
             const response = await fetch(`${BASE_URL}user/login/` , {
@@ -163,8 +160,8 @@ export const UserProvider = ({children}) => {
                     'Content-Type': 'application/json', // Set the Content-Type header to JSON
                   },
                 body : {
-                    username : encrypted_username,
-                    password : encrypted_password,
+                    username : username,
+                    password : password,
                     isGuest : isGuest
                 }
             })
@@ -175,7 +172,7 @@ export const UserProvider = ({children}) => {
                 console.log('user logged in successfully')
                 
                 // create a new jwt token 
-                createJWTToken(encrypted_username , encrypted_password)
+                createJWTToken(username , password)
 
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGED_IN' , payload : true})

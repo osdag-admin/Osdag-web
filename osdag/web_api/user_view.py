@@ -28,13 +28,9 @@ from django.conf import settings
 from osdag.serializers import User_Serializer
 
 # other imports 
-from osdag_web.aes import AESCipher
-from cryptography.fernet import Fernet
 import string
 import os
 import random
-from Crypto.Cipher import AES
-import base64
 
 
 # obtain the attributes 
@@ -57,54 +53,15 @@ class SignupView(APIView) :
         username = request.data.get("username")
         password = request.data.get("password")
         email = request.data.get('email')
+        isGuest = request.data.get('isGuest')
         print('username : ' , username)
         print('email : ' , email)
         print('password : ' , password)
+        print('isGuest : ' , isGuest)
 
-        # store the username, password and the email in the database using a serializer 
-
-        # aes 
-        #aes = AESCipher('atharva')
-        #encText = aes.encrypt("This is Atharva")
-        #print('enc Text : ' , encText)
-        #decUsername = aes.decrypt(username)
-        #print('dec username : ' , decUsername)
-        
-        secret_key = "atharva"
-        secret_key_bytes = convert_to_32_bytes(secret_key)
-        # Initialize AES cipher in CBC mode with PKCS7 padding.
-        cipher = AES.new(secret_key_bytes, AES.MODE_CBC, IV=bytes([0] * 16))
-            
-        # Decode the base64 encoded data and decrypt.
-        encrypted_data = base64.b64decode(username)
-        print('encrypted data : ' , encrypted_data)
-        decrypted_data = cipher.decrypt(encrypted_data).rstrip(b'\0').decode('utf-8')
-        print('decrypted username : ' ,decrypted_data)
-
-        # encrypt the password
-        key = Fernet.generate_key()
-        print('key : ' , key)
-        # later use the same key to decrypt the password
-        
-        # save the key in a file 
-        targetFilePath = SECRET_ROOT + "key.txt"
-        print('targetFilePath : ' , targetFilePath)
-        try : 
-            file_object = open(targetFilePath , "+bw")
-            file_object.write(key)
-            file_object.close()
-            print('key stored in the FS')
-        
-        except : 
-            print('error in saving the key')
-            return Response({'message' , 'Error in saving the key'} , status = 500)
-
-
-        f = Fernet(key)
-        token = f.encrypt(password.encode())
         tempData = {
             'username' : username,
-            'password' : token
+            'password' : password
         }
 
         # append the username in the User table ( in the username array )
