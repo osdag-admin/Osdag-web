@@ -1,8 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { Modal, Input, Button } from 'antd'
+import { ModuleContext } from '../context/ModuleState'
 
-const CustomSectionModal = ({ showModal, setShowModal }) => {
+const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValues, type="supported" }) => {
 
+    const {getMaterialDetails} = useContext(ModuleContext)
     const [inputs, setInputs] = useState({
         fy_20: '',
         fy_20_40: '',
@@ -51,9 +53,28 @@ const CustomSectionModal = ({ showModal, setShowModal }) => {
         .then(res => res.json())
         .then(data => {
             console.log(data)
+            if(type == 'supported'){
+                setInputValues({...inputValues, supported_material: grade})
+            }
+            else if(type == 'supporting'){
+                setInputValues({...inputValues, supporting_material: grade})
+            }
+            getMaterialDetails({material: grade, type: type})
+
+            alert(data.message)
         })
         .catch(err => {
             console.log(err)
+            alert("Something went wrong.")
+        })
+
+        setShowModal(false)
+        setGrade("Cus____");
+        setInputs({
+            fy_20: '',
+            fy_20_40: '',
+            fy_40: '',
+            fu: ''
         })
     }
     

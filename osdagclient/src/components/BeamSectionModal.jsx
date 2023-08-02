@@ -364,8 +364,11 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                 </div>
             </div>
             <CustomSectionModal 
-                setShowModal={setShowModal}
                 showModal={showModal}
+                setShowModal={setShowModal}
+                setInputValues={setInputs}
+                inputValues={inputs}
+                type='supporting'
             />
         </>
     )

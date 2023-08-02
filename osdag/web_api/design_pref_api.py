@@ -66,7 +66,9 @@ class MaterialDetails(APIView):
         if not Design.objects.filter(cookie_id=cookie_id).exists(): 
             return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
 
-        print(materialName, fy_20, fy_20_40, fy_40, fu)
+        alreadyExists = Material.objects.filter(Grade=materialName).exists()
+        if alreadyExists:
+            return Response({"message": "The material already exists"}, status=403)
 
         serializer = Material_Serializer(data = {
             "Grade": materialName,
@@ -79,7 +81,7 @@ class MaterialDetails(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"status" : "Uploaded"} , status=201) 
+            return Response({"message" : "Material added successfuly"} , status=201) 
         else:
             print('serializer.errors : ' , serializer.errors)
-        return Response({"status" : "Failed"} , status=500)
+        return Response({"message" : "Something went wrong"} , status=500)

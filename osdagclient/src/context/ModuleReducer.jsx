@@ -83,7 +83,7 @@ export default (state, action) => {
             let {supporting_section_results} = state.designPrefData
             supporting_section_results = supporting_section_results[0]
 
-            if(action.payload === "Custom"){
+            if(action.payload.includes("Cus")){
                 supporting_section_results.Source = 'Custom'
                 supporting_section_results.Type = 'Welded'
                 return {
@@ -102,7 +102,7 @@ export default (state, action) => {
             let {supported_section_results} = state.designPrefData
             supported_section_results = supported_section_results[0]
 
-            if(action.payload === "Custom"){
+            if(action.payload.includes("Cus")){
                 supported_section_results.Source = 'Custom'
                 supported_section_results.Type = 'Welded'
                 return {

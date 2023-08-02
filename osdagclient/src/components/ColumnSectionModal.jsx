@@ -366,6 +366,8 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
             <CustomSectionModal 
                 showModal={showModal}
                 setShowModal={setShowModal}
+                setInputValues={setInputs}
+                inputValues={inputs}
             />
         </>
     )
