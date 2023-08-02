@@ -33,11 +33,19 @@ from cryptography.fernet import Fernet
 import string
 import os
 import random
+from Crypto.Cipher import AES
+import base64
 
 
 # obtain the attributes 
 SECRET_ROOT = getattr(settings, 'SECRET_ROOT' , "")
 
+
+def convert_to_32_bytes(input_string) : 
+    input_bytes = input_string.encode('utf-8')
+    padded_bytes = input_bytes.ljust(32, b'\x00')
+
+    return padded_bytes
 
 class SignupView(APIView) :
     def post(self , request) : 
@@ -56,12 +64,23 @@ class SignupView(APIView) :
         # store the username, password and the email in the database using a serializer 
 
         # aes 
-        aes = AESCipher('atharva')
-        encText = aes.encrypt("This is Atharva")
-        print('enc Text : ' , encText)
-        decUsername = aes.decrypt(username)
-        print('dec username : ' , decUsername)
+        #aes = AESCipher('atharva')
+        #encText = aes.encrypt("This is Atharva")
+        #print('enc Text : ' , encText)
+        #decUsername = aes.decrypt(username)
+        #print('dec username : ' , decUsername)
         
+        secret_key = "atharva"
+        secret_key_bytes = convert_to_32_bytes(secret_key)
+        # Initialize AES cipher in CBC mode with PKCS7 padding.
+        cipher = AES.new(secret_key_bytes, AES.MODE_CBC, IV=bytes([0] * 16))
+            
+        # Decode the base64 encoded data and decrypt.
+        encrypted_data = base64.b64decode(username)
+        print('encrypted data : ' , encrypted_data)
+        decrypted_data = cipher.decrypt(encrypted_data).rstrip(b'\0').decode('utf-8')
+        print('decrypted username : ' ,decrypted_data)
+
         # encrypt the password
         key = Fernet.generate_key()
         print('key : ' , key)
