@@ -3,41 +3,6 @@ import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { UserContext } from '../../context/UserState';
-//import CryptoJS from 'crypto-js';
-//import { createCipheriv, createDecipheriv, randomBytes } from 'crypto-browserify';
-import {AES} from 'crypto-js'
-
-const secretKey = 'atharva';
-
-
-const encryptData = (data) => {
-    
-    const dataString = JSON.stringify(data);
-    const encrypted = AES.encrypt(dataString, secretKey).toString();
-    return JSON.stringify(encrypted);
-    
-    /*
-    const iv = 'asd';
-
-    const fkey = CryptoJS.enc.Utf8.parse(secretKey);
-    const fiv = CryptoJS.enc.Utf8.parse(iv);
-
-    const enc = CryptoJS.AES.encrypt(data, fkey, {
-        iv: fiv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-    });
-
-    console.log('enc : ' ,enc)
-    return JSON.stringify(enc)
-*/
-  };
-  
-//   const decryptData = (encryptedData) => {
-//     const decryptedBytes = AES.decrypt(encryptedData, secretKey);
-//     const decryptedString = decryptedBytes.toString(enc.Utf8);
-//     return JSON.parse(decryptedString);
-//   };
 
 const generateRandomString = (length) => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -53,7 +18,7 @@ const LoginPage = ({ onLogin }) => {
 
     const { userSignup, userLogin } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
-    const [name, setName] = useState('')
+    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -70,31 +35,21 @@ const LoginPage = ({ onLogin }) => {
     
 
         try{
-            let jsonResponse;
             if(isSignup){
-                if(!name){
+                if(!username){
                     alert("Enter a name to continue")
                     return;
                 }
                 
                 // register
-                const encUsername = encryptData({name});
-                const encEmail = encryptData({email});
-                const encPassword = encryptData({password});
-
-                console.log("\n Username"+encUsername+"\n Email "+encEmail+"\n Password"+encPassword);
-                console.log("\n\n Input goes as "+ userSignup(  encUsername, encEmail, encPassword  ))
-                userSignup(  encUsername, encEmail, encPassword  ).then(()=> {onLogin(); })
+                console.log('input signup data : ')
+                console.log('username : ' , username)
+                console.log('email : ' , email)
+                console.log('password : ' , password)
+                userSignup( username , email , password , false ).then(()=> {onLogin(); })
              
-                    
-
-
             }else{
-                const Guestlog = false;
-                const encUsername = encryptData({name});
-                const encPassword = encryptData({password});
-                console.log("\n\n Input goes as "+ userSignup(  encUsername, encPassword, Guestlog  ))
-                userLogin(  encUsername, encPassword, Guestlog ).then(()=> {onLogin(); })
+                userLogin( username , password , false).then(()=> {onLogin(); })
 
             }
         }
@@ -142,7 +97,7 @@ const LoginPage = ({ onLogin }) => {
                         isSignup && (
                             <label htmlFor='name'>
                                 <h4>Username</h4>
-                                <input type="text" id='name' name='name' onChange={(e) => {setName(e.target.value)}}/>
+                                <input type="text" id='name' name='name' onChange={(e) => {setUsername(e.target.value)}}/>
                             </label>
                         )
                     }
