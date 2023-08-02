@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -24,23 +24,27 @@ import LoginPage from './components/userAuth/LoginPage';
 
 function App() {
   // State to track user authentication status
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // using redux variables 
   const {isLoggedIn} = useContext(UserContext)
   console.log('isLoggedIn : ' , isLoggedIn)
 
+  useEffect(() => {
+    console.log('isLogged in useEffect : ' , isLoggedIn)
+  } , [isLoggedIn])
+
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<Root isAuthenticated={isAuthenticated} />}>
+      <Route path="/" element={<Root isLoggedIn={isLoggedIn} />}>
         <Route index element={<Mainwindow />} />
         <Route path='/design-type/:designType' element={<Window />} />
         {/* Wrap FinePlate with a route that checks authentication */}
         <Route
           path='/design/:designType/:item'
           element={
-            isAuthenticated ? <FinePlate /> : <Navigate to="/login" />
+            isLoggedIn ? <FinePlate /> : <Navigate to="/login" />
           }
         />
       <Route path='/user' element={<UserAccount />} />
@@ -56,9 +60,9 @@ function App() {
           <ModuleProvider>
             <div className="app">
               {/* Show the login page when not authenticated */}
-              {!isAuthenticated && <LoginPage setIsAuthenticated = {setIsAuthenticated} />}
+              {!isLoggedIn && <LoginPage />}
               {/* Render the router when authenticated */}
-              {isAuthenticated && <RouterProvider router={router} />}
+              {isLoggedIn && <RouterProvider router={router} />}
             </div>
           </ModuleProvider>
         </GlobalProvider>
@@ -67,8 +71,8 @@ function App() {
   );
 }
 
-const Root = ( isAuthenticated ) => {
-  console.log('isAuthenticated in root : ' , isAuthenticated)
+const Root = ( isLoggedIn ) => {
+  console.log('isLoggedIn in root : ' , isLoggedIn)
   const navigate = useNavigate();
 
   // Check if the current pathname matches the specified path
@@ -78,7 +82,7 @@ const Root = ( isAuthenticated ) => {
   return (
     <>
       {/* Show Sidebar when authenticated and not on a design page */}
-      {isAuthenticated && !isDesignPage && !isUserProfilePage && (
+      {isLoggedIn && !isDesignPage && !isUserProfilePage && (
         <div>
           <Sidebar />
         </div>

@@ -195,6 +195,26 @@ class LoginView(APIView) :
         print('password : ' , password)
         print('isGuest : ' , isGuest)
 
+        if(not isGuest) : 
+            print('is a guest user')
+            # create a dummy user
+            user = User.objects.create_user(username = 'default123' , email = 'default@123.com' , password = 'defualt123' )
+            # provide no permissions to the user and just save
+            user.save()
+
+        else : 
+            print('is not a guest user')
+            # find the useranme and password from the UserAccount model 
+            result = UserAccount.objects.get(username = username , password = password)
+            if(result) : 
+                print('the user has been found')
+
+                # grant the login access to the user 
+                return Response({'message' : 'Login suvvessfuly'} , status = status.HTTP_200_OK)
+            else : 
+                print('Login failed')
+                return Response({'message' : 'Login failed'} , status = status.HTTP_400_BAD_REQUEST)
+            
         # authenticate the user 
 
         

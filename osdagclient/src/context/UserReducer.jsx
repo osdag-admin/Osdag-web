@@ -8,6 +8,7 @@
 export default (state, action) => {
     switch(action.type){
         case 'SET_LOGGED_IN' : 
+        console.log('action.payload : ' , action.payload)
             return {
                 ...state,
                 isLoggedIn : action.payload

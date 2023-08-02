@@ -158,7 +158,7 @@ export const UserProvider = ({children}) => {
 
     const userLogin = async(username , password ,  isGuest) => {
         console.log('inside user login')
-        console.log('encrypted_username : ' , username)
+        console.log('username' , username)
         console.log('isGuest : ' ,isGuest)
 
         try{

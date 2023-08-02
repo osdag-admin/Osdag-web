@@ -14,7 +14,7 @@ const generateRandomString = (length) => {
     return result;
   };
 
-const LoginPage = ({setIsAuthenticated}) => {
+const LoginPage = () => {
 
     const { userSignup, userLogin } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
@@ -47,11 +47,10 @@ const LoginPage = ({setIsAuthenticated}) => {
                 console.log('email : ' , email)
                 console.log('password : ' , password)
                 userSignup( username , email , password , false )
-                setIsAuthenticated(true)
              
             }else{
-                userLogin( username , password , false)
-                setIsAuthenticated(true)
+                userLogin( email , password , false)
+            
 
             }
         }
@@ -76,7 +75,6 @@ const LoginPage = ({setIsAuthenticated}) => {
         console.log('guest password : ' , GuestUserPassword)
         // setting the isGuest to true
         userLogin(  GuestUserName, GuestUserPassword, true  )
-        setIsAuthenticated(true)
       };
 
 

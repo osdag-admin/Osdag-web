@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS public."UserAccount" (
 	/* each report is mapped to a unique user */ 
 );
 
-
 CREATE TABLE IF NOT EXISTS public."Bolt" (
 	"id" SERIAL PRIMARY KEY,
 	"Bolt_diameter"	TEXT
