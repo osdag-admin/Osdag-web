@@ -12,5 +12,10 @@ export default (state, action) => {
                 ...state,
                 isLoggedIn : action.payload
             }
+        case 'PUSH_REPORT_LINK' : 
+            return {
+                ...state,
+                allReportsLink : [allReportsLink , ...action.payload]
+            }
     }
 }

@@ -14,7 +14,7 @@ const generateRandomString = (length) => {
     return result;
   };
 
-const LoginPage = () => {
+const LoginPage = ({setIsAuthenticated}) => {
 
     const { userSignup, userLogin } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
@@ -47,9 +47,11 @@ const LoginPage = () => {
                 console.log('email : ' , email)
                 console.log('password : ' , password)
                 userSignup( username , email , password , false )
+                setIsAuthenticated(true)
              
             }else{
                 userLogin( username , password , false)
+                setIsAuthenticated(true)
 
             }
         }
@@ -67,12 +69,14 @@ const LoginPage = () => {
   };
     // Guest 
     const handleGuestSignIn = () => {
+        console.log('handle Guest Sign in ')
         const GuestUserName = `GUEST.${generateRandomString(10)}`;
         const GuestUserPassword = generateRandomString(12);
-        const Guestlog = true;
-        console.log("\n Guest Name: "+GuestUserName+"\n Password:"+GuestUserPassword)
-        console.log("\n\n Input goes as "+ userSignup(  GuestUserName, GuestUserPassword, Guestlog  ))
-        userLogin(  GuestUserName, GuestUserPassword, Guestlog  )
+        console.log('guest username : ' , GuestUserName)
+        console.log('guest password : ' , GuestUserPassword)
+        // setting the isGuest to true
+        userLogin(  GuestUserName, GuestUserPassword, true  )
+        setIsAuthenticated(true)
       };
 
 

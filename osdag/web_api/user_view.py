@@ -202,3 +202,13 @@ class LoginView(APIView) :
         return Response({'message' : 'User logged in'} , status = status.HTTP_200_OK)
 
 
+class ObtainAllReportsView(APIView) : 
+    def get(self , request) : 
+        print('inside obtain all reports view get')
+
+        return Response({'message' : 'Inside obtain all report view'} , status = status.HTTP_200_OK)
+    
+    def post(self , request) : 
+        print('inside obtain all report view post')
+
+        return Response({'message' : 'Inside obtain all report view'}, status = status.HTTP_200_OK)

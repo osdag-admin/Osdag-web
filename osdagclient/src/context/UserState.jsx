@@ -8,8 +8,8 @@ import UserReducer from './UserReducer'
 */
 
 let initialValue = {
-    isLoggedIn : false
-
+    isLoggedIn : false,
+    allReportsLink : []
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -168,11 +168,11 @@ export const UserProvider = ({children}) => {
                 headers: {
                     'Content-Type': 'application/json', // Set the Content-Type header to JSON
                   },
-                body : {
+                body : JSON.stringify({
                     username : username,
                     password : password,
                     isGuest : isGuest
-                }
+                })
             })
 
             const jsonResponse = await response?.json()
@@ -181,7 +181,9 @@ export const UserProvider = ({children}) => {
                 console.log('user logged in successfully')
                 
                 // create a new jwt token 
-                createJWTToken(username , password)
+                if(isGuest==false){
+                    createJWTToken(username , password)
+                }
 
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGED_IN' , payload : true})
@@ -192,6 +194,43 @@ export const UserProvider = ({children}) => {
         }catch(err){
             console.log('error in logging in')
             dispatch({type : 'SET_LOGGED_IN' , payload : false})
+        }
+    }
+
+    const obtainAllReports = async() => {
+        console.log('inside teh obtain All reports thunk')
+        const access_token = localStorage.getItem('access')
+        console.log('access_token : ' , access_token)
+
+        try{
+            fetch(`${BASE_URL}user/allreports/` , {
+                method : 'GET',
+                mode : 'cors',
+                credentials : 'include',
+                // Authorization header as well
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache', // Disable caching
+                    'Pragma': 'no-cache', // For older browsers
+                    'Authorization' : `Bearer ${access_token}`,
+                }
+            }).then((response) => {
+                if (response.ok) {
+                    const link = document.createElement('a');
+                    link.href = response.url;
+                    link.setAttribute('download', 'your_file_name.pdf');
+
+                    // store the link in an array
+                    dispatch({type : 'PUSH_REPORT_LINK' , payload : link})
+                    console.log('pushed the report link')
+
+                } else {
+                    console.error('Error in obtaining the PDF file:', response.status, response.statusText);
+                }
+            });
+
+        }catch(err){
+            console.log('error in obtainig all the reports : ' , err)
         }
     }
 
