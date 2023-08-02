@@ -14,7 +14,7 @@ const generateRandomString = (length) => {
     return result;
   };
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
 
     const { userSignup, userLogin } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
@@ -46,10 +46,10 @@ const LoginPage = ({ onLogin }) => {
                 console.log('username : ' , username)
                 console.log('email : ' , email)
                 console.log('password : ' , password)
-                userSignup( username , email , password , false ).then(()=> {onLogin(); })
+                userSignup( username , email , password , false )
              
             }else{
-                userLogin( username , password , false).then(()=> {onLogin(); })
+                userLogin( username , password , false)
 
             }
         }
@@ -72,7 +72,7 @@ const LoginPage = ({ onLogin }) => {
         const Guestlog = true;
         console.log("\n Guest Name: "+GuestUserName+"\n Password:"+GuestUserPassword)
         console.log("\n\n Input goes as "+ userSignup(  GuestUserName, GuestUserPassword, Guestlog  ))
-        userLogin(  GuestUserName, GuestUserPassword, Guestlog  ).then(()=> {onLogin(); })
+        userLogin(  GuestUserName, GuestUserPassword, Guestlog  )
       };
 
 

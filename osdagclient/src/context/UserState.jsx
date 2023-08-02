@@ -144,6 +144,8 @@ export const UserProvider = ({children}) => {
 
                 // call the reducer action to set the Login variable
                 dispatch({type : 'SET_LOGGED_IN' , payload : true})
+
+                console.log('isloggedIn in signup thunk : ' , state.isLoggedIn)
             }else{
                 console.log('response.status is not 201, failed to create a new user')
                 dispatch({type : 'SET_LOGGED_IN' , payload : false})

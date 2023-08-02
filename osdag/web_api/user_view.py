@@ -56,6 +56,7 @@ class SignupView(APIView) :
         print('email : ' , email)
         print('password : ' , password)
         print('isGuest : ' , isGuest)
+        print('type isGuest : ' , type(isGuest))
 
         tempData = {
             'username' : username,
