@@ -22,36 +22,42 @@ export const UserProvider = ({children}) => {
 
     // USER AUTHENTICATION AND AUTHORAZATION 
     const createJWTToken = async(username , password) => {
+        console.log('inside createJWT token ')
+        console.log('username : ' , username)
         try{
             const response = await fetch(`${BASE_URL}api/token/` , {
                 method : 'POST',
                 mode : 'cors',
                 credentials : 'include',
-                body : {
+                headers : {
+                    'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body : JSON.stringify({
                     'username' : username,
                     'password' : password
-                }
+                })
             })
 
             const jsonResponse = await response?.json()
-            if(response.status==201){
+            console.log('jsonResposne : ' , jsonResponse)
+            if(response.status==200){
                 console.log('token has been created')
 
                 // obtain the refresh and the access token 
-                const refresh_token =jsonResponse.refresh_token
-                const access_token = jsonResponse.access_token
+                const refresh_token =jsonResponse.refresh
+                const access_token = jsonResponse.access
                 
                 console.log('refresh_token ; ' , refresh_token)
                 console.log('access_token : ' , access_token)
                 
                 // set the refresh token and the access token in teh localstorage 
-                localStorage.setItem('access_token' , access_token)
-                localStorage.setItem('refresh_token' , refresh_token)
+                localStorage.setItem('access' , access_token)
+                localStorage.setItem('refresh' , refresh_token)
                 // now for every next request, set the Authorization header and the access_token
                 // headers : {Authorization : 'Bearer {access_token}'}
 
             }else{
-                console.log('response status !=201 for creating token')
+                console.log('response status !=200 for creating token')
             }
 
         }catch(error){
@@ -63,9 +69,9 @@ export const UserProvider = ({children}) => {
     const refreshJWTToken = async() => {
         // obtain teh refresh token and access token from the localStorage 
 
-        let refresh_token = localStorage.getItem('refresh_token')
+        let refresh_token = localStorage.getItem('refresh')
         console.log('refresh_token : ' , refresh_token)
-        let access_token = localStorage.getItem('access_token')
+        let access_token = localStorage.getItem('access')
         console.log('access_token : ' , access_token)
 
         if(!refresh_token){
@@ -83,22 +89,23 @@ export const UserProvider = ({children}) => {
                 method : 'POST',
                 mode : 'cors',
                 headers : {
-                    'Authorization' : `Bearer ${access_token}`
+                    'Authorization' : `Bearer ${access_token}`,
+                    'Content-Type': 'application/json; charset=UTF-8',
                 },
-                body : {
+                body : JSON.stringify({
                     "refresh" : refresh_token
-                },
+                }),
                 credentials : 'include'
             })
 
             const jsonResponse = await response?.json()
-            if(response.status==201){
-                console.log('new access token created : ' , jsonResponse.access_token)
+            if(response.status==200){
+                console.log('new access token created : ' , jsonResponse.access)
                 
                 // set the new access_token to the localStorage 
-                localStorage.setItem('access_token' , jsonResponse.access_token)
+                localStorage.setItem('access' , jsonResponse.access_token)
             }else{
-                console.log('response status!=201 when creating new access token')
+                console.log('response status!=200 when creating new access token')
             }
 
         }catch(err){

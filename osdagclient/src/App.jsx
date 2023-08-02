@@ -24,7 +24,7 @@ import LoginPage from './components/userAuth/LoginPage';
 
 function App() {
   // State to track user authentication status
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Function to handle successful login
   const handleLogin = () => {
