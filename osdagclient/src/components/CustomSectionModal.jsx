@@ -59,6 +59,9 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
             else if(type == 'supporting'){
                 setInputValues({...inputValues, supporting_material: grade})
             }
+            else if(type == 'connector'){
+                setInputValues({...inputValues, connector_material: grade})
+            }
             getMaterialDetails({material: grade, type: type})
 
             alert(data.message)

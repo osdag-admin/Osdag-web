@@ -1,6 +1,7 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ModuleContext } from '../context/ModuleState'
 import { Input, Select } from 'antd'
+import CustomSectionModal from './CustomSectionModal'
 
 const readOnlyFontStyle = {
     color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
@@ -9,12 +10,16 @@ const readOnlyFontStyle = {
 const ConnectorSectionModal = ({ inputs, setInputs }) => {
 
     const { materialList, conn_material_details, getMaterialDetails } = useContext(ModuleContext)
-
+    const [showModal, setShowModal] = useState(false)
     useEffect(() => {
         getMaterialDetails({material: inputs.connector_material, type: "connector"})
     }, [])
 
     const handleMaterialChange = value => {
+        if(value === 'Custom'){
+            setShowModal(true)
+            return;
+        }
         setInputs({ ...inputs, connector_material: value })
         getMaterialDetails({material: value, type: "connector"})
     }
@@ -32,7 +37,6 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                                 onSelect={(value) => handleMaterialChange(value)}
                             >
                                 {materialList.map((item, index) => {
-                                    if(item == "Custom") return;
                                     return (
                                         <Option key={index} value={item}>{item}</Option>
                                     )
@@ -86,11 +90,13 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                     </div>
                     </div>
             </div>
-            {/*  */}
-       
-            {/*  */}
-
-            
+            <CustomSectionModal 
+                showModal={showModal}
+                setShowModal={setShowModal}
+                setInputValues={setInputs}
+                inputValues={inputs}
+                type="connector"
+            />
         </div>
     )
 }
