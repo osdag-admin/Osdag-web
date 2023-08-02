@@ -23,7 +23,7 @@ export const UserProvider = ({children}) => {
     // USER AUTHENTICATION AND AUTHORAZATION 
     const createJWTToken = async(username , password) => {
         try{
-            const response = await fetch(`${BASE_URL}api/token` , {
+            const response = await fetch(`${BASE_URL}api/token/` , {
                 method : 'POST',
                 mode : 'cors',
                 credentials : 'include',
@@ -152,6 +152,8 @@ export const UserProvider = ({children}) => {
     const userLogin = async(encrypted_username , encrypted_password , isGuest) => {
         console.log('inside user login')
         console.log('encrypted_username : ' , encrypted_username)
+        console.log('encrypted_pass : ' , encrypted_password)
+        console.log('encrypted_guest : ' , isGuest)
 
         try{
             const response = await fetch(`${BASE_URL}user/login/` , {

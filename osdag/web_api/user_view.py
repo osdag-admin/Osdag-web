@@ -210,8 +210,10 @@ class LoginView(APIView) :
         # obtain the encrypted username and password 
         username = request.data.get('username')
         password = request.data.get('password')
+        isGuest = request.data.get('password')
         print('username : ' , username)
         print('password : ' , password)
+        print('isGuest : ' , isGuest)
 
         # authenticate the user 
 

@@ -83,6 +83,7 @@ const LoginPage = ({ onLogin }) => {
                 const encPassword = encryptData({password});
 
                 console.log("\n Username"+encUsername+"\n Email "+encEmail+"\n Password"+encPassword);
+                console.log("\n\n Input goes as "+ userSignup(  encUsername, encEmail, encPassword  ))
                 userSignup(  encUsername, encEmail, encPassword  ).then(()=> {onLogin(); })
              
                     
@@ -92,7 +93,8 @@ const LoginPage = ({ onLogin }) => {
                 const Guestlog = false;
                 const encUsername = encryptData({name});
                 const encPassword = encryptData({password});
-                userLogin( { encUsername, encPassword, Guestlog } ).then(()=> {onLogin(); })
+                console.log("\n\n Input goes as "+ userSignup(  encUsername, encPassword, Guestlog  ))
+                userLogin(  encUsername, encPassword, Guestlog ).then(()=> {onLogin(); })
 
             }
         }
@@ -114,7 +116,8 @@ const LoginPage = ({ onLogin }) => {
         const GuestUserPassword = generateRandomString(12);
         const Guestlog = true;
         console.log("\n Guest Name: "+GuestUserName+"\n Password:"+GuestUserPassword)
-        userLogin( { GuestUserName, GuestUserPassword, Guestlog } ).then(()=> {onLogin(); })
+        console.log("\n\n Input goes as "+ userSignup(  GuestUserName, GuestUserPassword, Guestlog  ))
+        userLogin(  GuestUserName, GuestUserPassword, Guestlog  ).then(()=> {onLogin(); })
       };
 
 
