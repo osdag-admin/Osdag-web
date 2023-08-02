@@ -4,7 +4,7 @@ import { ModuleContext } from '../context/ModuleState'
 
 const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValues, type="supported" }) => {
 
-    const {getMaterialDetails} = useContext(ModuleContext)
+    const {getMaterialDetails, getColumnBeamMaterialList, currentModuleName} = useContext(ModuleContext)
     const [inputs, setInputs] = useState({
         fy_20: '',
         fy_20_40: '',
@@ -62,8 +62,9 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
             else if(type == 'connector'){
                 setInputValues({...inputValues, connector_material: grade})
             }
-            getMaterialDetails({material: grade, type: type})
 
+            getMaterialDetails({material: grade, type: type})
+            getColumnBeamMaterialList(currentModuleName, 'Column-Flange-Beam-Web')
             alert(data.message)
         })
         .catch(err => {
