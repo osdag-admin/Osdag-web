@@ -22,6 +22,7 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import cad_background from '../../assets/cad_empty_image.png'
 import { Tube } from '@react-three/drei';
 import DesignPrefSections from '../DesignPrefSections';
+import CustomSectionModal from '../CustomSectionModal';
 
 // drop down 
 import DropdownMenu from '../DropdownMenu';
@@ -97,11 +98,11 @@ const MenuItems = [
 //     const handleKeyDown = (event) => {
 //       // Check for key combinations
 //       if (event.altKey && event.key === 'p') {
-        
+
 //         console.log('Alt + P pressed');
 //       } 
 //       if (event.altKey && event.key === 'q') {
-        
+
 //         console.log('Alt + q pressed');
 //       } 
 
@@ -136,6 +137,7 @@ function FinePlate() {
   const [thicknessSelect, setThicknessSelect] = useState("All")
   const [propertyClassSelect, setPropertyClassSelect] = useState("All")
   const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false)
+  const [showModal, setShowModal] = useState(false)
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getDesingPrefData } = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
@@ -184,11 +186,11 @@ function FinePlate() {
     if (value === 'Customized') {
       // check, if the bolt_grade already has a value, then set it to that value 
       // else, set it to an empty list 
-      if(inputs.bolt_grade.length!=0){
-        setInputs({...inputs , bolt_grade : inputs.bolt_grade})
-      }else{
+      if (inputs.bolt_grade.length != 0) {
+        setInputs({ ...inputs, bolt_grade: inputs.bolt_grade })
+      } else {
         // if the length is 0 , then set it to an empty array 
-        setInputs({...inputs , bolt_grade : []})
+        setInputs({ ...inputs, bolt_grade: [] })
       }
       setPropertyClassSelect("Customized")
       setAllSelected({ ...allSelected, bolt_grade: false })
@@ -204,11 +206,11 @@ function FinePlate() {
     if (value === 'Customized') {
       // check, if the bolt_diameter already has a value, then set it to that value 
       // else, set it to an empty list 
-      if(inputs.bolt_diameter.length!=0){
-        setInputs({...inputs , bolt_diameter : inputs.bolt_diameter})
-      }else{
+      if (inputs.bolt_diameter.length != 0) {
+        setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter })
+      } else {
         // if the length is 0 , then set it to an empty array 
-        setInputs({...inputs , bolt_diameter : []})
+        setInputs({ ...inputs, bolt_diameter: [] })
       }
       setBoltDiameterSelect("Customized")
       setAllSelected({ ...allSelected, bolt_diameter: false });
@@ -223,11 +225,11 @@ function FinePlate() {
     if (value === 'Customized') {
       // check, if the plate_thickness already has a value, then set it to that value 
       // else, set it to an empty list 
-      if(inputs.plate_thickness.length!=0){
-        setInputs({...inputs , plate_thickness : inputs.plate_thickness})
-      }else{
+      if (inputs.plate_thickness.length != 0) {
+        setInputs({ ...inputs, plate_thickness: inputs.plate_thickness })
+      } else {
         // if the length is 0 , then set it to an empty array 
-        setInputs({...inputs , plate_thickness : []})
+        setInputs({ ...inputs, plate_thickness: [] })
       }
       setThicknessSelect("Customized")
       setAllSelected({ ...allSelected, plate_thickness: false });
@@ -262,7 +264,7 @@ function FinePlate() {
   };
 
 
-;
+  ;
 
   useEffect(() => {
     if (displayOutput) {
@@ -382,8 +384,8 @@ function FinePlate() {
     jobNumber: '1',
     client: 'Someone else',
     additionalComments: 'No comments',
-    companyLogo : null,
-    companyLogoName : ""
+    companyLogo: null,
+    companyLogoName: ""
   })
 
 
@@ -472,7 +474,7 @@ function FinePlate() {
       alert('Please submit the design first.')
       return;
     }
-    console.log('designreportInputs : ' , designReportInputs)
+    console.log('designreportInputs : ', designReportInputs)
     createDesignReport(designReportInputs)
     handleCancelProfile()
   };
@@ -488,8 +490,8 @@ function FinePlate() {
       jobNumber: '1',
       client: 'Someone else',
       additionalComments: 'No comments',
-      companyLogo : null,
-      companyLogoName : ""
+      companyLogo: null,
+      companyLogoName: ""
     })
     setCreateDesignReportBool(false);
   };
@@ -670,10 +672,10 @@ function FinePlate() {
     setInputs({ ...inputs, plate_thickness: nextTargetKeys })
   };
 
-// Get local Stored Items
+  // Get local Stored Items
 
-// const storedCompanyLogo = JSON.parse(localStorage.getItem('companyLogo'));
-// const storedCompanyLogoName = localStorage.getItem('companyLogoName');
+  // const storedCompanyLogo = JSON.parse(localStorage.getItem('companyLogo'));
+  // const storedCompanyLogoName = localStorage.getItem('companyLogoName');
   // Image file changehandler 
   const handleImageFileChange = (event) => {
 
@@ -685,14 +687,14 @@ function FinePlate() {
     // localStorage.setItem('companyLogo',imageFile);
     // localStorage.setItem('companyLogoName', imageFileName);
 
-    setDesignReportInputs({...designReportInputs , companyLogo : imageFile , companyLogoName : imageFileName})
+    setDesignReportInputs({ ...designReportInputs, companyLogo: imageFile, companyLogoName: imageFileName })
   }
 
   // menu actions 
   useEffect(() => {
 
     const designPrefHandler = (e) => {
-      if(e.altKey && e.key == 'p'){
+      if (e.altKey && e.key == 'p') {
         setDesignPrefModalStatus(true)
       }
     }
@@ -709,11 +711,11 @@ function FinePlate() {
   const closeDesignPreferencesModel = () => {
     setDesignPreferencesModel(false);
   };
-  
+
   useEffect(() => {
-    
-    if(conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web'){
-      if(inputs.column_section != "" && inputs.beam_section != ""){
+
+    if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
+      if (inputs.column_section != "" && inputs.beam_section != "") {
         getDesingPrefData({
           supported_section: inputs.beam_section,
           supporting_section: inputs.column_section,
@@ -721,43 +723,43 @@ function FinePlate() {
         })
       }
     }
-    else if (conn_map[selectedOption] == 'Beam-Beam'){
+    else if (conn_map[selectedOption] == 'Beam-Beam') {
       getDesingPrefData({
         supported_section: inputs.secondary_beam,
         supporting_section: inputs.primary_beam,
         connectivity: conn_map[selectedOption]
       })
     }
-  
+
 
   }, [inputs.column_section, inputs.beam_section, inputs.primary_beam, inputs.secondary_beam, selectedOption])
-  
+
 
 
 
   return (
     <>
-      <div style={{width: '100%'}}>
-      <div className="module_nav">
-      {MenuItems.map((item, index) => (
-        <DropdownMenu 
-          key={index} 
-          label={item.label} 
-          dropdown={item.dropdown} 
-          setDesignPrefModalStatus={setDesignPrefModalStatus} 
-          inputs={inputs} 
-          setInputs={setInputs}
-          allSelected={allSelected}
-          setAllSelected={setAllSelected}
-          selectedOption={selectedOption}
-          setSelectedOption={setSelectedOption}
-          logs={logs}
-          setCreateDesignReportBool={setCreateDesignReportBool}
-        />
-      ))}
-    </div>
-    {/* <KeyPressListener /> */}
-    
+      <div style={{ width: '100%' }}>
+        <div className="module_nav">
+          {MenuItems.map((item, index) => (
+            <DropdownMenu
+              key={index}
+              label={item.label}
+              dropdown={item.dropdown}
+              setDesignPrefModalStatus={setDesignPrefModalStatus}
+              inputs={inputs}
+              setInputs={setInputs}
+              allSelected={allSelected}
+              setAllSelected={setAllSelected}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              logs={logs}
+              setCreateDesignReportBool={setCreateDesignReportBool}
+            />
+          ))}
+        </div>
+        {/* <KeyPressListener /> */}
+
         {/* Main Body of code  */}
         <div className='superMainBody'>
           {/* Left */}
@@ -862,7 +864,13 @@ function FinePlate() {
                 <div>
                   <Select style={{ width: '100%' }}
                     value={inputs.connector_material || materialList[0]}
-                    onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
+                    onSelect={(value) => {
+                      if (value == 'Custom') {
+                        setShowModal(true);
+                        return;
+                      }
+                      setInputs({ ...inputs, connector_material: value })
+                    }}
                   >
                     {materialList.map((item, index) => (
                       <Option key={index} value={item}>{item}</Option>
@@ -1087,7 +1095,7 @@ function FinePlate() {
                       <label>Company Logo : </label>
                     </Col>
                     <Col span={15}>
-                      <input type="file" accept = "image/png , image/jpeg , image/jpg" value = {setDesignReportInputs.companyLogoName} onChange={handleImageFileChange} />
+                      <input type="file" accept="image/png , image/jpeg , image/jpg" value={setDesignReportInputs.companyLogoName} onChange={handleImageFileChange} />
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
@@ -1161,24 +1169,32 @@ function FinePlate() {
 
               {/* Nav Bar Model list */}
               {designPrefModalStatus && (
-              <Modal
-                open={designPrefModalStatus}
-                onCancel={() => setDesignPrefModalStatus(false)}
-                footer={null}
-                minWidth={1200}
-                width={1400}
-                maxHeight={1200}
-              >
-                <DesignPrefSections inputs={inputs} setInputs={setInputs} selectedOption={selectedOption}/>
-              </Modal>
-    )}
+                <Modal
+                  open={designPrefModalStatus}
+                  onCancel={() => setDesignPrefModalStatus(false)}
+                  footer={null}
+                  minWidth={1200}
+                  width={1400}
+                  maxHeight={1200}
+                >
+                  <DesignPrefSections inputs={inputs} setInputs={setInputs} selectedOption={selectedOption} />
+                </Modal>
+              )}
 
-                  {/* Nav Bar Model List End */}
+              {/* Nav Bar Model List End */}
 
             </div>
           </div>
         </div>
       </div>
+
+      <CustomSectionModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        setInputValues={setInputs}
+        inputValues={inputs}
+        type="connector"
+      />
 
       {displayPDF ?
         <div style={{
