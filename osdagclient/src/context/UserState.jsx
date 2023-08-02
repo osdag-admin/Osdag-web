@@ -8,7 +8,7 @@ import UserReducer from './UserReducer'
 */
 
 let initialValue = {
-    isLoggedIn : false
+    isLoggedIn : true
 
 }
 

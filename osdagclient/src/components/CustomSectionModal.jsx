@@ -111,6 +111,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
                         <Input
                             type="text"
                             name="Fy-20"
+                            onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fy_20}
                             onChange={e => {
@@ -123,6 +124,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
                         <Input
                             type="text"
                             name="Fy_20_40"
+                            onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fy_20_40}
                             onChange={e => setInputs({...inputs, fy_20_40: e.target.value})}
@@ -133,6 +135,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
                         <Input
                             type="text"
                             name="Fy_40"
+                            onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fy_40}
                             onChange={e => setInputs({...inputs, fy_40: e.target.value})}
@@ -143,6 +146,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
                         <Input
                             type="text"
                             name="Fu"
+                            onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fu}
                             onChange={e => setInputs({...inputs, fu: e.target.value})}
