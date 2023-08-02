@@ -3,6 +3,9 @@ from django.db import models
 # postgres imports 
 from django.contrib.postgres.fields import ArrayField
 
+# other imports 
+from django.contrib.auth.hashers import make_password, check_password
+
 class Design(models.Model):
     """Design Session object in Database."""
     cookie_id = models.CharField(unique=True, max_length=32)
@@ -20,11 +23,18 @@ class Design(models.Model):
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
-class User(models.Model) : 
-    username = ArrayField(ArrayField(models.TextField(blank=True)))
-    password = models.JSONField(blank=True)
-    email = models.JSONField(blank=True)
-    allReports = models.JSONField(blank=True)
+class UserAccount(models.Model) : 
+    username = models.TextField(blank=True , unique = True)
+    password_hash = models.BinaryField(blank=True)
+    email = models.TextField(blank=True)
+    allReports = ArrayField(models.TextField(blank=True))
+
+    def set_password(self , raw_password) : 
+        self.password_hash = make_password(raw_password)
+    
+    def check_password(self, raw_password) : 
+        return check_password(raw_password , self.password_hash)
+
 
     class Meta : 
         db_table = "User"

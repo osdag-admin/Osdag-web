@@ -3,19 +3,19 @@ from rest_framework import serializers
 
 # importing models 
 from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS 
-from osdag.models import Design, User
+from osdag.models import Design, UserAccount
 
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
 
-class User_Serializer(serializers.ModelSerializer) : 
+class UserAccount_Serializer(serializers.ModelSerializer) : 
     class Meta : 
-        model = User
+        model = UserAccount
         fields = '__all__'
 
     def create(self, validated_data) : 
-        return User.objects.create(**validated_data)
+        return UserAccount.objects.create(**validated_data)
 
     def update(self , instance , validated_data) : 
         # update the instance 
@@ -23,7 +23,6 @@ class User_Serializer(serializers.ModelSerializer) :
 
         # save the instance 
         instance.save()
-
         return instance
 
 class Design_Serializer(serializers.ModelSerializer) : 

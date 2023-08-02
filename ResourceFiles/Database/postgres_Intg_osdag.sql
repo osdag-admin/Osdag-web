@@ -20,12 +20,12 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 	"cad_design_status" BOOLEAN
 );
 
-CREATE TABLE IF NOT EXISTS public."User" (
+CREATE TABLE IF NOT EXISTS public."UserAccount" (
 	"id" SERIAL PRIMARY KEY,
-	"username" TEXT[],
-	"password" JSONB,
-	"email" JSONB,
-	"allReports" JSONB
+	"username" TEXT,
+	"password_hash" BYTEA,
+	"email" TEXT,
+	"allReports" TEXT[]
 	/* An array of username that can store multiple users */ 
 	/* each password will be matched to username in JSONB */ 
 	/* each email will be mapped to one username in JSONB */ 
