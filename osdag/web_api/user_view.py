@@ -12,22 +12,20 @@ from rest_framework.permissions import IsAuthenticated
 # email imports
 from osdag_web import mailing
 
-# importing serializers 
-from osdag.serializers import User_Serializer
-
 # simpleJWT imports 
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # importing Django models 
-from osdag.models import User
+from osdag.models import UserAccount
 
 # django imports 
 from django.conf import settings
 
 # importing serializers
-from osdag.serializers import User_Serializer
+from osdag.serializers import UserAccount_Serializer
 
 # other imports 
+from django.contrib.auth.models import User
 import string
 import os
 import random
@@ -61,23 +59,28 @@ class SignupView(APIView) :
 
         tempData = {
             'username' : username,
-            'password' : password
+            'password_hash' : password,
+            'email' : email,
+            'allReports' : ['']
         }
 
         # append the username in the User table ( in the username array )
         # create a JSON object that maps the username to the password and add it to the User table ( passsword column )
-        serializer = User_Serializer(data = tempData)
+        serializer = UserAccount_Serializer(data = tempData)
         if(serializer.is_valid()) : 
             # save the serializer 
             serializer.save()
 
+            # create a user in the Django.contrib.auth 
+            user = User.objects.create_user(username , email , password)
+            user.save()
+
             # return 201 
-            return Response({'message' : 'The credentials have been created'} , status = status.HTTP__201_CREATED ) 
+            return Response({'message' : 'The credentials have been created'} , status = status.HTTP_201_CREATED ) 
         else : 
             print('serializer is invalid ')
             print('error : ' , serializer.errors)
-
-            return Response({'message' , 'The credentials ahve not been created'} , status = status.HTTP_400_BAD_REQUEST)
+            return Response({'message' : 'user with this username already exists' , 'code' : 'unique'} , status = status.HTTP_400_BAD_REQUEST)
 
 
 
