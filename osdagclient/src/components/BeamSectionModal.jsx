@@ -14,7 +14,8 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        getMaterialDetails({material: inputs.supporting_material, type: 'supporting'})
+        const material = materialList.filter(value => value.Grade === inputs.supported_material)
+        getMaterialDetails({data: material[0], type: 'supporting'})
     }, [])
 
     return (
@@ -40,14 +41,18 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
                                     value={inputs.supporting_material}
                                     onSelect={(value) => {
-                                        setInputs({ ...inputs, supporting_material: value }),
-                                        updateSourceAndMechType(2, value)
-                                        getMaterialDetails({material: value, type: 'supporting'})
-                                        if(value === 'Custom') setShowModal(true)
+                                        const material = materialList.find(item => item.id === value)
+                                        if(material.Grade === 'Custom'){
+                                            setShowModal(true)
+                                            return;
+                                        }
+                                        setInputs({ ...inputs, supporting_material: material.Grade }),
+                                        updateSourceAndMechType(2, material.Grade)
+                                        getMaterialDetails({data: material, type: 'supporting'})
                                     }}
                                 >
                                     {materialList.map((item, index) => (
-                                        <Option key={index} value={item}>{item}</Option>
+                                        <Option key={index} value={item.id}>{item.Grade}</Option>
                                     ))}
                                 </Select>
                             </div>
