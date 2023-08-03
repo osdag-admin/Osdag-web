@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 CREATE TABLE IF NOT EXISTS public."UserAccount" (
 	"id" SERIAL PRIMARY KEY,
 	"username" TEXT,
-	"password_hash" BYTEA,
+	"password" TEXT,
 	"email" TEXT,
 	"allReports" TEXT[]
 	/* An array of username that can store multiple users */ 

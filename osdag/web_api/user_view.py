@@ -60,7 +60,7 @@ class SignupView(APIView) :
 
         tempData = {
             'username' : username,
-            'password_hash' : password,
+            'password' : password,
             'email' : email,
             'allReports' : ['']
         }
@@ -87,28 +87,28 @@ class SignupView(APIView) :
 
 class ForgetPasswordView(APIView) : 
     def post(self , request) : 
-        print('sindie teh forget password post')
+        print('inside the forget password post')
         
-        # obtain the new passwrod 
+        # obtain the new password
         password = request.data.get('password')
+        print('password : ' , password)
+        email = request.data.get('email')
+        print('email : ' , email)
+
+        # obtain the user object from the Django.contrib.auth.models User
+        user = User.objects.get(email = email)
+        user.password = password
+        user.save()
+        print('Django user updates')
+
+        # update the user in the postgres database
+        user = UserAccount.objects.get(email = email)
+        user.password = password
+        user.save()
+        print('postgres user updated')
 
         # PARTIAL WORK, WORK IN PROGRESS 
-        return Response({'message' , 'Something goes here'} , status = status.HTTP_201_CREATED)
-    
-
-    def get(self , request) : 
-        print('inside the forget password get')
-        
-        # 1. Send the current username to the browser 
-        # 2. send the email attached to the username
-        # 3. In the browser, the user then types the email, the email is verified against the one which is sent from the Server 
-        # 4. If it is matched, then the user enters a new pasword
-        
-        # this API view just sends the current username and password 
-        
-        # PARTIAL WORK, WORK IN PROGRESS
-
-        return Response({'message' , 'Something goes here'} , status = status.HTTP_200_OK)
+        return Response({'message' , 'Password has been updated successfully'} , status = status.HTTP_200_OK)
         
 class LogoutView(APIView) : 
     permission_classes = (IsAuthenticated,)

@@ -16,7 +16,9 @@ let initialValue = {
     LoginMessage : "",
     SignupMessage : "",
     OTPSent : false,
-    OTPMessage : ""
+    OTPMessage : "",
+    passwordSet : false,
+    passwordSetMessage : ""
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -265,8 +267,10 @@ export const UserProvider = ({children}) => {
                 const otp = jsonResponse.get('OTP')
                 // encode the OTP
                 const encoded_otp = base64_encode(otp)
+                const encoded_email = base64_encode(email)
                 // set the OTP in the localStorage
                 localStorage.setItem('otp' , encoded_otp)
+                localStorage.setItem('email' , encoded_email)
 
                 dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : true , message : 'The OTP has been sent'}})                
 
@@ -278,6 +282,49 @@ export const UserProvider = ({children}) => {
         }catch(err){
             console.log('There is an error in the server while checking the email : ' , err)
             dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : false , message : 'Server error in sending the OTP, please try again'}})
+        }
+    }
+
+
+    const ForgetPassword = async(newPassword) => {
+        console.log('inside the forget password thunk')
+        console.log('newPassword : ' , newPassword)
+        // obtain the stored email from the localStorage and delete the email, OTP 
+        let encoded_email = localStorage.get('email')
+        const email = base64_decode(encoded_email)
+        localStorage.removeItem('email')
+        localStorage.removeItem('otp')
+        console.log('email : ' , email)
+
+        try{
+            const response =  await fetch(`${BASE_URL}user/forgetpassword/` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json',
+                },
+                body : JSON.stringify({
+                    password : newPassword,
+                    email : email
+                })
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse : ' , jsonResponse)
+            if(response.status==200){
+                console.log('password updated')
+
+                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : true , passwordSetMessage : 'New password has been set'}})
+                
+            }else{
+                console.log('response.status!=200 on forget password')
+
+                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : false , passwordSetMessage : 'Failed to update the password , please try again'}})
+            }
+        }catch(err){
+            console.log('Server error in updating the password')
+
+            dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : false ,passwordSetMessage : 'Server error in updating the password, please try again'}})
         }
     }
 
@@ -294,7 +341,8 @@ export const UserProvider = ({children}) => {
             // thunks
             userSignup,
             userLogin,
-            verifyEmail
+            verifyEmail,
+            ForgetPassword
             
         }}>
             {children}

@@ -32,5 +32,11 @@ export default (state, action) => {
                 ...state,
                 allReportsLink : [allReportsLink , ...action.payload]
             }
+        case 'SET_FORGETPASSWORD_STATUS' : 
+            return {
+                ...state,
+                passwordSet : action.payload.passwordSet,
+                passwordSetMessage : action.payload.passwordSetMessage
+            }
     }
 }
