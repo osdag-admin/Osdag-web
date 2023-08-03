@@ -134,13 +134,9 @@ export default (state, action) => {
                 supporting_material_details: action.payload
             }
         case 'UPDATE_MATERIAL_FROM_CACHES':
-            let list = [];
-            for(let item of action.payload){
-                list.push(item.Grade)
-            }
             return {
                 ...state,
-                materialList: [...state.materialList, ...list]
+                materialList: [...state.materialList, ...action.payload]
             }
         default:
             return state;

@@ -41,11 +41,11 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
                                     value={inputs.supporting_material}
                                     onSelect={(value) => {
-                                        const material = materialList.find(item => item.id === value)
-                                        if(material.Grade === 'Custom'){
+                                        if(value == -1){
                                             setShowModal(true)
                                             return;
                                         }
+                                        const material = materialList.find(item => item.id === value)
                                         setInputs({ ...inputs, supporting_material: material.Grade }),
                                         updateSourceAndMechType(2, material.Grade)
                                         getMaterialDetails({data: material, type: 'supporting'})

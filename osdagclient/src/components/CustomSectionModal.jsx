@@ -50,6 +50,23 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
             const prevData = JSON.parse(localStorage.getItem("osdag-custom-materials"))
             console.log(prevData)
 
+            let presentItemsInCaches = null;
+            presentItemsInCaches = prevData.filter(item => item.Grade === grade) 
+            presentItemsInCaches = materialList.filter(item => item.Grade === grade) 
+
+            if(presentItemsInCaches && presentItemsInCaches.length > 0){
+                alert("The material is already presend");
+                setShowModal(false)
+                setGrade("Cus____");
+                setInputs({
+                    fy_20: '',
+                    fy_20_40: '',
+                    fy_40: '',
+                    fu: ''
+                })
+                return;
+            }
+
             let newData = []
             if(prevData) newData = [...prevData, customSectionData];
             else newData = [customSectionData]

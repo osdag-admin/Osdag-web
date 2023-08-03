@@ -17,11 +17,11 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
     }, [])
 
     const handleMaterialChange = value => {
-        const material = materialList.find(item => item.id === value)
-        if(material.Grade === 'Custom'){
+        if(value == -1){
             setShowModal(true)
             return;
         }
+        const material = materialList.find(item => item.id === value)
         setInputs({ ...inputs, connector_material: material.Grade })
         getMaterialDetails({data: material, type: "connector"})
     }

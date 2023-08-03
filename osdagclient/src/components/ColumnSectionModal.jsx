@@ -41,11 +41,11 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
                                     value={inputs.supported_material}
                                     onSelect={(value) => {
-                                        const material = materialList.find(item => item.id === value)
-                                        if(material.Grade === 'Custom'){
+                                        if(value == -1){
                                             setShowModal(true)
                                             return;
                                         }
+                                        const material = materialList.find(item => item.id === value)
                                         setInputs({ ...inputs, supported_material: material.Grade })
                                         updateSourceAndMechType(1, material.Grade )
                                         getMaterialDetails({data: material , type: "supported"})
