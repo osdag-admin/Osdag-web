@@ -64,7 +64,7 @@ class SignupView(APIView) :
             'username' : username,
             'password' : password,
             'email' : email,
-            'allReports' : ['']
+            'allInputValueFiles' : ['']
         }
 
         # append the username in the User table ( in the username array )
@@ -229,6 +229,11 @@ class ObtainAllInputValueFilesView(APIView) :
         email = request.GET.get('email')
         print('email : ' , email)
 
+        # send the input value files to the client
+        currentDirectory = os.cwd()
+        print('current Directory : ' , currentDirectory)
+        fullpath = currentDirectory + "/file_storage/input_values_files/"
+
         userAccount = UserAccount.objects.get(email = email)
         fileLocations = userAccount.allInputValueFiles
         print('fileLocations : ' , fileLocations)
@@ -244,7 +249,9 @@ class SaveInputFileView(APIView) :
 
         # obtain the file from the request 
         content = request.data.get('content')
+        email = request.data.get('email')
         print('content : ' , content)
+        print('email : ' , email)
 
         # create a file in the file_storage 
         fileName = ''.join(str(uuid.uuid4()).split('-')) + ".osi"
@@ -261,6 +268,17 @@ class SaveInputFileView(APIView) :
                 destination.write(content)
             destination.close()
             print('created the .osi file ')
+            
+            try : 
+                # append the fulllPath of the file to the email
+                userObject = UserAccount.objects.get(email = email)
+                userObject.allInputValueFiles.append(fullPath)
+                userObject.save()
+                print('the filePath has been appended and linked to the user')
+            except Exception as e: 
+                print('An exception has occured : ' , e)
+
+                return Response({'message' : 'Failed to connect the file to the User'} , status = status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response({'message' : "File stored successfully"} , status = status.HTTP_201_CREATED)
         
