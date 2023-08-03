@@ -43,7 +43,8 @@ const MenuItems = [
     label: "File",
     dropdown: [
       { name: "Load Input", shortcut: "Ctrl+L" },
-      { name: "Save Input", shortcut: "Ctrl+S" },
+      { name: "Download Input", shortcut: "Ctrl+D" },
+      { name: "Save Input" , shortcut : "Ctrl+C"},
       { name: "Save Log Messages", shortcut: "Alt+M" },
       { name: "Create Design Report", shortcut: "Alt+C" },
       { name: "Save 3D Model", shortcut: "Alt+3" },

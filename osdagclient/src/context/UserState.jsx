@@ -379,7 +379,8 @@ export const UserProvider = ({children}) => {
             userLogin,
             verifyEmail,
             ForgetPassword,
-            obtainALLInputValueFiles
+            obtainALLInputValueFiles,
+            SaveInputValueFile
             
         }}>
             {children}
