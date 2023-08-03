@@ -865,12 +865,12 @@ function FinePlate() {
                   <Select style={{ width: '100%' }}
                     value={inputs.connector_material || materialList[0].Grade}
                     onSelect={(value) => {
-                      const material = materialList.find(item => item.id === value)
-                      console.log(material)
-                      if (material.Grade == 'Custom') {
+                      if (value == -1) {
                         setShowModal(true);
                         return;
                       }
+                      const material = materialList.find(item => item.id === value)
+                      console.log(material)
                       setInputs({ ...inputs, connector_material: material.Grade })
                     }}
                   >
