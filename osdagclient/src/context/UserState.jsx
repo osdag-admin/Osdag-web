@@ -9,7 +9,9 @@ import UserReducer from './UserReducer'
 
 let initialValue = {
     isLoggedIn : false,
-    allReportsLink : []
+    allReportsLink : [],
+    LoginMessage : "",
+    SignupMessage : ""
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -143,16 +145,16 @@ export const UserProvider = ({children}) => {
                 createJWTToken(username , password)
 
                 // call the reducer action to set the Login variable
-                dispatch({type : 'SET_LOGGED_IN' , payload : true})
+                dispatch({type : 'SET_SIGNUP_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Signed up"}})
 
                 console.log('isloggedIn in signup thunk : ' , state.isLoggedIn)
             }else{
                 console.log('response.status is not 201, failed to create a new user')
-                dispatch({type : 'SET_LOGGED_IN' , payload : false})
+                dispatch({type : 'SET_SIGNUP_STATUS' , payload : {isLoggedIn : false, message : "Error in creating the User Account, please try again"}})
             }
         }catch(err){
             console.log('there is an error in user signup : ' , err)
-            dispatch({type : 'SET_LOGGED_IN' , payload : false})
+            dispatch({type : 'SET_SIGNUP_STATUS', payload : {isLoggedIn : false , message : "Server Error in creating User Account, please try again"}} )
         }
     }
 
@@ -186,14 +188,14 @@ export const UserProvider = ({children}) => {
                 }
 
                 // set the login variable to true 
-                dispatch({type : 'SET_LOGGED_IN' , payload : true})
+                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
             }else{
                 console.log('response.status!=200, user not logged in')
-                dispatch({type : 'SET_LOGGED_IN' , payload : false})
+                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
             }
         }catch(err){
             console.log('error in logging in')
-            dispatch({type : 'SET_LOGGED_IN' , payload : false})
+            dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : "Server error occured while logging in, please try again"}})
         }
     }
 

@@ -7,11 +7,19 @@
 
 export default (state, action) => {
     switch(action.type){
-        case 'SET_LOGGED_IN' : 
+        case 'SET_LOGGING_STATUS' : 
         console.log('action.payload : ' , action.payload)
             return {
                 ...state,
-                isLoggedIn : action.payload
+                isLoggedIn : action.payload.isLoggedIn,
+                LoginMessage : action.payload.message
+            }
+        case 'SET_SIGNUP_STATUS' : 
+        console.log('action.payload : ' , action.payload)
+            return {
+                ...state,
+                isLoggedIn : action.payload.isLoggedIn,
+                SignupMessage : action.payload.message
             }
         case 'PUSH_REPORT_LINK' : 
             return {

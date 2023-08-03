@@ -69,12 +69,13 @@ const LoginPage = () => {
     // Guest 
     const handleGuestSignIn = () => {
         console.log('handle Guest Sign in ')
-        const GuestUserName = `GUEST.${generateRandomString(10)}`;
+        let GuestEmail = `GUEST.${generateRandomString(10)}`;
+        GuestEmail += "@gmail.com"
         const GuestUserPassword = generateRandomString(12);
-        console.log('guest username : ' , GuestUserName)
+        console.log('Guest email : ' , GuestEmail)
         console.log('guest password : ' , GuestUserPassword)
         // setting the isGuest to true
-        userLogin(  GuestUserName, GuestUserPassword, true  )
+        userLogin(  GuestEmail, GuestUserPassword, true  )
       };
 
 

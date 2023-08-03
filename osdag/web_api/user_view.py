@@ -187,33 +187,47 @@ class LoginView(APIView) :
     def post(self , request) : 
         print('inside login post')
 
-        # obtain the encrypted username and password 
-        username = request.data.get('username')
-        password = request.data.get('password')
-        isGuest = request.data.get('password')
-        print('username : ' , username)
-        print('password : ' , password)
+        # check if the user is a guest user or not 
+        isGuest = request.data.get('isGuest')
         print('isGuest : ' , isGuest)
 
-        if(not isGuest) : 
+        if(isGuest) : 
             print('is a guest user')
             # create a dummy user
-            user = User.objects.create_user(username = 'default123' , email = 'default@123.com' , password = 'defualt123' )
-            # provide no permissions to the user and just save
-            user.save()
 
+            # check if the dummy user is already created or not 
+            # if not, then create, else use the dummy user
+            try : 
+                user = User.objects.create_user(username = 'default123' , email = 'default@123.com' , password = 'default123' )
+                # provide no permissions to the user and just save
+                user.save()
+            
+            except : 
+                print('the user already exists')
+
+            # grant the login access to the user 
+            return Response({'message' : 'Login suvvessfuly'} , status = status.HTTP_200_OK)
+        
+        # for a guest user
+        print('is not a guest user')
+
+        # obtain the email and password
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        print('email : ' , email)
+        print('password : ' , password)
+
+        # find the useranme and password from the UserAccount model 
+        result = UserAccount.objects.get(email = email , password = password)
+        if(result) : 
+            print('the user has been found')
+
+            # grant the login access to the user 
+            return Response({'message' : 'Login successfully'} , status = status.HTTP_200_OK)
         else : 
-            print('is not a guest user')
-            # find the useranme and password from the UserAccount model 
-            result = UserAccount.objects.get(username = username , password = password)
-            if(result) : 
-                print('the user has been found')
-
-                # grant the login access to the user 
-                return Response({'message' : 'Login suvvessfuly'} , status = status.HTTP_200_OK)
-            else : 
-                print('Login failed')
-                return Response({'message' : 'Login failed'} , status = status.HTTP_400_BAD_REQUEST)
+            print('Login failed')
+            return Response({'message' : 'Login failed'} , status = status.HTTP_400_BAD_REQUEST)
             
         # authenticate the user 
 
