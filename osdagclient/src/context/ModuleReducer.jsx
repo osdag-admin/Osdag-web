@@ -14,18 +14,22 @@ export default (state, action) => {
                 error_msg : 'Error in fetching Connectivity List'
             }
         case 'SET_COLUMN_BEAM_MATERIAL_LIST' : 
+            let prev = JSON.parse(localStorage.getItem("osdag-custom-materials"))
+            state.materialList = action.payload.materialList
             return{
                 ...state , 
                 columnList : action.payload.columnList,
                 beamList : action.payload.beamList,
-                materialList : action.payload.materialList,
+                materialList : [...state.materialList, ...prev],
                 error_msg : 'Error in fetching Column, Beam and Material List'
             }
         case 'SET_BEAM_MATERIAL_LIST' :
+            prev = JSON.parse(localStorage.getItem("osdag-custom-materials"))
+            state.materialList = action.payload.materialList
             return{
                 ...state ,
                 beamList : action.payload.beamList,
-                materialList : action.payload.materialList,
+                materialList : [...state.materialList, ...prev],
                 error_msg : 'Error in fetching Beam and Material List'
             }
         case 'SET_COOKIE_FETCH' : 

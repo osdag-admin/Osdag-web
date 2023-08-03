@@ -96,6 +96,7 @@ export const ModuleProvider = ({ children }) => {
 
     const updateMaterialListFromCaches = () => {
         const data = JSON.parse(localStorage.getItem("osdag-custom-materials"))
+        console.log(data)
         if(data && data.length > 0){
             console.log(data)
             dispatch({type: "UPDATE_MATERIAL_FROM_CACHES", payload: data})
