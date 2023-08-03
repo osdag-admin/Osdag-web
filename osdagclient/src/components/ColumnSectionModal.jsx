@@ -51,9 +51,10 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                         getMaterialDetails({data: material , type: "supported"})
                                     }}
                                 >
-                                    {materialList.map((item, index) => (
-                                        <Option key={index} value={item.id}>{item.Grade}</Option>
-                                    ))}
+                                    {materialList.map((item) => {
+                                        console.log('item : ' , item)
+                                        return <Option key={item.id} value={item.id}>{item.Grade}</Option>
+                                    })}
                                 </Select>
                             </div>
                         </div>
