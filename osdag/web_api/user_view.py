@@ -10,7 +10,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 
 # email imports
-from osdag_web import mailing
+from osdag_web.mailing import send_mail
 
 # simpleJWT imports 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -146,26 +146,12 @@ class CheckEmailView(APIView):
         # K -> is the number of digits in the OTP
         OTP = ''.join(random.choices(string.digits, k = 6))   
         print('OTP : ' , OTP)
-        
-        # save the OTP somewhere in the FS
-        # generate a file with the same name as teh email and store the OTP in the FILE 
-        fileName = email.split('@')[0]
-        print('fileName : ' ,fileName)
-        fileName = fileName + ".txt"
-        currentDirectory = os.getcwd()
-        print('currentDirectory : ' , currentDirectory)
-
-        # create the file 
-        try :       
-            with open(currentDirectory+"/file_storage/emails/"+fileName , 'w') as fp : 
-                pass 
-        except : 
-            print('Error in creating the image file')
 
         # send a mail to this email
         # generate a random OTP and verify if the OTP generated is valid or not 
         try : 
-            mailing.send_mail(OTP)
+            print('inside try')
+            send_mail(email  , OTP)
 
             # convert the OTP in a hash
             return Response({'message' : 'OTP Sent' , 'OTP' : OTP} , status = status.HTTP_200_OK)
