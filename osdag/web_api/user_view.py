@@ -251,14 +251,15 @@ class SaveInputFileView(APIView) :
         print('fileName : ' , fileName)
         currentDirectory = os.getcwd()
         print('currentDirectory : ' , currentDirectory)
-        fullPath = currentDirectory + "file_storage/input_files/" + fileName
+        fullPath = currentDirectory + "/file_storage/input_values_files/" + fileName
         print('fullPath : ' , fullPath)
 
         # create the file
         try : 
             print('creating the .osi file')
-            with default_storage.open(fullPath , "wb+") as destination : 
+            with open(fullPath , "wt") as destination : 
                 destination.write(content)
+            destination.close()
             print('created the .osi file ')
 
             return Response({'message' : "File stored successfully"} , status = status.HTTP_201_CREATED)

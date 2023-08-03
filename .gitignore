@@ -48,3 +48,6 @@ file_storage/design_report/*.aux
 
 # ignore companylogo images 
 file_storage/company_logo/*.png
+
+# ignore the input values files 
+file_storage/input_values_files/*.osi
