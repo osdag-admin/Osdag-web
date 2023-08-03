@@ -12,16 +12,18 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
     const { materialList, conn_material_details, getMaterialDetails } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
     useEffect(() => {
-        getMaterialDetails({material: inputs.connector_material, type: "connector"})
+        const material = materialList.filter(value => value.Grade === inputs.supported_material)
+        getMaterialDetails({data: material[0], type: "connector"})
     }, [])
 
     const handleMaterialChange = value => {
-        if(value === 'Custom'){
+        const material = materialList.find(item => item.id === value)
+        if(material.Grade === 'Custom'){
             setShowModal(true)
             return;
         }
-        setInputs({ ...inputs, connector_material: value })
-        getMaterialDetails({material: value, type: "connector"})
+        setInputs({ ...inputs, connector_material: material.Grade })
+        getMaterialDetails({data: material, type: "connector"})
     }
     
 
@@ -34,11 +36,13 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
                                 value={inputs.connector_material}
-                                onSelect={(value) => handleMaterialChange(value)}
+                                onSelect={(value) => {
+                                    handleMaterialChange(value)
+                                }}
                             >
                                 {materialList.map((item, index) => {
                                     return (
-                                        <Option key={index} value={item}>{item}</Option>
+                                        <Option key={index} value={item.id}>{item.Grade}</Option>
                                     )
                                 })}
                             </Select>

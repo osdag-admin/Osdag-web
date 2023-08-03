@@ -11,7 +11,7 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 */
 
 let initialValue = {
-    isLoggedIn : false,
+    isLoggedIn : true,
     allReportsLink : [],
     LoginMessage : "",
     SignupMessage : "",

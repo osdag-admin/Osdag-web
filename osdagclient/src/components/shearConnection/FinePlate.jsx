@@ -863,17 +863,19 @@ function FinePlate() {
                 <div><h4>Material</h4></div>
                 <div>
                   <Select style={{ width: '100%' }}
-                    value={inputs.connector_material || materialList[0]}
+                    value={inputs.connector_material || materialList[0].Grade}
                     onSelect={(value) => {
-                      if (value == 'Custom') {
+                      const material = materialList.find(item => item.id === value)
+                      console.log(material)
+                      if (material.Grade == 'Custom') {
                         setShowModal(true);
                         return;
                       }
-                      setInputs({ ...inputs, connector_material: value })
+                      setInputs({ ...inputs, connector_material: material.Grade })
                     }}
                   >
                     {materialList.map((item, index) => (
-                      <Option key={index} value={item}>{item}</Option>
+                      <Option key={index} value={item.id}>{item.Grade}</Option>
                     ))}
                   </Select>
                 </div>

@@ -94,6 +94,14 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
+    const updateMaterialListFromCaches = () => {
+        const data = JSON.parse(localStorage.getItem("osdag-custom-materials"))
+        if(data && data.length > 0){
+            console.log(data)
+            dispatch({type: "UPDATE_MATERIAL_FROM_CACHES", payload: data})
+        }
+    }
+
     const getBoltDiameterList = async () => {
         try {
             const response = await fetch(`${BASE_URL}populate?moduleName=${state.currentModuleName}&boltDiameter=Customized`, {
@@ -275,23 +283,14 @@ export const ModuleProvider = ({ children }) => {
     }
 
     const getMaterialDetails = async(param) => {
-        try {
-            const response = await fetch(`${BASE_URL}materialDetails/?material=${param.material}`, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'include'
-            })
-            const data = await response?.json()
-            if(param.type === 'connector')
-                dispatch({type: 'SAVE_CM_DETAILS', payload: data.material_details})
-            else if(param.type === 'supported')
-                dispatch({type: 'SAVE_SDM_DETAILS', payload: data.material_details})
-            else if(param.type === 'supporting')
-                dispatch({type: 'SAVE_STM_DETAILS', payload: data.material_details})
-        } catch (error) {
-            //console.log(error)
-            console.log("Something went wrong")
-        }
+        if(param.type === 'connector')
+            dispatch({type: 'SAVE_CM_DETAILS', payload: [param.data]})
+        else if(param.type === 'supported')
+            dispatch({type: 'SAVE_SDM_DETAILS', payload: [param.data]})
+        else if(param.type === 'supporting')
+            dispatch({type: 'SAVE_STM_DETAILS', payload: [param.data]})
+
+        return;
     }
 
     const getPDF = async (obj) => {
@@ -463,7 +462,8 @@ export const ModuleProvider = ({ children }) => {
             saveCSV,
             getDesingPrefData,
             updateSourceAndMechType,
-            getMaterialDetails
+            getMaterialDetails,
+            updateMaterialListFromCaches
         }}>
             {children}
         </ModuleContext.Provider>
