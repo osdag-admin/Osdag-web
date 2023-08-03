@@ -341,7 +341,12 @@ export const UserProvider = ({children}) => {
             const response = await fetch(`${BASE_URL}user/saveinput/` , {
                 method : 'POST',
                 mode : 'cors',
-                body : content
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify({
+                    'content' : content
+                })
             })
 
             const jsonResponse = await response?.json()

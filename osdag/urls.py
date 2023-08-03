@@ -73,7 +73,7 @@ urlpatterns = [
     path('user/logout/' ,  LogoutView.as_view()),
     path('user/login/' , LoginView.as_view()),
     path('user/checkemail/' , CheckEmailView.as_view()),
-    path('user/saveinputfile/' , SaveInputFileView.as_view()),
+    path('user/saveinput/' , SaveInputFileView.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',
