@@ -79,9 +79,9 @@ class InputData(APIView):
                     'Designation', flat=True))
                 beamList = list(Beams.objects.values_list(
                     'Designation', flat=True))
-                materialList = list(
-                    Material.objects.values_list('Grade', flat=True))
-                materialList.append('Custom')
+                materialList = list(Material.objects.filter().values())
+
+                materialList.append({"id": -1, "Grade": 'Custom'})
                 response = {
                     'columnList': columnList,
                     'beamList': beamList,
@@ -90,7 +90,8 @@ class InputData(APIView):
 
                 return Response(response, status=status.HTTP_200_OK)
 
-            except:
+            except Exception as err:
+                print(err)
                 return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (connectivity == 'Beam-Beam'):
@@ -101,8 +102,8 @@ class InputData(APIView):
             try:
                 beamList = list(Beams.objects.values_list(
                     'Designation', flat=True))
-                materialList = list(
-                    Material.objects.values_list('Grade', flat=True))
+                materialList = list(Material.objects.all().values())
+                materialList.append({"id": -1, "Grade": 'Custom'})
                 response = {
                     'beamList': beamList,
                     'materialList': materialList

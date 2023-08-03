@@ -17,10 +17,12 @@ class DesignPreference(APIView):
         material = request.GET.get("material")
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
 
+        """
         if cookie_id == None or cookie_id == '': 
             return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 
         if not Design.objects.filter(cookie_id=cookie_id).exists(): 
             return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
+        """
 
         connector_material_details = []
         if material:
@@ -68,7 +70,7 @@ class MaterialDetails(APIView):
 
         alreadyExists = Material.objects.filter(Grade=materialName).exists()
         if alreadyExists:
-            return Response({"message": "The material already exists"}, status=403)
+            return Response({"message": "The material already exists", "success": False}, status=403)
 
         serializer = Material_Serializer(data = {
             "Grade": materialName,
@@ -76,12 +78,11 @@ class MaterialDetails(APIView):
             "Yield_Stress_between_20_and_neg40": fy_20_40,
             "Yield_Stress_greater_than_40": fy_40,
             "Ultimate_Tensile_Stress": fu,
-            "Elongation": 20
         })
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"message" : "Material added successfuly"} , status=201) 
+            return Response({"message" : "Material added successfuly", "success": True} , status=201) 
         else:
             print('serializer.errors : ' , serializer.errors)
-        return Response({"message" : "Something went wrong"} , status=500)
+        return Response({"message" : "Something went wrong", "success": True} , status=500)
