@@ -305,8 +305,7 @@ export const ModuleProvider = ({ children }) => {
                     'Cache-Control': 'no-cache', // Disable caching
                     'Pragma': 'no-cache', // For older browsers
                 }
-            })
-                .then((response) => {
+            }).then((response) => {
                     if (response.ok) {
                         const link = document.createElement('a');
                         link.href = response.url;

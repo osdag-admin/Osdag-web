@@ -2,16 +2,22 @@ import smtplib
 import getpass
 
 # import variables from utils.py 
-from osdag_web.utils import HOST, PORT, FROM_EMAIL, PASSWORD
+from osdag_web import utils
 
-def send_mail(OTP = 123) : 
+def send_mail(email , OTP=123) : 
+    print('inside send email')
     # OTP = 123 by default
-    HOST = HOST
-    PORT = PORT
+    HOST = utils.HOST
+    PORT = utils.PORT
+    print('host : ' ,HOST)
+    print('PORT ; ' ,PORT)
 
-    FROM_EMAIL = FROM_EMAIL
-    TO_EMAIL = "atharva0300@gmail.com"
-    PASSWORD = PASSWORD
+    FROM_EMAIL = utils.FROM_EMAIL
+    TO_EMAIL = str(email)
+    PASSWORD = utils.PASSWORD
+    print('TO email :  ', TO_EMAIL)
+    print('password : ' , PASSWORD)
+    print('FROMT_EMAIL : ' ,FROM_EMAIL)
     MESSAGE = f"""Subject: OTP for Email verification
 
     Hi Atharva,
@@ -20,6 +26,8 @@ def send_mail(OTP = 123) :
 
     Thanks,
     Osdag on Cloud Developer"""
+    print('MESSAGE : ' , MESSAGE)
+    print('sending...')
     smtp = smtplib.SMTP(HOST , PORT)
 
     status_code, response = smtp.ehlo()
@@ -33,3 +41,5 @@ def send_mail(OTP = 123) :
 
     smtp.sendmail(FROM_EMAIL , TO_EMAIL , MESSAGE)
     smtp.quit()
+
+    print('sent...')

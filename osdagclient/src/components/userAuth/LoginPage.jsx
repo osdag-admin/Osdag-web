@@ -49,7 +49,8 @@ const LoginPage = () => {
                 userSignup( username , email , password , false )
              
             }else{
-                userLogin( username , password , false)
+                userLogin( email , password , false)
+            
 
             }
         }
@@ -67,12 +68,14 @@ const LoginPage = () => {
   };
     // Guest 
     const handleGuestSignIn = () => {
-        const GuestUserName = `GUEST.${generateRandomString(10)}`;
+        console.log('handle Guest Sign in ')
+        let GuestEmail = `GUEST.${generateRandomString(10)}`;
+        GuestEmail += "@gmail.com"
         const GuestUserPassword = generateRandomString(12);
-        const Guestlog = true;
-        console.log("\n Guest Name: "+GuestUserName+"\n Password:"+GuestUserPassword)
-        console.log("\n\n Input goes as "+ userSignup(  GuestUserName, GuestUserPassword, Guestlog  ))
-        userLogin(  GuestUserName, GuestUserPassword, Guestlog  )
+        console.log('Guest email : ' , GuestEmail)
+        console.log('guest password : ' , GuestUserPassword)
+        // setting the isGuest to true
+        userLogin(  GuestEmail, GuestUserPassword, true  )
       };
 
 

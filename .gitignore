@@ -9,8 +9,8 @@
 **/.idea/
 *~
 .vscode
-*.sqlite
-**/*.sqlite
+#*.sqlite
+#**/*.sqlite
 *.log
 *.bak
 *.pdf
@@ -35,7 +35,7 @@ ResourceFiles/Osi_Files/*
 *.xlsx
 ResourceFiles/last_designs/*
 ResourceFiles/html_page/*
-osdag_web/secret_key.py
+#osdag_web/secret_key.py
 db.sqlite3
 file_storage/cad_models/*
 osdagclient/node_modules

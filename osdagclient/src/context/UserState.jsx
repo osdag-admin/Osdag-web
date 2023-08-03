@@ -1,5 +1,8 @@
 import { createContext, useReducer } from 'react';
-import UserReducer from './UserReducer'
+import UserReducer from './UserReducer';
+
+// crypto packages
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 /* 
     ######################################################### 
@@ -8,8 +11,14 @@ import UserReducer from './UserReducer'
 */
 
 let initialValue = {
-    isLoggedIn : true
-
+    isLoggedIn : false,
+    allReportsLink : [],
+    LoginMessage : "",
+    SignupMessage : "",
+    OTPSent : false,
+    OTPMessage : "",
+    passwordSet : false,
+    passwordSetMessage : ""
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -143,22 +152,22 @@ export const UserProvider = ({children}) => {
                 createJWTToken(username , password)
 
                 // call the reducer action to set the Login variable
-                dispatch({type : 'SET_LOGGED_IN' , payload : true})
+                dispatch({type : 'SET_SIGNUP_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Signed up"}})
 
                 console.log('isloggedIn in signup thunk : ' , state.isLoggedIn)
             }else{
                 console.log('response.status is not 201, failed to create a new user')
-                dispatch({type : 'SET_LOGGED_IN' , payload : false})
+                dispatch({type : 'SET_SIGNUP_STATUS' , payload : {isLoggedIn : false, message : "Error in creating the User Account, please try again"}})
             }
         }catch(err){
             console.log('there is an error in user signup : ' , err)
-            dispatch({type : 'SET_LOGGED_IN' , payload : false})
+            dispatch({type : 'SET_SIGNUP_STATUS', payload : {isLoggedIn : false , message : "Server Error in creating User Account, please try again"}} )
         }
     }
 
     const userLogin = async(username , password ,  isGuest) => {
         console.log('inside user login')
-        console.log('encrypted_username : ' , username)
+        console.log('username' , username)
         console.log('isGuest : ' ,isGuest)
 
         try{
@@ -168,11 +177,11 @@ export const UserProvider = ({children}) => {
                 headers: {
                     'Content-Type': 'application/json', // Set the Content-Type header to JSON
                   },
-                body : {
+                body : JSON.stringify({
                     username : username,
                     password : password,
                     isGuest : isGuest
-                }
+                })
             })
 
             const jsonResponse = await response?.json()
@@ -181,30 +190,159 @@ export const UserProvider = ({children}) => {
                 console.log('user logged in successfully')
                 
                 // create a new jwt token 
-                createJWTToken(username , password)
+                if(isGuest==false){
+                    createJWTToken(username , password)
+                }
 
                 // set the login variable to true 
-                dispatch({type : 'SET_LOGGED_IN' , payload : true})
+                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
             }else{
                 console.log('response.status!=200, user not logged in')
-                dispatch({type : 'SET_LOGGED_IN' , payload : false})
+                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
             }
         }catch(err){
             console.log('error in logging in')
-            dispatch({type : 'SET_LOGGED_IN' , payload : false})
+            dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : "Server error occured while logging in, please try again"}})
         }
     }
+
+    const obtainAllReports = async() => {
+        console.log('inside teh obtain All reports thunk')
+        const access_token = localStorage.getItem('access')
+        console.log('access_token : ' , access_token)
+
+        try{
+            fetch(`${BASE_URL}user/allreports/` , {
+                method : 'GET',
+                mode : 'cors',
+                credentials : 'include',
+                // Authorization header as well
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache', // Disable caching
+                    'Pragma': 'no-cache', // For older browsers
+                    'Authorization' : `Bearer ${access_token}`,
+                }
+            }).then((response) => {
+                if (response.ok) {
+                    const link = document.createElement('a');
+                    link.href = response.url;
+                    link.setAttribute('download', 'your_file_name.pdf');
+
+                    // store the link in an array
+                    dispatch({type : 'PUSH_REPORT_LINK' , payload : link})
+                    console.log('pushed the report link')
+
+                } else {
+                    console.error('Error in obtaining the PDF file:', response.status, response.statusText);
+                }
+            });
+
+        }catch(err){
+            console.log('error in obtainig all the reports : ' , err)
+        }
+    }
+
+    const verifyEmail = async(email) => {
+        console.log('inside the verify email thunk')
+        console.log('email : ' , email)
+
+        try{
+            const response = await fetch.await(`${BASE_URL}user/checkemail/` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify({
+                    email : email
+                })
+            })
+
+            const jsonResponse = await response?.json()
+            if(response.status==200){
+                console.log('the OTP has been sent to the email')
+
+                // obtain the OTP, hash it and store it in the localstorage
+                const otp = jsonResponse.get('OTP')
+                // encode the OTP
+                const encoded_otp = base64_encode(otp)
+                const encoded_email = base64_encode(email)
+                // set the OTP in the localStorage
+                localStorage.setItem('otp' , encoded_otp)
+                localStorage.setItem('email' , encoded_email)
+
+                dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : true , message : 'The OTP has been sent'}})                
+
+            }else{
+                console.log('response.status!=200 while checking the email')
+                dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : false , message : 'failed to send the OTP, try again'}})
+
+            }
+        }catch(err){
+            console.log('There is an error in the server while checking the email : ' , err)
+            dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : false , message : 'Server error in sending the OTP, please try again'}})
+        }
+    }
+
+
+    const ForgetPassword = async(newPassword) => {
+        console.log('inside the forget password thunk')
+        console.log('newPassword : ' , newPassword)
+        // obtain the stored email from the localStorage and delete the email, OTP 
+        let encoded_email = localStorage.get('email')
+        const email = base64_decode(encoded_email)
+        localStorage.removeItem('email')
+        localStorage.removeItem('otp')
+        console.log('email : ' , email)
+
+        try{
+            const response =  await fetch(`${BASE_URL}user/forgetpassword/` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json',
+                },
+                body : JSON.stringify({
+                    password : newPassword,
+                    email : email
+                })
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse : ' , jsonResponse)
+            if(response.status==200){
+                console.log('password updated')
+
+                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : true , passwordSetMessage : 'New password has been set'}})
+                
+            }else{
+                console.log('response.status!=200 on forget password')
+
+                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : false , passwordSetMessage : 'Failed to update the password , please try again'}})
+            }
+        }catch(err){
+            console.log('Server error in updating the password')
+
+            dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : false ,passwordSetMessage : 'Server error in updating the password, please try again'}})
+        }
+    }
+
 
     return (
         <UserContext.Provider value = {{
             // state variables 
             isLoggedIn : state.isLoggedIn,
-
-
+            OTPSent : state.OTPSent,
+            OTPMessage : state.OTPMessage,
+            LoginMessage : state.LoginMessage,
+            SignupMessage : state.SignupMessage,
 
             // thunks
             userSignup,
-            userLogin
+            userLogin,
+            verifyEmail,
+            ForgetPassword
             
         }}>
             {children}

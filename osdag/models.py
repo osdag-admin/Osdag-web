@@ -25,19 +25,12 @@ class Design(models.Model):
 #########################################################
 class UserAccount(models.Model) : 
     username = models.TextField(blank=True , unique = True)
-    password_hash = models.BinaryField(blank=True)
-    email = models.TextField(blank=True)
-    allReports = ArrayField(models.TextField(blank=True))
-
-    def set_password(self , raw_password) : 
-        self.password_hash = make_password(raw_password)
-    
-    def check_password(self, raw_password) : 
-        return check_password(raw_password , self.password_hash)
+    password = models.TextField(blank=False)
+    email = models.TextField(blank=True, unique = True)
 
 
     class Meta : 
-        db_table = "User"
+        db_table = "UserAccount"
 
 class Anchor_Bolt(models.Model):
     Diameter = models.TextField()

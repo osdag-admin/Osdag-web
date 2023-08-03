@@ -10,7 +10,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 
 # email imports
-from osdag_web import mailing
+from osdag_web.mailing import send_mail
 
 # simpleJWT imports 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -60,7 +60,7 @@ class SignupView(APIView) :
 
         tempData = {
             'username' : username,
-            'password_hash' : password,
+            'password' : password,
             'email' : email,
             'allReports' : ['']
         }
@@ -87,28 +87,28 @@ class SignupView(APIView) :
 
 class ForgetPasswordView(APIView) : 
     def post(self , request) : 
-        print('sindie teh forget password post')
+        print('inside the forget password post')
         
-        # obtain the new passwrod 
+        # obtain the new password
         password = request.data.get('password')
+        print('password : ' , password)
+        email = request.data.get('email')
+        print('email : ' , email)
+
+        # obtain the user object from the Django.contrib.auth.models User
+        user = User.objects.get(email = email)
+        user.password = password
+        user.save()
+        print('Django user updates')
+
+        # update the user in the postgres database
+        user = UserAccount.objects.get(email = email)
+        user.password = password
+        user.save()
+        print('postgres user updated')
 
         # PARTIAL WORK, WORK IN PROGRESS 
-        return Response({'message' , 'Something goes here'} , status = status.HTTP_201_CREATED)
-    
-
-    def get(self , request) : 
-        print('inside the forget password get')
-        
-        # 1. Send the current username to the browser 
-        # 2. send the email attached to the username
-        # 3. In the browser, the user then types the email, the email is verified against the one which is sent from the Server 
-        # 4. If it is matched, then the user enters a new pasword
-        
-        # this API view just sends the current username and password 
-        
-        # PARTIAL WORK, WORK IN PROGRESS
-
-        return Response({'message' , 'Something goes here'} , status = status.HTTP_200_OK)
+        return Response({'message' , 'Password has been updated successfully'} , status = status.HTTP_200_OK)
         
 class LogoutView(APIView) : 
     permission_classes = (IsAuthenticated,)
@@ -134,10 +134,11 @@ class CheckEmailView(APIView):
         # check if the email exists in the database or not 
         # database query for checking if the email is present in the database or not 
         try : 
-            pass 
-        except : 
+            emailobject = User.objects.get(email = email)
+            print('emailObject : ' , emailobject)
+        except User.DoesNotExist as e : 
             # the email is not present in the the database 
-            print('email is not present in the database')
+            print('email is not present in the database : ' , e)
 
             return Response({'message' , "Email is not registered"} , status = status.HTTP_400_BAD_REQUEST)
 
@@ -145,27 +146,15 @@ class CheckEmailView(APIView):
         # K -> is the number of digits in the OTP
         OTP = ''.join(random.choices(string.digits, k = 6))   
         print('OTP : ' , OTP)
-        
-        # save the OTP somewhere in the FS
-        # generate a file with the same name as teh email and store the OTP in the FILE 
-        fileName = email.split('@')[0]
-        print('fileName : ' ,fileName)
-        fileName = fileName + ".txt"
-        currentDirectory = os.getcwd()
-        print('currentDirectory : ' , currentDirectory)
-
-        # create the file 
-        try :       
-            with open(currentDirectory+"/file_storage/emails/"+fileName , 'w') as fp : 
-                pass 
-        except : 
-            print('Error in creating the image file')
 
         # send a mail to this email
         # generate a random OTP and verify if the OTP generated is valid or not 
         try : 
-            mailing.send_mail(OTP)
-            return Response({'message' : 'OTP Sent'} , status = status.HTTP_200_OK)
+            print('inside try')
+            send_mail(email  , OTP)
+
+            # convert the OTP in a hash
+            return Response({'message' : 'OTP Sent' , 'OTP' : OTP} , status = status.HTTP_200_OK)
         except : 
             return Response({'message' : 'Failed to send the mail'} , status = status.HTTP_400_BAD_REQUEST)
         
@@ -187,14 +176,48 @@ class LoginView(APIView) :
     def post(self , request) : 
         print('inside login post')
 
-        # obtain the encrypted username and password 
-        username = request.data.get('username')
-        password = request.data.get('password')
-        isGuest = request.data.get('password')
-        print('username : ' , username)
-        print('password : ' , password)
+        # check if the user is a guest user or not 
+        isGuest = request.data.get('isGuest')
         print('isGuest : ' , isGuest)
 
+        if(isGuest) : 
+            print('is a guest user')
+            # create a dummy user
+
+            # check if the dummy user is already created or not 
+            # if not, then create, else use the dummy user
+            try : 
+                user = User.objects.create_user(username = 'default123' , email = 'default@123.com' , password = 'default123' )
+                # provide no permissions to the user and just save
+                user.save()
+            
+            except : 
+                print('the user already exists')
+
+            # grant the login access to the user 
+            return Response({'message' : 'Login suvvessfuly'} , status = status.HTTP_200_OK)
+        
+        # for a guest user
+        print('is not a guest user')
+
+        # obtain the email and password
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        print('email : ' , email)
+        print('password : ' , password)
+
+        # find the useranme and password from the UserAccount model 
+        result = UserAccount.objects.get(email = email , password = password)
+        if(result) : 
+            print('the user has been found')
+
+            # grant the login access to the user 
+            return Response({'message' : 'Login successfully'} , status = status.HTTP_200_OK)
+        else : 
+            print('Login failed')
+            return Response({'message' : 'Login failed'} , status = status.HTTP_400_BAD_REQUEST)
+            
         # authenticate the user 
 
         
@@ -202,3 +225,13 @@ class LoginView(APIView) :
         return Response({'message' : 'User logged in'} , status = status.HTTP_200_OK)
 
 
+class ObtainAllReportsView(APIView) : 
+    def get(self , request) : 
+        print('inside obtain all reports view get')
+
+        return Response({'message' : 'Inside obtain all report view'} , status = status.HTTP_200_OK)
+    
+    def post(self , request) : 
+        print('inside obtain all report view post')
+
+        return Response({'message' : 'Inside obtain all report view'}, status = status.HTTP_200_OK)

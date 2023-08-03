@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 CREATE TABLE IF NOT EXISTS public."UserAccount" (
 	"id" SERIAL PRIMARY KEY,
 	"username" TEXT,
-	"password_hash" BYTEA,
+	"password" TEXT,
 	"email" TEXT,
 	"allReports" TEXT[]
 	/* An array of username that can store multiple users */ 
@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS public."UserAccount" (
 	/* allReports will mappings of the username and the report names ( unique ) */ 
 	/* each report is mapped to a unique user */ 
 );
-
 
 CREATE TABLE IF NOT EXISTS public."Bolt" (
 	"id" SERIAL PRIMARY KEY,
