@@ -53,18 +53,20 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues,inputValue
         .then(res => res.json())
         .then(data => {
             console.log(data)
-            if(type == 'supported'){
-                setInputValues({...inputValues, supported_material: grade})
+            if(data.success === true){
+                if(type == 'supported'){
+                    setInputValues({...inputValues, supported_material: grade})
+                }
+                else if(type == 'supporting'){
+                    setInputValues({...inputValues, supporting_material: grade})
+                }
+                else if(type == 'connector'){
+                    setInputValues({...inputValues, connector_material: grade})
+                }
+    
+                getMaterialDetails({material: grade, type: type})
+                getColumnBeamMaterialList(currentModuleName, 'Column-Flange-Beam-Web')
             }
-            else if(type == 'supporting'){
-                setInputValues({...inputValues, supporting_material: grade})
-            }
-            else if(type == 'connector'){
-                setInputValues({...inputValues, connector_material: grade})
-            }
-
-            getMaterialDetails({material: grade, type: type})
-            getColumnBeamMaterialList(currentModuleName, 'Column-Flange-Beam-Web')
             alert(data.message)
         })
         .catch(err => {
