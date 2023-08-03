@@ -211,7 +211,12 @@ export const UserProvider = ({children}) => {
     const obtainALLInputValueFiles = async() => {
         console.log('inside teh obtain All reports thunk')
         const access_token = localStorage.getItem('access')
+        const allInputValueFilesLength = localStorage.getItem('allInputValueFilesLength')
+        console.log('allInputValueFilesLength : ' , allInputValueFilesLength)
         console.log('access_token : ' , access_token)
+        const email = localStorage.getItem('email')
+        console.log('email : ' , email)
+        let fileIndex = 0
 
         try{
             fetch(`${BASE_URL}user/allreports/` , {
@@ -224,7 +229,12 @@ export const UserProvider = ({children}) => {
                     'Cache-Control': 'no-cache', // Disable caching
                     'Pragma': 'no-cache', // For older browsers
                     'Authorization' : `Bearer ${access_token}`,
-                }
+                },
+                body : JSON.stringify({
+                    'allInputValueFilesLength' : allInputValueFilesLength,
+                    'email' : email,
+                    'fileIndex' : fileIndex
+                })
             }).then((response) => {
                 if (response.ok) {
                     const link = document.createElement('a');
@@ -353,7 +363,10 @@ export const UserProvider = ({children}) => {
             console.log('jsonResponse : ' , jsonResponse)
             if(response.status==201){
                 console.log('the input file has beed stored successfully')
-
+                const allInputValueFilesLength = jsonResponse.get('allInputValueFilesLength')
+                // set to localStorage 
+                localStorage.setItem('allInputValueFilesLength' , allInputValueFilesLength)
+            
                 dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : true , inputFilesMessage : "The files have been stored in the server"}})
 
             }else{

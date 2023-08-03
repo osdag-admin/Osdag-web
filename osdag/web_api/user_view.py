@@ -21,6 +21,7 @@ from osdag.models import UserAccount
 # django imports 
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.http import FileResponse
 
 # importing serializers
 from osdag.serializers import UserAccount_Serializer
@@ -222,26 +223,38 @@ class LoginView(APIView) :
 
 
 class ObtainAllInputValueFilesView(APIView) : 
-    def get(self , request) : 
+    def post(self , request) : 
         print('inside obtain all reports view get')
 
         # obtain the email 
-        email = request.GET.get('email')
+        email = request.data.get('email')
         print('email : ' , email)
+        allInputValueFilesLength = request.data.get('allInputValueFilesLength')
+        print('allInputValueFilesLength : ' , allInputValueFilesLength)
+        fileIndex = request.data.get('fileIndex')
+        print('fileIndex : ' , fileIndex)
 
-        # send the input value files to the client
-        currentDirectory = os.cwd()
-        print('current Directory : ' , currentDirectory)
-        fullpath = currentDirectory + "/file_storage/input_values_files/"
+        userObject = UserAccount.objects.get(email = email)
+        filePath = userObject.allInputValueFiles[int(fileIndex)+1]
+        print('filePath : ' , filePath)
 
-        userAccount = UserAccount.objects.get(email = email)
-        fileLocations = userAccount.allInputValueFiles
-        print('fileLocations : ' , fileLocations)
-
-        # iterate through the file locations and send the all the files to the client 
+        try : 
+            # send the input value files to the client
+            currentDirectory = os.getcwd()
+            print('current Directory : ' , currentDirectory)
+            fullpath = currentDirectory + "/file_storage/input_values_files/"
+            response = FileResponse(open(filePath, 'rb'))
+            response['Content-Type'] = 'application/text'
+            response['Content-Disposition'] = f'attachment; filename="{filePath}"'
+            for key, value in response.items():
+                print(f'{key}: {value}')
+            
+            return response
         
+        except Exception as e : 
+            print('An exception has occured in obtaining the osi file : ' , e)
 
-        return Response({'message' : 'Inside obtain all report view'} , status = status.HTTP_200_OK)
+            return Response({'message' : 'Inside obtain all report view'} , status = status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class SaveInputFileView(APIView) : 
     def post(self, request) : 
@@ -273,6 +286,7 @@ class SaveInputFileView(APIView) :
                 # append the fulllPath of the file to the email
                 userObject = UserAccount.objects.get(email = email)
                 userObject.allInputValueFiles.append(fullPath)
+                allInputValueFilesLength = len(userObject.allInputValueFiles)
                 userObject.save()
                 print('the filePath has been appended and linked to the user')
             except Exception as e: 
@@ -280,7 +294,7 @@ class SaveInputFileView(APIView) :
 
                 return Response({'message' : 'Failed to connect the file to the User'} , status = status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            return Response({'message' : "File stored successfully"} , status = status.HTTP_201_CREATED)
+            return Response({'message' : "File stored successfully" , 'allInputValueFilesLength' : allInputValueFilesLength} , status = status.HTTP_201_CREATED)
         
         except : 
             print('Error in creating an storing the contents of the file')
