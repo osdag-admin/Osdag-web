@@ -18,7 +18,9 @@ let initialValue = {
     OTPSent : false,
     OTPMessage : "",
     passwordSet : false,
-    passwordSetMessage : ""
+    passwordSetMessage : "",
+    inputFiles : false,
+    inputFilesMessage : ""
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -206,7 +208,7 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const obtainAllReports = async() => {
+    const obtainALLInputValueFiles = async() => {
         console.log('inside teh obtain All reports thunk')
         const access_token = localStorage.getItem('access')
         console.log('access_token : ' , access_token)
@@ -233,8 +235,11 @@ export const UserProvider = ({children}) => {
                     dispatch({type : 'PUSH_REPORT_LINK' , payload : link})
                     console.log('pushed the report link')
 
+                    dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : true , inputFilesMessage : "The files have been stored in the server"}})
+
                 } else {
                     console.error('Error in obtaining the PDF file:', response.status, response.statusText);
+                    dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Failed to store the files in the server"}})
                 }
             });
 
@@ -328,6 +333,37 @@ export const UserProvider = ({children}) => {
         }
     }
 
+    const SaveInputValueFile = async(content) => {
+        console.log('inside saveInputValueFile thunk')
+        console.log('content : ' ,content)
+
+        try{
+            const response = await fetch(`${BASE_URL}user/saveinput/` , {
+                method : 'POST',
+                mode : 'cors',
+                body : content
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse : ' , jsonResponse)
+            if(response.status==201){
+                console.log('the input file has beed stored successfully')
+
+                dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : true , inputFilesMessage : "The files have been stored in the server"}})
+
+            }else{
+                console.log('response.status!=200 while sending the input values files')
+
+                dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Failed to store the input files in the servers"}})
+            }
+        }catch(err){
+            console.log('Error in sending the input files : ' , err)
+
+            dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Server error in storing the files"}})
+        }
+
+    }
+
 
     return (
         <UserContext.Provider value = {{
@@ -342,7 +378,8 @@ export const UserProvider = ({children}) => {
             userSignup,
             userLogin,
             verifyEmail,
-            ForgetPassword
+            ForgetPassword,
+            obtainALLInputValueFiles
             
         }}>
             {children}

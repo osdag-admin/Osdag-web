@@ -27,7 +27,7 @@ class UserAccount(models.Model) :
     username = models.TextField(blank=True , unique = True)
     password = models.TextField(blank=False)
     email = models.TextField(blank=True, unique = True)
-
+    allinputValueFiles = ArrayField(models.TextField(blank = True))
 
     class Meta : 
         db_table = "UserAccount"

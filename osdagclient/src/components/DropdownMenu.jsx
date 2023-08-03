@@ -153,6 +153,7 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     let content
     if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
       content = `Bolt.Bolt_Hole_Type: ${inputs.bolt_hole_type}\nBolt.Diameter: \n${formatArrayForText(allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter)}\nBolt.Grade: \n${formatArrayForText(allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade)}\nBolt.Slip_Factor: ${inputs.bolt_slip_factor}\nBolt.TensionType: ${inputs.bolt_tension_type}\nBolt.Type: ${inputs.bolt_type.replaceAll("_", " ")}\nConnectivity: ${conn_map[selectedOption]}\nConnector.Material: ${inputs.connector_material}\nDesign.Design_Method: ${inputs.design_method}\nDetailing.Corrosive_Influences: ${inputs.detailing_corr_status}\nDetailing.Edge_type: ${inputs.detailing_edge_type}\nDetailing.Gap: ${inputs.detailing_gap}\nLoad.Axial: ${inputs.load_axial || ''}\nLoad.Shear: ${inputs.load_shear || ''}\nMaterial: ${inputs.connector_material}\nMember.Supported_Section.Designation: ${inputs.beam_section}\nMember.Supported_Section.Material: ${inputs.supported_material}\nMember.Supporting_Section.Designation: ${inputs.column_section}\nMember.Supporting_Section.Material: ${inputs.supporting_material}\nModule: Fin Plate Connection\nWeld.Fab: ${inputs.weld_fab}\nWeld.Material_Grade_OverWrite: ${inputs.weld_material_grade}\nConnector.Plate.Thickness_List: \n${formatArrayForText(allSelected.plate_thickness ? thicknessList : inputs.plate_thickness)}\n`
+
     }
     else{
       content = `Bolt.Bolt_Hole_Type: ${inputs.bolt_hole_type}\nBolt.Diameter: \n${formatArrayForText(allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter)}\nBolt.Grade: \n${formatArrayForText(allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade)}\nBolt.Slip_Factor: ${inputs.bolt_slip_factor}\nBolt.TensionType: ${inputs.bolt_tension_type}\nBolt.Type: ${inputs.bolt_type.replaceAll("_", " ")}\nConnectivity: ${conn_map[selectedOption]}\nConnector.Material: ${inputs.connector_material}\nDesign.Design_Method: ${inputs.design_method}\nDetailing.Corrosive_Influences: ${inputs.detailing_corr_status}\nDetailing.Edge_type: ${inputs.detailing_edge_type}\nDetailing.Gap: ${inputs.detailing_gap}\nLoad.Axial: ${inputs.load_axial || ''}\nLoad.Shear: ${inputs.load_shear || ''}\nMaterial: ${inputs.connector_material}\nMember.Supported_Section.Designation: ${inputs.secondary_beam}\nMember.Supported_Section.Material: ${inputs.supported_material}\nMember.Supporting_Section.Designation: ${inputs.primary_beam}\nMember.Supporting_Section.Material: ${inputs.supporting_material}\nModule: Fin Plate Connection\nWeld.Fab: ${inputs.weld_fab}\nWeld.Material_Grade_OverWrite: ${inputs.weld_material_grade}\nConnector.Plate.Thickness_List: \n${formatArrayForText(allSelected.plate_thickness ? thicknessList : inputs.plate_thickness)}\n`
@@ -166,6 +167,9 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
     parentRef.current.appendChild(element)
     element.click();
     parentRef.current.removeChild(element)
+
+    // an API call, send the .osi file in the backend 
+    
   }
 
   const saveLogMessages = () => {

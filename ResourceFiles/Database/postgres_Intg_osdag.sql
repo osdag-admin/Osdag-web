@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public."UserAccount" (
 	"username" TEXT,
 	"password" TEXT,
 	"email" TEXT,
-	"allReports" TEXT[]
+	"allInputValueFiles" TEXT[]
 	/* An array of username that can store multiple users */ 
 	/* each password will be matched to username in JSONB */ 
 	/* each email will be mapped to one username in JSONB */ 

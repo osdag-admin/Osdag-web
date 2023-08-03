@@ -20,6 +20,7 @@ from osdag.models import UserAccount
 
 # django imports 
 from django.conf import settings
+from django.core.files.storage import default_storage
 
 # importing serializers
 from osdag.serializers import UserAccount_Serializer
@@ -29,6 +30,7 @@ from django.contrib.auth.models import User
 import string
 import os
 import random
+import uuid
 
 
 # obtain the attributes 
@@ -217,21 +219,51 @@ class LoginView(APIView) :
         else : 
             print('Login failed')
             return Response({'message' : 'Login failed'} , status = status.HTTP_400_BAD_REQUEST)
-            
-        # authenticate the user 
-
-        
-        # return a sucess message 
-        return Response({'message' : 'User logged in'} , status = status.HTTP_200_OK)
 
 
-class ObtainAllReportsView(APIView) : 
+class ObtainAllInputValueFilesView(APIView) : 
     def get(self , request) : 
         print('inside obtain all reports view get')
 
+        # obtain the email 
+        email = request.GET.get('email')
+        print('email : ' , email)
+
+        userAccount = UserAccount.objects.get(email = email)
+        fileLocations = userAccount.allInputValueFiles
+        print('fileLocations : ' , fileLocations)
+
+        # iterate through the file locations and send the all the files to the client 
+        
+
         return Response({'message' : 'Inside obtain all report view'} , status = status.HTTP_200_OK)
     
-    def post(self , request) : 
-        print('inside obtain all report view post')
+class SaveInputFileView(APIView) : 
+    def post(self, request) : 
+        print('inside teh saveinput file view post')
 
-        return Response({'message' : 'Inside obtain all report view'}, status = status.HTTP_200_OK)
+        # obtain the file from the request 
+        content = request.data.get('content')
+        print('content : ' , content)
+
+        # create a file in the file_storage 
+        fileName = ''.join(str(uuid.uuid4()).split('-')) + ".osi"
+        print('fileName : ' , fileName)
+        currentDirectory = os.getcwd()
+        print('currentDirectory : ' , currentDirectory)
+        fullPath = currentDirectory + "file_storage/input_files/" + fileName
+        print('fullPath : ' , fullPath)
+
+        # create the file
+        try : 
+            print('creating the .osi file')
+            with default_storage.open(fullPath , "wb+") as destination : 
+                destination.write(content)
+            print('created the .osi file ')
+
+            return Response({'message' : "File stored successfully"} , status = status.HTTP_201_CREATED)
+        
+        except : 
+            print('Error in creating an storing the contents of the file')
+
+            return Response({'message' : "Failed to store the contents of the file"} , status = status.HTTP_400_BAD_REQUEST)
