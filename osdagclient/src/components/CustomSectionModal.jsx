@@ -51,7 +51,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
             console.log(prevData)
 
             let presentItemsInCaches = null;
-            presentItemsInCaches = prevData.filter(item => item.Grade === grade) 
+            if(prevData) presentItemsInCaches = prevData.filter(item => item.Grade === grade) 
             presentItemsInCaches = materialList.filter(item => item.Grade === grade) 
 
             if(presentItemsInCaches && presentItemsInCaches.length > 0){

@@ -16,6 +16,14 @@ export default (state, action) => {
         case 'SET_COLUMN_BEAM_MATERIAL_LIST' : 
             let prev = JSON.parse(localStorage.getItem("osdag-custom-materials"))
             state.materialList = action.payload.materialList
+            if(prev == null){
+                return{
+                    ...state , 
+                    columnList : action.payload.columnList,
+                    beamList : action.payload.beamList,
+                    error_msg : 'Error in fetching Column, Beam and Material List'
+                }
+            }
             return{
                 ...state , 
                 columnList : action.payload.columnList,
@@ -26,6 +34,13 @@ export default (state, action) => {
         case 'SET_BEAM_MATERIAL_LIST' :
             prev = JSON.parse(localStorage.getItem("osdag-custom-materials"))
             state.materialList = action.payload.materialList
+            if(prev == null){
+                return{
+                    ...state ,
+                    beamList : action.payload.beamList,
+                    error_msg : 'Error in fetching Beam and Material List'
+                }
+            }
             return{
                 ...state ,
                 beamList : action.payload.beamList,
