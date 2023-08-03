@@ -134,10 +134,11 @@ class CheckEmailView(APIView):
         # check if the email exists in the database or not 
         # database query for checking if the email is present in the database or not 
         try : 
-            pass 
-        except : 
+            emailobject = User.objects.get(email = email)
+            print('emailObject : ' , emailobject)
+        except User.DoesNotExist as e : 
             # the email is not present in the the database 
-            print('email is not present in the database')
+            print('email is not present in the database : ' , e)
 
             return Response({'message' , "Email is not registered"} , status = status.HTTP_400_BAD_REQUEST)
 
@@ -165,7 +166,9 @@ class CheckEmailView(APIView):
         # generate a random OTP and verify if the OTP generated is valid or not 
         try : 
             mailing.send_mail(OTP)
-            return Response({'message' : 'OTP Sent'} , status = status.HTTP_200_OK)
+
+            # convert the OTP in a hash
+            return Response({'message' : 'OTP Sent' , 'OTP' : OTP} , status = status.HTTP_200_OK)
         except : 
             return Response({'message' : 'Failed to send the mail'} , status = status.HTTP_400_BAD_REQUEST)
         

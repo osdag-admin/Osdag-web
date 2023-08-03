@@ -1,5 +1,8 @@
 import { createContext, useReducer } from 'react';
-import UserReducer from './UserReducer'
+import UserReducer from './UserReducer';
+
+// crypto packages
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 /* 
     ######################################################### 
@@ -11,7 +14,9 @@ let initialValue = {
     isLoggedIn : false,
     allReportsLink : [],
     LoginMessage : "",
-    SignupMessage : ""
+    SignupMessage : "",
+    OTPSent : false,
+    OTPMessage : ""
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -236,16 +241,60 @@ export const UserProvider = ({children}) => {
         }
     }
 
+    const verifyEmail = async(email) => {
+        console.log('inside the verify email thunk')
+        console.log('email : ' , email)
+
+        try{
+            const response = await fetch.await(`${BASE_URL}user/checkemail/` , {
+                method : 'POST',
+                mode : 'cors',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify({
+                    email : email
+                })
+            })
+
+            const jsonResponse = await response?.json()
+            if(response.status==200){
+                console.log('the OTP has been sent to the email')
+
+                // obtain the OTP, hash it and store it in the localstorage
+                const otp = jsonResponse.get('OTP')
+                // encode the OTP
+                const encoded_otp = base64_encode(otp)
+                // set the OTP in the localStorage
+                localStorage.setItem('otp' , encoded_otp)
+
+                dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : true , message : 'The OTP has been sent'}})                
+
+            }else{
+                console.log('response.status!=200 while checking the email')
+                dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : false , message : 'failed to send the OTP, try again'}})
+
+            }
+        }catch(err){
+            console.log('There is an error in the server while checking the email : ' , err)
+            dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : false , message : 'Server error in sending the OTP, please try again'}})
+        }
+    }
+
+
     return (
         <UserContext.Provider value = {{
             // state variables 
             isLoggedIn : state.isLoggedIn,
-
-
+            OTPSent : state.OTPSent,
+            OTPMessage : state.OTPMessage,
+            LoginMessage : state.LoginMessage,
+            SignupMessage : state.SignupMessage,
 
             // thunks
             userSignup,
-            userLogin
+            userLogin,
+            verifyEmail
             
         }}>
             {children}

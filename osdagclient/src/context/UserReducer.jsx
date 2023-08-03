@@ -21,6 +21,12 @@ export default (state, action) => {
                 isLoggedIn : action.payload.isLoggedIn,
                 SignupMessage : action.payload.message
             }
+        case 'SET_CHECKEMAIL_STATUS' : 
+            return{
+                ...state,
+                OTPSent : action.payload.OTPSent,
+                OTPMessage : action.payload.message
+            }
         case 'PUSH_REPORT_LINK' : 
             return {
                 ...state,
