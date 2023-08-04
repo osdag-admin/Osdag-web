@@ -198,6 +198,7 @@ export const UserProvider = ({children}) => {
 
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
+                console.log("isloggedin inside logging"+ isLoggedIn)
             }else{
                 console.log('response.status!=200, user not logged in')
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
@@ -314,7 +315,7 @@ export const UserProvider = ({children}) => {
         console.log('inside the forget password thunk')
         console.log('newPassword : ' , newPassword)
         // obtain the stored email from the localStorage and delete the email, OTP 
-        let encoded_email = localStorage.get('email')
+        let encoded_email = localStorage.getItem('email')
         const email = base64_decode(encoded_email)
         localStorage.removeItem('email')
         localStorage.removeItem('otp')

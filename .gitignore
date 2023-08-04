@@ -40,6 +40,7 @@ db.sqlite3
 file_storage/cad_models/*
 osdagclient/node_modules
 osdag/migrations
+node_modules
 osdagclient/public/output-obj.obj
 file_storage/design_report/*.pdf
 file_storage/design_report/*.log
