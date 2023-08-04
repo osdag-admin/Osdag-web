@@ -3,15 +3,18 @@
 ### Software Requirements : 
 
 1. Ubuntu LTS 20.04 / 22.04
-2. Git : Install Git on Ubuntu with
+2. Git : Install Git on Ubuntu :
 
-   ```
-   # Update the Repository
-   sudo apt update
+   * Update the Repository
 
-   # Install Git 
-   sudo apt install git
-   ```
+     ```
+     sudo apt update
+     ```
+   * Install Git
+
+     ```
+     sudo apt install git
+     ```
 3. IDE ( **OPTIONAL** ) ( preferrably VSCode ) : Install VSCode with
 
    ```
@@ -21,24 +24,35 @@
 
    ```
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+   ```
 
+   ```
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+   ```
 
+   ```
    source ~/.bashrc
+   ```
 
+   ```
    nvm install v16.20.0
    ```
 5. Postgres : Install Postgres by running the following commands :
 
    ```
    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+   ```
 
+   ```
    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+   ```
 
+   ```
    sudo apt-get update
+   ```
 
+   ```
    sudo apt-get -y install postgresql
-
    ```
 
 ### Installation Steps
@@ -58,7 +72,8 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 
    ```
    sudo apt-get update
-
+   ```
+   ```
    sudo apt-get install -y texlive-latex-extra
    ```
 5. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
@@ -95,46 +110,68 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    ```
 9. Create Database and Role in Postgres and Configure it, open the Terminal ( Ctrl + Alt + T ):
 
-   ```
-   # To Enter into the Postgres terminal 
-   sudo -u postgres psql
+   * Enter into the Postgres Terminal
 
-   # Create the Role 
-   CREATE ROLE osdagdeveloper PASSWORD 'password' SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
+     ```
+     sudo -u postgres psql
+     ```
+   * Create a new role
 
-   # Create the Database
-   CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
+     ```
+     CREATE ROLE osdagdeveloper PASSWORD 'password' SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
+     ```
+   * Create the database
 
-   # Exit from the Postgres terminal
-   \q
-   ```
+     ```
+     CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
+     ```
+   * Exit from the Postgres terminal
+
+     ```
+     \q
+     ```
 10. Run the Following commnands in the Root of Osdag-web :
 
-    ```
-    # cd into Osdag-web folder which you have cloned 
-    cd Osdag-web
+    * Enter into the Osdag-web folder which you have cloned
 
-    # switch to develop branch 
-    git checkout develop
+      ```
+      cd Osdag-web
+      ```
+    * Switch to **develop** branch
 
-    # Install Requirements.txt packages 
-    pip install -r requirements.txt
+      ```
+      git checkout develop
+      ```
+    * Install requirements.txt packages
 
-    # Configure the Postgres database
-    python populate_database.py
-    python update_sequences.py
-    python manage.py migrate
+      ```
+      pip install -r requirements.txt
+      ```
+    * Configure the Postgres database
 
-    # Install the Node dependencies
-    cd osdagclient
-    npm install
-    cd ..
+      ```
+      python populate_database.py
+      python update_sequences.py
+      python manage.py migrate
+      ```
+    * Install the node dependencies
 
-    # Run the Django Server 
-    python manage.py runserver 8000
+      ```
+      cd osdagclient
+      npm install
+      cd ..
+      ```
+    * Start the Django server
 
-    # Open another terminal pointing to the root of Osdag-web 
-    cd osdagclient
-    npm run dev
-    ```
+      ```
+      python manage.py runserver 8000
+      ```
+    * Open another terminal, navigate to root of Osdag-web folder adn run the following commands :
+
+      ```
+      cd osdagclient
+      ```
+      ```
+      npm run dev
+      ```
 11. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
