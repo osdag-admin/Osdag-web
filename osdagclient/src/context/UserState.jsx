@@ -198,6 +198,7 @@ export const UserProvider = ({children}) => {
 
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
+                console.log("isloggedin inside logging"+ isLoggedIn)
             }else{
                 console.log('response.status!=200, user not logged in')
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})

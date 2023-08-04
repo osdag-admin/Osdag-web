@@ -18,7 +18,7 @@ import { GlobalProvider } from './context/GlobalState';
 import { ModuleProvider } from './context/ModuleState';
 import { UserContext, UserProvider } from './context/UserState';
 import UserAccount from './components/userAccount/UserAccount';
-
+import { useSelector } from 'react-redux';
 // New component for the login page
 import LoginPage from './components/userAuth/LoginPage';
 
@@ -28,6 +28,7 @@ function App() {
 
   // using redux variables 
   const {isLoggedIn} = useContext(UserContext)
+  
   console.log('isLoggedIn : ' , isLoggedIn)
 
   useEffect(() => {

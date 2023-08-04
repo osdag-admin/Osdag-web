@@ -17,8 +17,7 @@ const generateRandomString = (length) => {
 
 const LoginPage = () => {
 
-            ForgetPassword,
-            const { userSignup, userLogin, verifyEmail, ForgetPassword , } = useContext(UserContext)
+    const { userSignup, userLogin, verifyEmail, ForgetPassword } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
