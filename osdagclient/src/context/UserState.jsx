@@ -11,7 +11,7 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 */
 
 let initialValue = {
-    isLoggedIn : true,
+    isLoggedIn : false,
     allReportsLink : [],
     LoginMessage : "",
     SignupMessage : "",
@@ -32,9 +32,9 @@ export const UserProvider = ({children}) => {
     const [state, dispatch] = useReducer(UserReducer, initialValue);
 
     // USER AUTHENTICATION AND AUTHORAZATION 
-    const createJWTToken = async(username , password) => {
+    const createJWTToken = async(email , password) => {
         console.log('inside createJWT token ')
-        console.log('username : ' , username)
+        console.log('email : ' , email)
         try{
             const response = await fetch(`${BASE_URL}api/token/` , {
                 method : 'POST',
@@ -44,7 +44,7 @@ export const UserProvider = ({children}) => {
                     'Content-Type': 'application/json; charset=UTF-8',
                 },
                 body : JSON.stringify({
-                    'username' : username,
+                    'username' : email,
                     'password' : password
                 })
             })
@@ -167,9 +167,9 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const userLogin = async(username , password ,  isGuest) => {
+    const userLogin = async(email, password ,  isGuest) => {
         console.log('inside user login')
-        console.log('username' , username)
+        console.log('email' , email)
         console.log('isGuest : ' ,isGuest)
 
         try{
@@ -180,7 +180,7 @@ export const UserProvider = ({children}) => {
                     'Content-Type': 'application/json', // Set the Content-Type header to JSON
                   },
                 body : JSON.stringify({
-                    username : username,
+                    email : email,
                     password : password,
                     isGuest : isGuest
                 })
@@ -193,7 +193,7 @@ export const UserProvider = ({children}) => {
                 
                 // create a new jwt token 
                 if(isGuest==false){
-                    createJWTToken(username , password)
+                    createJWTToken(email , password)
                 }
 
                 // set the login variable to true 

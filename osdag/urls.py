@@ -17,6 +17,7 @@ from . import views
 # temporary
 app_name = 'osdag-web/'
 
+
 urlpatterns = [
     path('sessions/create/', CreateSession.as_view()),
     path('sessions/create', CreateSession.as_view()),

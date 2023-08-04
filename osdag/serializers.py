@@ -5,9 +5,31 @@ from rest_framework import serializers
 from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS 
 from osdag.models import Design, UserAccount
 
+# simplejwt imports 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['email'] = user.email
+        print('token email : ' , token['email'])
+        token['password'] = user.password
+        print('token password : ' , token['password'])
+        #token['isGuest'] = user.isGuest
+        #print('token isGuest : ' , token['isGuest'])
+
+        return token
+
 
 class UserAccount_Serializer(serializers.ModelSerializer) : 
     class Meta : 
