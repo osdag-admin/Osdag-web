@@ -151,7 +151,11 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 
       ```
       python populate_database.py
+      ```
+      ```
       python update_sequences.py
+      ```
+      ```
       python manage.py migrate
       ```
     * Install the node dependencies
