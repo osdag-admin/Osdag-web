@@ -1,6 +1,6 @@
 # Installation of Osdag-Web Application
 
-### Software Requirements : 
+### Software Requirements :
 
 1. Ubuntu LTS 20.04 / 22.04
 2. Git : Install Git on Ubuntu :
@@ -130,7 +130,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      ```
      \q
      ```
-10. Run the Following commnands in the Root of Osdag-web :
+11. Run the Following commnands in the Root of Osdag-web :
 
     * Enter into the Osdag-web folder which you have cloned
 
@@ -178,4 +178,4 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
       ```
       npm run dev
       ```
-11. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
+12. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.

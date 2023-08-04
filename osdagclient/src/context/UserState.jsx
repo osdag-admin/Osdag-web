@@ -295,6 +295,7 @@ export const UserProvider = ({children}) => {
                 // const encoded_email = base64_encode(email)
                 
                 // set the OTP in the localStorage
+                console.log('OTP : ' , jsonResponse.OTP)
                 localStorage.setItem('otp' , jsonResponse.OTP)
                 localStorage.setItem('email' , email)
 
