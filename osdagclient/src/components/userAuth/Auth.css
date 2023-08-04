@@ -48,6 +48,14 @@
     font-size: 13px;
     margin: 5px;
 }
+.verify-email-popup label input{
+  padding: 10px;
+  width: calc( 100% - 30px );
+  border: solid 1px #0000003e;
+  font-size: 13px;
+  margin: 5px;
+}
+
 
 .auth-container-2 form label:nth-child(1) h4,
 .auth-container-2 form label:nth-child(2) h4,

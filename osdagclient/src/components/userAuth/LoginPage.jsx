@@ -3,6 +3,7 @@ import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { UserContext } from '../../context/UserState';
+import { Modal, Button } from 'antd';
 
 const generateRandomString = (length) => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -16,15 +17,54 @@ const generateRandomString = (length) => {
 
 const LoginPage = () => {
 
-    const { userSignup, userLogin } = useContext(UserContext)
+            ForgetPassword,
+            const { userSignup, userLogin, verifyEmail, ForgetPassword , } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [verifyEmailModalVisible, setVerifyEmailModalVisible] = useState(false);
+    const [verifyEmails, setVerifyEmail] = useState('')
 
+    const [fPasswordModalVisible, setFPasswordModalVisible] = useState(false);
+    const [fPasswordEmail, setFPasswordEmail] = useState('')
+    const [fPasswordNewPass, setFPasswordNewPass] = useState('')
+    
     const handleSwitch = () => {
         setIsSignup(!isSignup)
     }
+
+    // Handle EmailVerification
+    const handleVerifyEmailModal = () => {
+        setVerifyEmailModalVisible(true);
+      };
+
+    const handleVerifyEmailModalClose = () => {
+        setVerifyEmailModalVisible(false);
+      };
+
+      const handleVerifyEmail = () => {
+        console.log("VE:"+verifyEmails)
+        verifyEmail(verifyEmails)
+      };
+// End++++++++++++++++++++++++++++++++++++++++++
+
+// Handle Forgot password
+const handleFPasswordModal = () => {
+    setFPasswordModalVisible(true);
+  };
+
+const handleFPasswordModalClose = () => {
+    setFPasswordModalVisible(false);
+  };
+
+  const handleFPassword = () => {
+    console.log("FP:"+fPasswordEmail)
+
+    ForgetPassword( fPasswordNewPass, fPasswordEmail)
+  };
+// End++++++++++++++++++++++++++++++++++++++++++
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -108,14 +148,18 @@ const LoginPage = () => {
                         <h4>Email</h4>
                         <input type="email" name='email' id='email' onChange={(e) => {setEmail(e.target.value)}}/>
                     </label>
-                    <label htmlFor="password">
+                    <label >
                         <div style={{display:"flex", justifyContent:"space-between"}}>
                             <h4>Password</h4>
-                            { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}}>forgot password?</p> }
+                            { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}} onClick={handleVerifyEmailModal} >Verify Your Email.</p> }
                         </div>
                         <input type="password" name='password' id='password' onChange={(e) => {setPassword(e.target.value)}}/>
-                        { isSignup && <p style={{ color: "#666767", fontSize:"13px"}}>Passwords must contain at least eight<br />characters, including at least 1 letter and 1<br /> number.</p> }
                     </label>
+                        <div style={{display:"flex", justifyContent:"space-between"}}>
+                            <h4></h4>
+                            { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}} onClick={handleFPasswordModal}>Forgot Password?</p> }
+                        </div>
+                        { isSignup && <p style={{ color: "#666767", fontSize:"13px"}}>Passwords must contain at least eight<br />characters, including at least 1 letter and 1<br /> number.</p> }
                     {
                         isSignup && (
                             <label htmlFor='check'>
@@ -142,6 +186,58 @@ const LoginPage = () => {
                 </p>
             </div>
         </section>
+        {/* Verify Email Popup */}
+        <Modal
+        title="Verify Email"
+        visible={verifyEmailModalVisible}
+        onCancel={handleVerifyEmailModalClose}
+        footer={[
+            <Button key="cancel" onClick={handleVerifyEmailModalClose}>
+              Cancel
+            </Button>,
+          ]}
+      >
+        <div className='verify-email-popup'>
+        <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>
+            <label htmlFor="verifyemail">
+                <h4> Email :</h4>
+                <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => {setVerifyEmail(e.target.value)}}/>    
+            </label>
+            <Button key="submitverifyemail" onClick={handleVerifyEmail}>
+                Verify
+            </Button>
+        </div>
+      </Modal>
+
+{/* Forgot Password Popup */}
+    <Modal
+        title="Forgot Password"
+        visible={fPasswordModalVisible}
+        onCancel={handleFPasswordModalClose}
+        footer={[
+            <Button key="cancel" onClick={handleFPasswordModalClose}>
+              Cancel
+            </Button>,
+          ]}
+      >
+        <div className='verify-email-popup'>
+        <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>
+            <label htmlFor="verifyemail">
+                <h4>Email :</h4>
+                <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => {setFPasswordEmail(e.target.value)}}/>    
+            </label>
+            <label htmlFor="verifyemail">
+                <h4>New Password :</h4>
+                <input type="password" name='newPassword' id='newPassword' onChange={(e) => {setFPasswordNewPass(e.target.value)}}/>    
+            </label>
+            <Button key="submitverifyemail" onClick={handleFPassword}>
+                Change password
+            </Button>
+
+
+        </div>
+      </Modal>
+
     </>
   );
 };

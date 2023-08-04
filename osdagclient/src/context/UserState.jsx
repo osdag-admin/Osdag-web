@@ -11,7 +11,7 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 */
 
 let initialValue = {
-    isLoggedIn : true,
+    isLoggedIn : false,
     allReportsLink : [],
     LoginMessage : "",
     SignupMessage : "",
@@ -314,7 +314,7 @@ export const UserProvider = ({children}) => {
         console.log('inside the forget password thunk')
         console.log('newPassword : ' , newPassword)
         // obtain the stored email from the localStorage and delete the email, OTP 
-        let encoded_email = localStorage.get('email')
+        let encoded_email = localStorage.getItem('email')
         const email = base64_decode(encoded_email)
         localStorage.removeItem('email')
         localStorage.removeItem('otp')
