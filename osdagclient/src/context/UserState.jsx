@@ -213,7 +213,7 @@ export const UserProvider = ({children}) => {
         const access_token = localStorage.getItem('access')
         const email = localStorage.getItem('email')
         try{
-            fetch(`${BASE_URL}user/allreports/` , {
+            fetch(`${BASE_URL}user/obtainallinputfiles/` , {
                 method : 'GET',
                 mode : 'cors',
                 credentials : 'include',
@@ -338,7 +338,7 @@ export const UserProvider = ({children}) => {
             if(response.status==200){
                 console.log('password updated')
 
-                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : true , passwordSetMessage : 'New password has been set'}})
+                dispatch({type : 'SET_FORGETPAfSSWORD_STATE' , payload : {passwordSet : true , passwordSetMessage : 'New password has been set'}})
                 
             }else{
                 console.log('response.status!=200 on forget password')
