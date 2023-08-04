@@ -316,11 +316,11 @@ export const UserProvider = ({children}) => {
         console.log('inside the forget password thunk')
         console.log('newPassword : ' , newPassword)
         // obtain the stored email from the localStorage and delete the email, OTP 
-        let encoded_email = localStorage.getItem('email')
-        const email = base64_decode(encoded_email)
-        localStorage.removeItem('email')
-        localStorage.removeItem('otp')
-        console.log('email : ' , email)
+        let Lemail = localStorage.getItem('email')
+        // const email = base64_decode(encoded_email)
+        // localStorage.removeItem('email')
+        // localStorage.removeItem('otp')
+        console.log('email : ' , Lemail)
 
         try{
             const response =  await fetch(`${BASE_URL}user/forgetpassword/` , {
@@ -331,7 +331,7 @@ export const UserProvider = ({children}) => {
                 },
                 body : JSON.stringify({
                     password : newPassword,
-                    email : email
+                    email : Lemail
                 })
             })
 

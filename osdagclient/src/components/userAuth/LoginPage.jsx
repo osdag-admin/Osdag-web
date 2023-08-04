@@ -57,9 +57,9 @@ const LoginPage = () => {
          
             const response =  JSON.stringify(verifyEmail(verifyEmails));
             globalOTP = localStorage.getItem('otp')
-            alert(response.message+": "+ JSON.stringify(response.OTP))
+            alert(response.message+": "+ globalOTP)
             console.log("OTP received:", globalOTP);    
-            localStorage.setItem('otp', JSON.stringify(response.OTP));
+            
             // Enable the input if needed
             setInputDisabled(false);
         } catch (error) {
@@ -73,9 +73,9 @@ const LoginPage = () => {
         // Get the OTP value from local storage
         const storedOTP = localStorage.getItem('otp');
     
-        if (storedOTP === globalOTP) {
+        handleFPasswordModal();
+        if (storedOTP === otp) {
 
-            handleFPasswordModal();
             console.log('OTP verification successful.');    
             localStorage.removeItem('otp');    
             globalOTP = null;    
@@ -98,8 +98,12 @@ const handleFPasswordModalClose = () => {
 
   const handleFPassword = () => {
     console.log("FP:"+fPasswordEmail)
+    if(fPasswordNewPass==fPasswordEmail){
 
-    ForgetPassword( fPasswordNewPass, fPasswordEmail)
+        ForgetPassword(fPasswordNewPass)
+    }
+
+
   };
 // End++++++++++++++++++++++++++++++++++++++++++
 
@@ -271,11 +275,11 @@ const handleFPasswordModalClose = () => {
         <div className='verify-email-popup'>
         <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>
             <label htmlFor="verifyemail">
-                <h4>Email :</h4>
+                <h4>New Password :</h4>
                 <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => {setFPasswordEmail(e.target.value)}}/>    
             </label>
             <label htmlFor="verifyemail">
-                <h4>New Password :</h4>
+                <h4>Confirm Password :</h4>
                 <input type="password" name='newPassword' id='newPassword' onChange={(e) => {setFPasswordNewPass(e.target.value)}}/>    
             </label>
             <Button key="submitverifyemail" onClick={handleFPassword}>
