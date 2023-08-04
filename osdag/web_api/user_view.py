@@ -235,7 +235,7 @@ class ObtainAllInputValueFilesView(APIView) :
         print('fileIndex : ' , fileIndex)
 
         userObject = UserAccount.objects.get(email = email)
-        filePath = userObject.allInputValueFiles[int(fileIndex)+1]
+        filePath = userObject.allInputValueFiles[int(fileIndex)]
         print('filePath : ' , filePath)
 
         try : 

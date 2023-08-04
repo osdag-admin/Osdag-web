@@ -208,16 +208,10 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const obtainALLInputValueFiles = async() => {
-        console.log('inside teh obtain All reports thunk')
+    const obtainSingleInputFile = async(fileIndex) => {
+        console.log('inside obtain single input file : ' , fileIndex)
         const access_token = localStorage.getItem('access')
-        const allInputValueFilesLength = localStorage.getItem('allInputValueFilesLength')
-        console.log('allInputValueFilesLength : ' , allInputValueFilesLength)
-        console.log('access_token : ' , access_token)
         const email = localStorage.getItem('email')
-        console.log('email : ' , email)
-        let fileIndex = 0
-
         try{
             fetch(`${BASE_URL}user/allreports/` , {
                 method : 'GET',
@@ -231,7 +225,6 @@ export const UserProvider = ({children}) => {
                     'Authorization' : `Bearer ${access_token}`,
                 },
                 body : JSON.stringify({
-                    'allInputValueFilesLength' : allInputValueFilesLength,
                     'email' : email,
                     'fileIndex' : fileIndex
                 })
@@ -251,10 +244,26 @@ export const UserProvider = ({children}) => {
                     console.error('Error in obtaining the PDF file:', response.status, response.statusText);
                     dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Failed to store the files in the server"}})
                 }
-            });
-
+            })
         }catch(err){
-            console.log('error in obtainig all the reports : ' , err)
+            console.log('Server error in obtaining the file')
+        }
+            
+    }
+
+    const obtainALLInputValueFiles = async() => {
+        console.log('inside teh obtain All reports thunk')
+        const access_token = localStorage.getItem('access')
+        const allInputValueFilesLength = localStorage.getItem('allInputValueFilesLength')
+        console.log('allInputValueFilesLength : ' , allInputValueFilesLength)
+        console.log('access_token : ' , access_token)
+        const email = localStorage.getItem('email')
+        console.log('email : ' , email)
+
+        // calling the obtainSingleInputFile 
+        // allInputValueFileLekngth number of times 
+        for(let fileIndex=1;fileIndex<allInputValueFilesLength;fileIndex++){
+            obtainSingleInputFile(fileIndex)
         }
     }
 
