@@ -30,8 +30,12 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
     }, [inputs])
 
     const handleSubmit = (inCache = True) => {
-        if (!inputs.fy_20 && !inputs.fy_20_40 && !inputs.fy_40 && !inputs.fu) {
-            alert("Please fill the fields");
+        if (!inputs.fy_20 || !inputs.fy_20_40 || !inputs.fy_40 || !inputs.fu) {
+            alert("Please fill the missing parameters.");
+            return;
+        }
+
+        if(!validateInput(inputs)){
             return;
         }
 
@@ -138,6 +142,23 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
         })
     }
 
+    // utility function
+    const validateInput = fields => {
+        const mp = ['fy_20', 'fy_20_40', 'fy_40', 'fu'];
+        const arr = [fields.fy_20, fields.fy_20_40, fields.fy_40, fields.fu];
+
+        for(let i=0; i<arr.length; i++){
+            if(165 <= parseInt(arr[i]) &&  parseInt(arr[i]) <= 1500)
+                continue;
+            else{
+                alert(`${mp[i]} is not in valid range`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     return (
         <Modal
@@ -169,6 +190,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
                             name="Fy-20"
                             onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
+                            placeholder='Range: 165-1500'
                             value={inputs.fy_20}
                             onChange={e => {
                                 setInputs({ ...inputs, fy_20: e.target.value })
@@ -183,6 +205,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
                             onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fy_20_40}
+                            placeholder='Range: 165-1500'
                             onChange={e => setInputs({ ...inputs, fy_20_40: e.target.value })}
                         />
                     </div>
@@ -194,6 +217,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
                             onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fy_40}
+                            placeholder='Range: 165-1500'
                             onChange={e => setInputs({ ...inputs, fy_40: e.target.value })}
                         />
                     </div>
@@ -205,6 +229,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
                             onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
                             className='input-design-pref'
                             value={inputs.fu}
+                            placeholder='Range: 165-1500'
                             onChange={e => setInputs({ ...inputs, fu: e.target.value })}
                         />
                     </div>
