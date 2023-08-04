@@ -28,7 +28,6 @@
 
    nvm install v16.20.0
    ```
-5. 
 
 
 
@@ -60,7 +59,6 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      ```
      tar -xvf Osdag-Web-master.zip
      ```
-
      Move the unzipped Osdag-Web-master folder to 'Desktop' or wherever you want and rename it to 'Osdag-web'
 6. Next step is to install Postgres. Open the terminal and run the following commands :
 
@@ -73,20 +71,6 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 
    sudo apt-get -y install postgresql
    ```
-7. install Pgadmin ( **OPTIONAL** ). Open the terminal and run the following commands :
-
-```
-   curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
-
-   sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
-
-   sudo apt install pgadmin4
-
-   sudo apt install pgadmin4-desktop
-
-   sudo /usr/pgadmin4/bin/setup-web.sh
-```
-
 8. Open the Osdag-Web-master folder and open a new terminal there. Make sure you have the conda environment activated. You can know this if there is **(base)** written at the start of the terminal line. If you don't see this, activate the conda environment using :
 
    ```
@@ -113,6 +97,8 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
     # Create the Database
     CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
 
+    # Exit from the Postgres terminal
+    \q
     ```
 11. Run the Following commnands in the Root of Osdag-web :
 
