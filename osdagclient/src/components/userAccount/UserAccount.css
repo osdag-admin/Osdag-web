@@ -39,3 +39,29 @@
 .main-content h1 {
   margin-bottom: 20px;
 }
+
+/* UserAccount.css */
+
+/* Center the component on the page */
+.user-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 100vh; 
+  margin: 4rem;
+  overflow: hidden;
+}
+.dashboard-header{
+  margin: 1rem;
+}
+/* Style the container with a border and padding */
+.user-dashboard {
+  width: 100vh;
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+/* Style the files list */
+.file-list {
+  margin-top: 10px;
+}
