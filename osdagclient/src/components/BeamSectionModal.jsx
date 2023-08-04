@@ -39,7 +39,7 @@ const BeamSectionModal = ({supportedSectionData, designPrefInputs, setDesignPref
                             <h5>Material</h5>
                             <div>
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
-                                    value={designPrefInputs.supporting_material}
+                                    value={designPrefInputs.supported_material}
                                     onSelect={(value) => {
                                         if(value == -1){
                                             setShowModal(true)
