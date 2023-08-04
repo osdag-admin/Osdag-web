@@ -8,6 +8,7 @@ from .data.design_types import design_type_data, connections_data, shear_connect
 # Create your views here.
 
 
+
 @api_view(['GET'])
 def get_design_types(request):
     return JsonResponse({'result': design_type_data}, safe=False)
