@@ -28,8 +28,20 @@
 
    nvm install v16.20.0
    ```
+5. Postgres : Install Postgres by running the following commands :
 
+   ```
+   sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
+   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+   sudo apt-get update
+
+   sudo apt-get -y install postgresql
+
+   ```
+
+### Installation Steps
 
 The Osdag-Web application uses 'Conda' environment which contains all the dependencies. To first download these, visit the link : [https://osdag.fossee.in/resources/downloads]() and download the ' Installer [Release: 2021-02-15] ' for Ubuntu :
 
@@ -45,6 +57,8 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 4. Install texlive-latex-extra packages. Open the terminal ( Ctrl + Alt + T )and run the following command :
 
    ```
+   sudo apt-get update
+
    sudo apt-get install -y texlive-latex-extra
    ```
 5. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
@@ -65,23 +79,12 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      tar -xvf Osdag-Web-master.zip
      ```
      Move the unzipped Osdag-Web-master folder to 'Desktop' or wherever you want and rename it to 'Osdag-web'
-7. Next step is to install Postgres. Open the terminal and run the following commands :
-
-   ```
-   sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-
-   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-
-   sudo apt-get update
-
-   sudo apt-get -y install postgresql
-   ```
-8. Open the Osdag-Web-master folder and open a new terminal there. Make sure you have the conda environment activated. You can know this if there is **(base)** written at the start of the terminal line. If you don't see this, activate the conda environment using :
+7. Open the Osdag-Web-master folder and open a new terminal there. Make sure you have the conda environment activated. You can know this if there is **(base)** written at the start of the terminal line. If you don't see this, activate the conda environment using :
 
    ```
    conda activate
    ```
-9. To configure Freecad software. Navigate to the root directory of the project :
+8. To configure Freecad software. Navigate to the root directory of the project :
 
    ![Root Directory](image/installation/root_directory.png)
 
@@ -90,24 +93,27 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    ```
    bash install_freecad.sh
    ```
-10. Create Database and Role in Postgres and Configure it, open the Terminal ( Ctrl + Alt + T ):
+9. Create Database and Role in Postgres and Configure it, open the Terminal ( Ctrl + Alt + T ):
+
+   ```
+   # To Enter into the Postgres terminal 
+   sudo -u postgres psql
+
+   # Create the Role 
+   CREATE ROLE osdagdeveloper PASSWORD 'password' SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
+
+   # Create the Database
+   CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
+
+   # Exit from the Postgres terminal
+   \q
+   ```
+10. Run the Following commnands in the Root of Osdag-web :
 
     ```
-    # To Enter into the Postgres terminal 
-    sudo -u postgres psql
+    # cd into Osdag-web folder which you have cloned 
+    cd Osdag-web
 
-    # Create the Role 
-    CREATE ROLE osdagdeveloper PASSWORD 'password' SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
-
-    # Create the Database
-    CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
-
-    # Exit from the Postgres terminal
-    \q
-    ```
-11. Run the Following commnands in the Root of Osdag-web :
-
-    ```
     # switch to develop branch 
     git checkout develop
 
@@ -131,4 +137,4 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
     cd osdagclient
     npm run dev
     ```
-12. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
+11. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
