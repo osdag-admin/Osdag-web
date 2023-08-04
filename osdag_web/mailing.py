@@ -20,7 +20,7 @@ def send_mail(email , OTP=123) :
     print('FROMT_EMAIL : ' ,FROM_EMAIL)
     MESSAGE = f"""Subject: OTP for Email verification
 
-    Hi Atharva,
+    Hi,
     
     Your OTP for Email verification for Osdag on Cloud application is : {OTP}
 

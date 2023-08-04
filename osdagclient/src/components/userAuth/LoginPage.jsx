@@ -14,6 +14,7 @@ const generateRandomString = (length) => {
     }
     return result;
   };
+  let globalOTP = null;
 
 const LoginPage = () => {
 
@@ -24,6 +25,8 @@ const LoginPage = () => {
     const [password, setPassword] = useState('')
     const [verifyEmailModalVisible, setVerifyEmailModalVisible] = useState(false);
     const [verifyEmails, setVerifyEmail] = useState('')
+    const [otp, setOtp] = useState('')
+    const [isInputDisabled, setInputDisabled] = useState(true);
 
     const [fPasswordModalVisible, setFPasswordModalVisible] = useState(false);
     const [fPasswordEmail, setFPasswordEmail] = useState('')
@@ -42,10 +45,46 @@ const LoginPage = () => {
         setVerifyEmailModalVisible(false);
       };
 
-      const handleVerifyEmail = () => {
-        console.log("VE:"+verifyEmails)
-        verifyEmail(verifyEmails)
+      const handleVerifyEmail =  () => {
+
+        if(verifyEmails =="")
+        {
+            alert("Enter Email")
+            return;
+        }
+
+        try {
+         
+            const response =  JSON.stringify(verifyEmail(verifyEmails));
+            globalOTP = localStorage.getItem('otp')
+            alert(response.message+": "+ globalOTP)
+            console.log("OTP received:", globalOTP);    
+            
+            // Enable the input if needed
+            setInputDisabled(false);
+        } catch (error) {
+            console.error("Error in OTP:", error);
+    
+        }
+
       };
+
+      const handleVerify = () => {
+        // Get the OTP value from local storage
+        const storedOTP = localStorage.getItem('otp');
+    
+        handleFPasswordModal();
+        if (storedOTP === otp) {
+
+            console.log('OTP verification successful.');    
+            localStorage.removeItem('otp');    
+            globalOTP = null;    
+
+        } else {
+            console.log('OTP verification failed.');    
+        }
+    };
+    
 // End++++++++++++++++++++++++++++++++++++++++++
 
 // Handle Forgot password
@@ -59,15 +98,19 @@ const handleFPasswordModalClose = () => {
 
   const handleFPassword = () => {
     console.log("FP:"+fPasswordEmail)
+    if(fPasswordNewPass==fPasswordEmail){
 
-    ForgetPassword( fPasswordNewPass, fPasswordEmail)
+        ForgetPassword(fPasswordNewPass)
+    }
+
+
   };
 // End++++++++++++++++++++++++++++++++++++++++++
 
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if(!email || !password){
+        if(!username || !password){
             alert('Enter email and password')
             return;
         }
@@ -75,7 +118,7 @@ const handleFPasswordModalClose = () => {
 
         try{
             if(isSignup){
-                if(!username){
+                if(!email){
                     alert("Enter a name to continue")
                     return;
                 }
@@ -138,16 +181,18 @@ const handleFPasswordModalClose = () => {
                 <form onSubmit={handleSubmit}>
                     {
                         isSignup && (
-                            <label htmlFor='name'>
-                                <h4>Username</h4>
-                                <input type="text" id='name' name='name' onChange={(e) => {setUsername(e.target.value)}}/>
-                            </label>
+                            <label htmlFor="email">
+                            <h4>Email</h4>
+                            <input type="email" name='email' id='email' onChange={(e) => {setEmail(e.target.value)}}/>
+                        </label>
+                           
                         )
                     }
-                    <label htmlFor="email">
-                        <h4>Email</h4>
-                        <input type="email" name='email' id='email' onChange={(e) => {setEmail(e.target.value)}}/>
+                    <label htmlFor='name'>
+                                <h4>Username</h4>
+                                <input type="text" id='name' name='name' onChange={(e) => {setUsername(e.target.value)}}/>
                     </label>
+
                     <label >
                         <div style={{display:"flex", justifyContent:"space-between"}}>
                             <h4>Password</h4>
@@ -157,7 +202,7 @@ const handleFPasswordModalClose = () => {
                     </label>
                         <div style={{display:"flex", justifyContent:"space-between"}}>
                             <h4></h4>
-                            { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}} onClick={handleFPasswordModal}>Forgot Password?</p> }
+                            {/* { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}} onClick={handleFPasswordModal}>Forgot Password?</p> } */}
                         </div>
                         { isSignup && <p style={{ color: "#666767", fontSize:"13px"}}>Passwords must contain at least eight<br />characters, including at least 1 letter and 1<br /> number.</p> }
                     {
@@ -203,7 +248,14 @@ const handleFPasswordModalClose = () => {
                 <h4> Email :</h4>
                 <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => {setVerifyEmail(e.target.value)}}/>    
             </label>
-            <Button key="submitverifyemail" onClick={handleVerifyEmail}>
+            <label htmlFor="verifyemail">
+                <h4> Enter OTP :</h4>
+                <input type="otp" name='otp' id='otp' onChange={(e) => {setOtp(e.target.value)}} disabled={isInputDisabled}/>    
+            </label>
+            <Button key="getotp" onClick={handleVerifyEmail}>
+                Get OTP
+            </Button>
+            <Button key="verifyemail" onClick={handleVerify}>
                 Verify
             </Button>
         </div>
@@ -223,11 +275,11 @@ const handleFPasswordModalClose = () => {
         <div className='verify-email-popup'>
         <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>
             <label htmlFor="verifyemail">
-                <h4>Email :</h4>
+                <h4>New Password :</h4>
                 <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => {setFPasswordEmail(e.target.value)}}/>    
             </label>
             <label htmlFor="verifyemail">
-                <h4>New Password :</h4>
+                <h4>Confirm Password :</h4>
                 <input type="password" name='newPassword' id='newPassword' onChange={(e) => {setFPasswordNewPass(e.target.value)}}/>    
             </label>
             <Button key="submitverifyemail" onClick={handleFPassword}>

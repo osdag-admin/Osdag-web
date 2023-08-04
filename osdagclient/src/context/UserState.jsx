@@ -273,7 +273,7 @@ export const UserProvider = ({children}) => {
         console.log('email : ' , email)
 
         try{
-            const response = await fetch.await(`${BASE_URL}user/checkemail/` , {
+            const response = await fetch(`${BASE_URL}user/checkemail/` , {
                 method : 'POST',
                 mode : 'cors',
                 headers : {
@@ -289,13 +289,15 @@ export const UserProvider = ({children}) => {
                 console.log('the OTP has been sent to the email')
 
                 // obtain the OTP, hash it and store it in the localstorage
-                const otp = jsonResponse.get('OTP')
+                // const otp = jsonResponse.('otp')
                 // encode the OTP
-                const encoded_otp = base64_encode(otp)
-                const encoded_email = base64_encode(email)
+                // const encoded_otp = base64_encode(otp)
+                // const encoded_email = base64_encode(email)
+                
                 // set the OTP in the localStorage
-                localStorage.setItem('otp' , encoded_otp)
-                localStorage.setItem('email' , encoded_email)
+                console.log('OTP : ' , jsonResponse.OTP)
+                localStorage.setItem('otp' , jsonResponse.OTP)
+                localStorage.setItem('email' , email)
 
                 dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : true , message : 'The OTP has been sent'}})                
 
@@ -315,11 +317,11 @@ export const UserProvider = ({children}) => {
         console.log('inside the forget password thunk')
         console.log('newPassword : ' , newPassword)
         // obtain the stored email from the localStorage and delete the email, OTP 
-        let encoded_email = localStorage.getItem('email')
-        const email = base64_decode(encoded_email)
-        localStorage.removeItem('email')
-        localStorage.removeItem('otp')
-        console.log('email : ' , email)
+        let Lemail = localStorage.getItem('email')
+        // const email = base64_decode(encoded_email)
+        // localStorage.removeItem('email')
+        // localStorage.removeItem('otp')
+        console.log('email : ' , Lemail)
 
         try{
             const response =  await fetch(`${BASE_URL}user/forgetpassword/` , {
@@ -330,7 +332,7 @@ export const UserProvider = ({children}) => {
                 },
                 body : JSON.stringify({
                     password : newPassword,
-                    email : email
+                    email : Lemail
                 })
             })
 
