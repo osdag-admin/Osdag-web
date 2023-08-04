@@ -273,7 +273,7 @@ export const UserProvider = ({children}) => {
         console.log('email : ' , email)
 
         try{
-            const response = await fetch.await(`${BASE_URL}user/checkemail/` , {
+            const response = await fetch(`${BASE_URL}user/checkemail/` , {
                 method : 'POST',
                 mode : 'cors',
                 headers : {
@@ -289,13 +289,14 @@ export const UserProvider = ({children}) => {
                 console.log('the OTP has been sent to the email')
 
                 // obtain the OTP, hash it and store it in the localstorage
-                const otp = jsonResponse.get('OTP')
+                // const otp = jsonResponse.('otp')
                 // encode the OTP
-                const encoded_otp = base64_encode(otp)
-                const encoded_email = base64_encode(email)
+                // const encoded_otp = base64_encode(otp)
+                // const encoded_email = base64_encode(email)
+                
                 // set the OTP in the localStorage
-                localStorage.setItem('otp' , encoded_otp)
-                localStorage.setItem('email' , encoded_email)
+                localStorage.setItem('otp' , jsonResponse.OTP)
+                localStorage.setItem('email' , email)
 
                 dispatch({type : 'SET_CHECKEMAIL_STATUS' , payload : {OTPSent : true , message : 'The OTP has been sent'}})                
 
