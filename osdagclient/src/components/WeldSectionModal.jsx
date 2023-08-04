@@ -1,6 +1,6 @@
 import { Select,Input } from 'antd'
 
-const WeldSectionModal = ({ inputs, setInputs }) => {
+const WeldSectionModal = ({ inputs, setInputs, designPrefInputs, setDesignPrefInputs }) => {
 
     const Weld_text=`Shop weld takes a material safety factor of 1.25
 Field weld takes a material safety factor of 1.5
@@ -16,8 +16,8 @@ Field weld takes a material safety factor of 1.5
                         <h5>Type of Weld Fabrication</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.weld_fab}
-                                onSelect={value => setInputs({...inputs, weld_fab: value})}
+                                value={designPrefInputs.weld_fab}
+                                onSelect={value => setDesignPrefInputs({...designPrefInputs, weld_fab: value})}
                             >
                                     <Option value="Shop Weld">Shop Weld</Option>
                                     <Option value="Field Weld">Field Weld</Option>
@@ -31,8 +31,8 @@ Field weld takes a material safety factor of 1.5
                             type="text"
                             name="source"
                             className='input-design-pref'
-                            value={inputs.weld_material_grade}
-                            onChange={e => setInputs({...inputs, weld_material_grade: e.target.value})}
+                            value={designPrefInputs.weld_material_grade}
+                            onChange={e => setDesignPrefInputs({...designPrefInputs, weld_material_grade: e.target.value})}
                         />
                         </div>
                     </div>

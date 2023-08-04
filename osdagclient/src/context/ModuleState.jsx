@@ -35,7 +35,21 @@ let initialValue = {
     designPrefData: {},
     conn_material_details: [],
     supported_material_details: [],
-    supporting_material_details: []
+    supporting_material_details: [],
+    design_pref_defaults: {
+        supported_material: "E 165 (Fe 290)",
+        supporting_material: "E 165 (Fe 290)",
+        connector_material: "E 250 (Fe 410 W)A",
+        bolt_tension_type: "Pre-tensioned",
+        bolt_hole_type: "Standard",
+        bolt_slip_factor: "0.3",
+        weld_fab: "Shop Weld",
+        weld_material_grade: "410",
+        detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
+        detailing_gap: "10",
+        detailing_corr_status: "No",
+        design_method: "Limit State Design"
+    }
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -445,6 +459,7 @@ export const ModuleProvider = ({ children }) => {
             conn_material_details: state.conn_material_details,
             supported_material_details: state.supported_material_details,
             supporting_material_details: state.supporting_material_details,
+            design_pref_defaults: state.design_pref_defaults,
 
             // actions
             cookieSetter,

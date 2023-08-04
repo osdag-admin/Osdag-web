@@ -8,14 +8,14 @@ const readOnlyFontStyle = {
     color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
 }
 
-const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
+const BeamSectionModal = ({ inputs, setInputs, supportedSectionData, designPrefInputs, setDesignPrefInputs }) => {
 
-    const { materialList, updateSourceAndMechType, getMaterialDetails, supporting_material_details } = useContext(ModuleContext)
+    const { materialList, updateSourceAndMechType, getMaterialDetails, supported_material_details } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        const material = materialList.filter(value => value.Grade === inputs.supported_material)
-        getMaterialDetails({data: material[0], type: 'supporting'})
+        const material = materialList.filter(value => value.Grade === designPrefInputs.supported_material)
+        getMaterialDetails({data: material[0], type: 'supported'})
     }, [])
 
     return (
@@ -39,16 +39,16 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                             <h5>Material</h5>
                             <div>
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
-                                    value={inputs.supporting_material}
+                                    value={designPrefInputs.supporting_material}
                                     onSelect={(value) => {
                                         if(value == -1){
                                             setShowModal(true)
                                             return;
                                         }
                                         const material = materialList.find(item => item.id === value)
-                                        setInputs({ ...inputs, supporting_material: material.Grade }),
+                                        setDesignPrefInputs({ ...designPrefInputs, supported_material: material.Grade }),
                                         updateSourceAndMechType(2, material.Grade)
-                                        getMaterialDetails({data: material, type: 'supporting'})
+                                        getMaterialDetails({data: material, type: 'supported'})
                                     }}
                                 >
                                     {materialList.map((item, index) => (
@@ -63,7 +63,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                                 type="text"
                                 name="ultimate-strength"
                                 className='input-design-pref'
-                                value={supporting_material_details[0] ? supporting_material_details[0].Ultimate_Tensile_Stress : 0}
+                                value={supported_material_details[0] ? supported_material_details[0].Ultimate_Tensile_Stress : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -74,7 +74,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                                 type="text"
                                 name="yield-strength"
                                 className='input-design-pref'
-                                value={supporting_material_details[0] ? supporting_material_details[0].Yield_Stress_greater_than_40 : 0}
+                                value={supported_material_details[0] ? supported_material_details[0].Yield_Stress_greater_than_40 : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -373,7 +373,7 @@ const BeamSectionModal = ({ inputs, setInputs, supportedSectionData }) => {
                 setShowModal={setShowModal}
                 setInputValues={setInputs}
                 inputValues={inputs}
-                type='supporting'
+                type='supported'
             />
         </>
     )

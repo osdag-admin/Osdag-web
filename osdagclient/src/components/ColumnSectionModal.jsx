@@ -8,14 +8,14 @@ const readOnlyFontStyle = {
     color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
 }
 
-const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
+const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData, designPrefInputs, setDesignPrefInputs }) => {
 
-    const { materialList, updateSourceAndMechType, getMaterialDetails, supported_material_details } = useContext(ModuleContext)
+    const { materialList, updateSourceAndMechType, getMaterialDetails, supporting_material_details } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        const material = materialList.filter(value => value.Grade === inputs.supported_material)
-        getMaterialDetails({data: material[0], type: "supported"})
+        const material = materialList.filter(value => value.Grade === designPrefInputs.supporting_material)
+        getMaterialDetails({data: material[0], type: "supporting"})
     }, [])
 
     return (
@@ -39,20 +39,19 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                             <h5>Material</h5>
                             <div>
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
-                                    value={inputs.supported_material}
+                                    value={designPrefInputs.supporting_material}
                                     onSelect={(value) => {
                                         if(value == -1){
                                             setShowModal(true)
                                             return;
                                         }
                                         const material = materialList.find(item => item.id === value)
-                                        setInputs({ ...inputs, supported_material: material.Grade })
+                                        setDesignPrefInputs({ ...designPrefInputs, supporting_material: material.Grade })
                                         updateSourceAndMechType(1, material.Grade )
-                                        getMaterialDetails({data: material , type: "supported"})
+                                        getMaterialDetails({data: material , type: "supporting"})
                                     }}
                                 >
                                     {materialList.map((item) => {
-                                        console.log('item : ' , item)
                                         return <Option key={item.id} value={item.id}>{item.Grade}</Option>
                                     })}
                                 </Select>
@@ -64,7 +63,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="ultimate-strength"
                                 className='input-design-pref'
-                                value={supported_material_details[0] ? supported_material_details[0].Ultimate_Tensile_Stress : 0}
+                                value={supporting_material_details[0] ? supporting_material_details[0].Ultimate_Tensile_Stress : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -75,7 +74,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                                 type="text"
                                 name="yield-strength"
                                 className='input-design-pref'
-                                value={supported_material_details[0] ? supported_material_details[0].Yield_Stress_greater_than_40 : 0}
+                                value={supporting_material_details[0] ? supporting_material_details[0].Yield_Stress_greater_than_40 : 0}
                                 disabled
                                 style={readOnlyFontStyle}
                             />
@@ -374,6 +373,7 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData }) => {
                 setShowModal={setShowModal}
                 setInputValues={setInputs}
                 inputValues={inputs}
+                type='supporting'
             />
         </>
     )

@@ -139,6 +139,7 @@ function FinePlate() {
   const [propertyClassSelect, setPropertyClassSelect] = useState("All")
   const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [confirmationModal, setConfirmationModal] = useState(false)
   const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getDesingPrefData } = useContext(ModuleContext)
 
   const [inputs, setInputs] = useState({
@@ -154,12 +155,12 @@ function FinePlate() {
     column_section: "HB 150",
     primary_beam: "JB 200",
     secondary_beam: "JB 150",
-    supported_material: "E 250 (Fe 410 W)A",
-    supporting_material: "E 250 (Fe 410 W)A",
+    supported_material: "E 165 (Fe 290)",
+    supporting_material: "E 165 (Fe 290)",
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
     weld_fab: "Shop Weld",
-    weld_material_grade: "290",
+    weld_material_grade: "410",
     detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
     detailing_gap: "10",
     detailing_corr_status: "No",
@@ -1174,13 +1175,21 @@ function FinePlate() {
               {designPrefModalStatus && (
                 <Modal
                   open={designPrefModalStatus}
-                  onCancel={() => setDesignPrefModalStatus(false)}
+                  onCancel={() => setConfirmationModal(true)}
                   footer={null}
                   minWidth={1200}
                   width={1400}
                   maxHeight={1200}
+                  maskClosable={false}
                 >
-                  <DesignPrefSections inputs={inputs} setInputs={setInputs} selectedOption={selectedOption} />
+                  <DesignPrefSections 
+                    inputs={inputs} 
+                    setInputs={setInputs} 
+                    selectedOption={selectedOption} 
+                    setDesignPrefModalStatus={setDesignPrefModalStatus} 
+                    confirmationModal={confirmationModal}
+                    setConfirmationModal={setConfirmationModal}
+                  />
                 </Modal>
               )}
 

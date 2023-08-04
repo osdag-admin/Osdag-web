@@ -1,6 +1,6 @@
 import { Select,Input } from 'antd'
 
-const BoltSectionModal = ({ inputs, setInputs }) => {
+const BoltSectionModal = ({ inputs, setInputs, designPrefInputs, setDesignPrefInputs }) => {
     const Bolt_discription = `
 IS 800 Table 20 Typical Average Values for Coefficient of Friction (µf)
 
@@ -29,8 +29,8 @@ xii) Red lead painted surface     0.1
                         <h5>Type</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.bolt_tension_type}
-                                onSelect={value => setInputs({...inputs, bolt_tension_type: value})}
+                                value={designPrefInputs.bolt_tension_type}
+                                onSelect={value => setDesignPrefInputs({...designPrefInputs, bolt_tension_type: value})}
                             >
                                     <Option value="Pretensioned">Pre-tensioned</Option>
                                     <Option value="Non pre-tensioned">Non Pre-tensioned</Option>
@@ -41,8 +41,8 @@ xii) Red lead painted surface     0.1
                     <h5>Hole Type</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.bolt_hole_type}
-                                onSelect={value => setInputs({...inputs, bolt_hole_type: value})}
+                                value={designPrefInputs.bolt_hole_type}
+                                onSelect={value => setDesignPrefInputs({...designPrefInputs, bolt_hole_type: value})}
                             >
                                     <Option value="Standard">Standard</Option>
                                     <Option value="0ver-Sized">Over-Sized</Option>
@@ -56,8 +56,8 @@ xii) Red lead painted surface     0.1
                     </h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.bolt_slip_factor}
-                                onSelect={value => setInputs({...inputs, bolt_slip_factor: value})}
+                                value={designPrefInputs.bolt_slip_factor}
+                                onSelect={value => setDesignPrefInputs({...designPrefInputs, bolt_slip_factor: value})}
                             >
                                     <Option value="0.5">0.5</Option>
                                     <Option value="0.3">0.3</Option>

@@ -7,7 +7,7 @@ import BoltSectionModal from './BoltSectionModal'
 import WeldSectionModal from './WeldSectionModal'
 import DetailingSectionModal from './DetailingSectionModal'
 import DesignSectionModal from './DesignSectionModal'
-import { Button , Input} from 'antd';
+import { Button , Modal} from 'antd';
 
 const tabs = [
     {
@@ -34,10 +34,37 @@ const tabs = [
     }
 ]
 
-const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
+const DesignPrefSections = ({inputs, setInputs, selectedOption, setDesignPrefModalStatus, setConfirmationModal, confirmationModal}) => {
 
     const [activeTab, setActiveTab] = useState(0)
-    const {designPrefData} = useContext(ModuleContext) 
+    const {designPrefData, design_pref_defaults} = useContext(ModuleContext) 
+    const [designPrefInputs, setDesignPrefInputs] = useState({
+        supported_material: inputs.supported_material,
+        supporting_material: inputs.supporting_material,
+        connector_material: inputs.connector_material,
+        bolt_tension_type: inputs.bolt_tension_type,
+        bolt_hole_type: inputs.bolt_hole_type,
+        bolt_slip_factor: inputs.bolt_slip_factor,
+        weld_fab: inputs.weld_fab,
+        weld_material_grade: inputs.weld_material_grade,
+        detailing_edge_type: inputs.detailing_edge_type,
+        detailing_gap: inputs.detailing_gap,
+        detailing_corr_status: inputs.detailing_corr_status,
+        design_method: inputs.design_method
+    })
+
+    const saveCoreInputs = () => {
+        setInputs({...inputs, ...designPrefInputs})
+        setDesignPrefModalStatus(false)
+        setConfirmationModal(false)
+    }
+
+    const resetInputs = () => {
+        setDesignPrefInputs(design_pref_defaults)
+        setInputs({...inputs, ...design_pref_defaults})
+        setConfirmationModal(false)
+        setDesignPrefModalStatus(false)
+    }
 
   return (
     <div >
@@ -65,6 +92,8 @@ const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
                 <ColumnSectionModal 
                     inputs={inputs} 
                     setInputs={setInputs} 
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}
                     supportingSectionData={designPrefData.supporting_section_results.length > 0 ? designPrefData.supporting_section_results[0] : designPrefData.supporting_section_results}
                 />
             }
@@ -73,23 +102,50 @@ const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
                 <BeamSectionModal 
                     inputs={inputs} 
                     setInputs={setInputs} 
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}
                     supportedSectionData={designPrefData.supported_section_results.length > 0 ? designPrefData.supported_section_results[0] : designPrefData.supported_section_results}
                 />
             }
             {activeTab == 2 &&
-                <ConnectorSectionModal inputs={inputs} setInputs={setInputs}/>
+                <ConnectorSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs}
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}   
+                />
             }
             {activeTab == 3 && 
-                <BoltSectionModal inputs={inputs} setInputs={setInputs}/>
+                <BoltSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs}
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}
+                />
             }
             {activeTab == 4 && 
-                <WeldSectionModal inputs={inputs} setInputs={setInputs}/>
+                <WeldSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs}
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}
+                />
             }
             {activeTab == 5 && 
-                <DetailingSectionModal inputs={inputs} setInputs={setInputs}/>
+                <DetailingSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs}
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}    
+                />
             }
             {activeTab == 6 && 
-                <DesignSectionModal inputs={inputs} setInputs={setInputs}/>
+                <DesignSectionModal 
+                    inputs={inputs} 
+                    setInputs={setInputs}
+                    designPrefInputs={designPrefInputs}
+                    setDesignPrefInputs={setDesignPrefInputs}    
+                />
             }
         </div>
 
@@ -107,11 +163,22 @@ const DesignPrefSections = ({inputs, setInputs, selectedOption}) => {
         }*/}
         <div className='subDesignPrefFooter subDesignPrefFooter-btn'>
             
-            <Button type="button" onClick={() => null}>Default</Button>
+            <Button type="button" onClick={() => setConfirmationModal(true)}>Default</Button>
             
-            <Button type="button" onClick={() => null}>Save </Button>            
+            <Button type="button" onClick={() => saveCoreInputs()}>Save and Close</Button>            
         </div> 
-        
+        <Modal 
+            title="Alert!" 
+            open={confirmationModal} 
+            onOk={resetInputs} 
+            onCancel={saveCoreInputs}
+            cancelText="Save and Continue"
+            okText="Discard Changes"
+            closable={false}
+            maskClosable={false}
+        >
+            This action will discard your changes.
+        </Modal>
     </div>
   )
 }

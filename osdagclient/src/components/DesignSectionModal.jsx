@@ -1,6 +1,6 @@
 import { Select,Input } from 'antd'
 
-const DesignSectionModal = ({ inputs, setInputs }) => {
+const DesignSectionModal = ({ inputs, setInputs,designPrefInputs, setDesignPrefInputs }) => {
 
     return (
 <>
@@ -12,8 +12,8 @@ const DesignSectionModal = ({ inputs, setInputs }) => {
                         <h5>Design Method</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.design_method}
-                                onSelect={value => setInputs({...inputs, design_method: value})}
+                                value={designPrefInputs.design_method}
+                                onSelect={value => setDesignPrefInputs({...designPrefInputs, design_method: value})}
                             >
                                     <Option value="Limited State Design">Limited State Design</Option>
                                     <Option value="Limited State (capacity based) Design" disabled>Limited State (capacity based) Design</Option>

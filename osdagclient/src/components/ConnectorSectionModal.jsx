@@ -7,12 +7,12 @@ const readOnlyFontStyle = {
     color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
 }
 
-const ConnectorSectionModal = ({ inputs, setInputs }) => {
+const ConnectorSectionModal = ({ inputs, setInputs, designPrefInputs, setDesignPrefInputs }) => {
 
     const { materialList, conn_material_details, getMaterialDetails } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
     useEffect(() => {
-        const material = materialList.filter(value => value.Grade === inputs.supported_material)
+        const material = materialList.filter(value => value.Grade === designPrefInputs.supported_material)
         getMaterialDetails({data: material[0], type: "connector"})
     }, [])
 
@@ -22,7 +22,7 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
             return;
         }
         const material = materialList.find(item => item.id === value)
-        setInputs({ ...inputs, connector_material: material.Grade })
+        setDesignPrefInputs({ ...designPrefInputs, connector_material: material.Grade })
         getMaterialDetails({data: material, type: "connector"})
     }
     
@@ -35,7 +35,7 @@ const ConnectorSectionModal = ({ inputs, setInputs }) => {
                         <h5>Material</h5>
                         <div>
                             <Select style={{ width: '200px', height: '25px',fontSize: '12px' }}
-                                value={inputs.connector_material}
+                                value={designPrefInputs.connector_material}
                                 onSelect={(value) => {
                                     handleMaterialChange(value)
                                 }}
