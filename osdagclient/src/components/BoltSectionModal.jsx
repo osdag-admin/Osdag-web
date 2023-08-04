@@ -1,6 +1,6 @@
 import { Select,Input } from 'antd'
 
-const BoltSectionModal = ({ inputs, setInputs, designPrefInputs, setDesignPrefInputs }) => {
+const BoltSectionModal = ({ designPrefInputs, setDesignPrefInputs }) => {
     const Bolt_discription = `
 IS 800 Table 20 Typical Average Values for Coefficient of Friction (µf)
 

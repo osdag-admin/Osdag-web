@@ -1,6 +1,6 @@
 import { Select,Input } from 'antd'
 
-const DesignSectionModal = ({ inputs, setInputs,designPrefInputs, setDesignPrefInputs }) => {
+const DesignSectionModal = ({designPrefInputs, setDesignPrefInputs }) => {
 
     return (
 <>

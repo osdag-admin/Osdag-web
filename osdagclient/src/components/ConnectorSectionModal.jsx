@@ -7,7 +7,7 @@ const readOnlyFontStyle = {
     color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
 }
 
-const ConnectorSectionModal = ({ inputs, setInputs, designPrefInputs, setDesignPrefInputs }) => {
+const ConnectorSectionModal = ({ designPrefInputs, setDesignPrefInputs }) => {
 
     const { materialList, conn_material_details, getMaterialDetails } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
@@ -97,8 +97,8 @@ const ConnectorSectionModal = ({ inputs, setInputs, designPrefInputs, setDesignP
             <CustomSectionModal 
                 showModal={showModal}
                 setShowModal={setShowModal}
-                setInputValues={setInputs}
-                inputValues={inputs}
+                setInputValues={setDesignPrefInputs}
+                inputValues={designPrefInputs}
                 type="connector"
             />
         </div>

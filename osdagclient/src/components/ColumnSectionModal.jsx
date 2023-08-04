@@ -8,7 +8,7 @@ const readOnlyFontStyle = {
     color: 'rgb(0 0 0 / 67%)', fontSize: '12px', fontWeight: '600'
 }
 
-const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData, designPrefInputs, setDesignPrefInputs }) => {
+const ColumnSectionModal = ({ supportingSectionData, designPrefInputs, setDesignPrefInputs }) => {
 
     const { materialList, updateSourceAndMechType, getMaterialDetails, supporting_material_details } = useContext(ModuleContext)
     const [showModal, setShowModal] = useState(false)
@@ -129,7 +129,6 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData, designPr
                                 <Select style={{ width: '200px', height: '25px', fontSize: '12px' }}
                                     value={supportingSectionData.Type ? supportingSectionData.Type : "Rolled"}
                                     disabled
-                                //onSelect={(value) => setInputs({ ...inputs, connector_material: value })}
                                 >
                                     {['Rolled', 'Welded'].map((item, index) => (
                                         <Option key={index} value={item}>{item}</Option>
@@ -371,8 +370,8 @@ const ColumnSectionModal = ({ inputs, setInputs, supportingSectionData, designPr
             <CustomSectionModal 
                 showModal={showModal}
                 setShowModal={setShowModal}
-                setInputValues={setInputs}
-                inputValues={inputs}
+                setInputValues={setDesignPrefInputs}
+                inputValues={designPrefInputs}
                 type='supporting'
             />
         </>
