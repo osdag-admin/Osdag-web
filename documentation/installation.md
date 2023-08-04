@@ -1,5 +1,37 @@
 # Installation of Osdag-Web Application
 
+### Software Requirements : 
+
+1. Ubuntu LTS 20.04 / 22.04
+2. Git : Install Git on Ubuntu with
+
+   ```
+   # Update the Repository
+   sudo apt update
+
+   # Install Git 
+   sudo apt install git
+   ```
+3. IDE ( **OPTIONAL** ) ( preferrably VSCode ) : Install VSCode with
+
+   ```
+   sudo snap install --classic code
+   ```
+4. Node v16.20.0 : Install Node from NVM by running these commands in the Terminal
+
+   ```
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+
+   source ~/.bashrc
+
+   nvm install v16.20.0
+   ```
+5. 
+
+
+
 The Osdag-Web application uses 'Conda' environment which contains all the dependencies. To first download these, visit the link : [https://osdag.fossee.in/resources/downloads]() and download the ' Installer [Release: 2021-02-15] ' for Ubuntu :
 
 1. Install both the Installer - Linux and the Installation instructions for Ubuntu files
@@ -28,7 +60,8 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      ```
      tar -xvf Osdag-Web-master.zip
      ```
-     Move the unzipped Osdag-Web-master folder to 'Desktop' or wherever you want
+
+     Move the unzipped Osdag-Web-master folder to 'Desktop' or wherever you want and rename it to 'Osdag-web'
 6. Next step is to install Postgres. Open the terminal and run the following commands :
 
    ```
@@ -40,9 +73,9 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 
    sudo apt-get -y install postgresql
    ```
-7. Now install Pgadmin ( **OPTIONAL** ). Open the terminal and run the following commands :
+7. install Pgadmin ( **OPTIONAL** ). Open the terminal and run the following commands :
 
-   ```
+```
    curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
 
    sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
@@ -52,7 +85,8 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    sudo apt install pgadmin4-desktop
 
    sudo /usr/pgadmin4/bin/setup-web.sh
-   ```
+```
+
 8. Open the Osdag-Web-master folder and open a new terminal there. Make sure you have the conda environment activated. You can know this if there is **(base)** written at the start of the terminal line. If you don't see this, activate the conda environment using :
 
    ```
@@ -67,9 +101,25 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    ```
    bash install_freecad.sh
    ```
-10. Run the Following commnands in the Root of Osdag-web :
+10. Create Database and Role in Postgres and Configure it, open the Terminal ( Ctrl + Alt + T ):
 
     ```
+    # To Enter into the Postgres terminal 
+    sudo -u postgres psql
+
+    # Create the Role 
+    CREATE ROLE osdagdeveloper PASSWORD 'password' SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
+
+    # Create the Database
+    CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
+
+    ```
+11. Run the Following commnands in the Root of Osdag-web :
+
+    ```
+    # switch to develop branch 
+    git checkout develop
+
     # Install Requirements.txt packages 
     pip install -r requirements.txt
 
@@ -90,4 +140,4 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
     cd osdagclient
     npm run dev
     ```
-11. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
+12. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
