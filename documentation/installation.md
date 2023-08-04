@@ -42,8 +42,13 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    tar -xvf Osdag_ubuntu_installer_v2021.02.a.a12f.tar.gz
    ```
 3. After unzipping the file, cd into the folder `Osdag_ubuntu_installer_v2021.02.a.a12f`, open the file 0-README.txt file and follow the instructions given in the file to install the dependencies.
-4. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
-5. The next step is to clone the Osdag-Web repository on github. There are 2 ways to download the repository :
+4. Install texlive-latex-extra packages. Open the terminal ( Ctrl + Alt + T )and run the following command :
+
+   ```
+   sudo apt-get install -y texlive-latex-extra
+   ```
+5. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
+6. The next step is to clone the Osdag-Web repository on github. There are 2 ways to download the repository :
 
    * If you already have `git` installed on your machine, then open a new terminal in Desktop ( `Ctrl+Alt+T` ) and run the following command :
 
@@ -60,7 +65,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      tar -xvf Osdag-Web-master.zip
      ```
      Move the unzipped Osdag-Web-master folder to 'Desktop' or wherever you want and rename it to 'Osdag-web'
-6. Next step is to install Postgres. Open the terminal and run the following commands :
+7. Next step is to install Postgres. Open the terminal and run the following commands :
 
    ```
    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
