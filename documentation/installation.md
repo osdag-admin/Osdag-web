@@ -11,7 +11,6 @@
 
    If the output gives you the username of your Ubuntu machine, then skip this step and proceed with the next step.
 
-
    If the output is : `Sorry, user USERNAME may not run sudo on VIRTUAL_MACHINE/UBUNTU_MACHINE`
 
    Then, you will have to add your Ubuntu username into the sudoers file
@@ -36,7 +35,9 @@
      USERNAME ALL=(ALL:ALL) ALL
      ```
 
-     Replace the text USERNAME with the username that you have obtained by the command `whoami`
+     Replace the text USERNAME with the username that you have obtained by the command `whoami.`
+
+     Save the file (**ctrl+o**) and exit (**ctrl+x**)
    * Exit the root terminal with `ctrl+d`
    * Close the terminal and reopen it (**ctrl+alt+t**)
 3. Git : Install Git on Ubuntu. Open the terminal (**ctrl+alt+t**) and run the below commands:
