@@ -196,9 +196,9 @@ const handleFPasswordModalClose = () => {
                     <label >
                         <div style={{display:"flex", justifyContent:"space-between"}}>
                             <h4>Password</h4>
-                            { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}} onClick={handleVerifyEmailModal} >Verify Your Email.</p> }
                         </div>
                         <input type="password" name='password' id='password' onChange={(e) => {setPassword(e.target.value)}}/>
+                        { !isSignup && <p style={{ color: "#91b014", fontSize:'13px'}} onClick={handleVerifyEmailModal} >Forgot Password?</p> }
                     </label>
                         <div style={{display:"flex", justifyContent:"space-between"}}>
                             <h4></h4>
@@ -233,7 +233,7 @@ const handleFPasswordModalClose = () => {
         </section>
         {/* Verify Email Popup */}
         <Modal
-        title="Verify Email"
+        title="Email Verification"
         visible={verifyEmailModalVisible}
         onCancel={handleVerifyEmailModalClose}
         footer={[

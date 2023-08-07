@@ -9,7 +9,7 @@ from osdag.web_api.inputData_view import InputData, DesignView
 from osdag.web_api.outputCalc_view import OutputData
 from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF, CompanyLogoView
 from osdag.web_api.design_pref_api import DesignPreference, MaterialDetails
-from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView, LoginView, ObtainAllInputValueFilesView, CheckEmailView, SaveInputFileView
+from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView, LoginView, ObtainInputFileView, CheckEmailView, SaveInputFileView
 from osdag.web_api.jwt_api import JWTHomeView
 from osdag.web_api.google_sso_api import GoogleSSOView
 from . import views
@@ -74,7 +74,7 @@ urlpatterns = [
     path('user/login/' , LoginView.as_view()),
     path('user/checkemail/' , CheckEmailView.as_view()),
     path('user/saveinput/' , SaveInputFileView.as_view()),
-    path('user/obtainallinputfiles/' , ObtainAllInputValueFilesView.as_view()),
+    path('user/obtain-input-file/' , ObtainInputFileView.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',

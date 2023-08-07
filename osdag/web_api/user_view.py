@@ -216,8 +216,9 @@ class LoginView(APIView) :
         try : 
             result = UserAccount.objects.get(username = username , password = password)
             print('result user login : ' , result)
+
             # grant the login access to the user 
-            return Response({'message' : 'Login successfully'} , status = status.HTTP_200_OK)
+            return Response({'message' : 'Login successfully' , 'allInputValueFilesLength' : len(result.allInputValueFiles)} , status = status.HTTP_200_OK)
         except ObjectDoesNotExist as e: 
             print('The user account does not exxists : ' , e)
             return Response({'message' : 'The User Account does not exists'} , status = status.HTTP_400_BAD_REQUEST)
@@ -225,7 +226,7 @@ class LoginView(APIView) :
             print('Invalid credentials : ' , e)
             return Response({'message' : 'Invalid credentials'} , status = status.HTTP_400_BAD_REQUEST)
 
-class ObtainAllInputValueFilesView(APIView) : 
+class ObtainInputFileView(APIView) : 
     def post(self , request) : 
         print('inside obtain all reports view get')
 
@@ -282,6 +283,12 @@ class SaveInputFileView(APIView) :
         print('currentDirectory : ' , currentDirectory)
         fullPath = currentDirectory + "/file_storage/input_values_files/" + fileName
         print('fullPath : ' , fullPath)
+        
+        # check if the input_values_files directory exists or not 
+        # if not, then create one 
+        if(not os.path.exists(os.path.join(os.getcwd() , "file_storage/input_values_files/"))) : 
+            print('The input_values_files dir dies not exist, creating one')
+            os.mkdir(os.path.join(os.getcwd() , "file_storage/input_values_files/"))
 
         # create the file
         try : 

@@ -12,15 +12,15 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 let initialValue = {
     isLoggedIn : false,
-    allReportsLink : [],
     LoginMessage : "",
     SignupMessage : "",
     OTPSent : false,
     OTPMessage : "",
     passwordSet : false,
     passwordSetMessage : "",
-    inputFiles : false,
-    inputFilesMessage : ""
+    inputFilesLink : null,
+    inputFilesStatus : false,
+    inputFilesMessage : "",
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -200,6 +200,8 @@ export const UserProvider = ({children}) => {
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
                 console.log("isloggedin inside logging"+ state.isLoggedIn)
+                // set the allInputValueFilesLength in the localStorage 
+                localStorage.setItem('allInputValueFilesLength' , jsonResponse.allInputValueFilesLength)
             }else{
                 console.log('response.status!=200, user not logged in')
                 if(jsonResponse.message == "The User Account does not exists"){
@@ -222,7 +224,7 @@ export const UserProvider = ({children}) => {
         const access_token = localStorage.getItem('access')
         const email = localStorage.getItem('email')
         try{
-            fetch(`${BASE_URL}user/obtainallinputfiles/` , {
+            fetch(`${BASE_URL}user/obtain-input-file/` , {
                 method : 'GET',
                 mode : 'cors',
                 credentials : 'include',
@@ -231,7 +233,7 @@ export const UserProvider = ({children}) => {
                     'Accept': 'application/json',
                     'Cache-Control': 'no-cache', // Disable caching
                     'Pragma': 'no-cache', // For older browsers
-                    'Authorization' : `Bearer ${access_token}`,
+                    // 'Authorization' : `Bearer ${access_token}`,
                 },
                 body : JSON.stringify({
                     'email' : email,
@@ -366,7 +368,9 @@ export const UserProvider = ({children}) => {
     const SaveInputValueFile = async(content) => {
         console.log('inside saveInputValueFile thunk')
         console.log('content : ' ,content)
-
+        const email = localStorage.getItem('email')
+        console.log('email in localStorage : ' , email)
+        
         try{
             const response = await fetch(`${BASE_URL}user/saveinput/` , {
                 method : 'POST',
@@ -375,7 +379,8 @@ export const UserProvider = ({children}) => {
                     'Content-Type' : 'application/json'
                 },
                 body : JSON.stringify({
-                    'content' : content
+                    'content' : content,
+                    'email' : email
                 })
             })
 

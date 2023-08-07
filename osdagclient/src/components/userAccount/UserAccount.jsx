@@ -1,8 +1,14 @@
-import React from 'react';
+import {React , useContext} from 'react';
 import { List, Button } from 'antd';
 import './UserAccount.css'; 
+import { UserContext } from '../../context/UserState';
+
+let renderOnce = false
 
 const UserAccount = () => {
+
+  // UserContext thunks adn variables 
+  const {obtainALLInputValueFiles} = useContext(UserContext)
   // Replace these with your actual data
   const userEmail = 'user@example.com';
   const osiFiles = [
@@ -10,6 +16,14 @@ const UserAccount = () => {
     { name: 'File 2.osi', url: 'https://example.com/file2.osi' },
     // Add more fila
   ];
+
+  if(!renderOnce){
+    // call the thunk to obtain all the input_value_files 
+    obtainALLInputValueFiles()
+    renderOnce = true
+  }
+
+
 
   const onViewClick = (url) => {
     // Implement view logic here
@@ -51,6 +65,7 @@ const UserAccount = () => {
             className="file-list" 
             />
         </div>
+        
       </div>
     </div>
             </>
