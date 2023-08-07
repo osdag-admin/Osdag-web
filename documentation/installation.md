@@ -9,7 +9,8 @@
    sudo -l
    ```
 
-   If the output gives you the username of your Ubuntu machine, then skip this step and proceed with the next step
+   If the output gives you the username of your Ubuntu machine, then skip this step and proceed with the next step.
+
    If the output is : `Sorry, user USERNAME may not run sudo on VIRTUAL_MACHINE/UBUNTU_MACHINE`
 
    Then, you will have to add your Ubuntu username into the sudoers file
@@ -34,7 +35,9 @@
      USERNAME ALL=(ALL:ALL) ALL
      ```
 
-     Replace the text USERNAME with the username that you have obtained by the command `whoami`
+     Replace the text USERNAME with the username that you have obtained by the command `whoami.`
+
+     Save the file (**ctrl+o**) and exit (**ctrl+x**)
    * Exit the root terminal with `ctrl+d`
    * Close the terminal and reopen it (**ctrl+alt+t**)
 3. Git : Install Git on Ubuntu. Open the terminal (**ctrl+alt+t**) and run the below commands:
@@ -121,9 +124,10 @@
 
 The Osdag-Web application uses 'Conda' environment which contains all the dependencies. To first download these, visit the link : [https://osdag.fossee.in/resources/downloads](https://osdag.fossee.in/resources/downloads) and download the ' Installer [Release: 2021-02-15] ' for Ubuntu :Install both the Installer - Linux and the Installation instructions for Ubuntu files
 
-1. ![ubuntu installation](image/installation/1691117745242.png "Osdag Ubuntu Installer")
-2. Follow the instructions in the `Installation instructions` file that you have downloaded
-3. Install texlive-latex-extra packages. Open the terminal ( Ctrl + Alt + T )and run the following command :
+![ubuntu installation](image/installation/1691117745242.png "Osdag Ubuntu Installer")
+
+1. Follow the instructions in the `Installation instructions` file that you have downloaded. After completing that return back to this installation guide.
+2. Install texlive-latex-extra packages. Open the terminal (**ctrl+alt+t**) and run the following command :
 
    ```
    sudo apt-get update
@@ -131,10 +135,10 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    ```
    sudo apt-get install -y texlive-latex-extra
    ```
-4. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
-5. The next step is to clone the Osdag-Web repository on github. There are 2 ways to download the repository :
+3. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
+4. The next step is to clone the Osdag-Web repository on github. There are 2 ways to download the repository :
 
-   * If you already have `git` installed on your machine, then open a new terminal in Desktop ( `Ctrl+Alt+T` ) and run the following command :
+   * If you already have `git` installed on your machine, then open a new terminal in Desktop (**ctrl+alt+t**) and run the following command :
 
      ```
      git clone https://github.com/SurajBhosale003/Osdag-web.git
@@ -149,13 +153,13 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      tar -xvf Osdag-Web-master.zip
      ```
      Move the unzipped Osdag-Web-master folder to `Desktop` or wherever you want and rename it to `Osdag-web`
-6. Open the Osdag-web folder and open a new terminal there. Make sure you have the conda environment activated. You can know this if there is **(base)** written at the start of the terminal line. If you don't see this, activate the conda environment using :
+5. Open the Osdag-web folder and open a new terminal there. Make sure you have the conda environment activated. You can know this if there is **(base)** written at the start of the terminal line. If you don't see this, activate the conda environment using :
    ![conda activation](image/installation/root_directory.png "conda activation")
 
    ```
    conda activate
    ```
-7. Create Database and Role in Postgres and Configure it, open the Terminal ( Ctrl + Alt + T ):
+6. Create Database and Role in Postgres and Configure it, open the Terminal ( Ctrl + Alt + T ):
 
    * Enter into the Postgres Terminal
 
@@ -177,7 +181,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      ```
      \q
      ```
-8. Open a terminal (**ctrl+alt+t**) and follow the below steps
+7. Open a terminal (**ctrl+alt+t**) and follow the below steps
 
    * Enter into the Osdag-web folder which you have cloned
 
@@ -225,4 +229,4 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
      ```
      npm run dev
      ```
-9. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
+8. Now your Server and Client are running. Navigate to [http://localhost:5173/](http://localhost:5173/) on your Browser. Now you can use the application.
