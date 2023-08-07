@@ -748,13 +748,13 @@ function FinePlate() {
       let storedCompanyLogo = localStorage.getItem('companyLogo')
       storedCompanyLogo = JSON.parse(storedCompanyLogo)
       // stored CompanyLogo is an array, it comtains the actual file
-      // the file is encoded 
+      // the file is encoded. decode it as given below
       // let companyLogo = base64_decode(storedCompanyLogo[0])
 
       let storedCompanyLogoName = localStorage.getItem('companyLogoName')
       storedCompanyLogoName = JSON.parse(storedCompanyLogoName)
       // stored companylogoName is an array, it contains the name of the files 
-      // the fileNaeme is encoded 
+      // the fileNaeme is encoded. decode it as given belows
       // let companyLogoName = base64_decode(storedCompanyLogoName[0])
 
       // an image consists of 2 parts, the companyLogo and the companyLogoName 
