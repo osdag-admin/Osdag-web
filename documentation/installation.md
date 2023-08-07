@@ -123,7 +123,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 
 ![ubuntu installation](image/installation/1691117745242.png "Osdag Ubuntu Installer")
 
-1. Follow the instructions in the `Installation instructions` file that you have downloaded
+1. Follow the instructions in the `Installation instructions` file that you have downloaded. After completing that return back to this installation guide.
 2. Install texlive-latex-extra packages. Open the terminal (**ctrl+alt+t**) and run the following command :
 
    ```
@@ -135,7 +135,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
 3. Now you have successfully installed Osdag, texLive and miniconda on your machine. Navigate to 'Desktop'
 4. The next step is to clone the Osdag-Web repository on github. There are 2 ways to download the repository :
 
-   * If you already have `git` installed on your machine, then open a new terminal in Desktop ( `Ctrl+Alt+T` ) and run the following command :
+   * If you already have `git` installed on your machine, then open a new terminal in Desktop (**ctrl+alt+t**) and run the following command :
 
      ```
      git clone https://github.com/SurajBhosale003/Osdag-web.git
