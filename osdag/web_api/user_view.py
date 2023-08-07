@@ -18,7 +18,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # importing Django models 
 from osdag.models import UserAccount
 
-import osdag
+# importing exceptions 
+from django.core.exceptions import ObjectDoesNotExist
 
 # django imports 
 from django.conf import settings
@@ -217,9 +218,12 @@ class LoginView(APIView) :
             print('result user login : ' , result)
             # grant the login access to the user 
             return Response({'message' : 'Login successfully'} , status = status.HTTP_200_OK)
-        except Exception as e : 
+        except ObjectDoesNotExist as e: 
             print('The user account does not exxists : ' , e)
             return Response({'message' : 'The User Account does not exists'} , status = status.HTTP_400_BAD_REQUEST)
+        except Exception as e : 
+            print('Invalid credentials : ' , e)
+            return Response({'message' : 'Invalid credentials'} , status = status.HTTP_400_BAD_REQUEST)
 
 class ObtainAllInputValueFilesView(APIView) : 
     def post(self , request) : 

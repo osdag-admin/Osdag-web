@@ -204,8 +204,10 @@ export const UserProvider = ({children}) => {
                 console.log('response.status!=200, user not logged in')
                 if(jsonResponse.message == "The User Account does not exists"){
                     dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "The User Account does not exists"}})    
-                }else{
+                }else if(jsonResponse.message == "Invalid credentials"){
                     dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
+                }else{
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Error while logging"}})
                 }
                 
             }
