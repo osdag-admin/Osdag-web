@@ -57,7 +57,7 @@ const LoginPage = () => {
          
             const response =  JSON.stringify(verifyEmail(verifyEmails));
             globalOTP = localStorage.getItem('otp')
-            alert(response.message+": "+ globalOTP)
+            // alert(response.message+": "+ globalOTP)
             console.log("OTP received:", globalOTP);    
             
             // Enable the input if needed
@@ -132,7 +132,7 @@ const handleFPasswordModalClose = () => {
              
             }else{
                 console.log('email getting passed : ' , email)
-                userLogin( email , password , false)
+                userLogin( username , password , false)
             
 
             }

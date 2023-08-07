@@ -11,7 +11,7 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 */
 
 let initialValue = {
-    isLoggedIn : true,
+    isLoggedIn : false,
     allReportsLink : [],
     LoginMessage : "",
     SignupMessage : "",
@@ -32,9 +32,10 @@ export const UserProvider = ({children}) => {
     const [state, dispatch] = useReducer(UserReducer, initialValue);
 
     // USER AUTHENTICATION AND AUTHORAZATION 
-    const createJWTToken = async(email , password) => {
+    const createJWTToken = async(username , password) => {
         console.log('inside createJWT token ')
-        console.log('email : ' , email)
+        console.log('username : ' , username)
+        console.log('password : ' , password)
         try{
             const response = await fetch(`${BASE_URL}api/token/` , {
                 method : 'POST',
@@ -44,7 +45,7 @@ export const UserProvider = ({children}) => {
                     'Content-Type': 'application/json; charset=UTF-8',
                 },
                 body : JSON.stringify({
-                    'username' : email,
+                    'username' : username,
                     'password' : password
                 })
             })
@@ -167,9 +168,9 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const userLogin = async(email, password ,  isGuest) => {
+    const userLogin = async(username, password ,  isGuest) => {
         console.log('inside user login')
-        console.log('email' , email)
+        console.log('username : ' , username)
         console.log('isGuest : ' ,isGuest)
 
         try{
@@ -180,7 +181,7 @@ export const UserProvider = ({children}) => {
                     'Content-Type': 'application/json', // Set the Content-Type header to JSON
                   },
                 body : JSON.stringify({
-                    email : email,
+                    username : username,
                     password : password,
                     isGuest : isGuest
                 })
@@ -193,15 +194,20 @@ export const UserProvider = ({children}) => {
                 
                 // create a new jwt token 
                 if(isGuest==false){
-                    createJWTToken(email , password)
+                    createJWTToken(username , password)
                 }
 
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
-                console.log("isloggedin inside logging"+ isLoggedIn)
+                console.log("isloggedin inside logging"+ state.isLoggedIn)
             }else{
                 console.log('response.status!=200, user not logged in')
-                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
+                if(jsonResponse.message == "The User Account does not exists"){
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "The User Account does not exists"}})    
+                }else{
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
+                }
+                
             }
         }catch(err){
             console.log('error in logging in')
@@ -341,17 +347,17 @@ export const UserProvider = ({children}) => {
             if(response.status==200){
                 console.log('password updated')
 
-                dispatch({type : 'SET_FORGETPAfSSWORD_STATE' , payload : {passwordSet : true , passwordSetMessage : 'New password has been set'}})
+                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : true , passwordSetMessage : 'New password has been set'}})
                 
             }else{
                 console.log('response.status!=200 on forget password')
 
-                dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : false , passwordSetMessage : 'Failed to update the password , please try again'}})
+                dispatch({type : 'SET_FORGETPASSWORD_STATUS' , payload : {passwordSet : false , passwordSetMessage : 'Failed to update the password , please try again'}})
             }
         }catch(err){
             console.log('Server error in updating the password')
 
-            dispatch({type : 'SET_FORGETPASSWORD_STATE' , payload : {passwordSet : false ,passwordSetMessage : 'Server error in updating the password, please try again'}})
+            dispatch({type : 'SET_FORGETPASSWORD_STATUS' , payload : {passwordSet : false ,passwordSetMessage : 'Server error in updating the password, please try again'}})
         }
     }
 

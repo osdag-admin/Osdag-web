@@ -38,5 +38,9 @@ export default (state, action) => {
                 passwordSet : action.payload.passwordSet,
                 passwordSetMessage : action.payload.passwordSetMessage
             }
+        default : 
+            return {
+                ...state
+            }
     }
 }

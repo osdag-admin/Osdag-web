@@ -18,6 +18,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # importing Django models 
 from osdag.models import UserAccount
 
+import osdag
+
 # django imports 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -203,24 +205,21 @@ class LoginView(APIView) :
         # for a guest user
         print('is not a guest user')
 
-        # obtain the email and password
-        email = request.data.get('email')
+        # obtain the username and password
+        username = request.data.get('username')
+        print('username : ' ,username)
         password = request.data.get('password')
-        
-        print('email : ' , email)
         print('password : ' , password)
 
         # find the useranme and password from the UserAccount model 
-        result = UserAccount.objects.get(email = email , password = password)
-        if(result) : 
-            print('the user has been found')
-
+        try : 
+            result = UserAccount.objects.get(username = username , password = password)
+            print('result user login : ' , result)
             # grant the login access to the user 
             return Response({'message' : 'Login successfully'} , status = status.HTTP_200_OK)
-        else : 
-            print('Login failed')
-            return Response({'message' : 'Login failed'} , status = status.HTTP_400_BAD_REQUEST)
-
+        except Exception as e : 
+            print('The user account does not exxists : ' , e)
+            return Response({'message' : 'The User Account does not exists'} , status = status.HTTP_400_BAD_REQUEST)
 
 class ObtainAllInputValueFilesView(APIView) : 
     def post(self , request) : 

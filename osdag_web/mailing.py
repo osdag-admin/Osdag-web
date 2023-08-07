@@ -39,7 +39,9 @@ def send_mail(email , OTP=123) :
     status_code, response = smtp.login(FROM_EMAIL , PASSWORD)
     print(f"[*] Logging in : {status_code} {response}")
 
-    smtp.sendmail(FROM_EMAIL , TO_EMAIL , MESSAGE)
+    try : 
+        smtp.sendmail(FROM_EMAIL , TO_EMAIL , MESSAGE)
+        print('sent...')
+    except Exception as e : 
+        print('An exception has occured while sending the mail :  ' , e)
     smtp.quit()
-
-    print('sent...')
