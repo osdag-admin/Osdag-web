@@ -339,6 +339,27 @@ export const ModuleProvider = ({ children }) => {
         console.log('companyLogo : ' , companyLogo)
         console.log('companyLogoName : ' , companyLogoName)
 
+        //base64 encode the companylogo and the ocmpanylogoname and store it in localStorage
+        // stringify the object before storing
+        if(!localStorage.getItem('companyLogo') && !localStorage.getItem('companyLogoName') && companyLogo && companyLogoName){
+            let companyLogoArr = [companyLogo]
+            localStorage.setItem('comapanyLogo' , JSON.stringify(companyLogoArr))
+            let companyLogoNameArr = [companyLogoName]
+            localStorage.setItem('companyLogoName' , JSON.stringify(companyLogoNameArr))
+            console.log('1 companyLogo and companyLogoName stored in the localStorage')
+        }else if(localStorage.getItem('companyLogo') && localStorage.getItem('companyLogoName') && companyLogo && companyLogoName){
+            let companyLogoArr = localStorage.getItem('companyLogo')
+            companyLogoArr = JSON.parse(companyLogoArr)
+            companyLogoArr.append(companyLogo)
+            localStorage.setItem('companyLogo' , JSON.stringify(companyLogoArr))
+
+            let companyLogoNameArr = localStorage.getItem('companyLogoName')
+            companyLogoNameArr = JSON.parse(companyLogoNameArr)
+            companyLogoNameArr.append(companyLogoName)
+            localStorage.setItem('companyLogoName' , JSON.stringify(companyLogoNameArr))
+            console.log('1 companyLogo and companyLogoName stored in the localStorage')
+        }
+
         // creting a formData and appending the image in the formData 
         let formData = new FormData()
         formData.append('file' , companyLogo , companyLogoName)
