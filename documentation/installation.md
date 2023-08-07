@@ -9,7 +9,9 @@
    sudo -l
    ```
 
-   If the output gives you the username of your Ubuntu machine, then skip this step and proceed with the next step
+   If the output gives you the username of your Ubuntu machine, then skip this step and proceed with the next step.
+
+
    If the output is : `Sorry, user USERNAME may not run sudo on VIRTUAL_MACHINE/UBUNTU_MACHINE`
 
    Then, you will have to add your Ubuntu username into the sudoers file
