@@ -27,6 +27,9 @@ import CustomSectionModal from '../CustomSectionModal';
 // drop down 
 import DropdownMenu from '../DropdownMenu';
 
+// crypto packages
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+
 
 const { Option } = Select;
 
@@ -737,6 +740,28 @@ function FinePlate() {
   }, [inputs.column_section, inputs.beam_section, inputs.primary_beam, inputs.secondary_beam, selectedOption])
 
 
+  const obtainStoredCompanyLogoImages = () => {
+    console.log('obtain stored company logo images')
+
+    // obtaining the companyLogo
+    if(localStorage.getItem('companyLogo') && localStorage.getItem('companyLogoName')){
+      let storedCompanyLogo = localStorage.getItem('companyLogo')
+      storedCompanyLogo = JSON.parse(storedCompanyLogo)
+      // stored CompanyLogo is an array, it comtains the actual file
+      // the file is encoded 
+      // let companyLogo = base64_decode(storedCompanyLogo[0])
+
+      let storedCompanyLogoName = localStorage.getItem('companyLogoName')
+      storedCompanyLogoName = JSON.parse(storedCompanyLogoName)
+      // stored companylogoName is an array, it contains the name of the files 
+      // the fileNaeme is encoded 
+      // let companyLogoName = base64_decode(storedCompanyLogoName[0])
+
+      // an image consists of 2 parts, the companyLogo and the companyLogoName 
+      // so the 0th index image will be formed by ( storedCompanyLogo[0] and storedCompanyLogoName[0] )
+      // the 1st index image will be formed by ( storedCompanyLogo[1] and storedCompanyLogoName[1] )
+    }
+  }
 
 
   return (

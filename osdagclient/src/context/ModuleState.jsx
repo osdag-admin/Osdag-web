@@ -1,6 +1,9 @@
 import { createContext, useReducer } from 'react';
 import ModuleReducer from './ModuleReducer'
 
+// crypto packages
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+
 
 
 /* 
@@ -342,20 +345,20 @@ export const ModuleProvider = ({ children }) => {
         //base64 encode the companylogo and the ocmpanylogoname and store it in localStorage
         // stringify the object before storing
         if(!localStorage.getItem('companyLogo') && !localStorage.getItem('companyLogoName') && companyLogo && companyLogoName){
-            let companyLogoArr = [companyLogo]
+            let companyLogoArr = [base64_encode(companyLogo)]
             localStorage.setItem('comapanyLogo' , JSON.stringify(companyLogoArr))
-            let companyLogoNameArr = [companyLogoName]
+            let companyLogoNameArr = [base64_encode(companyLogoName)]
             localStorage.setItem('companyLogoName' , JSON.stringify(companyLogoNameArr))
             console.log('1 companyLogo and companyLogoName stored in the localStorage')
         }else if(localStorage.getItem('companyLogo') && localStorage.getItem('companyLogoName') && companyLogo && companyLogoName){
             let companyLogoArr = localStorage.getItem('companyLogo')
             companyLogoArr = JSON.parse(companyLogoArr)
-            companyLogoArr.append(companyLogo)
+            companyLogoArr.append(base64_encode(companyLogo))
             localStorage.setItem('companyLogo' , JSON.stringify(companyLogoArr))
 
             let companyLogoNameArr = localStorage.getItem('companyLogoName')
             companyLogoNameArr = JSON.parse(companyLogoNameArr)
-            companyLogoNameArr.append(companyLogoName)
+            companyLogoNameArr.append(base64_encode(companyLogoName))
             localStorage.setItem('companyLogoName' , JSON.stringify(companyLogoNameArr))
             console.log('1 companyLogo and companyLogoName stored in the localStorage')
         }
