@@ -132,7 +132,7 @@ const handleFPasswordModalClose = () => {
              
             }else{
                 console.log('email getting passed : ' , email)
-                userLogin( username , password , false)
+                userLogin( email , password , false)
             
 
             }
