@@ -34,7 +34,7 @@ export default (state, action) => {
         case 'PUSH_REPORT_LINK' : 
             return {
                 ...state,
-                inputFilesLink : [inputFilesLink , ...action.payload]
+                inputFilesLink : [action.payload , ...state.inputFilesLink]
             }
         case 'SET_FORGETPASSWORD_STATUS' : 
             return {

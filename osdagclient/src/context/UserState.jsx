@@ -11,14 +11,14 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 */
 
 let initialValue = {
-    isLoggedIn : false,
+    isLoggedIn : true,
     LoginMessage : "",
     SignupMessage : "",
     OTPSent : false,
     OTPMessage : "",
     passwordSet : false,
     passwordSetMessage : "",
-    inputFilesLink : null,
+    inputFilesLink : [],
     inputFilesStatus : false,
     inputFilesMessage : "",
 }
@@ -237,26 +237,27 @@ export const UserProvider = ({children}) => {
         const access_token = localStorage.getItem('access')
         const email = localStorage.getItem('email')
         try{
+            console.log('fetching the input file')
             fetch(`${BASE_URL}user/obtain-input-file/` , {
-                method : 'GET',
+                method : 'POST',
                 mode : 'cors',
                 credentials : 'include',
                 // Authorization header as well
-                headers: {
-                    'Accept': 'application/json',
-                    'Cache-Control': 'no-cache', // Disable caching
-                    'Pragma': 'no-cache', // For older browsers
-                    // 'Authorization' : `Bearer ${access_token}`,
+                headers : {
+                    'Content-Type' : 'application/json'
                 },
                 body : JSON.stringify({
                     'email' : email,
                     'fileIndex' : fileIndex
                 })
             }).then((response) => {
+                console.log('found response : ' , response)
                 if (response.ok) {
                     const link = document.createElement('a');
                     link.href = response.url;
-                    link.setAttribute('download', 'your_file_name.pdf');
+                    console.log('link.href : ' , link.url)
+                    link.setAttribute('download', 'your_file_name.osi');
+                    link.innerHTML = "atharva0300@gmail_fin_plate_connection.osi"
 
                     // store the link in an array
                     dispatch({type : 'PUSH_REPORT_LINK' , payload : link})
@@ -264,24 +265,26 @@ export const UserProvider = ({children}) => {
 
                     dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : true , inputFilesMessage : "The files have been stored in the server"}})
 
+                    console.log('state.inputFilesLink : ' , state.inputFilesLink)
                 } else {
                     console.error('Error in obtaining the PDF file:', response.status, response.statusText);
                     dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Failed to store the files in the server"}})
                 }
             })
         }catch(err){
-            console.log('Server error in obtaining the file')
+            console.log('Server error in obtaining the file : ' , err)
         }
             
     }
 
-    const obtainALLInputValueFiles = async() => {
+    const obtainAllInputValueFiles = async() => {
         console.log('inside teh obtain All reports thunk')
         const access_token = localStorage.getItem('access')
         const allInputValueFilesLength = localStorage.getItem('allInputValueFilesLength')
         console.log('allInputValueFilesLength : ' , allInputValueFilesLength)
         console.log('access_token : ' , access_token)
-        const email = localStorage.getItem('email')
+        // const email = localStorage.getItem('email')
+        const email = "atharva0300@gmail.com"
         console.log('email : ' , email)
 
         // calling the obtainSingleInputFile 
@@ -401,7 +404,8 @@ export const UserProvider = ({children}) => {
             console.log('jsonResponse : ' , jsonResponse)
             if(response.status==201){
                 console.log('the input file has beed stored successfully')
-                const allInputValueFilesLength = jsonResponse.get('allInputValueFilesLength')
+                const allInputValueFilesLength = jsonResponse.allInputValueFilesLength
+                console.log('allInputValueFilesLength : ' , allInputValueFilesLength)
                 // set to localStorage 
                 localStorage.setItem('allInputValueFilesLength' , allInputValueFilesLength)
             
@@ -429,13 +433,14 @@ export const UserProvider = ({children}) => {
             OTPMessage : state.OTPMessage,
             LoginMessage : state.LoginMessage,
             SignupMessage : state.SignupMessage,
+            inputFilesLink : state.inputFilesLink,
 
             // thunks
             userSignup,
             userLogin,
             verifyEmail,
             ForgetPassword,
-            obtainALLInputValueFiles,
+            obtainAllInputValueFiles,
             SaveInputValueFile
             
         }}>

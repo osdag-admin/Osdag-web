@@ -228,13 +228,11 @@ class LoginView(APIView) :
 
 class ObtainInputFileView(APIView) : 
     def post(self , request) : 
-        print('inside obtain all reports view get')
+        print('inside obtain all reports view post')
 
         # obtain the email 
         email = request.data.get('email')
         print('email : ' , email)
-        allInputValueFilesLength = request.data.get('allInputValueFilesLength')
-        print('allInputValueFilesLength : ' , allInputValueFilesLength)
         fileIndex = request.data.get('fileIndex')
         print('fileIndex : ' , fileIndex)
 
@@ -242,19 +240,13 @@ class ObtainInputFileView(APIView) :
         filePath = userObject.allInputValueFiles[int(fileIndex)]
         print('filePath : ' , filePath)
 
-        # check if the input_values_files folder has been created or not 
-        # if no, create one 
-        if(not os.path.exists(os.path.join(os.getcwd() , "file_storage/input_values_files/"))) : 
-            print('path does not exists, input_values_files, creating one')
-            os.mkdir(os.path.join(os.getcwd() ,  "file_storage/input_values_files/"))
-
         try : 
             # send the input value files to the client
             currentDirectory = os.getcwd()
             print('current Directory : ' , currentDirectory)
             fullpath = currentDirectory + "/file_storage/input_values_files/"
             response = FileResponse(open(filePath, 'rb'))
-            response['Content-Type'] = 'application/text'
+            response['Content-Type'] = 'text/plain'
             response['Content-Disposition'] = f'attachment; filename="{filePath}"'
             for key, value in response.items():
                 print(f'{key}: {value}')
@@ -265,6 +257,27 @@ class ObtainInputFileView(APIView) :
             print('An exception has occured in obtaining the osi file : ' , e)
 
             return Response({'message' : 'Inside obtain all report view'} , status = status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get(self, request) : 
+        print('inside obtain input file GET')
+
+        fileName = "atharva0300@gmail.com" + "_fin_plate_connection.osi"
+        filePath = os.path.join(os.getcwd(), "file_storage/input_values_files/" + fileName)
+
+        try : 
+            print('preparing download...')
+            response = FileResponse(open(filePath , 'rb'))
+            response['Content-Type'] = 'text/plain'
+            response['Content-Disposition'] = f'attachment; filename="{fileName}"'
+            for key, value in response.items() : 
+                print(f'{key} : {value}')
+            
+            return response
+        
+        except Exception as e : 
+            print('Exception in downloading : ' , e)
+
+            return Response({'message' : 'Cannot download the file'} , status=status.HTTP_400_BAD_REQUEST)
     
 class SaveInputFileView(APIView) : 
     def post(self, request) : 
@@ -277,7 +290,8 @@ class SaveInputFileView(APIView) :
         print('email : ' , email)
 
         # create a file in the file_storage 
-        fileName = ''.join(str(uuid.uuid4()).split('-')) + ".osi"
+        # fileName = ''.join(str(uuid.uuid4()).split('-')) + ".osi"
+        fileName = email + "_fin_plate_connection.osi"
         print('fileName : ' , fileName)
         currentDirectory = os.getcwd()
         print('currentDirectory : ' , currentDirectory)
@@ -301,7 +315,13 @@ class SaveInputFileView(APIView) :
             try : 
                 # append the fulllPath of the file to the email
                 userObject = UserAccount.objects.get(email = email)
-                userObject.allInputValueFiles.append(fullPath)
+                
+                # check if the file path already exists in the list or not 
+                # if not, then append
+                # else do not append
+                if not fullPath in userObject.allInputValueFiles : 
+                    userObject.allInputValueFiles.append(fullPath)
+                
                 allInputValueFilesLength = len(userObject.allInputValueFiles)
                 userObject.save()
                 print('the filePath has been appended and linked to the user')

@@ -3,12 +3,13 @@ import { List, Button } from 'antd';
 import './UserAccount.css'; 
 import { UserContext } from '../../context/UserState';
 
+
 let renderOnce = false
 
 const UserAccount = () => {
 
   // UserContext thunks adn variables 
-  const {obtainALLInputValueFiles} = useContext(UserContext)
+  const {inputFilesLink , obtainAllInputValueFiles} = useContext(UserContext)
   // Replace these with your actual data
   const userEmail = 'user@example.com';
   const osiFiles = [
@@ -19,7 +20,7 @@ const UserAccount = () => {
 
   if(!renderOnce){
     // call the thunk to obtain all the input_value_files 
-    obtainALLInputValueFiles()
+    obtainAllInputValueFiles()
     renderOnce = true
   }
 
@@ -47,6 +48,12 @@ const UserAccount = () => {
     </List.Item>
   );
 
+  const downloadInputFile = (link) => {
+    console.log('inside download input file')
+    link.click()
+    link.remove()
+  }
+
   return (
     <>
     <div className="user-dashboard-container">
@@ -65,7 +72,9 @@ const UserAccount = () => {
             className="file-list" 
             />
         </div>
-        
+        {inputFilesLink.map((item , index) => (
+          <h2 key ={index} onClick={() => downloadInputFile(item)}>{item.innerHTML}</h2>
+        ))}
       </div>
     </div>
             </>
