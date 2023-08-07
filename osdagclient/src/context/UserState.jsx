@@ -11,7 +11,7 @@ import {decode as base64_decode, encode as base64_encode} from 'base-64';
 */
 
 let initialValue = {
-    isLoggedIn : true,
+    isLoggedIn : false,
     LoginMessage : "",
     SignupMessage : "",
     OTPSent : false,
@@ -191,7 +191,7 @@ export const UserProvider = ({children}) => {
             console.log('jsonResponse : ' , jsonResponse)
             if(response.status==200){
                 console.log('user logged in successfully in userLogin Context ')
-                // console.log("isloggedin inside logging below if response 200"+ isLoggedIn)
+                console.log("isloggedin inside logging below if response 200"+ state.isLoggedIn)
 
                 console.log('Line number 194 inside status 200 way to create token...')
                 // create a new jwt token 
@@ -203,18 +203,20 @@ export const UserProvider = ({children}) => {
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
                 console.log('Done dispatch isLog set true  ')
+          
+
                 try{
                     console.log("Inside try catch to check console error")
-                    // console.log("isloggedin inside logging below dispatch"+ isLoggedIn)
+                    console.log("isloggedin inside logging below dispatch"+ state.isLoggedIn)
 
                 }catch(e){
-                    // console.log("error in console"+ isLoggedIn+"actual error"+e)
+                    console.log("error in console"+ state.isLoggedIn+"actual error"+e)
                 }
                 
                 // set the allInputValueFilesLength in the localStorage 
                 localStorage.setItem('allInputValueFilesLength' , jsonResponse.allInputValueFilesLength)
                 console.log("Local storage set")
-                // console.log("isloggedin inside logging below local storage "+ isLoggedIn)
+                console.log("isloggedin inside logging below local storage "+ state.isLoggedIn)
             }else{
                 console.log('response.status!=200, user not logged in')
                 if(jsonResponse.message == "The User Account does not exists"){

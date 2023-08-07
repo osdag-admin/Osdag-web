@@ -1,9 +1,11 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
+// import { useHistory } from 'react-router-dom';
 import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { UserContext } from '../../context/UserState';
 import { Modal, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const generateRandomString = (length) => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -17,8 +19,9 @@ const generateRandomString = (length) => {
   let globalOTP = null;
 
 const LoginPage = () => {
+    const navigate = useNavigate();
 
-    const { userSignup, userLogin, verifyEmail, ForgetPassword } = useContext(UserContext)
+    const { userSignup, userLogin, verifyEmail, ForgetPassword, isLoggedIn } = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -31,6 +34,19 @@ const LoginPage = () => {
     const [fPasswordModalVisible, setFPasswordModalVisible] = useState(false);
     const [fPasswordEmail, setFPasswordEmail] = useState('')
     const [fPasswordNewPass, setFPasswordNewPass] = useState('')
+    
+
+    useEffect(() => {
+        console.log("inside use effect in login page and isloggedin is:"+isLoggedIn)
+        console.log("Done Action : inside use effect in login page and isloggedin")
+
+        if (isLoggedIn) {
+            console.log("isloggedin is true in side if statement of Loginpage")
+            navigate('/home');
+            console.log("inside If in login page and isloggedin is:"+isLoggedIn)
+        }
+      }, [isLoggedIn]);
+
     
     const handleSwitch = () => {
         setIsSignup(!isSignup)
@@ -151,6 +167,7 @@ const handleFPasswordModalClose = () => {
     
     const handleGuestSignIn = () => {
         try{
+            
             let GuestEmail = `GUEST.${generateRandomString(10)}`;
             GuestEmail += "@gmail.com"
             const GuestUserPassword = generateRandomString(12);
@@ -158,6 +175,7 @@ const handleFPasswordModalClose = () => {
             console.log('guest password : ' , GuestUserPassword)
             // setting the isGuest to true
             userLogin(  GuestEmail, GuestUserPassword, true )
+            console.log("Done and state is :"+isLoggedIn)
     
         }catch(e)
         {

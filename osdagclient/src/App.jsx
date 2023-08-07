@@ -39,7 +39,8 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root isLoggedIn={isLoggedIn} />}>
-        <Route index element={<Mainwindow />} />
+        <Route path="/home" element={<Mainwindow />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path='/design-type/:designType' element={<Window />} />
         {/* Wrap FinePlate with a route that checks authentication */}
         <Route
@@ -61,9 +62,10 @@ function App() {
           <ModuleProvider>
             <div className="app">
               {/* Show the login page when not authenticated */}
-              {!isLoggedIn && <LoginPage />}
+              {/* {!isLoggedIn && <LoginPage />} */}
+              
               {/* Render the router when authenticated */}
-              {isLoggedIn && <RouterProvider router={router} />}
+              <RouterProvider router={router} />
             </div>
           </ModuleProvider>
         </GlobalProvider>
@@ -79,11 +81,12 @@ const Root = ( isLoggedIn ) => {
   // Check if the current pathname matches the specified path
   const isDesignPage = window.location.pathname.startsWith('/design/');
   const isUserProfilePage = window.location.pathname.startsWith('/useraccount/');
+  // const isLoginPage = window.location.pathname.startsWith('/login/');
 
   return (
     <>
       {/* Show Sidebar when authenticated and not on a design page */}
-      {isLoggedIn && !isDesignPage && !isUserProfilePage && (
+      {isLoggedIn && !isDesignPage && !isUserProfilePage &&(
         <div>
           <Sidebar />
         </div>
