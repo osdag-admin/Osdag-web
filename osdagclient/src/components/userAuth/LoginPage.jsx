@@ -145,20 +145,25 @@ const handleFPasswordModalClose = () => {
 
     // Google Auth
   const handleGoogleSignIn = () => {
-
     console.log('Google Sign-In button clicked!');
-
   };
     // Guest 
+    
     const handleGuestSignIn = () => {
-        console.log('handle Guest Sign in ')
-        let GuestEmail = `GUEST.${generateRandomString(10)}`;
-        GuestEmail += "@gmail.com"
-        const GuestUserPassword = generateRandomString(12);
-        console.log('Guest email : ' , GuestEmail)
-        console.log('guest password : ' , GuestUserPassword)
-        // setting the isGuest to true
-        userLogin(  GuestEmail, GuestUserPassword, true  )
+        try{
+            let GuestEmail = `GUEST.${generateRandomString(10)}`;
+            GuestEmail += "@gmail.com"
+            const GuestUserPassword = generateRandomString(12);
+            console.log('Guest email : ' , GuestEmail)
+            console.log('guest password : ' , GuestUserPassword)
+            // setting the isGuest to true
+            userLogin(  GuestEmail, GuestUserPassword, true )
+    
+        }catch(e)
+        {
+            console.log('Error occurred while guest mode', e);
+            alert('There was an error during login As Guest .');
+        }
       };
 
 
