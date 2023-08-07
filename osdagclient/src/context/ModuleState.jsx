@@ -368,7 +368,7 @@ export const ModuleProvider = ({ children }) => {
         console.log('params  : ' , params)
 
         // store the companyLogo in the server fileSystem 
-        const logoFullPath = await fetchCompanyLogo(params.companyLogo , params.companyLogoName)
+        const logoFullPath = params.companyLogo ? await fetchCompanyLogo(params.companyLogo , params.companyLogoName) : ""
         console.log('fileName received : ' , logoFullPath)
         
         try {

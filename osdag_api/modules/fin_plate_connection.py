@@ -392,7 +392,13 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     except Exception as e :
         print('Error in cld.create2Dcad() e : ' , e)
         return False
-    
+
+    # check if the cad_models folder exists or not 
+    # if no, then create one 
+    if(not os.path.exists(os.path.join(os.getcwd() , "file_storage/cad_models/"))) :
+        print('path does not exists cad_models , creating one')
+        os.mkdir(os.path.join(os.getcwd() , "file_storage/cad_models/"))
+      
     print('2d model : ' , model)
     # os.system("clear")  # clear the terminal
     file_name = session + "_" + section + ".brep"

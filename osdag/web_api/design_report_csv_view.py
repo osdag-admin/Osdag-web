@@ -95,6 +95,14 @@ class CreateDesignReport(APIView):
             print('metadata final : ' , metadata_final)
             # print('LogoFullPath : ' , metadata_final['CompanyLogo'])
 
+        # check if the design_report folder has been created or not 
+        # if not, create one 
+        cwd = os.path.join(os.getcwd() , "file_storage/design_report/")
+        print('cwd_path : ' , cwd)
+        if(not os.path.exists) :
+            print('path does not exists, creating one : ', cwd)
+            os.mkdir(cwd) 
+
         try:
             print('creating module from input')
             module = create_from_input(input_values)

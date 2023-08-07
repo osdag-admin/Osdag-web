@@ -238,6 +238,12 @@ class ObtainAllInputValueFilesView(APIView) :
         filePath = userObject.allInputValueFiles[int(fileIndex)]
         print('filePath : ' , filePath)
 
+        # check if the input_values_files folder has been created or not 
+        # if no, create one 
+        if(not os.path.exists(os.path.join(os.getcwd() , "file_storage/input_values_files/"))) : 
+            print('path does not exists, input_values_files, creating one')
+            os.mkdir(os.path.join(os.getcwd() ,  "file_storage/input_values_files/"))
+
         try : 
             # send the input value files to the client
             currentDirectory = os.getcwd()
