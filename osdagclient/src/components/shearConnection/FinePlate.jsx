@@ -805,7 +805,7 @@ function FinePlate() {
           <div>
             <div className='component-grid'>
                   
-            <div><h4>Workspace Name :</h4></div>
+            {/*<div><h4>Workspace Name :</h4></div>
                 <div>
                   <Input
                     type="text"
@@ -813,7 +813,7 @@ function FinePlate() {
                     // onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
                     />
                 </div>
-            
+              */}
             </div>
             <h5>Input Dock</h5>
             <div className='subMainBody scroll-data'>
