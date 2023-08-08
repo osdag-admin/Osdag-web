@@ -22,12 +22,18 @@ import { useSelector } from 'react-redux';
 // New component for the login page
 import LoginPage from './components/userAuth/LoginPage';
 
+// jwt imports 
+import jwt_decode from 'jwt-decode';
+
+let renderedOnce = false
+
 function App() {
   // State to track user authentication status
   // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // using redux variables 
-  const {isLoggedIn} = useContext(UserContext)
+  const {isLoggedIn , userLogin} = useContext(UserContext)
+  let loggedIn = false
   
   console.log('isLoggedIn : ' , isLoggedIn)
 
@@ -38,7 +44,7 @@ function App() {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<Root isLoggedIn={isLoggedIn} />}>
+      <Route path="/" element={<Root loggedIn={loggedIn} />}>
         <Route path="/home" element={<Mainwindow />} />
         <Route path="/" element={<LoginPage />} />
         <Route path='/design-type/:designType' element={<Window />} />
@@ -74,8 +80,39 @@ function App() {
   );
 }
 
-const Root = ( isLoggedIn ) => {
-  console.log('isLoggedIn in root : ' , isLoggedIn)
+const Root = ( loggedIn ) => {
+  const {userLogin} = useContext(UserContext)
+  if(!renderedOnce){
+      
+    // obtain the access token from the localStorage, when the user is on the main application page 
+    // and the user nagivates to login page, the user should not have to login again
+    // then, implemented access_token checking and decoding
+    if(localStorage.getItem('access')){
+      const decodedAccessToken = jwt_decode(localStorage.getItem('access'))
+      console.log('decodedAccessToken : ' , decodedAccessToken)
+      console.log('Date.now() / 1000 : ' , Date.now()/1000)
+      // check expiration
+      if(decodedAccessToken.exp > Date.now() / 1000 && decodedAccessToken.username && decodedAccessToken.password && decodedAccessToken.email ){
+        // the user should automatically be logged in 
+        loggedIn = true
+        console.log('loggedIn : ' , loggedIn)
+        userLogin(decodedAccessToken.username , decodedAccessToken.password , false , true)
+      }else{
+        // login again
+        loggedIn = false
+        console.log('loggedIn : ' , loggedIn)
+      }
+
+      console.log('isLoggedIn in root : ' , loggedIn)
+    }else{
+      // login again
+      loggedIn = false
+      console.log('loggedIn : ' , loggedIn)
+    }
+    
+    renderedOnce = true
+  }
+  
   const navigate = useNavigate();
 
   // Check if the current pathname matches the specified path

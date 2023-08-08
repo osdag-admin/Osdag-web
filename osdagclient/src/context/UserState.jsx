@@ -199,10 +199,15 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const userLogin = async(username, password ,  isGst) => {
+    const userLogin = async(username, password ,  isGst , JWTLogin) => {
         console.log('in userlogin Context - inside user login')
         console.log('in userlogin Context - username : ' , username)
         console.log('in userlogin Context - isGuest : ' ,isGst)
+
+        if(JWTLogin==true){
+            dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "Login Successful"}})
+            return
+        }
 
         try{
             const response = await fetch(`${BASE_URL}user/login/` , {
@@ -463,6 +468,11 @@ export const UserProvider = ({children}) => {
 
     }
 
+    const setJWTLogin = async(loggedIn) => {
+        dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : loggedIn , message : "Login Successful"}})
+    }
+    
+
 
     return (
         <UserContext.Provider value = {{
@@ -480,7 +490,8 @@ export const UserProvider = ({children}) => {
             verifyEmail,
             ForgetPassword,
             obtainAllInputValueFiles,
-            SaveInputValueFile
+            SaveInputValueFile,
+            setJWTLogin
             
         }}>
             {children}

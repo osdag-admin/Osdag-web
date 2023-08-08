@@ -68,7 +68,7 @@ localStorage.removeItem('username');
 localStorage.removeItem('isLoggedIn');
 localStorage.removeItem('email');
 localStorage.removeItem('allInputValueFilesLength');
-//localStorage.removeItem('access');
+localStorage.removeItem('access');
     console.log("Logged out!");
     window.location.href = '/';
 
