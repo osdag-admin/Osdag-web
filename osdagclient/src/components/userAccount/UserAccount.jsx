@@ -94,7 +94,7 @@ localStorage.removeItem('access');
         <strong>Files in .osi format:</strong>
         <List >
           {inputFilesLink.map((item , index) => (
-            <li key={index}>
+            <li key={index} style={{'marginTop' : '5px'}}>
               <span>{item.innerHTML}</span>
               {/*<Button onClick={() => onViewClick(item)} style={{ marginLeft: '185px' }}>View</Button>*/}
               <Button onClick={() => downloadInputFile(item)} style={{ marginLeft: '412px' }}>Download</Button>

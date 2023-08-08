@@ -297,12 +297,12 @@ export const UserProvider = ({children}) => {
                 if (response.ok) {
                     const link = document.createElement('a');
                     console.log('response.url : ' , response.url)
-                    const newURL = response.url + `?filename=${email}_fin_plate_connection.osi`
+                    const newURL = response.url + `?filename=${email}_fin_plate_connection_${fileIndex}.osi`
                     console.log('newURL : ' , newURL)
                     link.href = newURL
                     console.log('link.href : ' , link.url)
-                    link.setAttribute('download', `${email}_fin_plate_connection.osi`);
-                    link.innerHTML = `${email}_fin_plate_connection.osi`
+                    link.setAttribute('download', `${email}_fin_plate_connection_${fileIndex}.osi`);
+                    link.innerHTML = `${email}_fin_plate_connection_${fileIndex}.osi`
 
                     // store the link in an array
                     dispatch({type : 'PUSH_REPORT_LINK' , payload : link})

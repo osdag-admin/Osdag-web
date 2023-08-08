@@ -294,7 +294,11 @@ class SaveInputFileView(APIView) :
 
         # create a file in the file_storage 
         # fileName = ''.join(str(uuid.uuid4()).split('-')) + ".osi"
-        fileName = email + "_fin_plate_connection.osi"
+        
+        # obtain the index of the allInputFiles of the user 
+        userObject = UserAccount.objects.get(email = email)
+        fileIndex = len(userObject.allInputValueFiles)
+        fileName = email + f"_fin_plate_connection_{fileIndex}.osi"
         print('fileName : ' , fileName)
         currentDirectory = os.getcwd()
         print('currentDirectory : ' , currentDirectory)
