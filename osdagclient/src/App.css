@@ -175,7 +175,7 @@
   
 }
 .bloc-tabs button{
-  height: 20px;
+  height: 30px;
 }
 
 .tabs {
@@ -394,9 +394,14 @@
   gap: 20px;
   background-color: #d2d4d2;
   width: 100%;
+
  
 }
-
+.element
+{
+  margin-left: auto;
+  margin-right: 10vh;
+}
 .module_nav div {
   padding: 0.6rem;
 }

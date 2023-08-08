@@ -46,7 +46,7 @@ function App() {
         <Route
           path='/design/:designType/:item'
           element={
-            isLoggedIn ? <FinePlate /> : <Navigate to="/login" />
+             <FinePlate /> 
           }
         />
       <Route path='/user' element={<UserAccount />} />
@@ -81,12 +81,12 @@ const Root = ( isLoggedIn ) => {
   // Check if the current pathname matches the specified path
   const isDesignPage = window.location.pathname.startsWith('/design/');
   const isUserProfilePage = window.location.pathname.startsWith('/useraccount/');
-  // const isLoginPage = window.location.pathname.startsWith('/login/');
+  const isLoginPage = window.location.pathname === '/';
 
   return (
     <>
       {/* Show Sidebar when authenticated and not on a design page */}
-      {isLoggedIn && !isDesignPage && !isUserProfilePage &&(
+      {!isLoginPage && !isDesignPage && !isUserProfilePage &&(
         <div>
           <Sidebar />
         </div>
