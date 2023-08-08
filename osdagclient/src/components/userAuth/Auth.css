@@ -1,7 +1,8 @@
 .auth-section{
+   
     min-height: 100vh;
     min-width: 100vh;
-    margin: 0% auto;
+    margin-left: 40% ;
     background-color: #ffffff;
     display: flex;
     justify-content: center;

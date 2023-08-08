@@ -34,7 +34,7 @@ const LoginPage = () => {
     const [fPasswordModalVisible, setFPasswordModalVisible] = useState(false);
     const [fPasswordEmail, setFPasswordEmail] = useState('')
     const [fPasswordNewPass, setFPasswordNewPass] = useState('')
-    
+    // const [isChecked, setIsChecked] = useState(false);
 
     useEffect(() => {
         console.log("inside use effect in login page and isloggedin is:"+isLoggedIn)
@@ -89,15 +89,18 @@ const LoginPage = () => {
         // Get the OTP value from local storage
         const storedOTP = localStorage.getItem('otp');
     
-        handleFPasswordModal();
         if (storedOTP === otp) {
-
+            
             console.log('OTP verification successful.');    
             localStorage.removeItem('otp');    
             globalOTP = null;    
+            alert("OTP verification successful.")
+            handleFPasswordModal();
+            handleVerifyEmailModalClose();
 
         } else {
-            console.log('OTP verification failed.');    
+            console.log('OTP verification failed.');   
+            alert("Enter Validate OTP")
         }
     };
     
@@ -117,6 +120,12 @@ const handleFPasswordModalClose = () => {
     if(fPasswordNewPass==fPasswordEmail){
 
         ForgetPassword(fPasswordNewPass)
+        alert("Password has been Changed")
+        handleFPasswordModalClose();
+        window.location.href = '/';
+    }
+    else{
+        alert("Enter Valid New password")
     }
 
 
@@ -130,10 +139,10 @@ const handleFPasswordModalClose = () => {
             alert('Enter email and password')
             return;
         }
-    
-
+        
         try{
             if(isSignup){
+               
                 if(!email){
                     alert("Enter a name to continue")
                     return;
@@ -145,12 +154,16 @@ const handleFPasswordModalClose = () => {
                 console.log('email : ' , email)
                 console.log('password : ' , password)
                 userSignup( username , email , password , false )
+                setIsSignup(false)
+             
              
             }else{
                 console.log('email getting passed : ' , email)
-                userLogin( username , password , false)
-            
-
+                userLogin( username , password , false).then((message)=>{
+                    alert("Message while Login : "+message)
+                    localStorage.setItem("username",username)
+                })
+                
             }
         }
         catch(error){
@@ -174,7 +187,8 @@ const handleFPasswordModalClose = () => {
             console.log('Guest email : ' , GuestEmail)
             console.log('guest password : ' , GuestUserPassword)
             // setting the isGuest to true
-            userLogin(  GuestEmail, GuestUserPassword, true )
+           userLogin(  GuestEmail, GuestUserPassword, true )
+
             console.log("Done and state is :"+isLoggedIn)
     
         }catch(e)
@@ -230,10 +244,17 @@ const handleFPasswordModalClose = () => {
                         { isSignup && <p style={{ color: "#666767", fontSize:"13px"}}>Passwords must contain at least eight<br />characters, including at least 1 letter and 1<br /> number.</p> }
                     {
                         isSignup && (
-                            <label htmlFor='check'>
-                                <input type="checkbox" id='check' height={80} width={80}/>
-                                <p style={{ fontSize:"13px"}}>Terms,<br />And Conditions.</p>
+                            <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                             <input
+                                type="checkbox"
+                                id="check"
+                                height={80}
+                                width={80}
+                            />
+                            <label htmlFor="check" style={{ marginLeft: "10px" }}>
+                              <p style={{ fontSize: "13px", margin: 0 }}>Terms,<br />And Conditions.</p>
                             </label>
+                          </div>
                         )
                     }
                     <button type='submit' className='auth-btn'>{ isSignup ? 'Sign up': 'Log in'}</button>
@@ -271,16 +292,18 @@ const handleFPasswordModalClose = () => {
                 <h4> Email :</h4>
                 <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => {setVerifyEmail(e.target.value)}}/>    
             </label>
-            <label htmlFor="verifyemail">
+            <label htmlFor="otp">
                 <h4> Enter OTP :</h4>
                 <input type="otp" name='otp' id='otp' onChange={(e) => {setOtp(e.target.value)}} disabled={isInputDisabled}/>    
             </label>
             <Button key="getotp" onClick={handleVerifyEmail}>
                 Get OTP
             </Button>
-            <Button key="verifyemail" onClick={handleVerify}>
+            <Button key="verifyemailbtn" onClick={handleVerify}>
                 Verify
             </Button>
+
+
         </div>
       </Modal>
 
