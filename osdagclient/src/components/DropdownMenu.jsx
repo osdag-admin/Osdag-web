@@ -214,11 +214,14 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
 
     }
 
-    // send the content to the Server 
-    SaveInputValueFile(content)
-    
-
-
+    if(localStorage.getItem('userType')=='guest'){
+      alert('Cannot save, user is not loggedin in')
+    }else if(localStorage.getItem('userType')=='user'){
+      // send the content to the Server 
+      SaveInputValueFile(content)
+    }else{
+      console.log('userType not matched')
+    }
   }
 
 
