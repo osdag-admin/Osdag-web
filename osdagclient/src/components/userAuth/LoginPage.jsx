@@ -208,10 +208,10 @@ const handleFPasswordModalClose = () => {
                 { !isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300}/>}
 
                 <div className='google-guest-container'> 
-                <button className="google-signin-button" onClick={handleGoogleSignIn}>
+                {/*<button className="google-signin-button" onClick={handleGoogleSignIn}>
                     <img className="google-logo" src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
                     Sign in with Google
-                </button>
+                </button> */}
                 <button className="guest-signin-button" onClick={handleGuestSignIn}>
                     Guest Mode
                 </button>
