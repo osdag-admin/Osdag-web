@@ -354,6 +354,7 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
   }, []);
 
   return (
+    <>
     <div className="dropdown" ref={parentRef}>
       <div className="dropdown-label" onClick={handleToggle}>
         {label}
@@ -368,7 +369,10 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
           ))}
         </div>
       )}
+
     </div>
+    
+      </>
   );
 }
 
