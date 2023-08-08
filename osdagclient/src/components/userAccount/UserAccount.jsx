@@ -13,31 +13,35 @@ const UserAccount = () => {
   const userName = localStorage.getItem("username");
   const userEmail = localStorage.getItem("email");;
   // Replace these with your actual data
+  /*
   const osiFiles = [
     { name: 'File 1.osi', url: 'https://example.com/file1.osi' },
     { name: 'File 2.osi', url: 'https://example.com/file2.osi' },
     // Add more fila
   ];
+  */
 
   if(!renderOnce){
     // call the thunk to obtain all the input_value_files 
-    alert("not input files")
+    // alert("not input files")
     obtainAllInputValueFiles()
     renderOnce = true
   }
 
 
 
-  const onViewClick = (url) => {
+  const onViewClick = (link) => {
     // Implement view logic here
-    console.log('View file:', url);
+    //onsole.log('View file:', url);
+    console.log('inside onViewClick')
+
+    return(
+      <iframe src={link.url} style="width:600px; height:500px;"></iframe>
+    )
   };
 
-  const onDownloadClick = (url) => {
-    // Implement download logic here
-    console.log('Download file:', url);
-  };
 
+  /*
   const renderItem = (file) => (
     <List.Item>
       <span>{file.name}</span>
@@ -49,6 +53,7 @@ const UserAccount = () => {
       </Button>
     </List.Item>
   );
+  */
 
   const downloadInputFile = (link) => {
     console.log('inside download input file')
@@ -86,17 +91,16 @@ localStorage.removeItem('access');
   </div>
 </div>
       <div className="user-dashboard">
-        <div>
-          <strong>Files in .osi format:</strong>
-          <List
-            dataSource={osiFiles}
-            renderItem={renderItem}
-            className="file-list" 
-            />
-        </div>
-        {inputFilesLink.map((item , index) => (
-          <h2 key ={index} onClick={() => downloadInputFile(item)}>{item.innerHTML}</h2>
-        ))}
+        <strong>Files in .osi format:</strong>
+        <List >
+          {inputFilesLink.map((item , index) => (
+            <li key={index}>
+              <span>{item.innerHTML}</span>
+              {/*<Button onClick={() => onViewClick(item)} style={{ marginLeft: '185px' }}>View</Button>*/}
+              <Button onClick={() => downloadInputFile(item)} style={{ marginLeft: '412px' }}>Download</Button>
+            </li>
+          ))}
+        </List>
       </div>
     </div>
             </>

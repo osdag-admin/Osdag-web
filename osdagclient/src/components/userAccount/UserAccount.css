@@ -2,6 +2,7 @@
 .dashboard-container {
   display: flex;
   height: 100vh; /* Adjust the height as needed */
+  width : 1080px;
   
 }
 
@@ -47,7 +48,7 @@
   display: flex;
   flex-direction: column;
   height: auto;
-  width: 100vh; 
+  width: 1080px; 
   margin: 4rem;
   overflow: hidden;
   min-width: 100vh;
@@ -57,7 +58,7 @@
 }
 /* Style the container with a border and padding */
 .user-dashboard {
-  width: 100vh;
+  width: 100%;
   border: 1px solid #ccc;
   padding: 20px;
 }
