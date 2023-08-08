@@ -207,7 +207,7 @@ export const UserProvider = ({children}) => {
                 }
                 console.log('Way to dispatch isLog set true cause its ')
                 // set the login variable to true 
-                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Logged in"}})
+                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})
                 console.log('Done dispatch isLog set true  ')
           
 
@@ -223,6 +223,8 @@ export const UserProvider = ({children}) => {
                 localStorage.setItem('allInputValueFilesLength' , jsonResponse.allInputValueFilesLength)
                 console.log("Local storage set")
                 console.log("isloggedin inside logging below local storage "+ state.isLoggedIn)
+
+                return jsonResponse.message
             }else{
                 console.log('response.status!=200, user not logged in')
                 if(jsonResponse.message == "The User Account does not exists"){

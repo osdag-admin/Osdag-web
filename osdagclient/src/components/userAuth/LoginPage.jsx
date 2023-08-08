@@ -21,7 +21,7 @@ const generateRandomString = (length) => {
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { userSignup, userLogin, verifyEmail, ForgetPassword, isLoggedIn } = useContext(UserContext)
+    const { userSignup, userLogin, verifyEmail, ForgetPassword, isLoggedIn} = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -160,10 +160,11 @@ const handleFPasswordModalClose = () => {
             }else{
                 console.log('email getting passed : ' , email)
                 userLogin( username , password , false).then((message)=>{
-                    alert("Message while Login : "+message)
+                    alert("Message while Login : "+ message)
                     localStorage.setItem("username",username)
                 })
                 
+            
             }
         }
         catch(error){
