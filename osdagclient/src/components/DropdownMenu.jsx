@@ -15,7 +15,7 @@ const conn_map_inv = {
   "Beam-Beam": "Beam-Beam"
 }
 
-function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected, logs, setCreateDesignReportBool }) {
+function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSelected, selectedOption, setInputs, setSelectedOption, setAllSelected, logs, setCreateDesignReportBool, setDisplaySaveInputPopup, setSaveInputFileName}) {
 
   const { boltDiameterList, propertyClassList, thicknessList } = useContext(ModuleContext)
   const { SaveInputValueFile} = useContext(UserContext)
@@ -218,7 +218,11 @@ function DropdownMenu({ label, dropdown, setDesignPrefModalStatus, inputs, allSe
       alert('Cannot save, user is not loggedin in')
     }else if(localStorage.getItem('userType')=='user'){
       // send the content to the Server 
-      SaveInputValueFile(content)
+      SaveInputValueFile(content).then((response) => {
+        console.log('response in dropdown : ' , response)
+        setDisplaySaveInputPopup(response.saveInputStatus)
+        setSaveInputFileName(response.saveInputFileName)
+      })
     }else{
       console.log('userType not matched')
     }

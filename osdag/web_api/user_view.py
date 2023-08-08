@@ -333,7 +333,7 @@ class SaveInputFileView(APIView) :
 
                 return Response({'message' : 'Failed to connect the file to the User'} , status = status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-            return Response({'message' : "File stored successfully" , 'allInputValueFilesLength' : allInputValueFilesLength} , status = status.HTTP_201_CREATED)
+            return Response({'message' : "File stored successfully" , 'allInputValueFilesLength' : allInputValueFilesLength , 'fileName' : fileName} , status = status.HTTP_201_CREATED)
         
         except : 
             print('Error in creating an storing the contents of the file')

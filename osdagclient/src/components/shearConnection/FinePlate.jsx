@@ -29,6 +29,7 @@ import DropdownMenu from '../DropdownMenu';
 
 // crypto packages
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import { UserContext } from '../../context/UserState';
 
 
 const { Option } = Select;
@@ -143,7 +144,13 @@ function FinePlate() {
   const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [confirmationModal, setConfirmationModal] = useState(false)
-  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getDesingPrefData } = useContext(ModuleContext)
+  const [displaySaveInputPopup , setDisplaySaveInputPopup] = useState(false)
+  const [saveInputFileName , setSaveInputFileName] = useState("")
+  const {connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getDesingPrefData } = useContext(ModuleContext)
+
+  if(displaySaveInputPopup)[
+    setTimeout(() => setDisplaySaveInputPopup(false) , 4000)
+  ]
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -782,8 +789,14 @@ function FinePlate() {
               setSelectedOption={setSelectedOption}
               logs={logs}
               setCreateDesignReportBool={setCreateDesignReportBool}
+              setDisplaySaveInputPopup={setDisplaySaveInputPopup}
+              setSaveInputFileName={setSaveInputFileName}
             />
           ))}
+
+          {displaySaveInputPopup && <span id="save-input-style" style={{'marginTop' : '18px'}}>
+              <strong>Saved input file as &quot; {saveInputFileName} &quot;</strong>
+          </span>}
 
         <h1 className="element">
               <Button

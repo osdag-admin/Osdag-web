@@ -43,6 +43,12 @@ export default (state, action) => {
                 passwordSet : action.payload.passwordSet,
                 passwordSetMessage : action.payload.passwordSetMessage
             }
+        case 'SET_SAVE_INPUT_FILE_STATUS' : 
+            return {
+                ...state,
+                saveInputFileStatus : action.payload.saveInputFileStatus,
+                saveInputFileName : action.payload.saveInputFileName
+            }
         default : 
             return {
                 ...state

@@ -21,6 +21,8 @@ let initialValue = {
     inputFilesLink : [],
     inputFilesStatus : false,
     inputFilesMessage : "",
+    saveInputFileStatus : false,
+    saveInputFileName : ""
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -453,17 +455,22 @@ export const UserProvider = ({children}) => {
                 // set to localStorage 
                 localStorage.setItem('allInputValueFilesLength' , allInputValueFilesLength)
             
-                dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : true , inputFilesMessage : "The files have been stored in the server"}})
+                dispatch({type : 'SET_SAVE_INPUT_FILE_STATUS' , payload : {saveInputFileStatus : true , fileName : jsonResponse.fileName}})
+
+                return {
+                    'saveInputStatus' : true,
+                    'saveInputFileName' : jsonResponse.fileName
+                }
 
             }else{
                 console.log('response.status!=200 while sending the input values files')
 
-                dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Failed to store the input files in the servers"}})
+                dispatch({type : 'SET_SAVE_INPUT_FILE_STATUS' , payload : {saveInputFileStatus : false}})
             }
         }catch(err){
             console.log('Error in sending the input files : ' , err)
 
-            dispatch({type : 'SET_INPUTFILES_STATUS' , payload : {inputFiles : false , inputFilesMessage : "Server error in storing the files"}})
+            dispatch({type : 'SET_SAVE_INPUT_FILE_STATUS' , payload : {saveInputFileStatus : false}})
         }
 
     }
@@ -483,6 +490,7 @@ export const UserProvider = ({children}) => {
             LoginMessage : state.LoginMessage,
             SignupMessage : state.SignupMessage,
             inputFilesLink : state.inputFilesLink,
+            saveInputFileStatus : state.saveInputFileStatus,
 
             // thunks
             userSignup,
