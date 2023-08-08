@@ -201,7 +201,7 @@ class LoginView(APIView) :
                 print('the user already exists')
 
             # grant the login access to the user 
-            return Response({'message' : 'Login suvvessfuly'} , status = status.HTTP_200_OK)
+            return Response({'message' : 'Login successful'} , status = status.HTTP_200_OK)
         
         # for a guest user
         print('is not a guest user')
@@ -339,3 +339,19 @@ class SaveInputFileView(APIView) :
             print('Error in creating an storing the contents of the file')
 
             return Response({'message' : "Failed to store the contents of the file"} , status = status.HTTP_400_BAD_REQUEST)
+
+
+class SetRefreshTokenCookieView(APIView) : 
+    def post(self , request) : 
+        print('inside the set Refresh token Cookie View post')
+
+        try : 
+            refresh = request.data.get('refresh')
+            print('refresh : ' , refresh)
+            response = JsonResponse({'message' : 'Refresh Token Cookie has been set'} , status = 200)
+            response.set_cookie(key='refresh' , value=refresh)
+            return response
+
+        except Exception as e : 
+            print('An exception occured while setting refresh token cookei :  ', e)
+            return JsonResponse({'message' : 'Failed to set refresh token'} , status = 500 )

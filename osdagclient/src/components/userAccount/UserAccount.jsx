@@ -64,11 +64,11 @@ const UserAccount = () => {
 
     localStorage.removeItem('userType');
 localStorage.removeItem('username');
-localStorage.removeItem('refresh');
+//localStorage.removeItem('refresh');
 localStorage.removeItem('isLoggedIn');
 localStorage.removeItem('email');
 localStorage.removeItem('allInputValueFilesLength');
-localStorage.removeItem('access');
+//localStorage.removeItem('access');
     console.log("Logged out!");
     window.location.href = '/';
 

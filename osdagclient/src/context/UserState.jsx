@@ -32,6 +32,33 @@ export const UserProvider = ({children}) => {
     const [state, dispatch] = useReducer(UserReducer, initialValue);
 
     // USER AUTHENTICATION AND AUTHORAZATION 
+    const setRefreshTokenCookie = async(refresh_token) => {
+        console.log('Inside set refresh token thunk')
+        try{
+            const response = await fetch(`${BASE_URL}user/set-refresh/` , {
+                method : 'POST',
+                mode : 'cors',
+                credentials : 'include',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify({
+                    'refresh' : refresh_token
+                })
+            })
+
+            const jsonResponse = await response?.json()
+            console.log('jsonResponse in setRefreshToken : ' , jsonResponse)
+
+            if(response.status==200){
+                console.log('the refresh token cookie has been set')
+            }else{
+                console.log('response.status!=200 while setting the refresh token cookie')
+            }
+        }catch(err){
+            console.log('Server error while setting refresh token cookie')
+        }
+    }
     const createJWTToken = async(username , password) => {
         console.log('inside createJWT token ')
         console.log('username : ' , username)
@@ -61,11 +88,12 @@ export const UserProvider = ({children}) => {
                 
                 console.log('refresh_token ; ' , refresh_token)
                 console.log('access_token : ' , access_token)
+
+                setRefreshTokenCookie(refresh_token)
                 
                 // set the refresh token and the access token in teh localstorage 
                 localStorage.setItem('access' , access_token)
-                localStorage.setItem('refresh' , refresh_token)
-                localStorage.setItem('username', username)
+                //localStorage.setItem('refresh' , refresh_token)
                 
                 console.log('inside token Local storage set')
                 // now for every next request, set the Authorization header and the access_token
@@ -199,8 +227,11 @@ export const UserProvider = ({children}) => {
                 console.log('Line number 194 inside status 200 way to create token...')
                 // create a new jwt token 
                 if(isGst==false){
-                    createJWTToken(username , password).then(localStorage.setItem('userType',"user"))
-                    
+                    createJWTToken(username , password)
+                    localStorage.setItem('userType',"user")
+                    localStorage.setItem('username' , username)
+                    localStorage.setItem('email' , jsonResponse.email)
+                    localStorage.setItem('allInputValueFilesLength' , jsonResponse.allInputValueFilesLength)
                 }
                 else{
                     localStorage.setItem('userType',"guest")
@@ -209,25 +240,12 @@ export const UserProvider = ({children}) => {
                 // set the login variable to true 
                 dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})
                 console.log('Done dispatch isLog set true  ')
-          
-
-                try{
-                    console.log("Inside try catch to check console error")
-                    console.log("isloggedin inside logging below dispatch"+ state.isLoggedIn)
-
-                }catch(e){
-                    console.log("error in console"+ state.isLoggedIn+"actual error"+e)
-                }
                 
-                // set the allInputValueFilesLength in the localStorage 
-                localStorage.setItem('allInputValueFilesLength' , jsonResponse.allInputValueFilesLength)
                 console.log("Local storage set")
                 console.log("isloggedin inside logging below local storage "+ state.isLoggedIn)
-                localStorage.setItem('username' , username)
-                localStorage.setItem('email' , jsonResponse.email)
-                
 
                 return jsonResponse.message
+
             }else{
                 console.log('response.status!=200, user not logged in')
                 if(jsonResponse.message == "The User Account does not exists"){
