@@ -65,6 +65,9 @@ export const UserProvider = ({children}) => {
                 // set the refresh token and the access token in teh localstorage 
                 localStorage.setItem('access' , access_token)
                 localStorage.setItem('refresh' , refresh_token)
+                localStorage.setItem('username', username)
+                
+                console.log('inside token Local storage set')
                 // now for every next request, set the Authorization header and the access_token
                 // headers : {Authorization : 'Bearer {access_token}'}
 
@@ -155,7 +158,7 @@ export const UserProvider = ({children}) => {
                 createJWTToken(username , password)
 
                 // call the reducer action to set the Login variable
-                dispatch({type : 'SET_SIGNUP_STATUS' , payload : {isLoggedIn : true , message : "User Successfully Signed up"}})
+                dispatch({type : 'SET_SIGNUP_STATUS' , payload : {isLoggedIn : false , message : "User Successfully Signed up"}})
 
                 console.log('isloggedIn in signup thunk : ' , state.isLoggedIn)
             }else{
@@ -196,8 +199,11 @@ export const UserProvider = ({children}) => {
                 console.log('Line number 194 inside status 200 way to create token...')
                 // create a new jwt token 
                 if(isGst==false){
-                    createJWTToken(username , password)
+                    createJWTToken(username , password).then(localStorage.setItem('userType',"user"))
                     
+                }
+                else{
+                    localStorage.setItem('userType',"guest")
                 }
                 console.log('Way to dispatch isLog set true cause its ')
                 // set the login variable to true 
