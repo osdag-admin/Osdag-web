@@ -13,6 +13,8 @@ function Sidebar() {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const { data, getInitialData } = useContext(GlobalContext)
 
+  const isGuestOrnot = localStorage.getItem('userType')
+
   if (!initialRender) {
     getInitialData()
     initialRender = true;
@@ -55,15 +57,25 @@ function Sidebar() {
               )
             })
           }
-          
+
+          {isGuestOrnot === 'guest' ? (
+            <div className="sidebar-item">
+              <button onClick={() => {     window.location.href = '/';}}>
+                Login
+              </button>
+            </div>
+          ) : (
+            <div className="sidebar-item">
+              <button
+                onClick={() => {
+                  navigate('/user');
+                }}
+              >
+                My account
+              </button>
+            </div>
+          )}
         </div>
-        <div className="sidebar-item">
-        <button onClick={()=>{
-          navigate('/user')
-        }}>
-          My account
-        </button>
-      </div>
         <div className="sidebar-setting">
           <select onChange={handleSelectChange}>
             <option value={"1"}>Help</option>
