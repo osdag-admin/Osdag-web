@@ -3,7 +3,7 @@ import '../../App.css'
 import { useContext, useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { Select, Input, Modal, Button, Row, Col } from 'antd';
-
+import { useNavigate } from 'react-router-dom'
 import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
 import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
 import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
@@ -763,7 +763,7 @@ function FinePlate() {
     }
   }
 
-
+  const navigate = useNavigate();
   return (
     <>
       <div style={{ width: '100%' }}>
@@ -784,6 +784,18 @@ function FinePlate() {
               setCreateDesignReportBool={setCreateDesignReportBool}
             />
           ))}
+
+        <h1 className="element">
+              <Button
+                onClick={() => {
+                  navigate('/home');
+                }}
+                style={{ backgroundColor: 'black', color: 'white' }}
+              >
+                Home
+              </Button>
+        </h1>
+          
         </div>
         {/* <KeyPressListener /> */}
 
@@ -791,6 +803,18 @@ function FinePlate() {
         <div className='superMainBody'>
           {/* Left */}
           <div>
+            <div className='component-grid'>
+                  
+            <div><h4>Workspace Name :</h4></div>
+                <div>
+                  <Input
+                    type="text"
+                    name="workspacename"
+                    // onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
+                    />
+                </div>
+            
+            </div>
             <h5>Input Dock</h5>
             <div className='subMainBody scroll-data'>
               {/* Section 1 Start */}
