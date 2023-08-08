@@ -24,7 +24,7 @@ from django.core.exceptions import ObjectDoesNotExist
 # django imports 
 from django.conf import settings
 from django.core.files.storage import default_storage
-from django.http import FileResponse
+from django.http import FileResponse, JsonResponse
 
 # importing serializers
 from osdag.serializers import UserAccount_Serializer
@@ -218,7 +218,7 @@ class LoginView(APIView) :
             print('result user login : ' , result)
 
             # grant the login access to the user 
-            return Response({'message' : 'Login successfully' , 'allInputValueFilesLength' : len(result.allInputValueFiles)} , status = status.HTTP_200_OK)
+            return Response({'message' : 'Login successfully' , 'allInputValueFilesLength' : len(result.allInputValueFiles) , 'email' : result.email} , status = status.HTTP_200_OK)
         except ObjectDoesNotExist as e: 
             print('The user account does not exxists : ' , e)
             return Response({'message' : 'The User Account does not exists'} , status = status.HTTP_400_BAD_REQUEST)
@@ -261,7 +261,10 @@ class ObtainInputFileView(APIView) :
     def get(self, request) : 
         print('inside obtain input file GET')
 
-        fileName = "atharva0300@gmail.com" + "_fin_plate_connection.osi"
+        print('request : ' , request)
+        print('request.GET : ' , request.GET)
+        fileName = request.GET.get('filename')
+        print('fileName obtained : ' , fileName)
         filePath = os.path.join(os.getcwd(), "file_storage/input_values_files/" + fileName)
 
         try : 
@@ -329,7 +332,7 @@ class SaveInputFileView(APIView) :
                 print('An exception has occured : ' , e)
 
                 return Response({'message' : 'Failed to connect the file to the User'} , status = status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            
             return Response({'message' : "File stored successfully" , 'allInputValueFilesLength' : allInputValueFilesLength} , status = status.HTTP_201_CREATED)
         
         except : 

@@ -223,22 +223,29 @@ export const UserProvider = ({children}) => {
                 localStorage.setItem('allInputValueFilesLength' , jsonResponse.allInputValueFilesLength)
                 console.log("Local storage set")
                 console.log("isloggedin inside logging below local storage "+ state.isLoggedIn)
+                localStorage.setItem('username' , username)
+                localStorage.setItem('email' , jsonResponse.email)
+                
 
                 return jsonResponse.message
             }else{
                 console.log('response.status!=200, user not logged in')
                 if(jsonResponse.message == "The User Account does not exists"){
-                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "The User Account does not exists"}})    
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "The User Account does not exists"}})  
+                    return jsonResponse.message
                 }else if(jsonResponse.message == "Invalid credentials"){
                     dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Invalid Credentials, please try again"}})
+                    return jsonResponse.message
                 }else{
                     dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message :  "Error while logging"}})
+                    return jsonResponse.message
                 }
                 
             }
         }catch(err){
             console.log('error in logging in')
             dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : "Server error occured while logging in, please try again"}})
+            return "Server error occured while logging in, please try again"
         }
     }
 
@@ -264,10 +271,13 @@ export const UserProvider = ({children}) => {
                 console.log('found response : ' , response)
                 if (response.ok) {
                     const link = document.createElement('a');
-                    link.href = response.url;
+                    console.log('response.url : ' , response.url)
+                    const newURL = response.url + `?filename=${email}_fin_plate_connection.osi`
+                    console.log('newURL : ' , newURL)
+                    link.href = newURL
                     console.log('link.href : ' , link.url)
-                    link.setAttribute('download', 'your_file_name.osi');
-                    link.innerHTML = "atharva0300@gmail_fin_plate_connection.osi"
+                    link.setAttribute('download', `${email}_fin_plate_connection.osi`);
+                    link.innerHTML = `${email}_fin_plate_connection.osi`
 
                     // store the link in an array
                     dispatch({type : 'PUSH_REPORT_LINK' , payload : link})
@@ -404,6 +414,7 @@ export const UserProvider = ({children}) => {
                 headers : {
                     'Content-Type' : 'application/json'
                 },
+                credentials : 'include',
                 body : JSON.stringify({
                     'content' : content,
                     'email' : email

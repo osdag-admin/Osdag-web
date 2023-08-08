@@ -11,7 +11,7 @@ const UserAccount = () => {
   // UserContext thunks adn variables 
   const {inputFilesLink , obtainAllInputValueFiles} = useContext(UserContext)
   const userName = localStorage.getItem("username");
-  const userEmail = localStorage.getItem("email");;
+  // const userEmail = localStorage.getItem("email");
   // Replace these with your actual data
   /*
   const osiFiles = [
@@ -81,7 +81,7 @@ localStorage.removeItem('access');
   <h2>User Dashboard</h2>
   <div>
     <strong>Username: </strong>{userName} <br />
-    <strong>Email: </strong> {userEmail}
+    {/*<strong>Email: </strong> {userEmail} */}
   </div>
   <div>
     <Button onClick={handleLogout}
