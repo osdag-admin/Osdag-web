@@ -50,6 +50,7 @@
   width: 100vh; 
   margin: 4rem;
   overflow: hidden;
+  min-width: 100vh;
 }
 .dashboard-header{
   margin: 1rem;

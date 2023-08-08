@@ -10,8 +10,9 @@ const UserAccount = () => {
 
   // UserContext thunks adn variables 
   const {inputFilesLink , obtainAllInputValueFiles} = useContext(UserContext)
+  const userName = localStorage.getItem("username");
+  const userEmail = localStorage.getItem("email");;
   // Replace these with your actual data
-  const userEmail = 'user@example.com';
   const osiFiles = [
     { name: 'File 1.osi', url: 'https://example.com/file1.osi' },
     { name: 'File 2.osi', url: 'https://example.com/file2.osi' },
@@ -20,6 +21,7 @@ const UserAccount = () => {
 
   if(!renderOnce){
     // call the thunk to obtain all the input_value_files 
+    alert("not input files")
     obtainAllInputValueFiles()
     renderOnce = true
   }
@@ -53,16 +55,36 @@ const UserAccount = () => {
     link.click()
     link.remove()
   }
+  const handleLogout = () => {
+
+    localStorage.removeItem('userType');
+localStorage.removeItem('username');
+localStorage.removeItem('refresh');
+localStorage.removeItem('isLoggedIn');
+localStorage.removeItem('email');
+localStorage.removeItem('allInputValueFilesLength');
+localStorage.removeItem('access');
+    console.log("Logged out!");
+    window.location.href = '/';
+
+  };
 
   return (
     <>
     <div className="user-dashboard-container">
-    <div className='dashboard-header'>
-        <h2>User Dashboard</h2>
-        <div>
-          <strong>Email:</strong> {userEmail}
-        </div>
-    </div>
+    <div className='dashboard-header' style={{ display: 'flex', justifyContent: 'space-between' }}>
+  <h2>User Dashboard</h2>
+  <div>
+    <strong>Username: </strong>{userName} <br />
+    <strong>Email: </strong> {userEmail}
+  </div>
+  <div>
+    <Button onClick={handleLogout}
+    style={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }}>
+    Logout
+    </Button>
+  </div>
+</div>
       <div className="user-dashboard">
         <div>
           <strong>Files in .osi format:</strong>
