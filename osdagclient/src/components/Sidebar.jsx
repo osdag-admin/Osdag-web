@@ -71,7 +71,7 @@ function Sidebar() {
                   navigate('/user');
                 }}
               >
-                My account
+                My Account
               </button>
             </div>
           )}

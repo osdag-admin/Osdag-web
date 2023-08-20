@@ -5,12 +5,17 @@ import { UserContext } from '../../context/UserState';
 
 
 let renderOnce = false
+let prevValue = localStorage.getItem('allInputValueFilesLength')
 
 const UserAccount = () => {
 
   // UserContext thunks adn variables 
   const {inputFilesLink , obtainAllInputValueFiles} = useContext(UserContext)
   const userName = localStorage.getItem("username");
+  const allInputValueFilesLength = localStorage.getItem('allInputValueFilesLength')
+  if(prevValue != allInputValueFilesLength){
+    renderOnce = false
+  }
   // const userEmail = localStorage.getItem("email");
   // Replace these with your actual data
   /*
@@ -25,6 +30,7 @@ const UserAccount = () => {
     // call the thunk to obtain all the input_value_files 
     // alert("not input files")
     obtainAllInputValueFiles()
+    prevValue = allInputValueFilesLength
     renderOnce = true
   }
 

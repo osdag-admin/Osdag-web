@@ -324,6 +324,7 @@ export const UserProvider = ({children}) => {
 
     const obtainAllInputValueFiles = async() => {
         console.log('inside teh obtain All reports thunk')
+        state.inputFilesLink = []
         const access_token = localStorage.getItem('access')
         const allInputValueFilesLength = localStorage.getItem('allInputValueFilesLength')
         console.log('allInputValueFilesLength : ' , allInputValueFilesLength)
