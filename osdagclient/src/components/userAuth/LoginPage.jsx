@@ -96,7 +96,8 @@ const LoginPage = () => {
             globalOTP = null;    
             alert("OTP verification successful.")
             if(loginCredValid){
-                setIsLoggedIn()
+                console.log('setting isLoggedIn')
+                setIsLoggedIn(true)
             }else{
                 handleFPasswordModal();
                 handleVerifyEmailModalClose();
