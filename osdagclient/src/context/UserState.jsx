@@ -246,7 +246,12 @@ export const UserProvider = ({children}) => {
                 }
                 console.log('Way to dispatch isLog set true cause its ')
                 // set the login variable to true 
-                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : jsonResponse.message}})
+                if(isGst == true){
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})    
+                }else{
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : jsonResponse.message}})
+                }
+                
                 state.loginCredValid = true
                 console.log('Done dispatch isLog set true  ')
                 
