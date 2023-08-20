@@ -21,7 +21,7 @@ const generateRandomString = (length) => {
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { userSignup, userLogin, verifyEmail, ForgetPassword, isLoggedIn} = useContext(UserContext)
+    const { userSignup, userLogin, loginCredValid , verifyEmail, ForgetPassword, isLoggedIn, setIsLoggedIn} = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -90,13 +90,18 @@ const LoginPage = () => {
         const storedOTP = localStorage.getItem('otp');
     
         if (storedOTP === otp) {
-            
+            console.log('loginCredValid : ' , loginCredValid)
             console.log('OTP verification successful.');    
             localStorage.removeItem('otp');    
             globalOTP = null;    
             alert("OTP verification successful.")
-            handleFPasswordModal();
-            handleVerifyEmailModalClose();
+            if(loginCredValid){
+                setIsLoggedIn()
+            }else{
+                handleFPasswordModal();
+                handleVerifyEmailModalClose();
+            }
+
 
         } else {
             console.log('OTP verification failed.');   
@@ -160,9 +165,11 @@ const handleFPasswordModalClose = () => {
             }else{
                 console.log('email getting passed : ' , email)
                 userLogin( username , password , false).then((message)=>{
-                    alert("Message while Login : "+ message)
+                    // alert("Message while Login : "+ message)
                     localStorage.setItem("username",username)
                 })
+
+                setVerifyEmailModalVisible(true)
                 
             
             }

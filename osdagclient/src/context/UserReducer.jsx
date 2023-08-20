@@ -49,6 +49,11 @@ export default (state, action) => {
                 saveInputFileStatus : action.payload.saveInputFileStatus,
                 saveInputFileName : action.payload.saveInputFileName
             }
+        case 'SET_LOGGED_IN' : 
+            return {
+                ...state,
+                isLoggedIn : action.payload.isLoggedIn
+            }
         default : 
             return {
                 ...state

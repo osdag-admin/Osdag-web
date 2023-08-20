@@ -217,6 +217,8 @@ class LoginView(APIView) :
             result = UserAccount.objects.get(username = username , password = password)
             print('result user login : ' , result)
 
+            # send_mail(result.email)
+
             # grant the login access to the user 
             return Response({'message' : 'Login successfully' , 'allInputValueFilesLength' : len(result.allInputValueFiles) , 'email' : result.email} , status = status.HTTP_200_OK)
         except ObjectDoesNotExist as e: 

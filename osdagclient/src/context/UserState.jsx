@@ -22,7 +22,8 @@ let initialValue = {
     inputFilesStatus : false,
     inputFilesMessage : "",
     saveInputFileStatus : false,
-    saveInputFileName : ""
+    saveInputFileName : "",
+    loginCredValid : false
 }
 
 const BASE_URL = 'http://127.0.0.1:8000/'
@@ -245,7 +246,8 @@ export const UserProvider = ({children}) => {
                 }
                 console.log('Way to dispatch isLog set true cause its ')
                 // set the login variable to true 
-                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})
+                dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : jsonResponse.message}})
+                state.loginCredValid = true
                 console.log('Done dispatch isLog set true  ')
                 
                 console.log("Local storage set")
@@ -272,6 +274,12 @@ export const UserProvider = ({children}) => {
             dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : "Server error occured while logging in, please try again"}})
             return "Server error occured while logging in, please try again"
         }
+    }
+
+    const setIsLoggedIn = async(value) => {
+        console.log('value :  ', value)
+        dispatch({type : 'SET_LOGGED_IN' , payload : {isLoggedIn : true}})
+        console.log('state.isLoggedIn : ' , state.isLoggedIn)
     }
 
     const obtainSingleInputFile = async(fileIndex) => {
@@ -492,6 +500,7 @@ export const UserProvider = ({children}) => {
             SignupMessage : state.SignupMessage,
             inputFilesLink : state.inputFilesLink,
             saveInputFileStatus : state.saveInputFileStatus,
+            loginCredValid : state.loginCredValid,
 
             // thunks
             userSignup,
@@ -500,7 +509,8 @@ export const UserProvider = ({children}) => {
             ForgetPassword,
             obtainAllInputValueFiles,
             SaveInputValueFile,
-            setJWTLogin
+            setJWTLogin,
+            setIsLoggedIn
             
         }}>
             {children}
