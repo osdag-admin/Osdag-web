@@ -244,7 +244,6 @@ export const UserProvider = ({children}) => {
                 else{
                     localStorage.setItem('userType',"guest")
                 }
-                console.log('Way to dispatch isLog set true cause its ')
                 // set the login variable to true 
                 if(isGst == true){
                     dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})    

@@ -35,6 +35,7 @@ import string
 import os
 import random
 import uuid
+import base64
 
 
 # obtain the attributes 
@@ -63,10 +64,13 @@ class SignupView(APIView) :
         print('password : ' , password)
         print('isGuest : ' , isGuest)
         print('type isGuest : ' , type(isGuest))
+        print('encoded passsword : ' , password.encode() )
+        print('encoding password 2 : ' , base64.b64encode(password.encode('ascii')).decode())
+        base64Password = base64.b64encode(password.encode('ascii')).decode()
 
         tempData = {
             'username' : username,
-            'password' : password,
+            'password' : base64Password,
             'email' : email,
             'allInputValueFiles' : ['']
         }
@@ -108,8 +112,9 @@ class ForgetPasswordView(APIView) :
         print('Django user updates')
 
         # update the user in the postgres database
+        base64Password = base64.b64encode(password.encode('ascii')).decode()
         user = UserAccount.objects.get(email = email)
-        user.password = password
+        user.password = base64Password
         user.save()
         print('postgres user updated')
 
@@ -214,7 +219,8 @@ class LoginView(APIView) :
 
         # find the useranme and password from the UserAccount model 
         try : 
-            result = UserAccount.objects.get(username = username , password = password)
+            base64Password = base64.b64encode(password.encode('ascii')).decode()
+            result = UserAccount.objects.get(username = username , password = base64Password)
             print('result user login : ' , result)
 
             # send_mail(result.email)

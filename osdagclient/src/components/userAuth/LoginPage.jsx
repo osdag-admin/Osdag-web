@@ -21,7 +21,7 @@ const generateRandomString = (length) => {
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { userSignup, userLogin, loginCredValid , verifyEmail, ForgetPassword, isLoggedIn, setIsLoggedIn} = useContext(UserContext)
+    const { userSignup, userLogin, loginCredValid , verifyEmail, ForgetPassword, isLoggedIn, setIsLoggedIn , LoginMessage} = useContext(UserContext)
     const [isSignup, setIsSignup] = useState(false)
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -30,6 +30,7 @@ const LoginPage = () => {
     const [verifyEmails, setVerifyEmail] = useState('')
     const [otp, setOtp] = useState('')
     const [isInputDisabled, setInputDisabled] = useState(true);
+    const [toggleForgotPassword, setToggleForgotPassword] = useState(false)
 
     const [fPasswordModalVisible, setFPasswordModalVisible] = useState(false);
     const [fPasswordEmail, setFPasswordEmail] = useState('')
@@ -55,10 +56,13 @@ const LoginPage = () => {
     // Handle EmailVerification
     const handleVerifyEmailModal = () => {
         setVerifyEmailModalVisible(true);
+        setToggleForgotPassword(true)
+        
       };
 
     const handleVerifyEmailModalClose = () => {
         setVerifyEmailModalVisible(false);
+        setToggleForgotPassword(false)
       };
 
       const handleVerifyEmail =  () => {
@@ -95,10 +99,10 @@ const LoginPage = () => {
             localStorage.removeItem('otp');    
             globalOTP = null;    
             alert("OTP verification successful.")
-            if(loginCredValid){
+            if(loginCredValid && !toggleForgotPassword){
                 console.log('setting isLoggedIn')
                 setIsLoggedIn(true)
-            }else{
+            }else if(toggleForgotPassword){
                 handleFPasswordModal();
                 handleVerifyEmailModalClose();
             }
@@ -169,8 +173,16 @@ const handleFPasswordModalClose = () => {
                     // alert("Message while Login : "+ message)
                     localStorage.setItem("username",username)
                 })
-
-                setVerifyEmailModalVisible(true)
+                
+                if(!loginCredValid){
+                    console.log('There is an error in loggin in ')
+                    console.log('login message : ' , LoginMessage)
+                    alert(LoginMessage)
+                }else if(loginCredValid){
+                    console.log('login Message ; ' , LoginMessage)
+                    setVerifyEmailModalVisible(true)
+                }
+                
                 
             
             }
