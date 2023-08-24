@@ -228,6 +228,7 @@ export const UserProvider = ({children}) => {
 
             const jsonResponse = await response?.json()
             console.log('jsonResponse : ' , jsonResponse)
+            console.log('jsonResponse msg : ' , jsonResponse.message)
             if(response.status==200){
                 console.log('user logged in successfully in userLogin Context ')
                 console.log("isloggedin inside logging below if response 200"+ state.isLoggedIn)
@@ -246,9 +247,9 @@ export const UserProvider = ({children}) => {
                 }
                 // set the login variable to true 
                 if(isGst == true){
-                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})    
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : jsonResponse.message}})    
                 }else{
-                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : false , message : jsonResponse.message}})
+                    dispatch({type : 'SET_LOGGING_STATUS' , payload : {isLoggedIn : true , message : jsonResponse.message}})
                 }
                 
                 state.loginCredValid = true
