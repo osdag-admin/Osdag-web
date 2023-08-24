@@ -13,6 +13,9 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
     })
     const [grade, setGrade] = useState("Cus____")
 
+    const items = JSON.parse(localStorage.getItem("isLoggedIn"));
+    console.log(items)
+
     useEffect(() => {
 
         let arr = ("Cus____").split("_")

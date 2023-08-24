@@ -183,7 +183,8 @@ const handleFPasswordModalClose = () => {
                     setVerifyEmailModalVisible(true)
                 }
                 
-                
+                // navigation
+                navigate('/home');
             
             }
         }
