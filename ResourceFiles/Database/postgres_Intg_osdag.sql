@@ -106,6 +106,17 @@ CREATE TABLE IF NOT EXISTS public."Material" (
 	"Ultimate Tensile Stress"	INTEGER,
 	"Elongation "	INTEGER
 );
+CREATE SEQUENCE custom_materials_id_seq START 100;
+CREATE TABLE IF NOT EXISTS public."CustomMaterials" (
+	"id" INTEGER PRIMARY KEY DEFAULT nextval('custom_materials_id_seq'),
+	"email" TEXT,
+	"Grade"	TEXT,
+	"Yield Stress (< 20)"	INTEGER,
+	"Yield Stress (20 -40)"	INTEGER,
+	"Yield Stress (> 40)"	INTEGER,
+	"Ultimate Tensile Stress"	INTEGER,
+	"Elongation "	INTEGER
+);
 INSERT INTO public."Material" VALUES(1, 'E 165 (Fe 290)',165,165,165,290,23);
 INSERT INTO public."Material" VALUES(2, 'E 250 (Fe 410 W)A',250,240,230,410,23);
 INSERT INTO public."Material" VALUES(3, 'E 250 (Fe 410 W)B',250,240,230,410,23);

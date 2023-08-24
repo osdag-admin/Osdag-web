@@ -181,10 +181,11 @@ const handleFPasswordModalClose = () => {
                 }else if(loginCredValid){
                     console.log('login Message ; ' , LoginMessage)
                     setVerifyEmailModalVisible(true)
+                    navigate('/home');
                 }
                 
                 // navigation
-                navigate('/home');
+                
             
             }
         }

@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # importing models 
-from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS 
+from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS, CustomMaterials 
 from osdag.models import Design, UserAccount
 
 # simplejwt imports 
@@ -142,6 +142,12 @@ class Material_Serializer(serializers.ModelSerializer) :
 
     class Meta  : 
         model = Material
+        fields = '__all__'
+
+class CustomMaterials_Serializer(serializers.ModelSerializer):
+
+    class Meta :
+        model = CustomMaterials
         fields = '__all__'
 
 

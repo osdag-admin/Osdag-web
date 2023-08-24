@@ -23,6 +23,7 @@ const ConnectorSectionModal = ({ designPrefInputs, setDesignPrefInputs }) => {
         }
         const material = materialList.find(item => item.id === value)
         setDesignPrefInputs({ ...designPrefInputs, connector_material: material.Grade })
+        
         getMaterialDetails({data: material, type: "connector"})
     }
     

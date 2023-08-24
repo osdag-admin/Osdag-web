@@ -4,8 +4,8 @@ from rest_framework import status
 from osdag.models import Design
 from osdag.models import Beams
 from osdag.models import Columns
-from osdag.models import Material
-from osdag.serializers import Material_Serializer
+from osdag.models import Material, CustomMaterials
+from osdag.serializers import Material_Serializer, CustomMaterials_Serializer
 
 
 class DesignPreference(APIView):
@@ -43,6 +43,7 @@ class DesignPreference(APIView):
 class MaterialDetails(APIView):
 
     def get(self, request):
+        email = request.GET.get("email")
         material = request.GET.get("material")
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
 
@@ -51,11 +52,17 @@ class MaterialDetails(APIView):
         if not Design.objects.filter(cookie_id=cookie_id).exists(): 
             return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
 
+        if email:
+            custom_materials = CustomMaterials.object.filter(email=email).values()
 
         material_details = Material.objects.filter(Grade=material).values()
+
+        total_materials = custom_materials + material_details
+
         return Response({"material_details": material_details }, status=status.HTTP_200_OK)
 
     def post(self, request):
+        email = request.data.get("email")
         materialName = request.data.get("materialName")
         fy_20 = request.data.get("fy_20")
         fy_20_40 = request.data.get("fy_20_40")
@@ -68,11 +75,12 @@ class MaterialDetails(APIView):
         if not Design.objects.filter(cookie_id=cookie_id).exists(): 
             return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
 
-        alreadyExists = Material.objects.filter(Grade=materialName).exists()
+        alreadyExists = CustomMaterials.objects.filter(email=email, Grade=materialName).exists()
         if alreadyExists:
             return Response({"message": "The material already exists", "success": False}, status=403)
 
-        serializer = Material_Serializer(data = {
+        serializer = CustomMaterials_Serializer(data = {
+            "email": email,
             "Grade": materialName,
             "Yield_Stress_less_than_20": fy_20,
             "Yield_Stress_between_20_and_neg40": fy_20_40,

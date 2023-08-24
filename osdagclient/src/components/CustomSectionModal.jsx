@@ -4,7 +4,7 @@ import { ModuleContext } from '../context/ModuleState'
 
 const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValues, type = "supported" }) => {
 
-    const { getMaterialDetails, getColumnBeamMaterialList, currentModuleName, updateMaterialListFromCaches, materialList } = useContext(ModuleContext)
+    const { getMaterialDetails, getColumnBeamMaterialList, currentModuleName, updateMaterialListFromCaches, materialList, addCustomMaterialToDB } = useContext(ModuleContext)
     const [inputs, setInputs] = useState({
         fy_20: '',
         fy_20_40: '',
@@ -54,7 +54,6 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
             }
 
             const prevData = JSON.parse(localStorage.getItem("osdag-custom-materials"))
-            console.log(prevData)
 
             let presentItemsInCaches = null;
             if(prevData) presentItemsInCaches = prevData.filter(item => item.Grade === grade) 
@@ -93,45 +92,8 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
             updateMaterialListFromCaches()
         }
         else {
-            fetch(`http://127.0.0.1:8000/materialDetails/`, {
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    materialName: grade,
-                    fy_20: parseInt(inputs.fy_20),
-                    fy_20_40: parseInt(inputs.fy_20_40),
-                    fy_40: parseInt(inputs.fy_40),
-                    fu: parseInt(inputs.fu)
-                })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data)
-                    if (data.success === true) {
-                        if (type == 'supported') {
-                            setInputValues({ ...inputValues, supported_material: grade })
-                        }
-                        else if (type == 'supporting') {
-                            setInputValues({ ...inputValues, supporting_material: grade })
-                        }
-                        else if (type == 'connector') {
-                            setInputValues({ ...inputValues, connector_material: grade })
-                        }
-
-                        const material = materialList.filter(value => value.Grade === grade)
-                        getMaterialDetails({ data: material.Grade, type: type })
-                        getColumnBeamMaterialList(currentModuleName, 'Column-Flange-Beam-Web')
-                    }
-                    alert(data.message)
-                })
-                .catch(err => {
-                    console.log(err)
-                    alert("Something went wrong.")
-                })
+            handleCustomMat()
+           
         }
 
         setShowModal(false)
@@ -142,6 +104,23 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
             fy_40: '',
             fu: ''
         })
+    }
+
+    const handleCustomMat = async () => {
+        const data = await addCustomMaterialToDB(grade, inputs, 'Column-Flange-Beam-Web', type)
+        if (data.success === true) {
+            if (type == 'supported') {
+                setInputValues({ ...inputValues, supported_material: grade })
+            }
+            else if (type == 'supporting') {
+                setInputValues({ ...inputValues, supporting_material: grade })
+            }
+            else if (type == 'connector') {
+                setInputValues({ ...inputValues, connector_material: grade })
+            }
+        }
+        alert(data.message)
+        updateMaterialListFromCaches()
     }
 
     // utility function

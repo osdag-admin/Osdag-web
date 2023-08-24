@@ -280,6 +280,18 @@ class Material(models.Model):
     class Meta:
         db_table = "Material"
 
+class CustomMaterials(models.Model):
+    email = models.TextField()
+    Grade = models.TextField()
+    Yield_Stress_less_than_20 = models.IntegerField(db_column="Yield Stress (< 20)")
+    Yield_Stress_between_20_and_neg40 = models.IntegerField(db_column="Yield Stress (20 -40)")
+    Yield_Stress_greater_than_40 = models.IntegerField(db_column="Yield Stress (> 40)")
+    Ultimate_Tensile_Stress = models.IntegerField(db_column="Ultimate Tensile Stress")
+    Elongation = models.IntegerField(db_column="Elongation ", blank=True)
+
+    class Meta:
+        db_table = "CustomMaterials"
+
 
 class RHS(models.Model):
     Designation = models.CharField(max_length=50)

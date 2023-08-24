@@ -90,9 +90,11 @@ export const ModuleProvider = ({ children }) => {
         }
     }
 
-    const getColumnBeamMaterialList = async (moduleName, connectivity) => {
+    const getColumnBeamMaterialList = async (moduleName, connectivity, cmat, update=false, type) => {
+        console.log("here")
         try {
-            const response = await fetch(`${BASE_URL}populate?moduleName=${moduleName}&connectivity=${connectivity}`, {
+            const email = localStorage.getItem("email")
+            const response = await fetch(`${BASE_URL}populate?moduleName=${moduleName}&connectivity=${connectivity}&email=${email}`, {
                 method: 'GET',
                 mode: 'cors',
                 credentials: 'include'
@@ -100,6 +102,18 @@ export const ModuleProvider = ({ children }) => {
             const jsonResponse = await response?.json()
 
             // diaptch the action 
+            console.log("Material details", jsonResponse)
+            if(update){
+                const mList = jsonResponse.materialList
+                const mat = mList.filter(item => item.Grade === cmat)
+
+                if(type === 'connector')
+                    dispatch({type: 'SAVE_CM_DETAILS', payload: mat})
+                else if(type === 'supported')
+                    dispatch({type: 'SAVE_SDM_DETAILS', payload: mat})
+                else if(type === 'supporting')
+                    dispatch({type: 'SAVE_STM_DETAILS', payload: mat})
+            }
             if (connectivity !== 'Beam-Beam') {
                 dispatch({ type: 'SET_COLUMN_BEAM_MATERIAL_LIST', payload: jsonResponse })
             } else if (connectivity === 'Beam-Beam') {
@@ -108,6 +122,49 @@ export const ModuleProvider = ({ children }) => {
         } catch (error) {
             dispatch({ type: 'SET_ERR_MSG_COLUMN_BEAM_MATERIAL', payload: '' })
             console.log('error : ', error)
+        }
+    }
+
+    const addCustomMaterialToDB = async (grade, inputs, connectivity, type) => {
+        try {
+            const email = localStorage.getItem("email");
+            const res = await fetch(`http://127.0.0.1:8000/materialDetails/`, {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    materialName: grade,
+                    fy_20: parseInt(inputs.fy_20),
+                    fy_20_40: parseInt(inputs.fy_20_40),
+                    fy_40: parseInt(inputs.fy_40),
+                    fu: parseInt(inputs.fu)
+                })
+            })
+            const data = await res?.json()
+            await getColumnBeamMaterialList(state.currentModuleName, connectivity, grade, true, type)
+            //console.log(state.materialList)
+            /*if(param.type === 'connector')
+                dispatch({type: 'SAVE_CM_DETAILS', payload: [{
+                    Elongation: null,
+                    Grade: grade,
+                    Ultimate_Tensile_Stress: inputs.fu,
+                    Yield_Stress_between_20_and_neg40: inputs.fy_20_40,
+                    Yield_Stress_greater_than_40: inputs.fy_40,
+                    Yield_Stress_less_than_20: inputs.fu,
+                    id: 169
+                }]})
+            else if(param.type === 'supported')
+                dispatch({type: 'SAVE_SDM_DETAILS', payload: [param.data]})
+            else if(param.type === 'supporting')
+                dispatch({type: 'SAVE_STM_DETAILS', payload: [param.data]})*/
+
+            return {success: true, message: "Material added successfuly"}
+        } catch (error) {
+            return {message: error}
         }
     }
 
@@ -301,6 +358,7 @@ export const ModuleProvider = ({ children }) => {
     }
 
     const getMaterialDetails = async(param) => {
+        console.log("PARAM: ", param)
         if(param.type === 'connector')
             dispatch({type: 'SAVE_CM_DETAILS', payload: [param.data]})
         else if(param.type === 'supported')
@@ -503,7 +561,8 @@ export const ModuleProvider = ({ children }) => {
             getDesingPrefData,
             updateSourceAndMechType,
             getMaterialDetails,
-            updateMaterialListFromCaches
+            updateMaterialListFromCaches,
+            addCustomMaterialToDB
         }}>
             {children}
         </ModuleContext.Provider>
