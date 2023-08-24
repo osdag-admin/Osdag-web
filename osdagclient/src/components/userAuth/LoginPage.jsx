@@ -212,6 +212,7 @@ const handleFPasswordModalClose = () => {
            userLogin(  GuestEmail, GuestUserPassword, true )
 
             console.log("Done and state is :"+isLoggedIn)
+            navigate('/home');
     
         }catch(e)
         {

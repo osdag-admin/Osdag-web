@@ -13,8 +13,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
     })
     const [grade, setGrade] = useState("Cus____")
 
-    const items = JSON.parse(localStorage.getItem("isLoggedIn"));
-    console.log(items)
+    const isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
 
     useEffect(() => {
 
@@ -240,7 +239,7 @@ const CustomSectionModal = ({ showModal, setShowModal, setInputValues, inputValu
 
                 <div style={{ display: 'flex', justifyContent: 'center', columnGap: "4px" }}>
                     <Button type='button' className='primary-btn' onClick={() => handleSubmit(true)}>Add to Caches</Button>
-                    <Button type='button' className='primary-btn' style={{ background: "gray" }} onClick={() => handleSubmit(false)} disabled>Add to Database</Button>
+                    <Button type='button' className='primary-btn' style={!isLoggedIn ? { background: "gray" }: {}} onClick={() => handleSubmit(false)} disabled={!isLoggedIn}>Add to Database</Button>
                 </div>
             </div>
         </Modal>
