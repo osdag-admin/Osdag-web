@@ -9,8 +9,6 @@
 ## Table of contents
 * <a href="#quick-start">Quick start</a>
 * <a href="#contribute">Contributing</a>
-* <a href="#bugs">Bugs and known issues</a>
-* <a href="#version">Versioning</a>
 * <a href="#license">Copyright and license</a>
 
 ## <a id="user-content-quick-start" class="anchor" href="#quick-start" aria-hidden="true"></a> Quick start
@@ -131,8 +129,8 @@
         npm run dev
 
     Now your server and client should be running. Navigate to http://localhost:5173/ on your browser.
-## <a id="user-content-contribute" class="anchor" href="#bugs" aria-hidden="true"></a> Contributing
-Osdag invites enthusiasts with similar interest(s) to contribute to Osdag development. Your contributions can go a long way in improving the software.
+## Contributing
+Osdag on Cloud invites enthusiasts with similar interest(s) to contribute to Osdag on Cloud development. Your contributions can go a long way in improving the software.
 Please take a moment to review the <a href= "https://github.com/osdag-admin/Osdag/blob/master/CONTRIBUTING.md">guidelines for contributing</a>.
 
    * Bug reports
