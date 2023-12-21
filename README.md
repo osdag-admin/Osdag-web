@@ -17,79 +17,118 @@
 
 
 #### System Requirements:
-    Operating System: 
-        Ubuntu LTS 20.04 / 22.04
-    Hardware Requirements:
-        Minimum 4 Gb RAM
-        Minimum of 1 Gb of free disk space
+Operating System: 
+Ubuntu LTS 20.04 / 22.04
+Hardware Requirements:
+Minimum 4 Gb RAM
+Minimum of 1 Gb of free disk space
+
+This setup script is for machines running Ubuntu that do not have Miniconda3. 
+If you have Miniconda3 already installed on your computer, please skip Step/Command 1 and proceed to Step/Command 2.
+
+
+Installation steps:
+===================
+
+Installing Python version 3
+Command 1:
+	sudo apt update
+Command 2:
+	sudo apt install python3
+Command 3:
+	python3 --version
+	
+Installing GCC
+Command 1:
+	sudo apt update
+Command 2:
+	sudo apt install build-essential
+Command 3:
+	gcc --version
+	
+The Osdag on Cloud project uses ’Conda’ environment which contains all the dependencies. To first download these, visit the link : https://osdag.fossee.in/resources/downloads
+and download the Installer [Release:2021-02-15] for Ubuntu.
+    
+Extract the downloaded installer using the Archive Manager/File-Roller, or using 
+the following command on the bash prompt:
+
+	tar -xvf Osdag_ubuntu_installer_v2021.02.a.a12f.tar.gz
  
-    This setup script is for machines running Ubuntu that do not have Miniconda3.  
-    If you have Miniconda3 already installed on your computer, please skip Step/Command 1 and proceed to Step/Command 2.
  
+Note: If you have already installed the  previous version of Osdag in your system then delete the same.
+It is mandatory to execute Commands 1 and 2 to successfully install this version of Osdag. 
+If you have LaTeX installed you may skip Step/Command 3.
+ 
+In bash, navigate to the extracted installation folder containing the shell 
+scripts (the folder that contains this README file) and a folder named Osdag, 
+and enter Command 1, Command 2 and Command 3 given below.  
 
-    Installation steps:
-    ===================
-      Extract the downloaded installer using the Archive Manager/File-Roller, or using the following command on the bash prompt: tar -xvf Osdag_ubuntu_installer.tar.gz
+ 
+Note: After entering Command 1, while installing Miniconda3, you will be asked  
+whether you wish to set the system default python to Miniconda3. You need to agree  
+to this, in order for the second command to work. After installing Miniconda3 close the terminal.
+Re-open the terminal at the same location and execute Command 2 and/or Command 3 respectively.
 
-      # If you have already installed the  previous version of Osdag in your system then skip Step/Command 1) and just run the new 2-install-osdag.sh.
+You will need internet connection to execute Step/Command 3.
 
-		In bash, navigate to the extracted installation folder containing the shell 
-		scripts (the folder that contains this README file) and a folder named Osdag, 
-		and enter Command 1 , Command 2 and Command 3 given below.  
-		 
-			Note: After entering Command 1, while installing Miniconda3, you will be asked  
-		whether you wish to set the system default python to Miniconda3. You need to agree  
-		to this.After that you have to run command 2 in order for the 3rd command to work.
-		After that execute the 3rd steps. After 3rd step completed run the command 4.Please be sure 
-		to have internet connection as it's required to download some files.
-			Step/Command 1:
-				bash 1-install-Miniconda3-latest-Linux-x86_64.sh
-			 Step/Command 2:
-			bash 2-init-conda_base.sh
-			Step/Command 3:
-				bash 3-install-osdag.sh
-			Step/Command 4:
-			bash 4-install-texlive.sh
+    Step/Command 1:
+        bash 1-install-Miniconda3-latest-Linux-x86_64.sh
+        
+    Step/Command 2:
+        bash 2-install-osdag.sh
+        
+    Step/Command 3:
+	bash 3-install-texlive.sh
 
 
     Running Osdag:
     =============
-      After the installation is complete, you may copy/move the extracted Osdag folder to a location of your choice (say, directly under your home folder). 
-      You can run Osdag in two ways
-      1) Using the Osdag Launcher:
-          To run Osdag, navigate to the Osdag folder, double click on the file named Osdag (without any extension). 
-          This file is different from Osdag_icon.ico (although both will show the Osdag logo in the grid icon view mode).
-          If you are using the Unity desktop, you may also pin this launcher to the launcher sidebar.
-
-      2) Using the Command:
-          In the bash prompt, navigate to the Osdag directory and enter the following command python osdagMainPage.py
-
-      Note that, Step/Command 2 will work only if the system default python is the one installed through Miniconda2.
-      Alternatively, you may specify the (installed) python you wish to use, in Command 2.
+    After the installation is complete, you may copy/move the extracted Osdag folder
+    to a location of your choice (say, directly under your home folder).
+    
+    Using the Command:
+    In the bash prompt, navigate to the Osdag directory and enter the following command
+        
+        python osdagMainPage.py
 
     Running Osdag on Cloud:
     ======================
     Node v16.20.0 : Install Node from NVM by running these commands in the terminal
 
-    sudo apt install curl
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-    source /.bashrc
-    nvm install v16.20.0
-
+    Command 1:
+    	cd ~
+    Command 2:
+	curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh
+    Command 3:
+	sudo bash nodesource_setup.sh
+    Command 4:
+    	sudo apt-get install nodejs
+    Command 5:
+    	node -v
+    	
     Postgres : Install Postgres by running the following commands
-
-    sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-    sudo apt-get update
-    sudo apt-get -y install postgresql
+    Command 1:
+    	sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    Command 2:
+    	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    Command 3:
+    	sudo apt-get update
+    Command 4:
+    	sudo apt-get -y install postgresql
 
     Freecad : Install freecad with the following commands 
-
-    cd /
-    sudo apt-get update
-    sudo apt-get install snapd
-    sudo snap install freecad
+    Command 1:
+    	cd /
+    Command 2:
+    	sudo apt-get update
+    Command 3:
+    	sudo apt-get install snapd
+    Command 4:
+    	sudo snap install freecad
+    	
+    Installing Vite
+    	Command 1:
+    		sudo apt-get -y install vite
 
     Setting up Osdag on Cloud
 
@@ -101,9 +140,9 @@
     Enter into the Postgres Terminal
         sudo -u postgres psql
     Create a new role
-        CREATE ROLE osdagdeveloper PASSWORD ’password’ SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
+        CREATE ROLE osdagdeveloper PASSWORD 'password' SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN;
     Create a database
-        CREATE DATABASE "postgres Intg osdag" WITH OWNER osdagdeveloper;
+        CREATE DATABASE "postgres_Intg_osdag" WITH OWNER osdagdeveloper;
     Exit fron the Postgres terminal
         \q
 
@@ -115,7 +154,7 @@
         pip install -r requirements.txt
     Configure the Postgres database
         python populate_database.py
-        python update_sequence.py
+        python update_sequences.py
         python manage.py migrate
     Install the node dependencies
         cd osdagclient
