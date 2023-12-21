@@ -13,9 +13,6 @@
 
 ## <a id="user-content-quick-start" class="anchor" href="#quick-start" aria-hidden="true"></a> Quick start
 
-<a href= "http://osdag.fossee.in/resources/downloads">Download the latest version of Osdag</a>
-
-
 #### System Requirements:
 Operating System: 
 Ubuntu LTS 20.04 / 22.04
