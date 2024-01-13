@@ -147,7 +147,7 @@
   margin-left: 3px;
   margin-top: 4px;
   margin-bottom: 0;
-  border: 2px solid #000;
+  border: 2px solid rgba(0, 0, 0, 0.274);
   text-align: center;
 }
 
@@ -169,6 +169,13 @@
 
 .bloc-tabs {
   display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.274);
+  
+  padding: 10px;
+  
+}
+.bloc-tabs button{
+  height: 30px;
 }
 
 .tabs {
@@ -182,6 +189,19 @@
   box-sizing: content-box;
   position: relative;
   outline: none;
+}
+
+.tabs-design-pref {
+  padding: 0 5px;
+  text-align: center;
+  width: 120%;
+  background: rgba(128, 128, 128, 0.075);
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.274);
+  box-sizing: content-box;
+  position: relative;
+  outline: none;
+  margin: 0 5px;
 }
 
 .design-types-cont {
@@ -343,7 +363,7 @@
 
 
 /* Fine Plate */
-
+/* 
 .module_nav {
   margin-top: 0.1rem;
   padding-left: 2rem;
@@ -352,7 +372,9 @@
   gap: 20px;
   background-color: #d2d4d2;
   width: 100%;
-  /* padding-right: ; */
+  
+  display: flex;
+  justify-content: space-between;
 }
 
 .module_nav div {
@@ -363,6 +385,65 @@
 .module_nav div:hover {
   background-color: #91b014;
   cursor: pointer;
+} */
+.module_nav {
+  margin-top: 0.1rem;
+  padding-left: 2rem;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background-color: #d2d4d2;
+  width: 100%;
+
+ 
+}
+.element
+{
+  margin-left: auto;
+  margin-right: 10vh;
+}
+.module_nav div {
+  padding: 0.6rem;
+}
+
+.module_nav div:hover {
+  background-color: #91b014;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-label {
+  font-weight: bold;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  min-width: 350px;
+  z-index: 1;
+}
+
+.dropdown-menu div {
+  padding: 0.6rem;
+}
+
+.dropdown-menu div:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+.dropdown-items{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font-size: small;
 }
 
 
@@ -504,11 +585,6 @@
   background-color: rgb(168, 121, 121);
 }
 
-.inputdock-btn Input {
-  background-color: rgb(135, 91, 91);
-  cursor: pointer;
-  color: #f1f1f1;
-}
 
 .btn{
   background-color: rgb(135, 91, 91);
@@ -516,6 +592,11 @@
   color: #f1f1f1;
 }
 
+.inputdock-btn Input {
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+}
 .inputdock-btn Input:hover {
   background-color: rgb(168, 121, 121);
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
@@ -582,9 +663,7 @@
 
 /* End */
 /* Capacity popups */
-.Capacity-main-body {
-  
-}
+
 
 .Capacity-sub-body-title {
   margin: 1vh;
@@ -604,9 +683,7 @@
 	align-items: center;
 }
 
-.Capacity-left-body div{
 
-}
 .Capacity-right-body {
   flex-grow: 1;
 	display: flex;
@@ -617,3 +694,119 @@
 }
 
 /* end */
+
+
+/* Design pref container*/
+.design-pref-cont{
+  margin-top: 10px;
+  border: 1px solid #000; 
+  min-height: 600px;
+  padding: 10px;
+}
+
+/* Column and Beam Section */
+.col-beam-cont{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.Connector-col-beam-cont{
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  gap: 20px;
+}
+
+.input-cont{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  justify-content: space-between;
+}
+.input-cont h5{
+  font-weight: 400;
+  width: 150px;
+  margin-right: 10px;
+}
+.input-design-pref{
+  width: 200px;
+  height: 25px;
+  font-size: 12px;
+}
+.sub-container{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+.DesignPrefFooter{
+  /* border-top: 1px solid #000; Change the color and thickness as desired */
+  margin-top: 5px; 
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 5px;
+  font-size: 12px;
+  
+}
+
+.DesignPrefFooter-btn Button {
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+  min-width: 200px;
+  font-size: 12px;
+}
+.DesignPrefFooter-btn Button:hover {
+  background-color: rgb(168, 121, 121);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+.subDesignPrefFooter-btn Button {
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+  min-width: 200px;
+  font-size: 12px;
+}
+.primary-btn{
+  background-color: rgb(135, 91, 91);
+  cursor: pointer;
+  color: #f1f1f1;
+  width: 100%;
+  font-size: 12px;
+}
+.primary-btn:hover{
+  background-color: rgb(168, 121, 121);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+.subDesignPrefFooter-btn Button:hover {
+  transform: translateY(-2px);
+}
+.subDesignPrefFooter{
+  border-top: 1px solid #000; /* Change the color and thickness as desired */
+  margin-top: 5px; 
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: 6rem;
+  font-size: 12px;
+  
+}
+.readonly-textarea {
+  border: 1px solid #ccc; /* Add a border to indicate it's a textarea */
+  background-color: #f9f9f9; /* Set a light gray background color */
+  resize: none; /* Disable textarea resizing */
+  cursor: default; /* Set cursor to default (non-editable) */
+}
+
+#save-input-style{
+  color : #91b014;
+  font-size: '16px';
+}

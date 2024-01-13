@@ -6,8 +6,15 @@ from django.http import FileResponse
 
 from osdag_api.modules.fin_plate_connection import create_from_input
 
-# importign serializers
+# importing models
 from osdag.models import Design
+
+from django.core.files.storage import default_storage
+
+
+# DRF imports
+from rest_framework.parsers import MultiPartParser , FormParser
+from rest_framework import status 
 
 
 # other imports
@@ -16,6 +23,7 @@ import platform
 import subprocess
 import json
 import time
+import uuid
 
 class CreateDesignReport(APIView):
 
@@ -24,6 +32,7 @@ class CreateDesignReport(APIView):
         # metadata = request.data
         # obtain teh cookies
         metadata = request.data.get('metadata')
+        print('metadata : ' , metadata)
         cookie_id = request.COOKIES.get('fin_plate_connection_session')
         print('cookie_id : ', cookie_id)
 
@@ -31,6 +40,7 @@ class CreateDesignReport(APIView):
         # we will use the same value to bring it back to the current directory 
         current_directory = os.getcwd()
         print('current_directory : '  , current_directory)
+
 
         # obtain the input_values, logs, design_status from using the cookie_id
         designObject = Design.objects.get(cookie_id=cookie_id)
@@ -82,6 +92,16 @@ class CreateDesignReport(APIView):
             metadata_final['does_design_exist'] = design_status
             metadata_final['logger_messages'] = logs
             metadata_final['filename'] = file_path
+            print('metadata final : ' , metadata_final)
+            # print('LogoFullPath : ' , metadata_final['CompanyLogo'])
+
+        # check if the design_report folder has been created or not 
+        # if not, create one 
+        cwd = os.path.join(os.getcwd() , "file_storage/design_report/")
+        print('cwd_path : ' , cwd)
+        if(not os.path.exists) :
+            print('path does not exists, creating one : ', cwd)
+            os.mkdir(cwd) 
 
         try:
             print('creating module from input')
@@ -92,11 +112,13 @@ class CreateDesignReport(APIView):
         try:
             print('generating the report .save_design')
             resultBoolean = module.save_design(metadata_final)
-            if(resultBoolean):
-                print('The LaTEX file has been created successfully')
-
         except Exception as e:
             print('e : ', e)
+        
+        if(resultBoolean):
+            print('The LaTEX file has been created successfully')
+
+
         
         os.chdir(current_directory)
         print('cwd after chdir : ' , os.getcwd())
@@ -194,3 +216,48 @@ class GetPDF(APIView):
         for key, value in response.items():
             print(f'{key}: {value}')
         return response
+
+
+class CompanyLogoView(APIView) : 
+    parser_classes = (MultiPartParser , FormParser)
+
+    def post(self, request):
+        print('inside company logo post') 
+        # check cookie
+        try:
+            cookie_id = request.COOKIES.get('fin_plate_connection_session')
+            print('cookie id in companyLogo:', cookie_id)
+        except Exception as e:
+            print('e:', e)
+
+        # obtain the file 
+        print('request data : ' , request.data)
+        file = request.data['file']
+        
+        # generate a unique name for the file 
+        fileName = ''.join(str(uuid.uuid4()).split('-')) + ".png"
+        print('fileName created : ' , fileName)
+        currentDirectory = os.getcwd()
+        
+        # create the png file 
+        try :       
+            with open(currentDirectory+"/file_storage/company_logo/"+fileName , 'w') as fp : 
+                pass 
+        except : 
+            print('Error in creating the image file')
+
+        print('currentWorkingDirectory : ' , currentDirectory)
+        try : 
+            with default_storage.open(currentDirectory+"/file_storage/company_logo/"+fileName, 'wb+') as destination : 
+                for chunk in file.chunks() :                 
+                    destination.write(chunk)
+            print('file saved')
+
+            # full path of the company logo w.r.t the Project 
+            logoFullPath = currentDirectory+"/file_storage/company_logo/"+fileName
+            print('logoFullPath : ' , logoFullPath)
+            return Response({'message' : 'successfully saved file' , 'logoFullPath' : logoFullPath} , status = status.HTTP_201_CREATED)
+        except : 
+            print('Error in saving the file ')
+
+            return Response({'message' : 'Error in saving the file'} , status = status.HTTP_400_BAD_REQUEST)

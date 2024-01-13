@@ -1,12 +1,53 @@
+# DRF imports
 from rest_framework import serializers
 
 # importing models 
-from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS 
-from osdag.models import Design
+from osdag.models import Anchor_Bolt , Angle_Pitch , Angles , Beams , Bolt , Bolt_fy_fu , CHS , Channels , Columns , EqualAngle , UnequalAngle , Material , RHS , SHS, CustomMaterials 
+from osdag.models import Design, UserAccount
+
+# simplejwt imports 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['email'] = user.email
+        print('token email : ' , token['email'])
+        token['password'] = user.password
+        print('token password : ' , token['password'])
+        token['username'] = user.username
+        print('token username : ' , token['username'])
+        #token['isGuest'] = user.isGuest
+        #print('token isGuest : ' , token['isGuest'])
+
+        return token
+
+
+class UserAccount_Serializer(serializers.ModelSerializer) : 
+    class Meta : 
+        model = UserAccount
+        fields = '__all__'
+
+    def create(self, validated_data) : 
+        return UserAccount.objects.create(**validated_data)
+
+    def update(self , instance , validated_data) : 
+        # update the instance 
+        instance.password = validated_data.get('password' , instance.password)
+
+        # save the instance 
+        instance.save()
+        return instance
 
 class Design_Serializer(serializers.ModelSerializer) : 
 
@@ -101,6 +142,12 @@ class Material_Serializer(serializers.ModelSerializer) :
 
     class Meta  : 
         model = Material
+        fields = '__all__'
+
+class CustomMaterials_Serializer(serializers.ModelSerializer):
+
+    class Meta :
+        model = CustomMaterials
         fields = '__all__'
 
 

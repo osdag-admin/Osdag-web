@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 
 # importing models
-from osdag.models import Columns, Beams, Bolt, Bolt_fy_fu, Material
+from osdag.models import Columns, Beams, Bolt, Bolt_fy_fu, Material, CustomMaterials
 from osdag.models import Design
 
 #########################################################
@@ -40,6 +40,7 @@ class InputData(APIView):
     """
 
     def get(self, request):
+        email = request.GET.get("email")
         moduleName = request.GET.get("moduleName")
         connectivity = request.GET.get("connectivity")
         boltDiameter = request.GET.get("boltDiameter")
@@ -66,7 +67,8 @@ class InputData(APIView):
                 'connectivityList': connectivityList
             }
             return Response(response, status=status.HTTP_200_OK)
-
+        
+        print("///////////////////////////////////////// ", email)
         if(connectivity == 'Column-Flange-Beam-Web' or connectivity == 'Column-Web-Beam-Web'):
             # print('connectivity : ', connectivity)
 
@@ -79,18 +81,23 @@ class InputData(APIView):
                     'Designation', flat=True))
                 beamList = list(Beams.objects.values_list(
                     'Designation', flat=True))
-                materialList = list(
-                    Material.objects.values_list('Grade', flat=True))
+                
+                materialList = list(Material.objects.filter().values())
+                if email: 
+                    custom_material = list(CustomMaterials.objects.filter(email=email).values())
+                materialList = materialList + custom_material
 
+                materialList.append({"id": -1, "Grade": 'Custom'})
                 response = {
                     'columnList': columnList,
                     'beamList': beamList,
-                    'materialList': materialList
+                    'materialList': materialList 
                 }
 
                 return Response(response, status=status.HTTP_200_OK)
 
-            except:
+            except Exception as err:
+                print(err)
                 return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
         elif (connectivity == 'Beam-Beam'):
@@ -101,8 +108,8 @@ class InputData(APIView):
             try:
                 beamList = list(Beams.objects.values_list(
                     'Designation', flat=True))
-                materialList = list(
-                    Material.objects.values_list('Grade', flat=True))
+                materialList = list(Material.objects.all().values())
+                materialList.append({"id": -1, "Grade": 'Custom'})
                 response = {
                     'beamList': beamList,
                     'materialList': materialList

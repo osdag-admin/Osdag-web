@@ -9,8 +9,8 @@
 **/.idea/
 *~
 .vscode
-*.sqlite
-**/*.sqlite
+#*.sqlite
+#**/*.sqlite
 *.log
 *.bak
 *.pdf
@@ -35,12 +35,22 @@ ResourceFiles/Osi_Files/*
 *.xlsx
 ResourceFiles/last_designs/*
 ResourceFiles/html_page/*
-osdag_web/secret_key.py
+#osdag_web/secret_key.py
 db.sqlite3
-file_storage/cad_models/*
 osdagclient/node_modules
 osdag/migrations
+node_modules
 osdagclient/public/output-obj.obj
 file_storage/design_report/*.pdf
 file_storage/design_report/*.log
 file_storage/design_report/*.tex
+file_storage/design_report/*.aux
+
+# ignore the brep fles 
+file_storage/cad_models/*.brep
+
+# ignore companylogo images 
+file_storage/company_logo/*.png
+
+# ignore the input values files 
+file_storage/input_values_files/*.osi

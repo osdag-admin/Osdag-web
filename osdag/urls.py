@@ -7,11 +7,16 @@ from osdag.web_api.cad_model_api import CADGeneration
 from osdag.web_api.modules_api import GetModules
 from osdag.web_api.inputData_view import InputData, DesignView
 from osdag.web_api.outputCalc_view import OutputData
-from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF
+from osdag.web_api.design_report_csv_view import CreateDesignReport, GetPDF, CompanyLogoView
+from osdag.web_api.design_pref_api import DesignPreference, MaterialDetails
+from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView, LoginView, ObtainInputFileView, CheckEmailView, SaveInputFileView, SetRefreshTokenCookieView
+from osdag.web_api.jwt_api import JWTHomeView
+from osdag.web_api.google_sso_api import GoogleSSOView
 from . import views
 
 # temporary
 app_name = 'osdag-web/'
+
 
 urlpatterns = [
     path('sessions/create/', CreateSession.as_view()),
@@ -54,6 +59,23 @@ urlpatterns = [
     path('design', DesignView.as_view()),
     path('generate-report' , CreateDesignReport.as_view()),
     path('getPDF' , GetPDF.as_view()),
+    path('design-preferences/', DesignPreference.as_view(), name="design-pref"),
+    path('materialDetails/', MaterialDetails.as_view()),
+    path('company-logo/' , CompanyLogoView.as_view()),
+
+    # authentications nad authorozation URL mappings
+    path('jwt/home' , JWTHomeView.as_view()),     # view for testing purpose
+    path('googlesso/' , GoogleSSOView.as_view()),
+
+    # user urls 
+    path('user/signup/' , SignupView.as_view()),
+    path('user/forgetpassword/' , ForgetPasswordView.as_view()),
+    path('user/logout/' ,  LogoutView.as_view()),
+    path('user/login/' , LoginView.as_view()),
+    path('user/checkemail/' , CheckEmailView.as_view()),
+    path('user/saveinput/' , SaveInputFileView.as_view()),
+    path('user/obtain-input-file/' , ObtainInputFileView.as_view()),
+    path('user/set-refresh/' , SetRefreshTokenCookieView.as_view()),
 
     # output generation from input
     path('calculate-output/fin-plate-connection',

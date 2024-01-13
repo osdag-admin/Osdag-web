@@ -1,5 +1,10 @@
 from django.db import models
 
+# postgres imports 
+from django.contrib.postgres.fields import ArrayField
+
+# other imports 
+from django.contrib.auth.hashers import make_password, check_password
 
 class Design(models.Model):
     """Design Session object in Database."""
@@ -18,6 +23,14 @@ class Design(models.Model):
 #########################################################
 # Author : Atharva Pingale ( FOSSEE Summer Fellow '23 ) #
 #########################################################
+class UserAccount(models.Model) : 
+    username = models.TextField(blank=True , unique = True)
+    password = models.TextField(blank=False)
+    email = models.TextField(blank=True, unique = True)
+    allInputValueFiles = ArrayField(models.TextField(blank = True))
+
+    class Meta : 
+        db_table = "UserAccount"
 
 class Anchor_Bolt(models.Model):
     Diameter = models.TextField()
@@ -78,7 +91,7 @@ class Beams(models.Model):
     B = models.DecimalField(max_digits=10, decimal_places=2)
     tw = models.DecimalField(max_digits=10, decimal_places=2)
     T = models.DecimalField(max_digits=10, decimal_places=2)
-    FlangeScope = models.IntegerField()
+    FlangeSlope = models.IntegerField()
     R1 = models.DecimalField(max_digits=10, decimal_places=2)
     R2 = models.DecimalField(max_digits=10, decimal_places=2)
     Iz = models.DecimalField(max_digits=10, decimal_places=2)
@@ -174,7 +187,7 @@ class Columns(models.Model):
     B = models.DecimalField(max_digits=10, decimal_places=2)
     tw = models.DecimalField(max_digits=10, decimal_places=2)
     T = models.DecimalField(max_digits=10, decimal_places=2)
-    FlangeScope = models.IntegerField()
+    FlangeSlope = models.IntegerField()
     R1 = models.DecimalField(max_digits=10, decimal_places=2)
     R2 = models.DecimalField(max_digits=10, decimal_places=2)
     Iz = models.DecimalField(max_digits=10, decimal_places=2)
@@ -258,14 +271,26 @@ class UnequalAngle(models.Model):
 
 class Material(models.Model):
     Grade = models.TextField()
-    Yield_Stress_less_than_20 = models.IntegerField()
-    Yield_Stress_between_20_and_neg40 = models.IntegerField()
-    Yield_Stress_greater_than_40 = models.IntegerField()
-    Ultimate_Tensile_Stress = models.IntegerField()
-    Elongation = models.IntegerField()
+    Yield_Stress_less_than_20 = models.IntegerField(db_column="Yield Stress (< 20)")
+    Yield_Stress_between_20_and_neg40 = models.IntegerField(db_column="Yield Stress (20 -40)")
+    Yield_Stress_greater_than_40 = models.IntegerField(db_column="Yield Stress (> 40)")
+    Ultimate_Tensile_Stress = models.IntegerField(db_column="Ultimate Tensile Stress")
+    Elongation = models.IntegerField(db_column="Elongation ", blank=True)
 
     class Meta:
         db_table = "Material"
+
+class CustomMaterials(models.Model):
+    email = models.TextField()
+    Grade = models.TextField()
+    Yield_Stress_less_than_20 = models.IntegerField(db_column="Yield Stress (< 20)")
+    Yield_Stress_between_20_and_neg40 = models.IntegerField(db_column="Yield Stress (20 -40)")
+    Yield_Stress_greater_than_40 = models.IntegerField(db_column="Yield Stress (> 40)")
+    Ultimate_Tensile_Stress = models.IntegerField(db_column="Ultimate Tensile Stress")
+    Elongation = models.IntegerField(db_column="Elongation ", blank=True)
+
+    class Meta:
+        db_table = "CustomMaterials"
 
 
 class RHS(models.Model):

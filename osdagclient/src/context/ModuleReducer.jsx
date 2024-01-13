@@ -14,18 +14,37 @@ export default (state, action) => {
                 error_msg : 'Error in fetching Connectivity List'
             }
         case 'SET_COLUMN_BEAM_MATERIAL_LIST' : 
+            let prev = JSON.parse(localStorage.getItem("osdag-custom-materials"))
+            state.materialList = action.payload.materialList
+            if(prev == null){
+                return{
+                    ...state , 
+                    columnList : action.payload.columnList,
+                    beamList : action.payload.beamList,
+                    error_msg : 'Error in fetching Column, Beam and Material List'
+                }
+            }
             return{
                 ...state , 
                 columnList : action.payload.columnList,
                 beamList : action.payload.beamList,
-                materialList : action.payload.materialList,
+                materialList : [...state.materialList, ...prev],
                 error_msg : 'Error in fetching Column, Beam and Material List'
             }
         case 'SET_BEAM_MATERIAL_LIST' :
+            prev = JSON.parse(localStorage.getItem("osdag-custom-materials"))
+            state.materialList = action.payload.materialList
+            if(prev == null){
+                return{
+                    ...state ,
+                    beamList : action.payload.beamList,
+                    error_msg : 'Error in fetching Beam and Material List'
+                }
+            }
             return{
                 ...state ,
                 beamList : action.payload.beamList,
-                materialList : action.payload.materialList,
+                materialList : [...state.materialList, ...prev],
                 error_msg : 'Error in fetching Beam and Material List'
             }
         case 'SET_COOKIE_FETCH' : 
@@ -74,7 +93,70 @@ export default (state, action) => {
                 ...state,
                 blobUrl : action.payload
             }
+        case 'SAVE_DESIGN_PREF_DATA':
+            return {
+                ...state,
+                designPrefData: action.payload
+            }
+        case 'UPDATE_SUPPORTING_ST_DATA':
+            let {supporting_section_results} = state.designPrefData
+            supporting_section_results = supporting_section_results[0]
 
+            if(action.payload.includes("Cus")){
+                supporting_section_results.Source = 'Custom'
+                supporting_section_results.Type = 'Welded'
+                return {
+                    ...state,
+                    designPrefData: {...state.designPrefData, supporting_section_results: [supporting_section_results]}
+                }
+            }
+            
+            supporting_section_results.Source = 'IS808_Rev'
+            supporting_section_results.Type = 'Rolled'
+            return {
+                ...state,
+                designPrefData: {...state.designPrefData, supporting_section_results: [supporting_section_results]}
+            }
+        case 'UPDATE_SUPPORTED_ST_DATA':
+            let {supported_section_results} = state.designPrefData
+            supported_section_results = supported_section_results[0]
+
+            if(action.payload.includes("Cus")){
+                supported_section_results.Source = 'Custom'
+                supported_section_results.Type = 'Welded'
+                return {
+                    ...state,
+                    designPrefData: {...state.designPrefData, supported_section_results: [supported_section_results]}
+                }
+            }
+            
+            supported_section_results.Source = 'IS808_Rev'
+            supported_section_results.Type = 'Rolled'
+            return {
+                ...state,
+                designPrefData: {...state.designPrefData, supported_section_results: [supported_section_results]}
+            }
+        
+        case 'SAVE_CM_DETAILS':
+            return {
+                ...state,
+                conn_material_details: action.payload
+            }
+        case 'SAVE_SDM_DETAILS':
+            return {
+                ...state,
+                supported_material_details: action.payload
+            }
+        case 'SAVE_STM_DETAILS':
+            return {
+                ...state,
+                supporting_material_details: action.payload
+            }
+        case 'UPDATE_MATERIAL_FROM_CACHES':
+            return {
+                ...state,
+                materialList: [...state.materialList, ...action.payload]
+            }
         default:
             return state;
     }

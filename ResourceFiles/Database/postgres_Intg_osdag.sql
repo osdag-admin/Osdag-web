@@ -8,6 +8,7 @@
 
 BEGIN TRANSACTION;
 
+
 CREATE TABLE IF NOT EXISTS public."Design" (
 	"id" SERIAL PRIMARY KEY,
 	"cookie_id" VARCHAR(32),
@@ -19,9 +20,21 @@ CREATE TABLE IF NOT EXISTS public."Design" (
 	"cad_design_status" BOOLEAN
 );
 
+CREATE TABLE IF NOT EXISTS public."UserAccount" (
+	"id" SERIAL PRIMARY KEY,
+	"username" TEXT,
+	"password" TEXT,
+	"email" TEXT,
+	"allInputValueFiles" TEXT[]
+	/* An array of username that can store multiple users */ 
+	/* each password will be matched to username in JSONB */ 
+	/* each email will be mapped to one username in JSONB */ 
+	/* allReports will mappings of the username and the report names ( unique ) */ 
+	/* each report is mapped to a unique user */ 
+);
 
 CREATE TABLE IF NOT EXISTS public."Bolt" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Bolt_diameter"	TEXT
 );
 INSERT INTO public."Bolt" VALUES(1,'8');
@@ -46,7 +59,7 @@ INSERT INTO public."Bolt" VALUES(19,'45');
 INSERT INTO public."Bolt" VALUES(20,'52');
 INSERT INTO public."Bolt" VALUES(21,'60');
 CREATE TABLE IF NOT EXISTS public."Anchor_Bolt" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Diameter"	TEXT
 );
 INSERT INTO public."Anchor_Bolt" VALUES(1,'M8');
@@ -63,7 +76,7 @@ INSERT INTO public."Anchor_Bolt" VALUES(11,'M56');
 INSERT INTO public."Anchor_Bolt" VALUES(12,'M64');
 INSERT INTO public."Anchor_Bolt" VALUES(13,'M72');
 CREATE TABLE IF NOT EXISTS public."Angle_Pitch" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Nominal_Leg"	INTEGER,
 	"Max_Bolt_Dia"	INTEGER,
 	"Bolt_lines"	INTEGER,
@@ -85,7 +98,7 @@ INSERT INTO public."Angle_Pitch" VALUES(11,150,20,2,55,55,NULL);
 INSERT INTO public."Angle_Pitch" VALUES(13,200,30,2,75,75,NULL);
 INSERT INTO public."Angle_Pitch" VALUES(12,200,20,3,55,55,55);
 CREATE TABLE IF NOT EXISTS public."Material" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Grade"	TEXT,
 	"Yield Stress (< 20)"	INTEGER,
 	"Yield Stress (20 -40)"	INTEGER,
@@ -93,18 +106,29 @@ CREATE TABLE IF NOT EXISTS public."Material" (
 	"Ultimate Tensile Stress"	INTEGER,
 	"Elongation "	INTEGER
 );
-INSERT INTO public."Material" VALUES(1,'E 165 (Fe 290)',165,165,165,290,23);
-INSERT INTO public."Material" VALUES(2,'E 250 (Fe 410 W)A',250,240,230,410,23);
-INSERT INTO public."Material" VALUES(3,'E 250 (Fe 410 W)B',250,240,230,410,23);
-INSERT INTO public."Material" VALUES(4,'E 250 (Fe 410 W)C',250,240,230,410,23);
-INSERT INTO public."Material" VALUES(5,'E 300 (Fe 440)',300,290,280,440,22);
-INSERT INTO public."Material" VALUES(6,'E 350 (Fe 490)',350,330,320,490,22);
-INSERT INTO public."Material" VALUES(7,'E 410 (Fe 540)',410,390,380,540,20);
-INSERT INTO public."Material" VALUES(8,'E 450 (Fe 570)D',450,430,420,570,20);
-INSERT INTO public."Material" VALUES(9,'E 450 (Fe 590) E',450,430,420,590,20);
-INSERT INTO public."Material" VALUES(10,'Cus_400_500_600_1400',400,500,600,1400,20);
+CREATE SEQUENCE custom_materials_id_seq START 100;
+CREATE TABLE IF NOT EXISTS public."CustomMaterials" (
+	"id" INTEGER PRIMARY KEY DEFAULT nextval('custom_materials_id_seq'),
+	"email" TEXT,
+	"Grade"	TEXT,
+	"Yield Stress (< 20)"	INTEGER,
+	"Yield Stress (20 -40)"	INTEGER,
+	"Yield Stress (> 40)"	INTEGER,
+	"Ultimate Tensile Stress"	INTEGER,
+	"Elongation "	INTEGER
+);
+INSERT INTO public."Material" VALUES(1, 'E 165 (Fe 290)',165,165,165,290,23);
+INSERT INTO public."Material" VALUES(2, 'E 250 (Fe 410 W)A',250,240,230,410,23);
+INSERT INTO public."Material" VALUES(3, 'E 250 (Fe 410 W)B',250,240,230,410,23);
+INSERT INTO public."Material" VALUES(4, 'E 250 (Fe 410 W)C',250,240,230,410,23);
+INSERT INTO public."Material" VALUES(5, 'E 300 (Fe 440)',300,290,280,440,22);
+INSERT INTO public."Material" VALUES(6, 'E 350 (Fe 490)',350,330,320,490,22);
+INSERT INTO public."Material" VALUES(7, 'E 410 (Fe 540)',410,390,380,540,20);
+INSERT INTO public."Material" VALUES(8, 'E 450 (Fe 570)D',450,430,420,570,20);
+INSERT INTO public."Material" VALUES(9, 'E 450 (Fe 590) E',450,430,420,590,20);
+INSERT INTO public."Material" VALUES(10, 'Cus_400_500_600_1400',400,500,600,1400,20);
 CREATE TABLE IF NOT EXISTS public."Bolt_fy_fu" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Property_Class"	NUMERIC,
 	"Diameter_min"	INTEGER,
 	"Diameter_max"	INTEGER,
@@ -123,7 +147,7 @@ INSERT INTO public."Bolt_fy_fu" VALUES(9,9.8,0,100,720,900);
 INSERT INTO public."Bolt_fy_fu" VALUES(10,10.9,0,100,940,1040);
 INSERT INTO public."Bolt_fy_fu" VALUES(11,12.9,0,100,1100,1220);
 CREATE TABLE IF NOT EXISTS public."UnequalAngle" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR(50),
 	"Mass"	NUMERIC(10 , 2),
 	"Area"	NUMERIC(10 , 2),
@@ -260,7 +284,7 @@ INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" ,
 INSERT INTO public."UnequalAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(108,'∠200ⅹ150ⅹ18',47.21,60.1,200.0,150.0,18.0,15.0,4.8,3.86,6.34,2390.0,1150.0,0.5,2920.0,623.0,6.3,4.38,6.97,3.22,175.0,103.0,317.0,187.0,'IS808_Rev',64.5);
 
 CREATE TABLE IF NOT EXISTS public."EqualAngle"(
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR(50),
 	"Mass"	NUMERIC(10 , 2),
 	"Area"	NUMERIC(10 , 2),
@@ -379,7 +403,7 @@ INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "
 INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(90,'∠180 ⅹ 180ⅹ 20',53.85,68.6,180.0,180.0,20.0,18.0,4.8,5.2,5.2,2060.0,2060.0,0.79,3270.0,853.0,5.49,5.49,6.91,3.53,161.0,161.0,290.0,291.0,'IS808_Rev',90.6);
 INSERT INTO public."EqualAngle"("id" , "Designation" , "Mass" , "Area" , "a" , "b" , "t" , "R1" , "R2" , "Cz" , "Cy" , "Iz" , "Iy" , "Alpha" , "Iu_max" , "Iv_min" , "rz" , "ry" , "ru_max" , "rv_min" , "Zz" , "Zy" , "Zpz" , "Zpy" , "Source" , "It") VALUES(91,'∠200 ⅹ 200ⅹ 24',71.31,90.8,200.0,200.0,24.0,18.0,4.8,5.85,5.85,3350.0,3350.0,0.79,5320.0,1390.0,6.08,6.08,7.65,3.91,237.0,237.0,427.0,428.0,'IS808_Rev',173.0);
 CREATE TABLE IF NOT EXISTS public."Columns" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR(50),
 	"Mass"	NUMERIC(10 , 2),
 	"Area"	NUMERIC(10 , 2),
@@ -490,7 +514,7 @@ INSERT INTO public."Columns" VALUES(84,'UC 356 x 406 x 467',467.0,594.9,436.6,41
 INSERT INTO public."Columns" VALUES(85,'UC 356 x 406 x 551',551.0,701.9,455.6,418.5,42.1,67.5,90,15.2,0.0,226938.0,82668.0,18.0,10.9,9962.0,3951.0,12076.0,6058.0,NULL,NULL,'IS808_Rev',NULL);
 INSERT INTO public."Columns" VALUES(86,'UC 356 x 406 x 634',633.9,807.5,474.6,424.0,47.6,77,90,15.2,0.0,274845.0,98122.0,18.4,11.0,11582.0,4628.0,14235.0,7108.0,NULL,NULL,'IS808_Rev',NULL);
 CREATE TABLE IF NOT EXISTS public."Beams" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR(50),
 	"Mass"	NUMERIC(10 , 2),
 	"Area"	NUMERIC(10 , 2),
@@ -838,7 +862,7 @@ INSERT INTO public."Beams" VALUES(321,'UB 914 x 305 x 289',289.1,368.3,926.6,307
 INSERT INTO public."Beams" VALUES(322,'UB 914 x 419 x 343',343.3,437.3,911.8,418.5,19.4,32.0,90,24.1,0.0,625779.0,39149.0,37.8,9.5,13726.0,1871.0,15477.0,2890.0,NULL,NULL,'',NULL);
 INSERT INTO public."Beams" VALUES(323,'UB 914 x 419 x 388',388.0,494.2,921.0,420.5,21.4,36.6,90,24.1,0.0,719635.0,45431.0,38.2,9.6,15627.0,2161.0,17665.0,3341.0,NULL,NULL,'',NULL);
 CREATE TABLE IF NOT EXISTS public."Channels" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR(50),
 	"Mass"	NUMERIC(10 , 2),
 	"Area"	NUMERIC(10 , 2),
@@ -924,7 +948,7 @@ INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B"
 INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(59,'MPC 350',42.7,54.3,350,100,8.3,13.5,90,14.0,8.0,2.65,10100.0,497.0,13.6,3.02,577.0,67.7,679.0,122.0,23.4,112000.0,'IS808_Rev',NULL);
 INSERT INTO public."Channels"("id" , "Designation" , "Mass" , "Area" , "D" , "B" , "tw" , "T" , "FlangeSlope" , "R1" , "R2" , "Cy" , "Iz" , "Iy" , "rz" , "ry" , "Zz" , "Zy" , "Zpz" , "Zpy" , "It" , "Iw" , "Source" , "Type") VALUES(60,'MPC 400',50.1,63.8,400,100,8.8,15.3,90,15.0,8.0,2.6,15200.0,572.0,15.4,3.0,762.0,77.4,901.0,139.0,33.1,170000.0,'IS808_Rev',NULL);
 CREATE TABLE IF NOT EXISTS public."SHS" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR,
 	"D"	NUMERIC(10 , 2),
 	"B"	NUMERIC(10 , 2),
@@ -1004,7 +1028,7 @@ INSERT INTO public."SHS" VALUES(60,' SHS 180 x  180 x  5.0',180.0,180.0,5.0,27.2
 INSERT INTO public."SHS" VALUES(61,' SHS 180 x  180 x  6.0',180.0,180.0,6.0,32.05,40.83,2036.0,2036.0,7.06,7.06,226.0,226.0,280.0,280.0,'IS 4923:1997');
 INSERT INTO public."SHS" VALUES(62,' SHS 180 x  180 x  8.0',180.0,180.0,8.0,41.91,53.39,2590.73,2590.73,6.97,6.97,287.86,287.86,340.68,340.68,'IS 4923:1997');
 CREATE TABLE IF NOT EXISTS public."RHS" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR,
 	"D"	NUMERIC(10 , 2),
 	"B"	NUMERIC(10 , 2),
@@ -1048,7 +1072,7 @@ INSERT INTO public."RHS" VALUES(24,' RHS 145  x 82  x 5.4',145.0,82.0,5.4,17.74,
 INSERT INTO public."RHS" VALUES(25,' RHS 172 x  92  x  4.8',172.0,92.0,4.8,18.71,23.83,917.13,346.91,6.2,3.82,106.64,75.41,132.08,85.61,'IS 4923:1997');
 INSERT INTO public."RHS" VALUES(26,' RHS 172  x  92  x  5.4',172.0,92.0,5.4,20.88,26.59,1012.47,381.74,6.17,3.79,117.73,82.99,146.55,94.86,'IS 4923:1997');
 CREATE TABLE IF NOT EXISTS public."CHS" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR,
 	"NB"	VARCHAR,
 	"OD"	NUMERIC(10 , 2),
@@ -1146,7 +1170,7 @@ INSERT INTO public."CHS" VALUES(79,' CHS 355.6 x 8','350',355.6,8.0,68.58,87.36,
 INSERT INTO public."CHS" VALUES(80,' CHS 355.6 x 10','350',355.6,10.0,85.23,108.57,88457.0,11172.0,10543.0,16223.5,912.46,12.22,149.42,'IS 1161:2014');
 INSERT INTO public."CHS" VALUES(81,' CHS 355.6 x 12','350',355.6,12.0,101.68,129.53,86361.0,11172.0,10418.0,19139.47,1076.46,12.16,147.76,'IS 1161:2014');
 CREATE TABLE IF NOT EXISTS public."Angles" (
-	"id" INTEGER PRIMARY KEY,
+	"id" SERIAL PRIMARY KEY,
 	"Designation"	VARCHAR(50),
 	"Mass"	NUMERIC(10 , 2),
 	"Area"	NUMERIC(10 , 2),
