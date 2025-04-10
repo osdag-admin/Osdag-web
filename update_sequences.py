@@ -6,8 +6,8 @@ from psycopg2 import sql
 #########################################################
 
 
-conn = psycopg2.connect(database='mydb', host='db',
-                        user='myuser', password='mypassword', port='5432')
+conn = psycopg2.connect(database='postgres', host='localhost',
+                        user='postgres', password='Vinay@404', port='5432')
 cursor = conn.cursor()
 file = open("ResourceFiles/Database/update_sequences.sql", "r+")
 

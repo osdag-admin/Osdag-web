@@ -333,3 +333,15 @@ class SHS(models.Model):
 
     class Meta:
         db_table = "SHS"
+
+class EndPlateDesign(models.Model):
+    session_id = models.UUIDField(unique=True)
+    status = models.CharField(max_length=20, default='initialized')  
+    input_values = models.JSONField(null=True)
+    output_values = models.JSONField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    cad_model = models.FileField(upload_to='cad_models/', null=True)
+
+    class Meta:
+        db_table = "EndPlateDesign"

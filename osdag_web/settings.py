@@ -15,6 +15,8 @@ from osdag_web.secret_key import get_secret_key
 from osdag_web.postgres_credentials import get_database_name, get_host, get_password, get_port, get_username
 import os
 from datetime import timedelta
+from django.conf import settings
+from django.conf.urls.static import static
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -131,7 +133,7 @@ SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "osdag.serializers.MyTokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
-    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework.simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
 }
 
@@ -162,10 +164,10 @@ WSGI_APPLICATION = 'osdag_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mydb',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        'HOST': 'db',  # This should be the name of the service
+        'NAME': 'postgres',  # Changed from 'postgres' to 'osdag_db'
+        'USER': 'db_osdag',
+        'PASSWORD': 'Vinay@404',
+        'HOST': 'localhost',  # This should be the name of the service
         'PORT': '5432',
     }
 }
@@ -216,13 +218,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static"
+    os.path.join(BASE_DIR, 'static')
 ]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'file_storage/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'file_storage')
+MEDIA_URL = '/file_storage/'
 
 SECRET_ROOT = os.path.join(BASE_DIR , 'secret/')
+
+# Make sure the directory exists
+os.makedirs(MEDIA_ROOT, exist_ok=True)

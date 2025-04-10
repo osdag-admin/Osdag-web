@@ -11,6 +11,8 @@ from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Cut
 
 class ColWebBeamWeb(object):
     
+    DEFAULT_CLEARANCE = 20.0  # Standard clearance distance between column and beam
+
     def __init__(self, column, beam, Fweld, plate, nut_bolt_array):
         self.column = column
         self.beam = beam
@@ -23,7 +25,7 @@ class ColWebBeamWeb(object):
         self.weldModelLeft = None
         self.weldModelRight = None
         self.plateModel = None
-        self.clearDist = 0.0  # This distance between edge of the column web/flange and beam cross section
+        self.clearDist = self.DEFAULT_CLEARANCE  # This distance between edge of the column web/flange and beam cross section
         
     def create_3dmodel(self):
         self.create_column_geometry()
