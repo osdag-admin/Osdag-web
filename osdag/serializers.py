@@ -164,4 +164,25 @@ class SHS_Serializer(serializers.ModelSerializer) :
         model = SHS 
         fields = '__all__'
 
-        
+from rest_framework import serializers
+from .models import EndPlateDesign
+
+class EndPlateInputSerializer(serializers.Serializer):
+    connectivity = serializers.CharField()
+    endPlateType = serializers.CharField()
+    beamSection = serializers.CharField()
+    material = serializers.CharField()
+    bendingMoment = serializers.FloatField(allow_null=True)
+    shearForce = serializers.FloatField()
+    axialForce = serializers.FloatField(allow_null=True)
+    boltDiameter = serializers.ListField(child=serializers.FloatField())
+    boltType = serializers.CharField()
+    propertyClass = serializers.ListField(child=serializers.CharField())
+    endPlateThickness = serializers.ListField(child=serializers.FloatField())
+    weldType = serializers.CharField()
+
+class EndPlateOutputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EndPlateDesign
+        fields = ['output_values', 'status']
+
