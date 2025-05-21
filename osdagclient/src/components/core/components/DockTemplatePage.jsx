@@ -1,4 +1,3 @@
-import React from 'react';
 import MainNavBar from './MainNavBar';
 
 const DockTemplatePage = ({
@@ -7,7 +6,7 @@ const DockTemplatePage = ({
     OutputComponent,
 }) => {
     return (
-        <>
+        <div className='dock-template-page'>
             <MainNavBar />
             <div className="dock-template-page-root">
                 <div className="dock-template-page-dock dock-template-page-dock-left">
@@ -20,7 +19,7 @@ const DockTemplatePage = ({
                     {OutputComponent}
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
