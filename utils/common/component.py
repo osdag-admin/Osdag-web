@@ -1902,6 +1902,7 @@ class Channel(Material):
 
 
 class Angle(Material):
+    print("abhi1")
     def __init__(self, designation, material_grade=""):
         self.designation = designation
         self.connect_to_database_update_other_attributes(
@@ -1909,23 +1910,36 @@ class Angle(Material):
         self.block_shear_capacity_axial = 0.0
 
         # self.length = 0.0
+    print("abhi2")
     def connect_to_database_update_other_attributes(self, designation, material_grade=""):
         conn = sqlite3.connect(PATH_TO_DATABASE)
+        print("connected")
         # db_query = "SELECT AXB, t FROM Angles WHERE Designation = ?"
         db_query = "SELECT * FROM Angles WHERE Designation = ?"
         cur = conn.cursor()
         cur.execute(db_query, (designation,))
         row = cur.fetchone()
+        print("connected1")
         self.mass = row[2]
+        print("connected1.1")
         self.area = row[3] * 100
+        print("connected1.2")
         self.a = row[4]
+        print("connected1.3")
         self.b = row[5]
+        print("connected1.4")
         self.leg_a_length = self.a
+        print("connected1.5")
         self.leg_b_length = self.b
+        print("connected1.6")
         self.max_leg = max(self.leg_a_length, self.leg_b_length)
+        print(124)
         self.min_leg = min(self.leg_a_length, self.leg_b_length)
+        print(125)
         self.thickness = row[6]
+        print("connected2")
         super(Angle, self).__init__(material_grade, self.thickness)
+        print("connected3")
         self.root_radius = row[7]
         self.toe_radius = row[8]
         # if self.leg_a_length != self.leg_b_length:
@@ -1951,6 +1965,7 @@ class Angle(Material):
         self.It = row[24] * 10 ** 4
         self.source = row[25]
         self.type = 'Rolled' if row[26] is None else row[26]
+        print("abhi3")
         conn.close()
 
     def angle_weld_length(self, weld_strength, depth_weld, force, C, depth):
@@ -1959,6 +1974,7 @@ class Angle(Material):
         f2 = weld_strength * depth_weld
         f3 = force * (1 - C / depth) - f2 / 2
         l3 = f3 / weld_strength
+        print("abhi4")
         return l3
 
     def get_available_seated_list(self, input_angle_list, max_leg_length=math.inf, min_leg_length=0.0, position="outer",
@@ -1980,6 +1996,7 @@ class Angle(Material):
                 available_angles.append(designation)
             else:
                 print("popped", designation)
+        print("abhi5")
         return available_angles
 
     def tension_member_yielding(self, A_g, F_y):

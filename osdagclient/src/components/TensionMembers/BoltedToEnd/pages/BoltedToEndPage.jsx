@@ -86,7 +86,7 @@ const MenuItems = [
 ];
 
 function BoltedToEndPage() {
-  const [selectedProfile, setSelectedProfile] = useState("Back to Back Angles");
+  const [selectedProfile, setSelectedProfile] = useState("Angles");
   const [imageSource, setImageSource] = useState(BACK_TO_BACK_ANGLES);
   const [isModalOpen, setModalOpen] = useState(false);
   const [output, setOutput] = useState(null);
@@ -142,7 +142,7 @@ function BoltedToEndPage() {
     material: "E 250 (Fe 410 W)A",
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
-    member_designation: "MB 300",
+    member_designation: "All",
     detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
     detailing_gap: "10",
     detailing_corr_status: "No",
@@ -323,30 +323,25 @@ function BoltedToEndPage() {
       value !== undefined && value !== null && value.length > 0 ? value : null;
 
     param = {
-      "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
-      "Bolt.Diameter": allSelected.bolt_diameter
-        ? safeValue(boltDiameterList)
-        : safeValue(inputs.bolt_diameter),
-      "Bolt.Grade": allSelected.bolt_grade
-        ? safeValue(propertyClassList)
-        : safeValue(inputs.bolt_grade),
-      "Bolt.Slip_Factor": inputs.bolt_slip_factor,
-      "Bolt.Type": inputs.bolt_type,
-      "Connector.Material": inputs.connector_material,
-      "Design.Design_Method": inputs.design_method,
-      "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
-      "Detailing.Edge_type": inputs.detailing_edge_type,
-      "Detailing.Gap": inputs.detailing_gap,
-      "Load.Axial": inputs.axial_force || "",
-      Material: inputs.material,
-      "Member.Section_Designation": inputs.section_designation,
-      "Member.Length": inputs.length,
-      "Member.Section_Profile": inputs.section_profile,
-      "Member.Location": inputs.location,
-      Module: "Tension Member Bolted Design",
-      "Connector.Plate.Thickness_List": allSelected.plate_thickness
-        ? safeValue(thicknessList)
-        : safeValue(inputs.plate_thickness),
+      "Bolt.Bolt_Hole_Type": "Standard",
+      "Bolt.Diameter": ['8', '10', '12', '16', '20', '24', '30', '36', '42', '48', '56', '64', '14', '18', '22', '27', '33', '39', '45', '52', '60'],
+      "Bolt.Grade": ['3.6'],
+      "Bolt.Slip_Factor": "0.3",
+      "Bolt.Type": "Bearing Bolt",
+      "Material": "E 250 (Fe 410 W)A",
+      "Connector.Material": "E 250 (Fe 410 W)A",
+      "Member.Material": "E 250 (Fe 410 W)A",
+      "Design.Design_Method": "Limit State Design",
+      "Detailing.Corrosive_Influences": "No",
+      "Detailing.Edge_type": "Sheared or hand flame cut",
+      "Detailing.Gap": "0",
+      "Load.Axial": "60",
+      "Member.Designation": "40 x 20 x 3",
+      "Member.Length": "1250",
+      "Member.Profile": "Back to Back Angles",
+      "Conn_Location": "Long Leg",
+      "Module": "Tension Member Design - Bolted to End Gusset",
+      "Connector.Plate.Thickness_List": ['8', '10', '12', '14', '16', '18', '20', '22', '25', '28', '32', '36', '40', '45', '50', '56', '63', '75', '80', '90', '100', '110', '120']
     };
 
     createDesign(param, "Tension-Member-Bolted-Design");
@@ -435,16 +430,18 @@ function BoltedToEndPage() {
       "Bolt.Slip_Factor": inputs.bolt_slip_factor,
       "Bolt.Type": inputs.bolt_type,
       "Connector.Material": inputs.connector_material,
+      "Material": inputs.connector_material,
+      "Member.Material": inputs.connector_material,
       "Design.Design_Method": inputs.design_method,
       "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
       "Detailing.Edge_type": inputs.detailing_edge_type,
       "Detailing.Gap": inputs.detailing_gap,
       "Load.Axial": inputs.axial_force || "",
-      Material: inputs.material,
-      "Member.Section_Designation": inputs.section_designation,
+      'Material': inputs.material,
+      "Member.Designation": inputs.section_designation,
       "Member.Length": inputs.length,
-      "Member.Section_Profile": inputs.section_profile,
-      "Member.Location": inputs.location,
+      "Member.Profile": inputs.section_profile,
+      "Conn_Location": inputs.location,
       Module: "Tension Member Bolted Design",
       "Connector.Plate.Thickness_List": allSelected.plate_thickness
         ? thicknessList
@@ -612,9 +609,9 @@ function BoltedToEndPage() {
                   <Select onSelect={handleSelectProfile} value={selectedProfile}>
                     {sectionProfileList && sectionProfileList.length > 0 ? (
                       sectionProfileList.map((profile) => (
-                        <option key={profile} value={profile}>
+                        <options key={profile} value={profile}>
                           {profile}
-                        </option>
+                        </options>
                       ))
                     ) : (
                       <option>Loading...</option>
@@ -650,17 +647,33 @@ function BoltedToEndPage() {
 
                 <div className="component-grid-align">
                   <h4>Section Designation*</h4>
+
+                  {console.log("desination", angleList)}
                   <Select
-                    value={inputs.member_designation || beamList[2]}
+                    value={inputs.member_designation || "All"}
                     onSelect={(value) =>
                       setInputs({ ...inputs, member_designation: value })
                     }
                   >
-                    {beamList?.map((item, index) => (
-                      <Option key={index} value={item}>
-                        {item}
-                      </Option>
-                    ))}
+                    <Option key="-1" value="All">
+                      All
+                    </Option>
+                    {
+                      selectedProfile.includes("Angle") ? (
+                        angleList.map((item, index) => (
+                          <Option key={index} value={item}>
+                            {item}
+                          </Option>
+                        ))
+                      ) : (
+                        channelList.map((item, index) => (
+                          <Option key={index} value={item}>
+                            {item}
+                          </Option>
+                        ))
+                      )
+                    }
+
                   </Select>
                 </div>
 

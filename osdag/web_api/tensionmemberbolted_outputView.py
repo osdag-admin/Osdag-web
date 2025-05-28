@@ -11,7 +11,6 @@ from osdag.serializers import Design_Serializer
 @method_decorator(csrf_exempt, name='dispatch')
 class TensionMemberBoltedOutputData(APIView):
     def post(self, request):
-        print('in tension_outputView.py: Entered post method')
         # Obtain session cookie and input values
         cookie_id = request.COOKIES.get('tension_member_bolted_design_session')
         print('in tension_outputView.py: cookie id in tension member bolted design output data ', cookie_id)
@@ -52,18 +51,22 @@ class TensionMemberBoltedOutputData(APIView):
             try:
                 output, logs = module_api.generate_output(input_values)
                 print('in tension_outputView.py: Output generated successfully')
+                print('in tension_outputView.py: Output:', output)
+                print('in tension_outputView.py: Logs:', logs)
             except Exception as e:
                 print('in tension_outputView.py: Error in generating output:', e)
             print('in tension_outputView.py: Processing logs')
             for log in logs:
                 if log not in new_logs:
                     new_logs.append(log)
+            print('in tension_outputView.py: New logs:', new_logs)
         except Exception as e:
             print('in tension_outputView.py: Exception raised:', e)
             return JsonResponse({"data": {}, "logs": new_logs, "success": False}, safe=False, status=400)
 
         print('in tension_outputView.py: Combining logs')
         finalLogsString = self.combine_logs(new_logs)
+        print('in tension_outputView.py: Final logs string:', finalLogsString)
 
         try:
             print('in tension_outputView.py: Trying to update Design object')
@@ -100,6 +103,7 @@ class TensionMemberBoltedOutputData(APIView):
     def check_non_zero_output(self, output):
         print('in tension_outputView.py: Entered check_non_zero_output method')
         flag = False
+        print('in tension_outputView.py: Checking output items:', output.keys())
         for item in output:
             val = None
             print('in tension_outputView.py: Processing item:', item)
