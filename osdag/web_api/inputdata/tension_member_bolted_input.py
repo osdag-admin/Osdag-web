@@ -1,7 +1,7 @@
 from .input_data_base import InputDataBase
 from rest_framework import status
 from rest_framework.response import Response
-from osdag.models import Beams, Material, Bolt, Bolt_fy_fu, CustomMaterials
+from osdag.models import Angles, Channels,  Beams, Material, Bolt, Bolt_fy_fu, CustomMaterials
 
 class TensionMemberBoltedInputData(InputDataBase):
     def process(self, **kwargs):
@@ -12,9 +12,9 @@ class TensionMemberBoltedInputData(InputDataBase):
         email = kwargs.get("email")
 
         # Always fetch angleList and channelList
-        angleList = list(Beams.objects.values_list(
+        angleList = list(Angles.objects.values_list(
                     'Designation', flat=True))
-        channelList = list(Beams.objects.values_list(
+        channelList = list(Channels.objects.values_list(
                     'Designation', flat=True))
 
         # Always fetch materialList

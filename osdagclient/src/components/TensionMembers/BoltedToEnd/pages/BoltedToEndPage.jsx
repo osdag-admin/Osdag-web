@@ -92,9 +92,9 @@ function BoltedToEndPage() {
   const [output, setOutput] = useState(null);
   const [logs, setLogs] = useState(null);
   const [displayOutput, setDisplayOutput] = useState();
-  const [boltDiameterSelect, setBoltDiameterSelect] = useState("Customized");
-  const [thicknessSelect, setThicknessSelect] = useState("Customized");
-  const [propertyClassSelect, setPropertyClassSelect] = useState("Customized");
+  const [boltDiameterSelect, setBoltDiameterSelect] = useState("All");
+  const [thicknessSelect, setThicknessSelect] = useState("All");
+  const [propertyClassSelect, setPropertyClassSelect] = useState("All");
   const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
@@ -138,7 +138,7 @@ function BoltedToEndPage() {
     axial_force: "60",
     module: "Tension Member Bolted Design",
     plate_thickness: [],
-    section_designation: "20 20 * 3",
+    section_designation: [],
     material: "E 250 (Fe 410 W)A",
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
@@ -153,9 +153,10 @@ function BoltedToEndPage() {
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
   const [plateThicknessModal, setPlateThicknessModal] = useState(false);
   const [allSelected, setAllSelected] = useState({
-    plate_thickness: false,
-    bolt_diameter: false,
-    bolt_grade: false,
+    plate_thickness: true,
+    bolt_diameter: true,
+    bolt_grade: true,
+    section_designation: true,
   });
 
   const [renderBoolean, setRenderBoolean] = useState(false);
@@ -203,19 +204,40 @@ function BoltedToEndPage() {
   // Handle bolt diameter select
   const handleSelectChangeBoltDiameter = (value) => {
     if (value === "Customized") {
-      if (inputs.bolt_diameter.length != 0) {
-        setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter });
-      } else {
-        setInputs({ ...inputs, bolt_diameter: [] });
-      }
       setBoltDiameterSelect("Customized");
       setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
     } else {
       setBoltDiameterSelect("All");
       setAllSelected({ ...allSelected, bolt_diameter: true });
+      // Set all bolt diameters except "All"
+      setInputs({ ...inputs, bolt_diameter: boltDiameterList.filter(x => x !== "All") });
       setModalOpen(false);
     }
+  };
+
+  // Add new state for section designation selection
+  const [sectionDesignationSelect, setSectionDesignationSelect] = useState("All");
+  const [isModalSectionDesignationOpen, setModalSectionDesignationOpen] = useState(false);
+  const [selectedSectionDesignationItems, setSelectedSectionDesignationItems] = useState([]);
+
+  // Update handleSelectSectionDesignation to match diameter/thickness logic
+  const handleSelectSectionDesignation = (value) => {
+    if (value === "Customized") {
+      setSectionDesignationSelect("Customized");
+      setAllSelected({ ...allSelected, section_designation: false });
+      setModalSectionDesignationOpen(true);
+    } else {
+      setSectionDesignationSelect("All");
+      setAllSelected({ ...allSelected, section_designation: true });
+      const list = selectedProfile.includes("Angle") ? angleList : channelList;
+      setInputs({ ...inputs, section_designation: list });
+      setModalSectionDesignationOpen(false);
+    }
+  };
+  const handleTransferChangeSectionDesignation = (nextTargetKeys) => {
+    setSelectedSectionDesignationItems(nextTargetKeys);
+    setInputs({ ...inputs, section_designation: nextTargetKeys });
   };
 
   // Handle plate thickness select
@@ -318,13 +340,51 @@ function BoltedToEndPage() {
       return;
     }
 
-    // Helper to safely get value or null
-    const safeValue = (value) =>
-      value !== undefined && value !== null && value.length > 0 ? value : null;
+
+    const getArrayParam = (allSelectedFlag, fullList, selectedList) => {
+      if (allSelectedFlag) {
+        // Exclude "All" if present in the list
+        return fullList.filter(item => item !== "All");
+      }
+      // Ensure always array
+      if (Array.isArray(selectedList)) {
+        return selectedList.filter(item => item !== "All");
+      }
+      return [selectedList].filter(item => item !== "All");
+    };
 
     param = {
+      "Bolt.Bolt_Hole_Type": String(inputs.bolt_hole_type),
+      "Bolt.Diameter": getArrayParam(allSelected.bolt_diameter, boltDiameterList, inputs.bolt_diameter),
+      "Bolt.Grade": getArrayParam(allSelected.bolt_grade, propertyClassList, inputs.bolt_grade),
+      "Bolt.Slip_Factor": String(inputs.bolt_slip_factor),
+      "Bolt.Type": String(inputs.bolt_type),
+      "Connector.Material": String(inputs.connector_material),
+      "Material": String(inputs.material),
+      "Member.Material": String(inputs.material),
+      "Design.Design_Method": String(inputs.design_method),
+      "Detailing.Corrosive_Influences": String(inputs.detailing_corr_status),
+      "Detailing.Edge_type": String(inputs.detailing_edge_type),
+      "Detailing.Gap": String(inputs.detailing_gap),
+      "Load.Axial": String(inputs.axial_force),
+      "Member.Designation": getArrayParam(
+        allSelected.section_designation,
+        selectedProfile.includes("Angle") ? angleList : channelList,
+        inputs.section_designation
+      ),
+      "Member.Length": String(inputs.length),
+      "Member.Profile": String(inputs.section_profile),
+      "Conn_Location": String(inputs.location),
+      "Module": "Tension Member Bolted Design",
+      "Connector.Plate.Thickness_List": getArrayParam(allSelected.plate_thickness, thicknessList, inputs.plate_thickness),
+    };
+
+    var param1 = {
       "Bolt.Bolt_Hole_Type": "Standard",
-      "Bolt.Diameter": ['8', '10', '12', '16', '20', '24', '30', '36', '42', '48', '56', '64', '14', '18', '22', '27', '33', '39', '45', '52', '60'],
+      "Bolt.Diameter": [
+        '8', '10', '12', '16', '20', '24', '30', '36', '42', '48', '56', '64',
+        '14', '18', '22', '27', '33', '39', '45', '52', '60'
+      ],
       "Bolt.Grade": ['3.6'],
       "Bolt.Slip_Factor": "0.3",
       "Bolt.Type": "Bearing Bolt",
@@ -336,13 +396,19 @@ function BoltedToEndPage() {
       "Detailing.Edge_type": "Sheared or hand flame cut",
       "Detailing.Gap": "0",
       "Load.Axial": "60",
-      "Member.Designation": "40 x 20 x 3",
+      "Member.Designation": ["40 x 20 x 3"],
       "Member.Length": "1250",
       "Member.Profile": "Back to Back Angles",
       "Conn_Location": "Long Leg",
       "Module": "Tension Member Design - Bolted to End Gusset",
-      "Connector.Plate.Thickness_List": ['8', '10', '12', '14', '16', '18', '20', '22', '25', '28', '32', '36', '40', '45', '50', '56', '63', '75', '80', '90', '100', '110', '120']
+      "Connector.Plate.Thickness_List": [
+        '8', '10', '12', '14', '16', '18', '20', '22', '25', '28', '32', '36',
+        '40', '45', '50', '56', '63', '75', '80', '90', '100', '110', '120'
+      ]
     };
+
+    console.log("param inputed: ", param);
+    console.log("param hardcoded: ", param1);
 
     createDesign(param, "Tension-Member-Bolted-Design");
     setDisplayOutput(true);
@@ -418,7 +484,7 @@ function BoltedToEndPage() {
       alert("Please submit the design first.");
       return;
     }
-
+    console.log("inputs.section_designation: ", inputs.section_designation);
     data = {
       "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
       "Bolt.Diameter": allSelected.bolt_diameter
@@ -437,7 +503,6 @@ function BoltedToEndPage() {
       "Detailing.Edge_type": inputs.detailing_edge_type,
       "Detailing.Gap": inputs.detailing_gap,
       "Load.Axial": inputs.axial_force || "",
-      'Material': inputs.material,
       "Member.Designation": inputs.section_designation,
       "Member.Length": inputs.length,
       "Member.Profile": inputs.section_profile,
@@ -472,7 +537,7 @@ function BoltedToEndPage() {
       bolt_diameter: inputs.bolt_diameter,
       bolt_grade: inputs.bolt_grade,
       bolt_type: "Bearing Bolt",
-      section_designation: "Select Section",
+      section_designation: "All",
       length: "",
       axial_force: "",
       plate_thickness: inputs.plate_thickness,
@@ -483,11 +548,12 @@ function BoltedToEndPage() {
       plate_thickness: false,
       bolt_diameter: false,
       bolt_grade: false,
+      section_designation: false,
     });
 
-    setBoltDiameterSelect("Customized");
-    setPropertyClassSelect("Customized");
-    setThicknessSelect("Customized");
+    setBoltDiameterSelect("All");
+    setPropertyClassSelect("All");
+    setThicknessSelect("All");
 
     // Reset CAD model and output
     setRenderBoolean(false);
@@ -647,35 +713,40 @@ function BoltedToEndPage() {
 
                 <div className="component-grid-align">
                   <h4>Section Designation*</h4>
-
-                  {console.log("desination", angleList)}
                   <Select
-                    value={inputs.member_designation || "All"}
-                    onSelect={(value) =>
-                      setInputs({ ...inputs, member_designation: value })
-                    }
+                    value={sectionDesignationSelect}
+                    onSelect={handleSelectSectionDesignation}
                   >
-                    <Option key="-1" value="All">
-                      All
-                    </Option>
-                    {
-                      selectedProfile.includes("Angle") ? (
-                        angleList.map((item, index) => (
-                          <Option key={index} value={item}>
-                            {item}
-                          </Option>
-                        ))
-                      ) : (
-                        channelList.map((item, index) => (
-                          <Option key={index} value={item}>
-                            {item}
-                          </Option>
-                        ))
-                      )
-                    }
-
+                    <Option value="All">All</Option>
+                    <Option value="Customized">Customized</Option>
                   </Select>
                 </div>
+
+                <Modal
+                  open={isModalSectionDesignationOpen}
+                  onCancel={() => setModalSectionDesignationOpen(false)}
+                  footer={null}
+                  width={500}
+                  height={500}
+                >
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={
+                        (selectedProfile.includes("Angle") ? angleList : channelList).map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))
+                      }
+                      targetKeys={selectedSectionDesignationItems}
+                      onChange={handleTransferChangeSectionDesignation}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
+                  </div>
+                </Modal>
 
                 <div className="component-grid-align">
                   <h4>Material *</h4>
@@ -754,8 +825,8 @@ function BoltedToEndPage() {
                     onSelect={handleSelectChangeBoltDiameter}
                     value={boltDiameterSelect}
                   >
-                    <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
+                    <Option value="Customized">Customized</Option>
                   </Select>
                 </div>
 
@@ -810,8 +881,8 @@ function BoltedToEndPage() {
                     onSelect={handleSelectChangePropertyClass}
                     value={propertyClassSelect}
                   >
-                    <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
+                    <Option value="Customized">Customized</Option>
                   </Select>
                 </div>
 
@@ -851,8 +922,8 @@ function BoltedToEndPage() {
                 <div className="component-grid-align">
                   <h4>Thickness (mm)</h4>
                   <Select onSelect={handleAllSelectPT} value={thicknessSelect}>
-                    <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
+                    <Option value="Customized">Customized</Option>
                   </Select>
                 </div>
 

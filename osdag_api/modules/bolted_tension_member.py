@@ -1,8 +1,10 @@
+from Common import KEY_DISP_TENSION_BOLTED
 from osdag_api.validation_utils import validate_arr, validate_num, validate_string
 from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
-import osdag_api.modules.bolted_tension_member as tbm
+import osdag_api.modules.tension_member_common as tbm
 from OCC.Core import BRepTools
+from OCC.Core.Message import Message_ProgressRange
 from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
 from OCC.Core.IGESControl import IGESControl_Writer
 from cad.common_logic import CommonDesignLogic
@@ -244,7 +246,6 @@ def create_module() -> Tension_bolted:
 
 
 def create_from_input(input_values: Dict[str, Any]) -> Tension_bolted:
-    print("in bolted_tension_member.py: create_from_input called with input_values:", input_values)
     try:
         module = create_module()
         print("in bolted_tension_member.py: Module created successfully")
@@ -278,13 +279,13 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     print("in bolted_tension_member.py: raw_output_text:", raw_output_text)
     raw_output_spacing = module.spacing(True)
     print("in bolted_tension_member.py: raw_output_spacing:", raw_output_spacing)
-    raw_output_capacities = module.capacities(True)
-    print("in bolted_tension_member.py: raw_output_capacities:", raw_output_capacities)
-    raw_output_bolt_capacity = module.bolt_capacity_details(True)
-    print("in bolted_tension_member.py: raw_output_bolt_capacity:", raw_output_bolt_capacity)
-    logs = module.logs
-    print("in bolted_tension_member.py: logs:", logs)
-    raw_output = raw_output_capacities + raw_output_spacing + raw_output_text + raw_output_bolt_capacity
+    # raw_output_capacities = module.capacities(True)
+    # print("in bolted_tension_member.py: raw_output_capacities:", raw_output_capacities)
+    # raw_output_bolt_capacity = module.bolt_capacity_details(True)
+    # print("in bolted_tension_member.py: raw_output_bolt_capacity:", raw_output_bolt_capacity)
+    # logs = module.logs
+    # print("in bolted_tension_member.py: logs:", logs)
+    raw_output = raw_output_spacing + raw_output_text
     print("in bolted_tension_member.py: raw_output combined:", raw_output)
     for param in raw_output:
         print("in bolted_tension_member.py: Processing param:", param)
@@ -299,20 +300,20 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             }
             print(f"in bolted_tension_member.py: Added output[{key}] = {output[key]}")
     print("in bolted_tension_member.py: Final output dict:", output)
-    return output, logs
+    return output, []
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
-    print("in bolted_tension_member.py: create_cad_model called with input_values:", input_values, "section:", section, "session:", session)
     if section not in ("Model", "Beam", "Column", "Plate"):
         print("in bolted_tension_member.py: Invalid section:", section)
         raise InvalidInputTypeError("section", "'Model', 'Beam', 'Column' or 'Plate'")
     module = create_from_input(input_values)
     print("in bolted_tension_member.py: module from input values:", module)
-    print("in bolted_tension_member.py: Connectivity:", module.connectivity)
+    # print("in bolted_tension_member.py: Connectivity:", module.connectivity)
     print("in bolted_tension_member.py: module:", module.module)
     print("in bolted_tension_member.py: Mainmodule:", module.mainmodule)
     try:
-        cld = CommonDesignLogic(None, '', module.module, module.mainmodule)
+        cld = CommonDesignLogic(None, '', KEY_DISP_TENSION_BOLTED, module.mainmodule)
+        cld.TObj = cld.createTensionCAD()
         print("in bolted_tension_member.py: CommonDesignLogic instance created")
     except Exception as e:
         print("in bolted_tension_member.py: error in cld e:", e)
@@ -337,7 +338,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     file_path = "file_storage/cad_models/" + file_name
     print("in bolted_tension_member.py: brep file path in create_cad_model:", file_path)
     try:
-        BRepTools.breptools.Write(model, file_path)
+        BRepTools.breptools.Write(model, file_path, Message_ProgressRange())
         print("in bolted_tension_member.py: BRepTools.breptools.Write called successfully")
         if section == "Model":
             step_writer = STEPControl_Writer()

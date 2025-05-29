@@ -2282,6 +2282,7 @@ class CommonDesignLogic(object):
 
         final_model = None
         cadlist = []
+        print("ABhiijth")
         print("self.mainmodule", self.mainmodule)
         print("self.Component", self.component)
         print("self.connection", self.connection)
@@ -2387,7 +2388,7 @@ class CommonDesignLogic(object):
         elif self.mainmodule == "Member":
             print("Main module is Member", self.connection)
             if self.connection == KEY_DISP_TENSION_BOLTED or self.connection == KEY_DISP_TENSION_WELDED:
-                print("Connection is ", self.connection)
+                print("Connection is Tension Bolted or Welded", self.connection)
                 if self.component == "Member":
                     
                     final_model = self.TObj.get_members_models()

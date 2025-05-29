@@ -31,7 +31,6 @@ class Tension_bolted(Member):
         super(Tension_bolted, self).__init__()
         self.design_status = False
         self.mainmodule = "Member"
-        self.logs = []
 
     ###############################################
     # Design Preference Functions Start
@@ -875,7 +874,6 @@ class Tension_bolted(Member):
         return self.section_size
 
     def max_section(self, design_dictionary, sizelist):
-        print("In Tension_bolted.max_section() function. ")
         "selecting components class based on the section passed "
         sec_area = {}
         sec_gyr = {}
@@ -892,9 +890,7 @@ class Tension_bolted(Member):
                     sec_depth.append(self.section.min_leg)
 
             elif design_dictionary[KEY_SEC_PROFILE] in ['Back to Back Angles', 'Star Angles']:
-                print("In Tension_bolted.max_section() function. Back to Back Angles or Star Angles", design_dictionary[KEY_SEC_MATERIAL])
                 self.section = Angle(designation=section, material_grade=design_dictionary[KEY_SEC_MATERIAL])
-                print("Section designation1:", self.section.designation)
                 self.min_rad_gyration_calc(designation=section, material_grade=design_dictionary[KEY_SEC_MATERIAL],
                                            key=design_dictionary[KEY_SEC_PROFILE],
                                            subkey=design_dictionary[KEY_LOCATION], D_a=self.section.a,
@@ -915,7 +911,6 @@ class Tension_bolted(Member):
                                            B_b=self.section.flange_width, T_t=self.section.flange_thickness,t = self.section.web_thickness)
                 sec_gyr[self.section.designation] = self.min_radius_gyration
                 sec_depth.append(self.section.depth)
-            print("Section designation:", self.section.designation)
             sec_area[self.section.designation] = self.section.area
 
 

@@ -45,7 +45,10 @@ class CADGeneration(View):
         beam_beam_end_plate_cookie_id = request.COOKIES.get("beam_beam_end_plate_connection_session")
         tension_member_bolted_cookie_id = request.COOKIES.get("tension_member_bolted_design_session")
         print("cookieeeeee ", request.COOKIES)
+        tension_member_bolted_cookie_id = request.COOKIES.get("tension_member_bolted_design_session")
+        print("cookieeeeee ", request.COOKIES)
         #Ensure that at least one session exists
+        if not fin_plate_cookie_id and not cleat_angle_cookie_id and not seated_angle_cookie_id and not end_plate_cookie_id and not cover_plate_bolted_cookie_id and not beam_beam_end_plate_cookie_id and not cover_plate_welded_cookie_id and not beam_column_end_plate_cookie_id and not tension_member_bolted_cookie_id:
         if not fin_plate_cookie_id and not cleat_angle_cookie_id and not seated_angle_cookie_id and not end_plate_cookie_id and not cover_plate_bolted_cookie_id and not beam_beam_end_plate_cookie_id and not cover_plate_welded_cookie_id and not beam_column_end_plate_cookie_id and not tension_member_bolted_cookie_id:
             return JsonResponse({"status": "error", "message": "Please open a module"}, status=400)
     
@@ -126,8 +129,7 @@ class CADGeneration(View):
         elif session_type == "BeamToColumnEndPlate":
             sections = ["Model", "Beam", "Column", "Connector"]
         elif session_type == "TensionMemberBoltedDesign":
-            # sections = ["Plate"]
-            sections = ["Member","Model","Plate", "Endplate"]
+            sections = ["Model", "Member", "Plate"]
         else:
             return JsonResponse({"status": "error", "message": "Unknown module type"}, status=400)
         

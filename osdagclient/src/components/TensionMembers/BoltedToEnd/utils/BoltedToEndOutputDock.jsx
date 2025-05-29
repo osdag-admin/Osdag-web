@@ -39,36 +39,40 @@ function BoltedToEndOutputDock({ output }) {
                 {Object.keys(output).map((key, i) => {
                     if (key === "NULL") return null;
                     return (
-                        <div key={i}>
-                            <h3>{key}</h3>
-                            {output[key].map((item, index) => {
-                                if (item.label === "Pattern" || item.label === "Spacing Details") {
-                                    return (
-                                        <div key={index} className="output-item">
-                                            <div className="output-label">
-                                                <strong>{item.label}</strong>
+                        <div key={i} className="component-grid">
+                            <div className="component-grid-align">
+                                <h3>{key}</h3>
+                            </div>
+                            <div className="details-main-body">
+                                {output[key].map((item, index) => {
+                                    if (item.label === "Pattern" || item.label === "Spacing Details") {
+                                        return (
+                                            <div key={index} className="output-item">
+                                                <div className="output-label">
+                                                    <strong>{item.label}</strong>
+                                                </div>
+                                                <div className="output-value">
+                                                    <Button
+                                                        className="pattern-btn"
+                                                        onClick={() => handlePatternClick(item.label, item.val)}
+                                                    >
+                                                        {item.label}
+                                                    </Button>
+                                                </div>
                                             </div>
-                                            <div className="output-value">
-                                                <Button
-                                                    className="pattern-btn"
-                                                    onClick={() => handlePatternClick(item.label, item.val)}
-                                                >
-                                                    {item.label}
-                                                </Button>
+                                        );
+                                    } else {
+                                        return (
+                                            <div key={index} className="output-item">
+                                                <div className="output-label">
+                                                    <strong>{item.label}</strong>
+                                                </div>
+                                                <div className="output-value">{item.val}</div>
                                             </div>
-                                        </div>
-                                    );
-                                } else {
-                                    return (
-                                        <div key={index} className="output-item">
-                                            <div className="output-label">
-                                                <strong>{item.label}</strong>
-                                            </div>
-                                            <div className="output-value">{item.val}</div>
-                                        </div>
-                                    );
-                                }
-                            })}
+                                        );
+                                    }
+                                })}
+                            </div>
                         </div>
                     );
                 })}
