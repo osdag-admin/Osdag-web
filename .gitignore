@@ -56,8 +56,4 @@ file_storage/company_logo/*.png
 file_storage/input_values_files/*.osi
 conda_packages
 
-# ignore the brep files
-file_storage/cad_models/*.brep
-file_storage/cad_models/*.obj
-file_storage/cad_models/*.iges
-file_storage/cad_models/*.step
+file_storage/cad_models/*

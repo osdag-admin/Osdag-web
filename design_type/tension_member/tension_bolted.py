@@ -1068,6 +1068,7 @@ class Tension_bolted(Member):
                 self.sizelist.remove(previous_size)
             else:
                 pass
+
         for selectedsize in self.sizelist:
             
             self.section_size = self.select_section(design_dictionary,selectedsize)

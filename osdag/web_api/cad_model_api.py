@@ -85,8 +85,11 @@ class CADGeneration(View):
         
         try:
             design_session = Design.objects.get(cookie_id=cookie_id)
+            print(f"Design session found: {design_session}")
             module_api = get_module_api(design_session.module_id)
+            print(f"Module API: {module_api}")
             input_values = design_session.input_values
+            print(f"Input values: {input_values}")
         except Design.DoesNotExist:
             return JsonResponse({"status": "error", "message": "Design session not found"}, status=404)
         except Exception as e:

@@ -171,11 +171,8 @@ class CommonDesignLogic(object):
         self.display = display
         self.mainmodule = mainmodule
         self.connection = connection
-        self.module_class = mainmodule
-        print(self.connection)
-
-
         self.connectivityObj = None
+        self.module_class = mainmodule
         self.CPObj = None
         self.folder = folder
 
@@ -685,7 +682,6 @@ class CommonDesignLogic(object):
         '''
         
         B = self.module_class
-
         if self.connection == KEY_DISP_BEAMCOVERPLATE:
             # B = BeamCoverPlate()
             # beam_data = self.fetchBeamPara()  # Fetches the beam dimensions
@@ -1706,7 +1702,7 @@ class CommonDesignLogic(object):
         return tensionCAD
 
     def display_3DModel(self, component, bgcolor):
-        print("Display 3D Model")
+
         self.component = component
 
         self.display.EraseAll()
@@ -2018,11 +2014,10 @@ class CommonDesignLogic(object):
 
         else:
             if self.connection == KEY_DISP_TENSION_BOLTED:
-                print("commonlogic.py: Tension Bolted Connection Display")
                 self.T = self.module_class()
-                print("commonlogic.py: Tension Bolted Connection Display", self.T.sec_profile)
+                print("Creating Tension CAD for connection type: ", self.connection)
                 self.TObj = self.createTensionCAD()
-                print("commonlogic.py: Tension Bolted Connection Display", self.TObj.sec_profile)
+                print("TObj created: ", self.TObj)
 
                 member = self.TObj.get_members_models()
                 print("Member models: ", member)
@@ -2315,7 +2310,7 @@ class CommonDesignLogic(object):
                         final_model = self.CPObj.get_only_beams_Models()
                     else:
                         final_model = self.CPObj.get_beam_models()
-                elif self.component == "Connector":                    
+                elif self.component == "Connector":
                     if self.connection == KEY_DISP_BEAMCOVERPLATE:
                         cadlist = [self.CPObj.get_flangewebplatesModel(), self.CPObj.get_nut_bolt_arrayModels()]
                         if B.preference != 'Outside':
@@ -2394,6 +2389,7 @@ class CommonDesignLogic(object):
             if self.connection == KEY_DISP_TENSION_BOLTED or self.connection == KEY_DISP_TENSION_WELDED:
                 print("Connection is ", self.connection)
                 if self.component == "Member":
+                    
                     final_model = self.TObj.get_members_models()
                 elif self.component == "Plate":
                     if self.connection == KEY_DISP_TENSION_BOLTED:
@@ -2411,15 +2407,12 @@ class CommonDesignLogic(object):
                 else:
                     print("self.TObj: ", self.TObj.shape)   
                     final_model = self.TObj.shape
-                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.        if cadlist and isinstance(cadlist, list) and len(cadlist) > 1:
-            print("Creating final model by fusing multiple components")
-            print("CADLIST:", cadlist)
+                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.
+
+        if cadlist and len(cadlist) > 1:
             final_model = cadlist[0]
-            print("Final Model:", final_model)
             for model in cadlist[1:]:
                 final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
-        elif cadlist and isinstance(cadlist, list) and len(cadlist) == 1:
-            final_model = cadlist[0]
 
         return final_model
 
@@ -2453,5 +2446,3 @@ class CommonDesignLogic(object):
 # if __name__!= "__main__":
 #
 #     CommonDesignLogic()
-
-
