@@ -52,7 +52,6 @@ export const InputSection = ({
   }, [extraState.selectedOption]);
 
   const handleCustomizableSelect = (field, value) => {
-
     if (value === "Customized") {
       if (inputs[field.key].length !== 0) {
         setInputs({ ...inputs, [field.key]: inputs[field.key] });

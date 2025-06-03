@@ -282,7 +282,6 @@ export const useEngineeringModule = (moduleConfig) => {
             formatedOutput[newKey] = { label, val };
           }
         }
-
         setOutput(formatedOutput);
       } catch (error) {
         console.log(error);
