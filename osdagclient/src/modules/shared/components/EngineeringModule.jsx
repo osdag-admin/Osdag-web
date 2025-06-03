@@ -238,6 +238,7 @@ export const EngineeringModule = ({
         </div>
       </div>
 
+      {/* Designreport separate modal */}
       <DesignReportModal
         isOpen={createDesignReportBool}
         onCancel={handleCancelDesignReport}
