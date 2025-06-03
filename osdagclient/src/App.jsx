@@ -27,10 +27,9 @@ import jwt_decode from 'jwt-decode';
 import EndPlate from './components/shearConnection/EndPlate';
 import CleatAngle from './components/shearConnection/CleatAngle';
 import SeatedAngle from './components/shearConnection/SeatedAngle';
-import CoverPlateBolted from "./components/momentConnection/beamToBeamSplice/CoverPlateBolted";
-import BeamBeamEndPlate from "./components/momentConnection/beamToBeamSplice/BeamBeamEndPlate";
+import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
+import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
 import BoltedToEndPage from './components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage';
-
 import CoverPlateWelded from "./components/momentConnection/beamToBeamSplice/CoverPlateWelded";
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
 
