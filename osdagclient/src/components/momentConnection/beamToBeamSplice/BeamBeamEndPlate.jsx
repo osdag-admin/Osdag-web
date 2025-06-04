@@ -25,12 +25,6 @@ import { useFrame } from "@react-three/fiber";
 import DesignPrefSections from "../../DesignPrefSections";
 import CustomSectionModal from "../../CustomSectionModal";
 
-// drop down
-import DropdownMenu from "../../DropdownMenu";
-
-// crypto packages
-import { decode as base64_decode, encode as base64_encode } from "base-64";
-import { UserContext } from "../../../context/UserState";
 import MomentDropdownMenu from "../../MomentDropDownMenu";
 import ScreenshotCapture from "../../ScreenShotCapture";
 import BeamBeamEndplateOutputDock from "../../BeamBeamEndPlateOutputDock";

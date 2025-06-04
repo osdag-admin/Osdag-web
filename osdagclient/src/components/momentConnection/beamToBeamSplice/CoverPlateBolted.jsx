@@ -16,20 +16,10 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import { Html, PerspectiveCamera } from "@react-three/drei";
 import useViewCamera from "./btobViewCamera";
 
-import { useFrame } from "@react-three/fiber";
-
 // import assets
-import cad_background from "../../../assets/cad_empty_image.png";
-import { Tube } from "@react-three/drei";
 import DesignPrefSections from "../../DesignPrefSections";
 import CustomSectionModal from "../../CustomSectionModal";
 
-// drop down
-import DropdownMenu from "../../DropdownMenu";
-
-// crypto packages
-import { decode as base64_decode, encode as base64_encode } from "base-64";
-import { UserContext } from "../../../context/UserState";
 import CoverPlateBoltedOutputDock from "../../CoverPlateBoltedOutputDock";
 import MomentDropdownMenu from "../../MomentDropDownMenu";
 import ScreenshotCapture from "../../ScreenShotCapture";
@@ -582,19 +572,6 @@ function CoverPlateBolted() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }
-  };
-
-  // Spacing model
-  const [spacingModel, setSpacingModel] = useState(true);
-
-  const handleDialogSpacing = (value) => {
-    alert("ji");
-
-    if (value === "Spacing") {
-      setSpacingModel(true);
-    } else {
-      setSpacingModel(false);
     }
   };
 
@@ -1446,13 +1423,13 @@ function CoverPlateBolted() {
         </div>
       </div>
 
-      <CustomSectionModal
+      {/* <CustomSectionModal
         showModal={showModal}
         setShowModal={setShowModal}
         setInputValues={setInputs}
         inputValues={inputs}
         type="connector"
-      />
+      /> */}
 
       {displayPDF ? (
         <div
