@@ -303,9 +303,9 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     return output, []
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
-    if section not in ("Model", "Beam", "Column", "Plate"):
+    if section not in ("Model", "Member", "Plate", "Endplate"):
         print("in bolted_tension_member.py: Invalid section:", section)
-        raise InvalidInputTypeError("section", "'Model', 'Beam', 'Column' or 'Plate'")
+        raise InvalidInputTypeError("section","Endplate")
     module = create_from_input(input_values)
     print("in bolted_tension_member.py: module from input values:", module)
     # print("in bolted_tension_member.py: Connectivity:", module.connectivity)
@@ -313,6 +313,8 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     print("in bolted_tension_member.py: Mainmodule:", module.mainmodule)
     try:
         cld = CommonDesignLogic(None, '', KEY_DISP_TENSION_BOLTED, module.mainmodule)
+        cld.module_class = module
+        print("in bolted_tension_member.py: cld.module_class set to:", cld.module_class)
         cld.TObj = cld.createTensionCAD()
         print("in bolted_tension_member.py: CommonDesignLogic instance created")
     except Exception as e:

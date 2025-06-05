@@ -45,7 +45,7 @@ class TensionMemberBoltedInputData(InputDataBase):
         if boltDiameter == 'Customized':
             boltList = list(Bolt.objects.values_list('Bolt_diameter', flat=True))
             boltList.sort()
-            response['boltDiameterList'] = boltList
+            response['boltList'] = boltList
 
         # Add propertyClassList if requested
         if propertyClass == 'Customized':

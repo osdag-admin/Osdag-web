@@ -88,11 +88,8 @@ class CADGeneration(View):
         
         try:
             design_session = Design.objects.get(cookie_id=cookie_id)
-            print(f"Design session found: {design_session}")
             module_api = get_module_api(design_session.module_id)
-            print(f"Module API: {module_api}")
             input_values = design_session.input_values
-            print(f"Input values: {input_values}")
         except Design.DoesNotExist:
             return JsonResponse({"status": "error", "message": "Design session not found"}, status=404)
         except Exception as e:
@@ -129,7 +126,8 @@ class CADGeneration(View):
         elif session_type == "BeamToColumnEndPlate":
             sections = ["Model", "Beam", "Column", "Connector"]
         elif session_type == "TensionMemberBoltedDesign":
-            sections = ["Model", "Member", "Plate"]
+            # sections = ["Plate"]
+            sections = ["Member","Model","Plate", "Endplate"]
         else:
             return JsonResponse({"status": "error", "message": "Unknown module type"}, status=400)
         

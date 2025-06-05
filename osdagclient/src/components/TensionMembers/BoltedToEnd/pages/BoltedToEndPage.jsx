@@ -30,7 +30,7 @@ import DesignPrefSections from "../../../DesignPrefSections";
 import CustomSectionModal from "../../../CustomSectionModal";
 
 // drop down
-import DropdownMenu from "../../../DropdownMenu";
+import TensionDropdownMenu from "../../../TensionDropdownMenu";
 
 // crypto packages
 import ScreenshotCapture from "../../../ScreenShotCapture";
@@ -64,6 +64,7 @@ const MenuItems = [
       { name: "Model" },
       { name: "Member" },
       { name: "Plate" },
+      { name: "Endplate" },
       { name: "Change Background" },
     ],
   },
@@ -132,7 +133,7 @@ function BoltedToEndPage() {
     bolt_grade: [],
     bolt_type: "Bearing Bolt",
     connector_material: "E 250 (Fe 410 W)A",
-    section_profile: "Back to Back Angles",
+    section_profile: "Angles",
     location: "Long Leg",
     length: "1250",
     axial_force: "60",
@@ -163,7 +164,7 @@ function BoltedToEndPage() {
   const [modelKey, setModelKey] = useState(0);
   const [loading, setLoading] = useState(false);
   const [selectedView, setSelectedView] = useState("Model");
-  const options = ["Model", "Member", "Plate"];
+  const options = ["Model", "Member", "Plate", "Endplate"];
   const [screenshotTrigger, setScreenshotTrigger] = useState(false);
   const triggerScreenshotCapture = () => {
     setScreenshotTrigger(true);
@@ -175,13 +176,13 @@ function BoltedToEndPage() {
 
 
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (location.pathname != "/design/members/tension_bolted") {
-  //       deleteSession("Tension Member Bolted Design");
-  //     }
-  //   };
-  // }, []);
+  useEffect(() => {
+    return () => {
+      if (location.pathname != "design/tension-member/bolted_to_end_gusset") {
+        deleteSession("Tension Member Bolted Design");
+      }
+    };
+  }, []);
 
   // Handle property class select
   const handleSelectChangePropertyClass = (value) => {
@@ -230,7 +231,7 @@ function BoltedToEndPage() {
     } else {
       setSectionDesignationSelect("All");
       setAllSelected({ ...allSelected, section_designation: true });
-      const list = selectedProfile.includes("Angle") ? angleList : channelList;
+      const list = selectedProfile && selectedProfile.includes("Angle") ? angleList : channelList;
       setInputs({ ...inputs, section_designation: list });
       setModalSectionDesignationOpen(false);
     }
@@ -622,7 +623,7 @@ function BoltedToEndPage() {
       <div className="module_base">
         <div className="module_nav">
           {MenuItems.map((item, index) => (
-            <DropdownMenu
+            <TensionDropdownMenu
               key={index}
               label={item.label}
               dropdown={item.dropdown}
@@ -733,7 +734,7 @@ function BoltedToEndPage() {
                     <h3>Customized</h3>
                     <Transfer
                       dataSource={
-                        (selectedProfile.includes("Angle") ? angleList : channelList).map((label) => ({
+                        (selectedProfile && selectedProfile.includes("Angle") ? angleList : channelList || []).map((label) => ({
                           key: label,
                           label: <h5>{label}</h5>,
                         }))
