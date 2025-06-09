@@ -91,6 +91,7 @@ export const useEngineeringModule = (moduleConfig) => {
   // Initialize session
   useEffect(() => {
     createSession(moduleConfig.sessionName);
+    console.log("Session created for:", moduleConfig.sessionName);
     return () => {
       if (location.pathname !== moduleConfig.routePath) {
         deleteSession(moduleConfig.sessionName);
@@ -334,7 +335,7 @@ export const useEngineeringModule = (moduleConfig) => {
     setSelectedView,
     screenshotTrigger,
     setScreenshotTrigger,
-    extraState, 
+    extraState,
     setExtraState,
 
     // Actions

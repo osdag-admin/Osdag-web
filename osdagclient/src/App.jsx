@@ -29,8 +29,9 @@ import CleatAngle from "./components/shearConnection/CleatAngle";
 import SeatedAngle from "./components/shearConnection/SeatedAngle";
 import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
 import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
-import CoverPlateWelded from "./components/momentConnection/beamToBeamSplice/CoverPlateWelded";
-import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
+import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
+//import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
+import BeamToColumnEndPlate from "./modules/beamToColumnEndPlate/BeamToColumnEndPlate";
 
 let renderedOnce = false
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Select, Input } from 'antd';
+import React, { useState, useEffect } from "react";
+import { Select, Input } from "antd";
 import FRM from "../../../assets/flush_ep.png";
 import EOWIM from "../../../assets/owe_ep.png";
 import EBWRM from "../../../assets/extended.png";
@@ -7,19 +7,18 @@ import ErrorImg from "../../../assets/notSelected.png";
 
 const { Option } = Select;
 
-export const InputSection = ({ 
-  section, 
-  inputs, 
-  setInputs, 
+export const InputSection = ({
+  section,
+  inputs,
+  setInputs,
   selectionStates,
   updateSelectionState,
   updateModalState,
   toggleAllSelected,
   contextData,
   extraState = {},
-  setExtraState = () => {}
+  setExtraState = () => {},
 }) => {
-  
   const [imageSource, setImageSource] = useState("");
 
   // Handle end plate type selection with image
@@ -53,32 +52,54 @@ export const InputSection = ({
 
   const renderField = (field) => {
     switch (field.type) {
-      case 'select':
-        if (field.options === 'beamList') {
+      case "select":
+        if (field.options === "beamList") {
           return (
             <Select
               value={inputs[field.key] || contextData.beamList[2]}
               onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
             >
               {contextData.beamList?.map((item, index) => (
-                <Option key={index} value={item}>{item}</Option>
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
               ))}
             </Select>
           );
-        } else if (field.options === 'materialList') {
+        } else if (field.options === "materialList") {
           return (
             <Select
               value={inputs[field.key] || contextData.materialList[0].Grade}
               onSelect={(value) => {
                 if (field.onChange) {
-                  field.onChange(value, inputs, setInputs, contextData.materialList);
+                  field.onChange(
+                    value,
+                    inputs,
+                    setInputs,
+                    contextData.materialList
+                  );
                 } else {
                   setInputs({ ...inputs, [field.key]: value });
                 }
               }}
             >
-              {contextData.materialList.map((item, index) => (
-                <Option key={index} value={item.id}>{item.Grade}</Option>
+              {contextData.materialList?.map((item, index) => (
+                <Option key={index} value={item.id}>
+                  {item.Grade}
+                </Option>
+              ))}
+            </Select>
+          );
+        } else if (field.options === "columnList") {
+          return (
+            <Select
+              value={inputs[field.key] || contextData.columnList[0]}
+              onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
+            >
+              {contextData.columnList?.map((item, index) => (
+                <Option key={index} value={item}>
+                  {item}
+                </Option>
               ))}
             </Select>
           );
@@ -89,9 +110,9 @@ export const InputSection = ({
               onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
             >
               {field.options.map((option, index) => (
-                <Option 
-                  key={index} 
-                  value={option.value || option} 
+                <Option
+                  key={index}
+                  value={option.value || option}
                   disabled={option.disabled}
                 >
                   {option.label || option}
@@ -101,19 +122,21 @@ export const InputSection = ({
           );
         }
 
-      case 'endPlateSelect':
+      case "endPlateSelect":
         const conn_map = {
           "Flushed - Reversible Moment": "Flushed - Reversible Moment",
-          "Extended One Way - Irreversible Moment": "Extended One Way - Irreversible Moment", 
-          "Extended Both Ways - Reversible Moment": "Extended Both Ways - Reversible Moment",
+          "Extended One Way - Irreversible Moment":
+            "Extended One Way - Irreversible Moment",
+          "Extended Both Ways - Reversible Moment":
+            "Extended Both Ways - Reversible Moment",
         };
-        
+
         return (
-          <Select 
+          <Select
             onSelect={(value) => {
               setExtraState({ ...extraState, selectedOption: value });
-              setInputs({ ...inputs, output: null }); 
-            }} 
+              setInputs({ ...inputs, output: null });
+            }}
             value={extraState.selectedOption}
           >
             {Object.keys(conn_map).map((item, index) => (
@@ -124,7 +147,7 @@ export const InputSection = ({
           </Select>
         );
 
-      case 'number':
+      case "number":
         return (
           <Input
             type="text"
@@ -132,11 +155,13 @@ export const InputSection = ({
               event.target.value = event.target.value.replace(/[^0-9.]/g, "");
             }}
             value={inputs[field.key]}
-            onChange={(event) => setInputs({ ...inputs, [field.key]: event.target.value })}
+            onChange={(event) =>
+              setInputs({ ...inputs, [field.key]: event.target.value })
+            }
           />
         );
 
-      case 'customizable':
+      case "customizable":
         return (
           <Select
             onSelect={(value) => handleCustomizableSelect(field, value)}
@@ -151,7 +176,9 @@ export const InputSection = ({
         return (
           <Input
             value={inputs[field.key]}
-            onChange={(event) => setInputs({ ...inputs, [field.key]: event.target.value })}
+            onChange={(event) =>
+              setInputs({ ...inputs, [field.key]: event.target.value })
+            }
           />
         );
     }
@@ -168,7 +195,7 @@ export const InputSection = ({
               {renderField(field)}
             </div>
             {/* Render image separately for endPlateSelect type */}
-            {field.type === 'endPlateSelect' && imageSource && (
+            {field.type === "endPlateSelect" && imageSource && (
               <div className="connectionimg">
                 <img
                   src={imageSource}

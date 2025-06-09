@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Html, PerspectiveCamera } from "@react-three/drei";
@@ -8,7 +8,7 @@ import { Input, Modal } from "antd";
 import { useEngineeringModule } from "../hooks/useEngineeringModule";
 import { InputSection } from "../components/InputSection";
 import { CustomizationModal } from "../components/CustomizationModal";
-import { DesignReportModal } from "../components/DesignReportModal"; 
+import { DesignReportModal } from "../components/DesignReportModal";
 import useViewCamera from "./btobViewCamera";
 import Model from "./btobRender";
 import Logs from "../../../components/Logs";
@@ -75,12 +75,14 @@ export const EngineeringModule = ({
     handleOkDesignReport,
     handleCancelDesignReport,
   } = useEngineeringModule(moduleConfig);
-
   const { position: cameraPos, fov } = useViewCamera(
     moduleConfig.cameraKey,
     selectedView
   );
-  const options = ["Model", "Beam", "Connector"];
+  const options =
+    moduleConfig.sessionName === "Beam-to-Column End Plate Connection"
+      ? ["Model", "Beam", "Column", "Connector"]
+      : ["Model", "Beam", "Connector"];
 
   const contextData = {
     beamList,
@@ -223,10 +225,7 @@ export const EngineeringModule = ({
 
         {/* Right - Output Dock */}
         <div className="superMain_right">
-          <OutputDockComponent
-            output={output}
-            extraState={extraState}
-          />
+          <OutputDockComponent output={output} extraState={extraState} />
           <div className="outputdock-btn">
             <Input
               type="button"

@@ -242,7 +242,7 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
             print('string key passed  : ' , key )
 
     # Validate for keys that are numbers
-    num_keys = [("Bolt.Slip_Factor", True)  # List of all parameters that are numbers (key, is_float)
+    num_keys = [("Bolt.Slip_Factor", True),  # List of all parameters that are numbers (key, is_float)
                 ("Detailing.Gap", False),
                 ("Load.Shear", False),
                 ("Weld.Material_Grade_OverWrite", False)]
