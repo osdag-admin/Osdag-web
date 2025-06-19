@@ -3,6 +3,9 @@ import { Select, Input } from "antd";
 import FRM from "../../../assets/flush_ep.png";
 import EOWIM from "../../../assets/owe_ep.png";
 import EBWRM from "../../../assets/extended.png";
+import CFBW from "../../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png";
+import CWBW from "../../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png";
+import BB from "../../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png";
 import ErrorImg from "../../../assets/notSelected.png";
 
 const { Option } = Select;
@@ -21,15 +24,29 @@ export const InputSection = ({
 }) => {
   const [imageSource, setImageSource] = useState("");
 
-  // Handle end plate type selection with image
+  // Handle connectivity selection with image (for FinePlate)
   useEffect(() => {
     if (extraState.selectedOption) {
-      const imageMap = {
+      const connectivityImageMap = {
+        "Column Flange-Beam-Web": CFBW,
+        "Column Web-Beam-Web": CWBW,
+        "Beam-Beam": BB,
+      };
+      
+      const endPlateImageMap = {
         "Flushed - Reversible Moment": FRM,
         "Extended One Way - Irreversible Moment": EOWIM,
         "Extended Both Ways - Reversible Moment": EBWRM,
       };
-      setImageSource(imageMap[extraState.selectedOption] || ErrorImg);
+      
+      // Check if it's a connectivity or end plate selection
+      if (connectivityImageMap[extraState.selectedOption]) {
+        setImageSource(connectivityImageMap[extraState.selectedOption]);
+      } else if (endPlateImageMap[extraState.selectedOption]) {
+        setImageSource(endPlateImageMap[extraState.selectedOption]);
+      } else {
+        setImageSource(ErrorImg);
+      }
     }
   }, [extraState.selectedOption]);
 
@@ -51,6 +68,11 @@ export const InputSection = ({
   };
 
   const renderField = (field) => {
+    // Check conditional display
+    if (field.conditionalDisplay && !field.conditionalDisplay(extraState)) {
+      return null;
+    }
+
     switch (field.type) {
       case "select":
         if (field.options === "beamList") {
@@ -66,7 +88,18 @@ export const InputSection = ({
               ))}
             </Select>
           );
-        } else if (field.options === "materialList") {
+        } else if (field.options === 'columnList') {
+          return (
+            <Select
+              value={inputs[field.key] || contextData.columnList[0]}
+              onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
+            >
+              {contextData.columnList?.map((item, index) => (
+                <Option key={index} value={item}>{item}</Option>
+              ))}
+            </Select>
+          );
+        } else if (field.options === 'materialList') {
           return (
             <Select
               value={inputs[field.key] || contextData.materialList[0].Grade}
@@ -122,7 +155,24 @@ export const InputSection = ({
           );
         }
 
-      case "endPlateSelect":
+      case 'connectivitySelect':
+        return (
+          <Select 
+            onSelect={(value) => {
+              setExtraState({ ...extraState, selectedOption: value });
+              setInputs({ ...inputs, connectivity: value, output: null }); 
+            }} 
+            value={extraState.selectedOption || inputs.connectivity}
+          >
+            {(contextData.connectivityList || []).map((item, index) => (
+              <Option key={index} value={item}>
+                {item}
+              </Option>
+            ))}
+          </Select>
+        );
+
+      case 'endPlateSelect':
         const conn_map = {
           "Flushed - Reversible Moment": "Flushed - Reversible Moment",
           "Extended One Way - Irreversible Moment":
@@ -188,25 +238,32 @@ export const InputSection = ({
     <div>
       <h3>{section.title}</h3>
       <div className="component-grid">
-        {section.fields.map((field, index) => (
-          <div key={index}>
-            <div className="component-grid-align">
-              <h4>{field.label}</h4>
-              {renderField(field)}
-            </div>
-            {/* Render image separately for endPlateSelect type */}
-            {field.type === "endPlateSelect" && imageSource && (
-              <div className="connectionimg">
-                <img
-                  src={imageSource}
-                  alt="Component"
-                  height="100px"
-                  width="100px"
-                />
+        {section.fields.map((field, index) => {
+          // Check conditional display again for the entire field container
+          if (field.conditionalDisplay && !field.conditionalDisplay(extraState)) {
+            return null;
+          }
+          
+          return (
+            <div key={index}>
+              <div className="component-grid-align">
+                <h4>{field.label}</h4>
+                {renderField(field)}
               </div>
-            )}
-          </div>
-        ))}
+              {/* Render image separately for connectivity and endPlateSelect types */}
+              {(field.type === 'connectivitySelect' || field.type === 'endPlateSelect') && imageSource && (
+                <div className="connectionimg">
+                  <img
+                    src={imageSource}
+                    alt="Component"
+                    height="100px"
+                    width="100px"
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

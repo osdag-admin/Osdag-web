@@ -13,6 +13,12 @@ export default function useViewCamera(moduleName, selectedView) {
         Beam: { position: [11, 9, 11], fov: 24 },
         Connector: { position: [-11, 9, -11], fov: 18 },
       },
+      FinPlate: {
+        Model: { position: [10, 8, 10], fov: 40 },
+        Beam: { position: [9, 7, 9], fov: 40 },
+        Column: { position: [8, 6, 8], fov: 42 },
+        Plate: { position: [-8, 6, -8], fov: 38 },
+      },
       // Add default fallback settings
       default: {
         Model: { position: [10, 8, 10], fov: 40 },

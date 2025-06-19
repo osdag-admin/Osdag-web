@@ -28,6 +28,8 @@ export const EngineeringModule = ({
   const {
     // Context data
     beamList,
+    columnList,
+    connectivityList,
     materialList,
     boltDiameterList,
     thicknessList,
@@ -79,13 +81,25 @@ export const EngineeringModule = ({
     moduleConfig.cameraKey,
     selectedView
   );
-  const options =
-    moduleConfig.sessionName === "Beam-to-Column End Plate Connection"
-      ? ["Model", "Beam", "Column", "Connector"]
-      : ["Model", "Beam", "Connector"];
+
+  // Determine view options based on module sessionName or cameraKey
+  const getViewOptions = () => {
+    if (moduleConfig.sessionName === "Beam-to-Column End Plate Connection") {
+      return ["Model", "Beam", "Column", "Connector"];
+    }
+    if (moduleConfig.cameraKey === "FinPlate") {
+      return ["Model", "Beam", "Column", "Plate"];
+    }
+    return ["Model", "Beam", "Connector"];
+  };
+
+  const options = getViewOptions();
+
 
   const contextData = {
     beamList,
+    columnList,
+    connectivityList,
     materialList,
     boltDiameterList,
     thicknessList,
@@ -167,9 +181,8 @@ export const EngineeringModule = ({
                 onClick={() => setSelectedView(option)}
               >
                 <div
-                  className={`option-box ${
-                    selectedView === option ? "selected" : ""
-                  }`}
+                  className={`option-box ${selectedView === option ? "selected" : ""
+                    }`}
                 ></div>
                 <span className="option-label">{option}</span>
               </div>

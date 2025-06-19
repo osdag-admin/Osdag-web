@@ -42,12 +42,21 @@ function Model({ modelPaths, selectedView }) {
     return g;
   };
 
+  // All geometry definitions - FIXED: Added missing ones
   const geometryModel = useMemo(
     () => (parsedModels?.Model ? getGeometry(parsedModels.Model) : null),
     [parsedModels, texture]
   );
   const geometryBeam = useMemo(
     () => (parsedModels?.Beam ? getGeometry(parsedModels.Beam) : null),
+    [parsedModels, texture]
+  );
+  const geometryColumn = useMemo(
+    () => (parsedModels?.Column ? getGeometry(parsedModels.Column) : null),
+    [parsedModels, texture]
+  );
+  const geometryPlate = useMemo(
+    () => (parsedModels?.Plate ? getGeometry(parsedModels.Plate) : null),
     [parsedModels, texture]
   );
   const geometryConnector = useMemo(
@@ -112,6 +121,42 @@ function Model({ modelPaths, selectedView }) {
             rotation={[Math.PI / -2, 0, 0]}
           >
             <meshPhysicalMaterial
+              color="#808080" //#594100
+              attach="material"
+              metalness={0.25}
+              roughness={0.3}
+              opacity={1.0}
+              transparent={true}
+              transmission={0.008}
+              clearcoat={1.0}
+              clearcoatRoughness={0.25}
+            />
+          </mesh>
+          {/* Beam outline - FIXED: Use correct geometry */}
+          <primitive
+            object={
+              new THREE.LineSegments(
+                new THREE.EdgesGeometry(geometryBeam, 15),
+                new THREE.LineBasicMaterial({ color: "black" })
+              )
+            }
+            scale={0.008}
+            rotation={[Math.PI / -2, 0, 0]}
+            position={[0, 0, 4]}
+          />
+        </>
+      )}
+
+      {/* Column Section - FIXED: Consistent styling and correct geometry */}
+      {selectedView === "Column" && geometryColumn && (
+        <>
+          <mesh
+            geometry={geometryColumn}
+            scale={0.008}
+            position={[0, 0, 4]}
+            rotation={[Math.PI / -2, 0, 0]}
+          >
+            <meshPhysicalMaterial
               color="#594100"
               attach="material"
               metalness={0.25}
@@ -123,11 +168,47 @@ function Model({ modelPaths, selectedView }) {
               clearcoatRoughness={0.25}
             />
           </mesh>
-          {/* Beam outline */}
+          {/* Column outline - FIXED: Use geometryColumn instead of geometryBeam */}
           <primitive
             object={
               new THREE.LineSegments(
-                new THREE.EdgesGeometry(geometryBeam, 15),
+                new THREE.EdgesGeometry(geometryColumn, 15),
+                new THREE.LineBasicMaterial({ color: "black" })
+              )
+            }
+            scale={0.008}
+            rotation={[Math.PI / -2, 0, 0]}
+            position={[0, 0, 4]}
+          />
+        </>
+      )}
+
+      {/* Plate Section - FIXED: Consistent styling and correct geometry */}
+      {selectedView === "Plate" && geometryPlate && (
+        <>
+          <mesh
+            geometry={geometryPlate}
+            scale={0.008}
+            position={[0, 0, 4]}
+            rotation={[Math.PI / -2, 0, 0]}
+          >
+            <meshPhysicalMaterial
+              attach="material"
+              map={texture}
+              metalness={0.25}
+              roughness={0.1}
+              opacity={1.0}
+              transparent={true}
+              transmission={0.99}
+              clearcoat={1.0}
+              clearcoatRoughness={0.25}
+            />
+          </mesh>
+          {/* Plate outline - FIXED: Use geometryPlate instead of geometryBeam */}
+          <primitive
+            object={
+              new THREE.LineSegments(
+                new THREE.EdgesGeometry(geometryPlate, 15),
                 new THREE.LineBasicMaterial({ color: "black" })
               )
             }

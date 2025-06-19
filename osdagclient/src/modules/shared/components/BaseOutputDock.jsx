@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Input, Modal } from 'antd';
 import spacingIMG from "../../../assets/spacing_3.png";
+import capacityIMG1 from "../../../assets/L_shear1.png";
+import capacityIMG2 from "../../../assets/L.png";
 import Stiffener_BWE from "../../../assets/BB_Stiffener_BWE.png";
 import Stiffener_FP from "../../../assets/BB_Stiffener_FP.png";
 import Stiffener_OWE from "../../../assets/BB_Stiffener_OWE.png";
@@ -52,14 +54,32 @@ export const BaseOutputDock = ({
         "Extended One Way - Irreversible Moment": Detailing_OWE,
         "Extended Both Ways - Reversible Moment": Detailing_BWE,
       },
-      groove: GrooveImg
+      groove: GrooveImg,
+      spacing: spacingIMG,
+      capacity1: capacityIMG1,
+      capacity2: capacityIMG2
     };
 
-    if (imageType === 'groove') return GrooveImg;
+    if (imageType === 'groove' || imageType === 'spacing' || 
+        imageType === 'capacity1' || imageType === 'capacity2') {
+      return imageMap[imageType];
+    }
     return imageMap[imageType]?.[selectedOption] || null;
   };
 
-  // JSX Rendering Functions (moved from config)
+  // Helper function to get output value - Works for both module formats
+  const getOutputValue = (key, output) => {
+    if (!output) return " ";
+    
+    // Both modules now use flat structure: { "Bolt.Diameter": { label, val } }
+    if (output[key]?.val !== undefined) {
+      return output[key].val;
+    }
+    
+    return " ";
+  };
+
+  // JSX Rendering Functions
   const renderModalContent = (modalType, activeSection, output) => {
     const config = outputConfig.modalTypes[modalType];
     const fieldsData = outputConfig.modalData[modalType]?.[activeSection] || [];
@@ -67,6 +87,11 @@ export const BaseOutputDock = ({
     if (config.layout === "two-column") {
       return (
         <div className="spacing-main-body">
+          {config.note && (
+            <p style={{ padding: "20px" }}>
+              Note: {config.note}
+            </p>
+          )}
           <div className="spacing-main-two">
             <div className="spacing-left-body">
               {fieldsData.map(({ key, label }, idx) => (
@@ -74,7 +99,7 @@ export const BaseOutputDock = ({
                   <h4>{label}</h4>
                   <Input
                     type="text"
-                    value={output?.[key]?.val ?? " "}
+                    value={getOutputValue(key, output)}
                     disabled
                     style={{
                       color: "rgb(0 0 0 / 67%)",
@@ -87,9 +112,65 @@ export const BaseOutputDock = ({
             </div>
             {config.hasImage && (
               <div className="spacing-right-body">
-                <img src={spacingIMG} alt="Image" />
+                <img src={getImageForModal('spacing')} alt="Spacing Image" />
               </div>
             )}
+          </div>
+        </div>
+      );
+    } else if (config.layout === "capacity-complex") {
+      // Complex capacity layout with multiple sections and images
+      const groupedFields = fieldsData.reduce((acc, field) => {
+        const section = field.section || 'Default';
+        if (!acc[section]) acc[section] = [];
+        acc[section].push(field);
+        return acc;
+      }, {});
+
+      return (
+        <div className="spacing-main-body">
+          {config.note && (
+            <p style={{ padding: "20px" }}>
+              Note: {config.note}
+            </p>
+          )}
+          <div className="Capacity-main-body">
+            {Object.entries(groupedFields).map(([sectionName, sectionFields], sectionIdx) => (
+              <div key={sectionIdx}>
+                <div className="Capacity-sub-body-title">
+                  <h4>{sectionName}</h4>
+                </div>
+                <div className="Capacity-sub-body">
+                  <div className="Capacity-left-body">
+                    {sectionFields.map(({ key, label }, idx) => (
+                      <div key={idx} className="Capacity-left-body-align">
+                        <p>{label}</p>
+                        <Input
+                          type="text"
+                          value={getOutputValue(key, output)}
+                          disabled
+                          style={{
+                            color: "rgb(0 0 0 / 67%)",
+                            fontSize: "12px",
+                            fontWeight: "500",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {sectionIdx < 2 && ( // Show images for first two sections
+                    <div className="Capacity-right-body">
+                      <img 
+                        src={getImageForModal(sectionIdx === 0 ? 'capacity1' : 'capacity2')} 
+                        alt={`Capacity Image ${sectionIdx + 1}`} 
+                      />
+                      <h5>Block Shear Pattern</h5>
+                    </div>
+                  )}
+                </div>
+                {sectionIdx < Object.entries(groupedFields).length - 1 && <hr />}
+              </div>
+            ))}
           </div>
         </div>
       );
@@ -109,7 +190,7 @@ export const BaseOutputDock = ({
                 <h4 dangerouslySetInnerHTML={{ __html: label }} />
                 <Input
                   type="text"
-                  value={output?.[key]?.val ?? " "}
+                  value={getOutputValue(key, output)}
                   disabled
                   style={{
                     color: "rgb(0 0 0 / 67%)",
@@ -125,11 +206,10 @@ export const BaseOutputDock = ({
     }
   };
 
-
   // Shared field renderer
   const renderField = (field, index) => {
-    const entry = output?.[field.key];
     const isModalTrigger = field.key in outputConfig.modals;
+    const fieldValue = getOutputValue(field.key, output);
 
     return (
       <div key={index} className="component-grid">
@@ -146,7 +226,7 @@ export const BaseOutputDock = ({
           ) : (
             <Input
               type="text"
-              value={entry?.val ?? " "}
+              value={fieldValue}
               disabled
               style={{
                 color: "rgb(0 0 0 / 67%)",

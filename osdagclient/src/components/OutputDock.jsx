@@ -6,647 +6,337 @@ import spacingIMG from "../assets/spacing_3.png";
 import capacityIMG1 from "../assets/L_shear1.png";
 import capacityIMG2 from "../assets/L.png";
 
-const placeholderOutput = {
-  Bolt: [
-    {
-      label: "Diameter (mm)",
-      val: 0,
-    },
-    {
-      label: "Property Class",
-      val: 0,
-    },
-    {
-      label: "shear Capacity (KN)",
-      val: 0,
-    },
-    {
-      label: "Bolt Force (KN)",
-      val: 0,
-    },
-    {
-      label: "Bolt Column (nos)",
-      val: 0,
-    },
-    {
-      label: "Bolt Rows (nos)",
-      val: 0,
-    },
+const customMapping = {
+  "Bolt": [
+    { key: "Bolt.Diameter", label: "Diameter (mm)" },
+    { key: "Bolt.Shear", label: "Shear Capacity (kN)" },
+    { key: "Bolt.Bearing", label: "Bearing Capacity (kN)" },
+    { key: "Bolt.Capacity", label: "Capacity (kN)" },
+    { key: "Bolt.Force (kN)", label: "Bolt Force (kN)" },
+    { key: "Bolt.Line", label: "Bolt Columns (nos)" },
+    { key: "Bolt.OneLine", label: "Bolt Rows (nos)" },
+    { key: "SpacingModal", label: "Spacing" },
   ],
-  Plate: [
-    {
-      label: "Thickness (mm)",
-      val: 0,
-    },
-    {
-      label: "Height (mm)",
-      val: 0,
-    },
-    {
-      label: "Length (mm)",
-      val: 0,
-    },
+  "Plate": [
+    { key: "Plate.Thickness", label: "Thickness (mm)" },
+    { key: "Plate.Height", label: "Height (mm)" },
+    { key: "Plate.Length", label: "Length (mm)" },
+    { key: "PlateCapacityModal", label: "Capacity" },
   ],
-  Weld: [
+  "Section Details": [
+    { key: "SectionCapacityModal", label: "Capacity" },
+  ],
+  "Weld": [
+    { key: "Weld.Size", label: "Size (mm)" },
+    { key: "Weld.Strength", label: "Strength (N/mm2)" },
+    { key: "Weld.Stress", label: "Stress (N/mm)" },
+  ],
+};
+
+const customSpacing = {
+  SpacingModal: [
     {
-      label: "Size (mm)",
-      val: 0,
+      key: "Bolt.Pitch",
+      label: "Pitch Distance (mm)",
     },
     {
-      label: "Strength (N/mm2)",
-      val: 0,
+      key: "Bolt.EndDist",
+      label: "End Distance (mm)",
     },
     {
-      label: "Stress (N/mm)",
-      val: 0,
+      key: "Bolt.Gauge",
+      label: "Gauge Distance (mm)",
+    },
+    {
+      key: "Bolt.EdgeDist",
+      label: "Edge Distance (mm)",
     },
   ],
 };
 
-const platePopUpFields = [
-  "Shear Yielding Capacity (kN)",
-  "Rupture Capacity (kN)",
-  "Block Shear Capacity (kN)",
-  "Tension Yielding Capacity (kN)",
-  "Tension Rupture Capacity (kN)",
-  "Axial Block Shear Capacity (kN)",
-  "Moment Demand (kNm)",
-  "Moment Capacity (kNm)",
-];
+const customCapacity = {
+  PlateCapacityModal: [
+    {
+      key: "Plate.Shear",
+      label: "Shear Yielding Capacity (kN)",
+    },
+    {
+      key: "Plate.Rupture",
+      label: "Rupture Capacity (kN)",
+    },
+    {
+      key: "Plate.BlockShear",
+      label: "Block Shear Capacity (kN)",
+    },
+    {
+      key: "Plate.TensionYield",
+      label: "Tension Yielding Capacity (kN)",
+    },
+    {
+      key: "Plate.TensionRupture",
+      label: "Tension Rupture Capacity (kN)",
+    },
+    {
+      key: "Plate.BlockShearAxial",
+      label: "Axial Block Shear Capacity (kN)",
+    },
+    {
+      key: "Plate.MomDemand",
+      label: "Moment Demand (kNm)",
+    },
+    {
+      key: "Plate.MomCapacity",
+      label: "Moment Capacity (kNm)",
+    },
+  ],
+  SectionCapacityModal: [
+    {
+      key: "Member.shear_yielding",
+      label: "Shear Yielding Capacity (kN)",
+    },
+    {
+      key: "Member.shear_rupture",
+      label: "Rupture Capacity (kN)",
+    },
+    {
+      key: "Member.shear_blockshear",
+      label: "Block Shear Capacity (kN)",
+    },
+    {
+      key: "Member.tension_yielding",
+      label: "Tension Yielding Capacity (kN)",
+    },
+    {
+      key: "Member.tension_rupture",
+      label: "Tension Rupture Capacity (kN)",
+    },
+    {
+      key: "Member.tension_blockshear",
+      label: "Axial Block Shear Capacity (kN)",
+    },
+    {
+      key: "Plate.MomDemand",
+      label: "Moment Demand (kNm)",
+    },
+    {
+      key: "Section.MomCapacity",
+      label: "Moment Capacity (kNm)",
+    },
+  ],
+};
 
-const boltPopUpFields = [
-  "Pitch Distance (mm)",
-  "End Distance (mm)",
-  "Edge Distance (mm)",
-];
+const modalButtonNames = {
+  SpacingModal: "Spacing",
+  PlateCapacityModal: "Capacity",
+  SectionCapacityModal: "Capacity",
+};
 
 const OutputDock = ({ output }) => {
   const [spacingModel, setSpacingModel] = useState(false);
-  const [capacityModel, setCapacityModel] = useState(false);
+  const [customCapacityModel, setCustomCapacityModel] = useState(false);
 
-  // console.log('output : ' , output, output && Object.keys(output).length)
-  const handleDialogSpacing = (value) => {
-    if (value === "Spacing") {
+  const [activeSpacingSection, setActiveSpacingSection] = useState(null);
+  const [activeCustomCapacitySection, setActiveCustomCapacitySection] = useState(null);
+
+  const handleDialog = (key) => {
+    if (key in customSpacing) {
+      setActiveSpacingSection(key);
       setSpacingModel(true);
-    } else if (value === "Capacity") {
-      setCapacityModel(true);
-    } else {
-      setSpacingModel(false);
-      setCapacityModel(false);
+    } else if (key in customCapacity) {
+      setActiveCustomCapacitySection(key);
+      setCustomCapacityModel(true);
     }
   };
 
-  // console.log(output)
+  // Helper function to get image for capacity sections
+  const getCapacityImage = (startIndex, endIndex) => {
+    if (startIndex >= 0 && endIndex <= 2) {
+      return { img: capacityIMG1, title: "Block Shear Pattern" };
+    } else if (startIndex >= 3 && endIndex <= 5) {
+      return { img: capacityIMG2, title: "Block Shear Pattern" };
+    }
+    return null;
+  };
+
+  // Helper function to render capacity section with image
+  const renderCapacitySection = (fields, startIndex, endIndex, sectionTitle) => {
+    const sectionFields = fields.slice(startIndex, endIndex + 1);
+    const imageData = getCapacityImage(startIndex, endIndex);
+    
+    return (
+      <div key={`section-${startIndex}`}>
+        {sectionTitle && (
+          <div className="Capacity-sub-body-title">
+            <h4>{sectionTitle}</h4>
+          </div>
+        )}
+        <div className="spacing-main-body">
+          <div className="spacing-main-two">
+            <div className="spacing-left-body">
+              {sectionFields.map(({ key, label }, idx) => (
+                <div key={idx} className="spacing-left-body-align">
+                  <h4>{label}</h4>
+                  <Input
+                    type="text"
+                    value={output?.[key]?.val ?? " "}
+                    disabled
+                    style={{
+                      color: "rgb(0 0 0 / 67%)",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            {imageData && (
+              <div className="spacing-right-body">
+                <img src={imageData.img} alt="CapacityImage" />
+                <h5>{imageData.title}</h5>
+              </div>
+            )}
+            {!imageData && endIndex >= 6 && (
+              <div className="spacing-right-body">
+                {/* Empty space for last section without image */}
+              </div>
+            )}
+          </div>
+        </div>
+        {endIndex < 5 && <hr />}
+      </div>
+    );
+  };
 
   return (
     <>
       <p>Output Dock</p>
       <div className="subMainBody scroll-data">
-        {output && Object.keys(output).length ? (
-          Object.keys(output).map((key, index) => {
-            return (
-              <>
-                <div key={index}>
-                  <h3>{key}</h3>
-                  {Object.values(output[key]).map((elm, index1) => {
-                    if (key == "Plate" && platePopUpFields.includes(elm.label))
-                      return <></>;
-                    else if (
-                      key == "Bolt" &&
-                      boltPopUpFields.includes(elm.label)
-                    )
-                      return <></>;
-                    return (
-                      <div key={index1} className="component-grid">
-                        <div className="component-grid-align">
-                          <h4>{elm.label}</h4>
-                          <Input
-                            type="text"
-                            style={{
-                              color: "rgb(0 0 0 / 67%)",
-                              fontSize: "12px",
-                              fontWeight: "500",
-                            }}
-                            name={`${key}_${elm.lable}`}
-                            value={elm.val}
-                            disabled
-                          />
-                        </div>
-                        {key !== "Weld" &&
-                          index1 == Object.values(output[key])?.length - 1 && (
-                            <>
-                              <div className="component-grid-align">
-                                <h4>
-                                  {key == "Bolt" ? "Spacing" : "Capacity"}
-                                </h4>
-                                <Input
-                                  className="btn"
-                                  type="button"
-                                  value={key == "Bolt" ? "Spacing" : "Capacity"}
-                                  onClick={() =>
-                                    handleDialogSpacing(
-                                      key === "Bolt" ? "Spacing" : "Capacity"
-                                    )
-                                  }
-                                />
-                              </div>
-                            </>
-                          )}
-                      </div>
-                    );
-                  })}
-                </div>
-                {key === "Bolt" && (
-                  <div style={{ marginTop: "7px", marginBottom: "7px" }}>
-                    <h4>Section Details</h4>
-                    <div className="component-grid">
-                      <div className="component-grid-align">
-                        <h4>Capacity</h4>
-                        <Input
-                          className="btn"
-                          type="button"
-                          value={"Capacity"}
-                          onClick={() => handleDialogSpacing("Capacity")}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            );
-          })
-        ) : (
-          <>
-            {Object.keys(placeholderOutput).map((key, index) => {
+        {Object.entries(customMapping).map(([section, fields]) => (
+          <div key={section}>
+            <h3>{section}</h3>
+            {fields.map(({ key, label }, index) => {
+              const entry = output?.[key];
+              const isModalTrigger =
+                key in customSpacing || key in customCapacity;
+
               return (
-                <>
-                  <div key={index}>
-                    <h3>{key}</h3>
-                    {Object.values(placeholderOutput[key]).map(
-                      (elm, index1) => {
-                        if (
-                          key == "Plate" &&
-                          platePopUpFields.includes(elm.label)
-                        )
-                          return <></>;
-                        else if (
-                          key == "Bolt" &&
-                          boltPopUpFields.includes(elm.label)
-                        )
-                          return <></>;
-                        return (
-                          <div
-                            key={index1}
-                            className="component-grid"
-                            style={{ userSelect: "none" }}
-                          >
-                            <div className="component-grid-align">
-                              <h4>{elm.label}</h4>
-                              <Input
-                                type="text"
-                                style={{
-                                  color: "rgb(0 0 0 / 67%)",
-                                  fontSize: "12px",
-                                  fontWeight: "500",
-                                }}
-                                name={`${key}_${elm.lable}`}
-                                value={" "}
-                                disabled
-                              />
-                            </div>
-                            {key !== "Weld" &&
-                              index1 ==
-                                Object.values(placeholderOutput[key])?.length -
-                                  1 && (
-                                <>
-                                  <div className="component-grid-align">
-                                    <h4>
-                                      {key == "Bolt" ? "Spacing" : "Capacity"}
-                                    </h4>
-                                    <Input
-                                      className="btn"
-                                      type="button"
-                                      value={
-                                        key === "Bolt" ? "Spacing" : "Capacity"
-                                      }
-                                      // onClick={() => handleDialogSpacing(key === "Bolt" ? "Spacing" : "Capacity")}
-                                      disabled
-                                    />
-                                  </div>
-                                </>
-                              )}
-                          </div>
-                        );
-                      }
+                <div key={index} className="component-grid">
+                  <div className="component-grid-align">
+                    <h4>{label}</h4>
+                    {isModalTrigger ? (
+                      <Input
+                        className="btn"
+                        type="button"
+                        value={modalButtonNames[key] || label}
+                        disabled={!output}
+                        onClick={() => handleDialog(key)}
+                      />
+                    ) : (
+                      <Input
+                        type="text"
+                        value={entry?.val ?? " "}
+                        disabled
+                        style={{
+                          color: "rgb(0 0 0 / 67%)",
+                          fontSize: "12px",
+                          fontWeight: "500",
+                        }}
+                      />
                     )}
                   </div>
-                  {key === "Plate" && (
-                    <div style={{ marginTop: "7px", marginBottom: "7px" }}>
-                      <h4>Section Details</h4>
-                      <div className="component-grid">
-                        <div className="component-grid-align">
-                          <h4>Capacity</h4>
-                          <Input
-                            className="btn"
-                            type="button"
-                            value={"Capacity"}
-                            disabled
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </>
+                </div>
               );
             })}
-          </>
-        )}
+          </div>
+        ))}
       </div>
 
-      {/* Spacing  */}
+      {/* Spacing Modal */}
       <Modal
         visible={spacingModel}
-        onCancel={() => setSpacingModel(false)}
+        onCancel={() => {
+          setSpacingModel(false);
+          setActiveSpacingSection(null);
+        }}
         footer={null}
-        width={"50%"}
+        width={"68%"}
       >
-        <>
-          <p>Spacing Details</p>
-          <div>
-            <p
-              style={{
-                padding: "20px",
-              }}
-            >
-              Note: Representative image for Spacing Details -3 x 3 pattern
-              considered
-            </p>
-            {/* <Input
-								className='btn'
-								type="button"
-								value={"Close"}
-								onClick={() => setSpacingModel(false)}
-								style={{
-									maxWidth: '10vh',
-									maxHight: 'vh',
-									marginLeft: "50vh"
-								}}
-								/> */}
-          </div>
-          <div className="spacing-main-body">
-            <h3>Spacing Details</h3>
-            <div className="spacing-main-two">
-              <div className="spacing-left-body">
-                <div className="spacing-left-body-align">
-                  <p>Pitch Distance (mm)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Bolt &&
-                        output?.Bolt[
-                          output?.Bolt.findIndex(
-                            (val) => val.label == "Pitch Distance (mm)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-                <div className="spacing-left-body-align">
-                  <p>End Distance (mm)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Bolt &&
-                        output?.Bolt[
-                          output?.Bolt.findIndex(
-                            (val) => val.label == "End Distance (mm)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-
-                <div className="spacing-left-body-align">
-                  <p>Gauge Distance (mm)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Bolt &&
-                        output?.Bolt[
-                          output?.Bolt.findIndex(
-                            (val) => val.label == "Gauge Distance (mm)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-
-                <div className="spacing-left-body-align">
-                  <p>Edge Distance (mm)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Bolt &&
-                        output?.Bolt[
-                          output?.Bolt.findIndex(
-                            (val) => val.label == "Edge Distance (mm)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="spacing-right-body">
-                <img src={spacingIMG} alt="SpacingImage" />
-              </div>
+        <h3>Spacing Details</h3>
+        <p style={{ padding: "20px" }}>
+          Note: Representative image for Spacing Details - 3 x 3 pattern considered
+        </p>
+        <div className="spacing-main-body">
+          <div className="spacing-main-two">
+            <div className="spacing-left-body">
+              {customSpacing?.[activeSpacingSection]?.map(
+                ({ key, label }, idx) => (
+                  <div key={idx} className="spacing-left-body-align">
+                    <h4>{label}</h4>
+                    <Input
+                      type="text"
+                      value={output?.[key]?.val ?? " "}
+                      disabled
+                      style={{
+                        color: "rgb(0 0 0 / 67%)",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                      }}
+                    />
+                  </div>
+                )
+              )}
+            </div>
+            <div className="spacing-right-body">
+              <img src={spacingIMG} alt="SpacingImage" />
             </div>
           </div>
-        </>
+        </div>
       </Modal>
 
-      {/* Capacity */}
+      {/* Custom Capacity Modal */}
       <Modal
-        visible={capacityModel}
-        onCancel={() => setCapacityModel(false)}
+        visible={customCapacityModel}
+        onCancel={() => {
+          setCustomCapacityModel(false);
+          setActiveCustomCapacitySection(null);
+        }}
         footer={null}
-        width={"50%"}
+        width={"68%"}
         style={{ height: "70vh" }}
       >
         <h3>Capacity Details</h3>
-        <div>
-          <p
-            style={{
-              padding: "20px",
-            }}
-          >
-            Note: Representative image for Failure Pattern (Half Pate) - 2 x 3
-            Bolt pattern considered
-          </p>
-          {/* <Input
-								className='btn'
-								type="button"
-								value={"Close"}
-								onClick={() => setSpacingModel(false)}
-								style={{
-									maxWidth: '10vh',
-									maxHight: 'vh',
-									marginLeft: "50vh"
-								}}
-								/> */}
-        </div>
+        <p style={{ padding: "20px" }}>
+          Note: Representative image for Failure Pattern (Half Plate) - 2 x 3 Bolt pattern considered
+        </p>
         <div className="Capacity-main-body">
-          <div className="Capacity-sub-body-title">
-            <h4>Failure Pattern due Shear in Plate</h4>
-          </div>
-          <div className="Capacity-sub-body">
-            <div className="Capacity-left-body">
-              <div className="Capacity-left-body-align">
-                <p>Shear Yielding Capacity (kN)</p>
-                <Input
-                  type="text"
-                  style={{
-                    color: "rgb(0 0 0 / 67%)",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                  readOnly={true}
-                  value={
-                    (output &&
-                      output.Plate &&
-                      output?.Plate[
-                        output?.Plate.findIndex(
-                          (val) => val.label == "Shear Yielding Capacity (kN)"
-                        )
-                      ]?.val) ||
-                    "0"
-                  }
-                />
-              </div>
-              <div className="Capacity-left-body-align">
-                <p>Rupture Capacity (kN)</p>
-                <Input
-                  type="text"
-                  style={{
-                    color: "rgb(0 0 0 / 67%)",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                  readOnly={true}
-                  value={
-                    (output &&
-                      output.Plate &&
-                      output?.Plate[
-                        output?.Plate.findIndex(
-                          (val) => val.label == "Rupture Capacity (kN)"
-                        )
-                      ]?.val) ||
-                    "0"
-                  }
-                />
-              </div>
-              <div className="Capacity-left-body-align">
-                <p>Block Shear Capacity (kN)</p>
-                <Input
-                  type="text"
-                  style={{
-                    color: "rgb(0 0 0 / 67%)",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                  readOnly={true}
-                  value={
-                    (output &&
-                      output.Plate &&
-                      output?.Plate[
-                        output?.Plate.findIndex(
-                          (val) => val.label == "Block Shear Capacity (kN)"
-                        )
-                      ]?.val) ||
-                    "0"
-                  }
-                />
-              </div>
-            </div>
-            <div className="Capacity-right-body">
-              <img src={capacityIMG1} alt="capacityIMG1" />
-              <h5>Block Shear Pattern</h5>
-            </div>
-          </div>
-          <hr />
-          {/* section 2 */}
-          <div>
-            <div className="Capacity-sub-body-title">
-              <h4>Failure due Tension in Plate</h4>
-            </div>
-            <div className="Capacity-sub-body">
-              <div className="Capacity-left-body">
-                <div className="Capacity-left-body-align">
-                  <p>Tension Yielding Capacity (kN)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Plate &&
-                        output?.Plate[
-                          output?.Plate.findIndex(
-                            (val) =>
-                              val.label == "Tension Yielding Capacity (kN)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-                <div className="Capacity-left-body-align">
-                  <p>Tension Rupture Capacity (kN)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Plate &&
-                        output?.Plate[
-                          output?.Plate.findIndex(
-                            (val) =>
-                              val.label == "Tension Rupture Capacity (kN)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-                <div className="Capacity-left-body-align">
-                  <p>Axial Block Shear Capacity (kN)</p>
-                  <Input
-                    type="text"
-                    style={{
-                      color: "rgb(0 0 0 / 67%)",
-                      fontSize: "12px",
-                      fontWeight: "500",
-                    }}
-                    readOnly={true}
-                    value={
-                      (output &&
-                        output.Plate &&
-                        output?.Plate[
-                          output?.Plate.findIndex(
-                            (val) =>
-                              val.label == "Axial Block Shear Capacity (kN)"
-                          )
-                        ]?.val) ||
-                      "0"
-                    }
-                  />
-                </div>
-              </div>
-              <div className="Capacity-right-body">
-                <img src={capacityIMG2} alt="capacityIMG2" />
-                <h5>Block Shear Pattern</h5>
-              </div>
-            </div>
-          </div>
-          <hr />
-          {/* Section 3 */}
-          <div className="Capacity-sub-body-title">
-            <h4>Section 3</h4>
-          </div>
-          <div className="Capacity-sub-body">
-            <div className="Capacity-left-body">
-              <div className="Capacity-left-body-align">
-                <p>Moment Demand (kNm)</p>
-                <Input
-                  type="text"
-                  style={{
-                    color: "rgb(0 0 0 / 67%)",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                  readOnly={true}
-                  value={
-                    (output &&
-                      output.Plate &&
-                      output?.Plate[
-                        output?.Plate.findIndex(
-                          (val) => val.label == "Moment Demand (kNm)"
-                        )
-                      ]?.val) ||
-                    "0"
-                  }
-                />
-              </div>
-              <div className="Capacity-left-body-align">
-                <p>Moment Capacity (kNm)</p>
-                <Input
-                  type="text"
-                  style={{
-                    color: "rgb(0 0 0 / 67%)",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                  }}
-                  readOnly={true}
-                  value={
-                    (output &&
-                      output.Plate &&
-                      output?.Plate[
-                        output?.Plate.findIndex(
-                          (val) => val.label == "Moment Capacity (kNm)"
-                        )
-                      ]?.val) ||
-                    "0"
-                  }
-                />
-              </div>
-            </div>
-            <div className="Capacity-right-body">
-              {/* <img src={capacityIMG2} alt='capacityIMG2'/>
-									
-									<h5>Block Shear Pattern</h5> */}
-            </div>
-          </div>
+          {customCapacity?.[activeCustomCapacitySection] && (
+            <>
+              {/* First section: Shear in Plate (indices 0-2) */}
+              {renderCapacitySection(
+                customCapacity[activeCustomCapacitySection],
+                0,
+                2,
+                "Failure Pattern due Shear in Plate"
+              )}
+              
+              {/* Second section: Tension in Plate (indices 3-5) */}
+              {renderCapacitySection(
+                customCapacity[activeCustomCapacitySection],
+                3,
+                5,
+                "Failure due Tension in Plate"
+              )}
+              
+              {/* Third section: Moment (indices 6-7) */}
+              {customCapacity[activeCustomCapacitySection].length > 6 &&
+                renderCapacitySection(
+                  customCapacity[activeCustomCapacitySection],
+                  6,
+                  7,
+                  "Moment Analysis"
+                )}
+            </>
+          )}
         </div>
       </Modal>
     </>

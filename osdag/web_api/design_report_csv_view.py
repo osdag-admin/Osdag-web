@@ -144,10 +144,8 @@ class CreateDesignReport(APIView):
             print('Error while creating module:', e)
 
         try:
-            print("$$$$$$$$$$$$", metadata_final)
             print('generating the report .save_design')
             resultBoolean = module.save_design(metadata_final)
-            print("*********Haluuuuuuuuuu")
             print(resultBoolean)
         except Exception as e:
             print('e : ', e)

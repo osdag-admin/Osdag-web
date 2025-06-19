@@ -310,25 +310,23 @@ function FinePlate() {
     }
   }, [designLogs]);
 
-  useEffect(() => {
+ useEffect(() => {
     if (displayOutput) {
       try {
+        console.log("Actual Output", designData);
         const formatedOutput = {};
-
         for (const [key, value] of Object.entries(designData)) {
-          const newKey = key.split(".")[0];
+          const newKey = key;
           const label = value.label;
           const val = value.value;
 
-          if (val) {
-            if (!formatedOutput[newKey])
-              formatedOutput[newKey] = [{ label, val }];
-            else formatedOutput[newKey].push({ label, val });
+          if (val !== undefined && val !== null) {
+            formatedOutput[newKey] = { label, val };
           }
         }
 
         setOutput(formatedOutput);
-        console.log(formatedOutput);
+        console.log("formated Output", formatedOutput);
       } catch (error) {
         console.log(error);
         setOutput(null);
@@ -635,11 +633,15 @@ function FinePlate() {
       };
     }
 
-    Object.keys(output).map((key, index) => {
-      Object.values(output[key]).map((elm, index1) => {
-        data[key + "." + elm.label.split(" ").join("_")] = elm.val;
-      });
-    });
+    for (const key in output) {
+      if (output.hasOwnProperty(key)) {
+        const { label, val } = output[key];
+        if (label && val !== undefined && val !== null) {
+          const safeLabel = label.replace(/\s+/g, "_");
+          data[`${key}.${safeLabel}`] = val;
+        }
+      }
+    }
 
     data = convertToCSV(data);
     const csvContent =
