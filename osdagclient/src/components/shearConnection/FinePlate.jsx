@@ -156,7 +156,78 @@ function FinePlate() {
     createDesignReport,
     getDesingPrefData,
     deleteSession,
+    resetModuleState,
   } = useContext(ModuleContext);
+
+  // Add a comprehensive reset function that resets both local and context state
+  const resetToDefaultState = () => {
+    console.log("FINPLATE: Starting complete reset");
+
+    if (resetModuleState) {
+      resetModuleState();
+    }
+
+    setRenderBoolean(false);
+    setModelKey(0);
+    setOutput(null);
+    setLogs(null);
+    setDisplayOutput(false);
+    setLoading(false);
+
+    setInputs({
+      bolt_diameter: [],
+      bolt_grade: [],
+      bolt_type: "Bearing Bolt",
+      connector_material: "E 250 (Fe 410 W)A",
+      load_shear: "70",
+      load_axial: "30",
+      module: "Fin Plate Connection",
+      plate_thickness: [],
+      beam_section: "MB 300",
+      column_section: "HB 150",
+      primary_beam: "JB 200",
+      secondary_beam: "JB 150",
+      supported_material: "E 165 (Fe 290)",
+      supporting_material: "E 165 (Fe 290)",
+      bolt_hole_type: "Standard",
+      bolt_slip_factor: "0.3",
+      weld_fab: "Shop Weld",
+      weld_material_grade: "410",
+      detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
+      detailing_gap: "10",
+      detailing_corr_status: "No",
+      design_method: "Limit State Design",
+      bolt_tension_type: "Pre-tensioned",
+    });
+
+    setSelectedOption("Column Flange-Beam-Web");
+    setBoltDiameterSelect("All");
+    setThicknessSelect("All");
+    setPropertyClassSelect("All");
+    setAllSelected({
+      plate_thickness: true,
+      bolt_diameter: true,
+      bolt_grade: true,
+    });
+
+    setModalOpen(false);
+    setModalpropertyClassListOpen(false);
+    setPlateThicknessModal(false);
+    setDesignPrefModalStatus(false);
+    setShowModal(false);
+    setConfirmationModal(false);
+    setDisplaySaveInputPopup(false);
+    setCreateDesignReportBool(false);
+
+    setSelectedDiameterNewItems([]);
+    setSelectedpropertyClassListItems([]);
+    setSelectedPlateThicknessItems([]);
+
+    setSelectedView("Model");
+    setScreenshotTrigger(false);
+
+    console.log("FINPLATE: Complete reset finished");
+  };
 
   if (displaySaveInputPopup)
     [setTimeout(() => setDisplaySaveInputPopup(false), 4000)];
@@ -196,6 +267,9 @@ function FinePlate() {
     bolt_grade: true,
   });
 
+  const [isLoadingModalVisible, setIsLoadingModalVisible] = useState(false);
+  const [loadingStage, setLoadingStage] = useState("");
+
   const [renderBoolean, setRenderBoolean] = useState(false);
   const [modelKey, setModelKey] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -209,17 +283,81 @@ function FinePlate() {
     setScreenshotTrigger(true);
   };
 
+  const [confirmationType, setConfirmationType] = useState("reset");
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [navigationSource, setNavigationSource] = useState(null);
+
+  //simple function to check unsaved work
+  const hasUnsavedWork = () => {
+    return !!(output || renderBoolean);
+  };
+
   useEffect(() => {
-    createSession("Fin Plate Connection");
+    // Reset to default state when component mounts
+    resetToDefaultState();
+
+    // Small delay before new session
+    setTimeout(() => {
+      console.log("FINPLATE: Creating new session");
+      createSession("Fin Plate Connection");
+    }, 100);
   }, []);
 
   useEffect(() => {
-    return () => {
-      if (location.pathname != "/design/connections/fin_plate") {
-        deleteSession("Fin Plate Connection");
+    // 1. Protect against browser refresh and direct URL changes
+    const handleBeforeUnload = (event) => {
+      if (hasUnsavedWork()) {
+        const message =
+          "You have unsaved design progress. Are you sure you want to leave?";
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
       }
     };
-  }, []);
+
+    // 2. Protect against browser back button
+    const handlePopState = (event) => {
+      if (hasUnsavedWork() && !allowNavigation) {
+        // Prevent back navigation by pushing current state back
+        window.history.pushState(null, "", "/design/connections/fin_plate");
+
+        // Show confirmation modal and mark as back navigation
+        setConfirmationType("navigation");
+        setNavigationSource("back"); // Mark this as back navigation
+        setShowResetConfirmation(true);
+
+        console.log("BACK BUTTON: Prevented navigation due to unsaved work");
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    // Add initial state to enable popstate detection
+    window.history.pushState(null, "", window.location.pathname);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [output, renderBoolean, allowNavigation]);
+
+  useEffect(() => {
+    return () => {
+      if (window.location.pathname !== "/design/connections/fin_plate") {
+        // Only do cleanup if navigation is allowed or no unsaved work
+        if (!hasUnsavedWork() || allowNavigation) {
+          console.log("CLEANUP: Proceeding with session deletion");
+          deleteSession("Fin Plate Connection");
+          setTimeout(() => {
+            resetToDefaultState();
+          }, 50);
+          setAllowNavigation(false);
+        }
+      }
+    };
+  }, [allowNavigation]);
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === "Customized") {
@@ -260,6 +398,7 @@ function FinePlate() {
       setModalOpen(false);
     }
   };
+
   const handleAllSelectPT = (value) => {
     if (value === "Customized") {
       // check, if the plate_thickness already has a value, then set it to that value
@@ -302,15 +441,20 @@ function FinePlate() {
   useEffect(() => {
     if (displayOutput) {
       try {
+        console.log("FINPLATE: Setting logs from designLogs:", designLogs);
         setLogs(designLogs);
       } catch (error) {
-        console.log(error);
-        setOutput(null);
+        console.log("FINPLATE: Error setting logs:", error);
+        setLogs(null);
       }
+    } else {
+      // When displayOutput is false, clear the logs
+      console.log("FINPLATE: Clearing logs (displayOutput is false)");
+      setLogs(null);
     }
-  }, [designLogs]);
+  }, [designLogs, displayOutput]);
 
- useEffect(() => {
+  useEffect(() => {
     if (displayOutput) {
       try {
         console.log("Actual Output", designData);
@@ -336,7 +480,7 @@ function FinePlate() {
 
   const handleSubmit = async () => {
     let param = {};
-    console.log(allSelected, boltDiameterList);
+
     if (
       selectedOption === "Column Flange-Beam-Web" ||
       selectedOption === "Column Web-Beam-Web"
@@ -419,10 +563,13 @@ function FinePlate() {
       };
     }
     console.log(param);
+
+    // Show loading modal
+    setIsLoadingModalVisible(true);
+    setLoadingStage("Generating design calculations...");
+
     createDesign(param, "Fin-Plate-Connection");
     setDisplayOutput(true);
-
-    setLoading(true);
     setModelKey((prev) => prev + 1); //Forces model to reload
   };
 
@@ -505,6 +652,12 @@ function FinePlate() {
       console.log("Received raw .obj data:", cadModelPaths);
       setRenderBoolean(true);
       setLoading(false);
+
+      // Hide loading modal when model is ready
+      setTimeout(() => {
+        setIsLoadingModalVisible(false);
+        setLoadingStage("");
+      }, 500);
     } else {
       setRenderBoolean(false);
     }
@@ -667,58 +820,114 @@ function FinePlate() {
     }
   };
 
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const handleReset = () => {
-    if (
-      conn_map[selectedOption] == "Column Flange-Beam Web" ||
-      conn_map[selectedOption] == "Column Web-Beam Web"
-    ) {
-      // resetting the inputs
+    setConfirmationType("reset");
+    setShowResetConfirmation(true);
+  };
+
+  const handleHomeClick = () => {
+    if (hasUnsavedWork()) {
+      setConfirmationType("navigation");
+      setNavigationSource("home"); //home navigation
+      setShowResetConfirmation(true);
+    } else {
+      navigate("/home");
+    }
+  };
+
+  const performReset = () => {
+    if (confirmationType === "navigation") {
+      console.log(`USER CONFIRMED NAVIGATION - source: ${navigationSource}`);
+
+      // Set flag to allow navigation
+      setAllowNavigation(true);
+
+      // Close modal first
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+
+      // Small delay then navigate
+      setTimeout(() => {
+        // First cleanup the session and state
+        deleteSession("Fin Plate Connection");
+        resetToDefaultState();
+
+        // Manual destinations
+        if (navigationSource === "home") {
+          console.log("Navigating to home");
+          navigate("/home");
+        } else if (navigationSource === "back") {
+          console.log("Navigating to connections page");
+          navigate("/design-type/connections");
+        }
+
+        setAllowNavigation(false);
+        setNavigationSource(null);
+      }, 100);
+    } else {
+      console.log("USER CONFIRMED RESET - starting targeted reset");
+
+      if (resetModuleState) {
+        resetModuleState();
+      }
+
+      setRenderBoolean(false);
+      setModelKey(0);
+      setOutput(null);
+      setLogs(null);
+      setDisplayOutput(false);
+      setLoading(false);
+
       setInputs({
-        bolt_diameter: inputs.bolt_diameter,
-        bolt_grade: inputs.bolt_grade,
+        bolt_diameter: [],
+        bolt_grade: [],
         bolt_type: "Bearing Bolt",
-        connector_material: inputs.connector_material,
-        load_shear: "",
-        load_axial: "",
+        connector_material: "E 250 (Fe 410 W)A",
+        load_shear: "70",
+        load_axial: "30",
         module: "Fin Plate Connection",
-        plate_thickness: inputs.plate_thickness,
-        beam_section: "Select Section",
-        column_section: "Select Section",
-      });
-    } else if (conn_map[selectedOption] == "Beam-Beam") {
-      setInputs({
-        bolt_diameter: inputs.bolt_diameter,
-        bolt_grade: inputs.bolt_grade,
-        bolt_type: "Bearing Bolt",
-        connector_material: inputs.connector_material,
-        load_shear: "",
-        load_axial: "",
-        module: "Fin Plate Connection",
-        plate_thickness: inputs.plate_thickness,
+        plate_thickness: [],
+        beam_section: "MB 300",
+        column_section: "HB 150",
         primary_beam: "JB 200",
         secondary_beam: "JB 150",
+        supported_material: "E 165 (Fe 290)",
+        supporting_material: "E 165 (Fe 290)",
+        bolt_hole_type: "Standard",
+        bolt_slip_factor: "0.3",
+        weld_fab: "Shop Weld",
+        weld_material_grade: "410",
+        detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
+        detailing_gap: "10",
+        detailing_corr_status: "No",
+        design_method: "Limit State Design",
+        bolt_tension_type: "Pre-tensioned",
       });
+
+      setSelectedOption("Column Flange-Beam-Web");
+      setBoltDiameterSelect("All");
+      setThicknessSelect("All");
+      setPropertyClassSelect("All");
+      setAllSelected({
+        plate_thickness: true,
+        bolt_diameter: true,
+        bolt_grade: true,
+      });
+
+      setModalOpen(false);
+      setModalpropertyClassListOpen(false);
+      setPlateThicknessModal(false);
+      setSelectedDiameterNewItems([]);
+      setSelectedpropertyClassListItems([]);
+      setSelectedPlateThicknessItems([]);
+      setSelectedView("Model");
+
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+
+      console.log("RESET: User confirmed - targeted reset completed");
     }
-
-    // reset setAllSelected
-    setAllSelected({
-      plate_thickness: true,
-      bolt_diameter: true,
-      bolt_grade: true,
-    });
-
-    setBoltDiameterSelect("All");
-    setPropertyClassSelect("All");
-    setThicknessSelect("All");
-    handleAllSelectPT("All"); // for thickness
-    handleSelectChangePropertyClass("All"); // for property Class
-    handleSelectChangeBoltBeam("All"); // for bolt diameter
-
-    // reset CAD model
-    setRenderBoolean(false);
-
-    // reset Output values dock
-    setOutput(null);
   };
 
   // Diameter mm
@@ -878,12 +1087,7 @@ function FinePlate() {
           )}
 
           <div className="element">
-            <div
-              className="home-btn"
-              onClick={() => {
-                navigate("/home");
-              }}
-            >
+            <div className="home-btn" onClick={handleHomeClick}>
               Home
             </div>
           </div>
@@ -1205,6 +1409,52 @@ function FinePlate() {
             </div>
           </div>
 
+          <Modal
+            open={showResetConfirmation}
+            title={
+              <span>
+                {confirmationType === "reset"
+                  ? "Confirm Reset"
+                  : "Unsaved Progress"}
+              </span>
+            }
+            onCancel={() => {
+              setShowResetConfirmation(false);
+              setConfirmationType("reset");
+            }}
+            footer={[
+              <Button
+                key="cancel"
+                onClick={() => setShowResetConfirmation(false)}
+              >
+                Cancel
+              </Button>,
+              <Button
+                key="confirm"
+                type="primary"
+                style={{ background: "rgb(135, 91, 91)", color: "white" }}
+                onClick={performReset}
+              >
+                {confirmationType === "reset"
+                  ? "Yes, Reset Everything"
+                  : "Yes, Leave Page"}
+              </Button>,
+            ]}
+            width={500}
+          >
+            <div>
+              <p>
+                {confirmationType === "reset"
+                  ? "Are you sure you want to reset all inputs and clear the current design?"
+                  : "You have unsaved design progress. Are you sure you want to leave?"}
+              </p>
+              <br />
+              <p>
+                <strong>This will lose all your current work.</strong>
+              </p>
+            </div>
+          </Modal>
+
           {/* Middle */}
           <div className="superMainBody_mid">
             <div className="options-container">
@@ -1228,14 +1478,13 @@ function FinePlate() {
                 <p>Loading Model...</p>
               </div>
             ) : renderBoolean ? (
-              <div
-                className="cadModel"
-              >
-                <Canvas gl={{ antialias: true, preserveDrawingBuffer: true }} 
-                onCreated={({ gl }) => {
-                  gl.setClearColor("#ADD8E6"); // set background inside WebGL itself, not just CSS
-                }}>
-
+              <div className="cadModel">
+                <Canvas
+                  gl={{ antialias: true, preserveDrawingBuffer: true }}
+                  onCreated={({ gl }) => {
+                    gl.setClearColor("#ADD8E6"); // set background inside WebGL itself, not just CSS
+                  }}
+                >
                   <PerspectiveCamera
                     ref={cameraRef}
                     makeDefault
@@ -1549,6 +1798,55 @@ function FinePlate() {
       ) : (
         <br />
       )}
+
+      {/* Loading Modal */}
+      <Modal
+        open={isLoadingModalVisible}
+        footer={null}
+        closable={false}
+        maskClosable={false}
+        centered
+        width={400}
+        className="loading-modal"
+        styles={{
+          body: {
+            textAlign: "center",
+            padding: "40px 20px",
+          },
+        }}
+      >
+        <div className="loading-content">
+          <div
+            style={{
+              fontSize: "18px",
+              marginBottom: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            Processing Design
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <div
+              className="spinner"
+              style={{
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #3498db",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                animation: "spin 1s linear infinite",
+                margin: "0 auto",
+              }}
+            ></div>
+          </div>
+          <div style={{ fontSize: "14px", color: "#666" }}>
+            {loadingStage || "Please wait while we generate your results..."}
+          </div>
+          <div style={{ marginTop: "10px", fontSize: "12px", color: "#999" }}>
+            This may take a few moments
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

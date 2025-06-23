@@ -98,12 +98,12 @@ export const ModuleProvider = ({ children }) => {
     update = false,
     type
   ) => {
-    console.log('getColumnBeamMaterialList called with:', {
+    console.log("getColumnBeamMaterialList called with:", {
       moduleName,
-      connectivity, 
+      connectivity,
       cmat,
       update,
-      type
+      type,
     });
 
     try {
@@ -132,12 +132,10 @@ export const ModuleProvider = ({ children }) => {
         if (type === "connector") {
           console.log("Saving connector material details");
           dispatch({ type: "SAVE_CM_DETAILS", payload: mat });
-        }
-        else if (type === "supported") {
-          console.log("Saving supported material details"); 
+        } else if (type === "supported") {
+          console.log("Saving supported material details");
           dispatch({ type: "SAVE_SDM_DETAILS", payload: mat });
-        }
-        else if (type === "supporting") {
+        } else if (type === "supporting") {
           console.log("Saving supporting material details");
           dispatch({ type: "SAVE_STM_DETAILS", payload: mat });
         }
@@ -153,26 +151,25 @@ export const ModuleProvider = ({ children }) => {
         console.log("Dispatching beam material list");
         dispatch({ type: "SET_BEAM_MATERIAL_LIST", payload: jsonResponse });
       }
-
     } catch (error) {
       console.log("Error in getColumnBeamMaterialList:", error);
       dispatch({ type: "SET_ERR_MSG_COLUMN_BEAM_MATERIAL", payload: "" });
     }
   };
 
-    const getColumnBeamMaterialList2 = async (
+  const getColumnBeamMaterialList2 = async (
     moduleName,
     connectivity,
     cmat,
     update = false,
     type
   ) => {
-    console.log('getColumnBeamMaterialList called with:', {
+    console.log("getColumnBeamMaterialList called with:", {
       moduleName,
-      connectivity, 
+      connectivity,
       cmat,
       update,
-      type
+      type,
     });
 
     try {
@@ -193,14 +190,11 @@ export const ModuleProvider = ({ children }) => {
       const jsonResponse = await response?.json();
       console.log("Response data:", jsonResponse);
 
-     
-        console.log("Dispatching column-beam material list");
-        dispatch({
-          type: "SET_COLUMN_BEAM_MATERIAL_LIST",
-          payload: jsonResponse,
-        });
-      
-
+      console.log("Dispatching column-beam material list");
+      dispatch({
+        type: "SET_COLUMN_BEAM_MATERIAL_LIST",
+        payload: jsonResponse,
+      });
     } catch (error) {
       console.log("Error in getColumnBeamMaterialList:", error);
       dispatch({ type: "SET_ERR_MSG_COLUMN_BEAM_MATERIAL", payload: "" });
@@ -216,7 +210,7 @@ export const ModuleProvider = ({ children }) => {
     state.currentModuleName = moduleName;
     try {
       state.currentModuleName = moduleName;
-      console.log('GETTING BEAM MATERIALS ',moduleName);
+      console.log("GETTING BEAM MATERIALS ", moduleName);
       const email = localStorage.getItem("email");
       // Build the URL with or without email if present
       let url = `${BASE_URL}populate?moduleName=${moduleName}`;
@@ -252,7 +246,6 @@ export const ModuleProvider = ({ children }) => {
       console.log("error : ", error);
     }
   };
-
 
   const getBeamMaterialList2 = async (
     moduleName,
@@ -534,10 +527,15 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
+  const resetModuleState = () => {
+    console.log(" CONTEXT: Resetting module state");
+    dispatch({ type: "RESET_MODULE_STATE" });
+  };
+
   const deleteSession = async (module_id) => {
     try {
       const requestData = { module_id: module_id };
-      console.log(requestData);
+      console.log("Deleting session for:", requestData);
 
       const response = await fetch(`${BASE_URL}sessions/delete`, {
         method: "POST",
@@ -550,8 +548,6 @@ export const ModuleProvider = ({ children }) => {
       });
       if (response.status === 200) {
         console.log("The session has been deleted");
-        // document.cookie = `${module_id}_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-        console.log("Cookie deleted from frontend.");
       } else {
         const errorData = await response.text(); // Read the error message
         console.error("Error in deleting the session:", response, errorData);
@@ -930,6 +926,7 @@ export const ModuleProvider = ({ children }) => {
         updateMaterialListFromCaches,
         addCustomMaterialToDB,
         downloadCADModel,
+        resetModuleState,
       }}
     >
       {children}

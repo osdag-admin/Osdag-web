@@ -25,7 +25,7 @@ import LoginPage from "./components/userAuth/LoginPage";
 import jwt_decode from "jwt-decode";
 
 // module imports
-import FinePlate from "./modules/FinPlate/FinPlate";
+import FinePlate from "./components/shearConnection/FinePlate";
 import EndPlate from "./components/shearConnection/EndPlate";
 import CleatAngle from "./components/shearConnection/CleatAngle";
 import SeatedAngle from "./components/shearConnection/SeatedAngle";

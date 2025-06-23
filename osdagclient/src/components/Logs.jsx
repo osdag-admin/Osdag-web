@@ -1,14 +1,39 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
-let endOfDesignLog = ""
 const Logs = ({ logs }) => {
+    // Move endOfDesignLog INSIDE the component as state
+    const [endOfDesignLog, setEndOfDesignLog] = useState("");
+
+    // Reset endOfDesignLog when logs prop changes or becomes null/empty
+    useEffect(() => {
+        if (!logs || logs.length === 0) {
+            console.log("🧹 LOGS: Clearing endOfDesignLog - no logs");
+            setEndOfDesignLog("");
+            return;
+        }
+
+        // Find the end of design log in the current logs
+        let foundEndLog = "";
+        logs.forEach(log => {
+            if (log.msg.includes('=== End Of Design ===')) {
+                foundEndLog = log.msg;
+            }
+        });
+        
+        setEndOfDesignLog(foundEndLog);
+        
+        if (foundEndLog) {
+            console.log("LOGS: Found end of design log");
+        } else {
+            console.log("LOGS: No end of design log found");
+        }
+    }, [logs]);
 
     return (
         <div className='log-box'>
             {logs && logs.map((log, index) => {
                 if (log.msg.includes('=== End Of Design ===')) {
-                    endOfDesignLog = log.msg
-                    return <></>
+                    return null;
                 }
                 return (
                     <p key={index} style={{
