@@ -17,23 +17,23 @@ import { GlobalProvider } from "./context/GlobalState";
 import { ModuleProvider } from "./context/ModuleState";
 import { UserContext, UserProvider } from "./context/UserState";
 import UserAccount from "./components/userAccount/UserAccount";
-import { useSelector } from "react-redux";
 // New component for the login page
 import LoginPage from "./components/userAuth/LoginPage";
 
-// jwt imports
-import jwt_decode from "jwt-decode";
+// jwt imports 
+import jwt_decode from 'jwt-decode';
+import EndPlate from './components/shearConnection/EndPlate';
+import CleatAngle from './components/shearConnection/CleatAngle';
+import SeatedAngle from './components/shearConnection/SeatedAngle';
+import CoverPlateBolted from "./components/momentConnection/beamToBeamSplice/CoverPlateBolted";
+import BeamBeamEndPlate from "./components/momentConnection/beamToBeamSplice/BeamBeamEndPlate";
+import BoltedToEndPage from './components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage';
 
 // module imports
 import FinePlate from "./components/shearConnection/FinePlate";
-import EndPlate from "./components/shearConnection/EndPlate";
-import CleatAngle from "./components/shearConnection/CleatAngle";
-import SeatedAngle from "./components/shearConnection/SeatedAngle";
-import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
-import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
-import BoltedToEndPage from './components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage';
 import CoverPlateWelded from "./components/momentConnection/beamToBeamSplice/CoverPlateWelded";
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
+import { clearSessionsOnNavigation } from "./utils/sessionManager";
 
 let renderedOnce = false
 
@@ -78,15 +78,7 @@ function App() {
         />
         <Route
           path='/design/:designType/bolted_to_end_gusset'
-          element={
-            <BoltedToEndPage />
-          }
-        />
-        <Route
-          path='/design/:designType/bolted_to_end_gusset'
-          element={
-            <BoltedToEndPage />
-          }
+          element={<BoltedToEndPage />}
         />
         <Route
           path="/design/:designType/beam-to-beam-splice/cover_plate_welded"
@@ -95,12 +87,6 @@ function App() {
         <Route
           path="/design/connections/beam-to-column/end_plate"
           element={<BeamToColumnEndPlate />}
-        />
-        <Route
-          path='/design/:designType/bolted_to_end_gusset'
-          element={
-            <BoltedToEndPage />
-          }
         />
         <Route path='/user' element={<UserAccount />} />
       </Route>
@@ -127,6 +113,18 @@ function App() {
 
 const Root = (loggedIn) => {
   const { userLogin } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  // Clear sessions when route changes
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+
+    // Clear sessions when navigating to non-design pages
+    if (currentPath === '/' || currentPath === '/home' || currentPath.startsWith('/user')) {
+      clearSessionsOnNavigation().catch(console.error);
+    }
+  }, []);
+
   if (!renderedOnce) {
     // obtain the access token from the localStorage, when the user is on the main application page
     // and the user nagivates to login page, the user should not have to login again
@@ -139,7 +137,6 @@ const Root = (loggedIn) => {
       if (
         decodedAccessToken.exp > Date.now() / 1000 &&
         decodedAccessToken.username &&
-        decodedAccessToken.password &&
         decodedAccessToken.email
       ) {
         // the user should automatically be logged in
@@ -147,7 +144,7 @@ const Root = (loggedIn) => {
         console.log("loggedIn : ", loggedIn);
         userLogin(
           decodedAccessToken.username,
-          decodedAccessToken.password,
+          "", // Don't pass password for security
           false,
           true
         );
@@ -167,12 +164,10 @@ const Root = (loggedIn) => {
     renderedOnce = true;
   }
 
-  const navigate = useNavigate();
-
   // Check if the current pathname matches the specified path
   const isDesignPage = window.location.pathname.startsWith("/design/");
   const isUserProfilePage =
-    window.location.pathname.startsWith("/useraccount/");
+    window.location.pathname.startsWith("/user");
   const isLoginPage = window.location.pathname === "/";
 
   return (

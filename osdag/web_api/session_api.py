@@ -81,6 +81,7 @@ class CreateSession(APIView):
             return JsonResponse({"status": "set"}, status=200)
         elif request.COOKIES.get("beam_beam_end_plate_connection_session") is not None:
             print("Beam Beam End Plate Connection is there ")
+            return JsonResponse({"status": "set"}, status=200)
         elif request.COOKIES.get("cover_plate_welded_connection_session") is not None:
             print("Cover plate welded connection is there ")
             return JsonResponse({"status": "set"}, status=200)
@@ -118,7 +119,7 @@ class CreateSession(APIView):
         cookie_id = get_random_string(
             length=32
         )  # creting a session from a random string
-        print("cookie id in session : ", cookie_id)
+        print("cookie id in session : *********************", cookie_id)
         tempData = {"cookie_id": cookie_id, "module_id": module_id, "input_values": {}}
         print("tempData : ", tempData)
         print("type of tempData  : ", type(tempData))
@@ -176,6 +177,7 @@ class DeleteSession(APIView):
             "Beam Beam End Plate Connection": "beam_beam_end_plate_connection_session",
             "Cover Plate Welded Connection": "cover_plate_welded_connection_session",
             "Beam-to-Column End Plate Connection": "beam_to_column_end_plate_connection_session",
+            "Tension Member Bolted Design": "tension_member_bolted_design_session",
         }
 
         if module_id not in cookie_keys:

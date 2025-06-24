@@ -6,7 +6,9 @@ import {
   useState,
   useLayoutEffect,
   Suspense,
+  useRef,
 } from "react";
+import CameraController from "../components/CameraController";
 import "react-toastify/dist/ReactToastify.css";
 import { Select, Input, Modal, Button, Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -164,6 +166,7 @@ function BoltedToEndPage() {
   const [modelKey, setModelKey] = useState(0);
   const [loading, setLoading] = useState(false);
   const [selectedView, setSelectedView] = useState("Model");
+  const [cameraDirection, setCameraDirection] = useState("home"); // "top", "bottom", "left", "right", "isometric1", etc.
   const options = ["Model", "Member", "Plate", "Endplate"];
   const [screenshotTrigger, setScreenshotTrigger] = useState(false);
   const triggerScreenshotCapture = () => {
@@ -653,7 +656,11 @@ function BoltedToEndPage() {
           <div className="element">
             <div
               className="home-btn"
-              onClick={() => {
+              onClick={async () => {
+                // Clear session before navigating to home
+                await import('../../../../utils/sessionManager').then(({ clearSessionsOnNavigation }) => {
+                  clearSessionsOnNavigation();
+                });
                 navigate("/home");
               }}
             >
@@ -665,7 +672,10 @@ function BoltedToEndPage() {
         {/* Main Body of code  */}
         <div className="superMainBody">
           {/* Left - Input Dock */}
-          <div className="InputDock">
+          <div
+            className="InputDock resize-x overflow-auto min-w-[320px] max-w-[600px]"
+            style={{ resize: "horizontal" }}
+          >
             <p>Input Dock</p>
             <div className="subMainBody scroll-data">
               {/* Connecting Members Section */}
@@ -995,16 +1005,53 @@ function BoltedToEndPage() {
               </div>
             ) : renderBoolean ? (
               <div className="cadModel">
+                <div className="absolute top-4 right-4 z-10">
+                  <div className="grid grid-cols-3 grid-rows-3 gap-1">
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: iso-nw, current selectedView:", selectedView);
+                      setCameraDirection("iso-nw");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: top, current selectedView:", selectedView);
+                      setCameraDirection("top");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: iso-ne, current selectedView:", selectedView);
+                      setCameraDirection("iso-ne");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: left, current selectedView:", selectedView);
+                      setCameraDirection("left");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: home, current selectedView:", selectedView);
+                      setCameraDirection("home");
+                    }} className="w-8 h-8 border-2 border-blue-400 rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: right, current selectedView:", selectedView);
+                      setCameraDirection("right");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: iso-sw, current selectedView:", selectedView);
+                      setCameraDirection("iso-sw");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: bottom, current selectedView:", selectedView);
+                      setCameraDirection("bottom");
+                    }} className="w-8 h-8 border rounded" />
+                    <button onClick={() => {
+                      console.log("Camera direction changing to: iso-se, current selectedView:", selectedView);
+                      setCameraDirection("iso-se");
+                    }} className="w-8 h-8 border rounded" />
+                  </div>
+                </div>
+
+
                 <Canvas
                   gl={{ antialias: true }}
                   style={{ background: "#ADD8E6" }}
-                  camera={{
-                    position: [10, 0, 10],
-                    fov: 50,
-                    near: 0.1,
-                    far: 1000,
-                  }}
                 >
+                  <CameraController cameraDirection={cameraDirection} />
                   <Suspense
                     fallback={
                       <Html>

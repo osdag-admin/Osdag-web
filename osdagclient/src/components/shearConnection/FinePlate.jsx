@@ -1088,6 +1088,16 @@ function FinePlate() {
 
           <div className="element">
             <div className="home-btn" onClick={handleHomeClick}>
+            {/* <div
+              className="home-btn"
+              onClick={async () => {
+                // Clear session before navigating to home
+                await import('../../utils/sessionManager').then(({ clearSessionsOnNavigation }) => {
+                  clearSessionsOnNavigation();
+                });
+                navigate("/home");
+              }}
+            > */}
               Home
             </div>
           </div>

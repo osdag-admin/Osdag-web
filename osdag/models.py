@@ -25,7 +25,6 @@ class Design(models.Model):
 #########################################################
 class UserAccount(models.Model) : 
     username = models.TextField(blank=True , unique = True)
-    password = models.TextField(blank=False)
     email = models.TextField(blank=True, unique = True)
     allInputValueFiles = ArrayField(models.TextField(blank = True))
 

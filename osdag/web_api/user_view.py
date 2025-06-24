@@ -25,6 +25,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.http import FileResponse, JsonResponse
+from django.contrib.auth import authenticate
 
 # importing serializers
 from osdag.serializers import UserAccount_Serializer
@@ -48,79 +49,47 @@ def convert_to_32_bytes(input_string) :
 
     return padded_bytes
 
-class SignupView(APIView) :
-    def post(self , request) : 
-        print('inside the signup post')
-        
-        # obtain the useranme and password 
-        temp = request.data
-        print('temp : ' , temp)
+class SignupView(APIView):
+    def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
         email = request.data.get('email')
         isGuest = request.data.get('isGuest')
-        print('username : ' , username)
-        print('email : ' , email)
-        print('password : ' , password)
-        print('isGuest : ' , isGuest)
-        print('type isGuest : ' , type(isGuest))
-        print('encoded passsword : ' , password.encode() )
-        print('encoding password 2 : ' , base64.b64encode(password.encode('ascii')).decode())
-        base64Password = base64.b64encode(password.encode('ascii')).decode()
+
+        if User.objects.filter(username=username).exists():
+            return Response({'message': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create Django user with hashed password
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
 
         tempData = {
-            'username' : username,
-            'password' : base64Password,
-            'email' : email,
-            'allInputValueFiles' : ['']
+            'username': username,
+            'email': email,
+            'allInputValueFiles': ['']
         }
-
-        # append the username in the User table ( in the username array )
-        # create a JSON object that maps the username to the password and add it to the User table ( passsword column )
-        serializer = UserAccount_Serializer(data = tempData)
-        if(serializer.is_valid()) : 
-            # save the serializer 
+        serializer = UserAccount_Serializer(data=tempData)
+        if serializer.is_valid():
             serializer.save()
+            return Response({'message': 'The credentials have been created'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'user with this username already exists', 'code': 'unique'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # create a user in the Django.contrib.auth 
-            user = User.objects.create_user(username , email , password)
-            user.save()
-
-            # return 201 
-            return Response({'message' : 'The credentials have been created'} , status = status.HTTP_201_CREATED ) 
-        else : 
-            print('serializer is invalid ')
-            print('error : ' , serializer.errors)
-            return Response({'message' : 'user with this username already exists' , 'code' : 'unique'} , status = status.HTTP_400_BAD_REQUEST)
-
-
-
-class ForgetPasswordView(APIView) : 
-    def post(self , request) : 
-        print('inside the forget password post')
-        
-        # obtain the new password
+class ForgetPasswordView(APIView):
+    def post(self, request):
         password = request.data.get('password')
-        print('password : ' , password)
         email = request.data.get('email')
-        print('email : ' , email)
 
-        # obtain the user object from the Django.contrib.auth.models User
-        user = User.objects.get(email = email)
-        user.password = password
-        user.save()
-        print('Django user updates')
+        try:
+            user = User.objects.get(email=email)
+            user.set_password(password)
+            user.save()
+            # Do NOT update or store password in UserAccount!
+            return Response({'message': 'Password has been updated successfully'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # update the user in the postgres database
-        base64Password = base64.b64encode(password.encode('ascii')).decode()
-        user = UserAccount.objects.get(email = email)
-        user.password = base64Password
-        user.save()
-        print('postgres user updated')
 
-        # PARTIAL WORK, WORK IN PROGRESS 
-        return Response({'message' , 'Password has been updated successfully'} , status = status.HTTP_200_OK)
-        
 class LogoutView(APIView) : 
     permission_classes = (IsAuthenticated,)
 
@@ -177,62 +146,38 @@ class CheckEmailView(APIView):
 
 
 
-class LoginView(APIView) : 
-    def get(self , request) :
-        print('inside login get')
+class LoginView(APIView):
+    def post(self, request):
+        is_guest = request.data.get('isGuest')
+        if is_guest:
+            # Generate a unique guest username each time
+            guest_username = "guest_" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+            guest_email = guest_username + "@guest.com"
+            guest_password = User.objects.make_random_password()
+            user = User.objects.create_user(username=guest_username, email=guest_email, password=guest_password)
+            # Optionally, set user.is_active = False or limit permissions
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'message': 'Login successful',
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                'username': guest_username,
+                'email': guest_email
+            }, status=status.HTTP_200_OK)
 
-        return Response({'message' : 'Fucntion under developement'} , status = status.HTTP_200_OK)
-    
-
-    def post(self , request) : 
-        print('inside login post')
-
-        # check if the user is a guest user or not 
-        isGuest = request.data.get('isGuest')
-        print('isGuest : ' , isGuest)
-
-        if(isGuest) : 
-            print('is a guest user')
-            # create a dummy user
-
-            # check if the dummy user is already created or not 
-            # if not, then create, else use the dummy user
-            try : 
-                user = User.objects.create_user(username = 'default123' , email = 'default@123.com' , password = 'default123' )
-                # provide no permissions to the user and just save
-                user.save()
-            
-            except : 
-                print('the user already exists')
-
-            # grant the login access to the user 
-            return Response({'message' : 'Login successful'} , status = status.HTTP_200_OK)
-        
-        # for a guest user
-        print('is not a guest user')
-
-        # obtain the username and password
         username = request.data.get('username')
-        print('username : ' ,username)
         password = request.data.get('password')
-        print('password : ' , password)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'message': 'Login successful',
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # find the useranme and password from the UserAccount model 
-        try : 
-            base64Password = base64.b64encode(password.encode('ascii')).decode()
-            result = UserAccount.objects.get(username = username , password = base64Password)
-            print('result user login : ' , result)
-
-            # send_mail(result.email)
-
-            # grant the login access to the user 
-            return Response({'message' : 'Login successfully' , 'allInputValueFilesLength' : len(result.allInputValueFiles) , 'email' : result.email} , status = status.HTTP_200_OK)
-        except ObjectDoesNotExist as e: 
-            print('The user account does not exxists : ' , e)
-            return Response({'message' : 'The User Account does not exists'} , status = status.HTTP_400_BAD_REQUEST)
-        except Exception as e : 
-            print('Invalid credentials : ' , e)
-            return Response({'message' : 'Invalid credentials'} , status = status.HTTP_400_BAD_REQUEST)
 
 class ObtainInputFileView(APIView) : 
     def post(self , request) : 

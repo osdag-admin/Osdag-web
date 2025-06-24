@@ -1,5 +1,6 @@
-import { createContext, useReducer } from "react";
+import { createContext, useEffect, useReducer } from "react";
 import UserReducer from "./UserReducer";
+import jwt_decode from 'jwt-decode';
 
 // crypto packages
 import { decode as base64_decode, encode as base64_encode } from "base-64";
@@ -34,6 +35,19 @@ export const UserContext = createContext(initialValue);
 export const UserProvider = ({ children }) => {
   const [state, dispatch] = useReducer(UserReducer, initialValue);
 
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    if (token) {
+      try {
+        const decoded = jwt_decode(token);
+        if (decoded.exp > Date.now() / 1000) {
+          dispatch({ type: 'LOGIN_SUCCESS', payload: decoded });
+        }
+      } catch (error) {
+        localStorage.removeItem("access");
+      }
+    }
+  }, []);
   // USER AUTHENTICATION AND AUTHORAZATION
   const setRefreshTokenCookie = async (refresh_token) => {
     console.log("Inside set refresh token thunk");

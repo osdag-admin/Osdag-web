@@ -96,8 +96,8 @@ class CADGeneration(View):
             return JsonResponse({"status": "error", "message": f"Unable to retrieve session - {repr(e)}"}, status=500)
         
         # Check for FreeCAD availability
-        command = shutil.which("FreeCADCmd")
-        print(f"Detected FreeCADCmd path: {command}")
+        # command = shutil.which("FreeCADCmd")
+        # print(f"Detected FreeCADCmd path: {command}")
         command = "D:\\Program Files\\FreeCAD 1.0\\bin\\freecadcmd.exe"
 
         if not command:

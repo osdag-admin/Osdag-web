@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { GlobalContext } from '../context/GlobalState'
 import { useContext } from 'react'
+import { clearSessionsOnNavigation } from '../utils/sessionManager'
 
 let initialRender = false;
 
@@ -39,6 +40,25 @@ function Sidebar() {
   }
 
   const navigate = useNavigate();
+
+  const handleModuleNavigation = async (moduleName) => {
+    // Clear any existing module sessions before navigating to a new module
+    await clearSessionsOnNavigation();
+    navigate(`design-type/${moduleName.toLowerCase().replaceAll("_", "-")}`);
+  };
+
+  const handleHomeNavigation = async () => {
+    // Clear any existing module sessions when going to home
+    await clearSessionsOnNavigation();
+    navigate('/home');
+  };
+
+  const handleUserAccountNavigation = async () => {
+    // Clear any existing module sessions when going to user account
+    await clearSessionsOnNavigation();
+    navigate('/user');
+  };
+
   return (
     <>
       <div className='sidebar'>
@@ -49,7 +69,7 @@ function Sidebar() {
                 <div key={item.id} className="sidebar-item" >
                   
                   <button onClick={() => {
-                    navigate(`design-type/${item.name.toLowerCase().replaceAll("_", "-")}`)
+                    handleModuleNavigation(item.name)
                   }}>{item.name.toUpperCase().replaceAll("_", " ")}</button>
                 </div>
               )
@@ -58,16 +78,17 @@ function Sidebar() {
 
           {isGuestOrnot === 'guest' ? (
             <div className="sidebar-item">
-              <button onClick={() => {     window.location.href = '/';}}>
+              <button onClick={async () => {     
+                await clearSessionsOnNavigation();
+                window.location.href = '/';
+              }}>
                 Login
               </button>
             </div>
           ) : (
             <div className="sidebar-item">
               <button
-                onClick={() => {
-                  navigate('/user');
-                }}
+                onClick={handleUserAccountNavigation}
               >
                 My Account
               </button>

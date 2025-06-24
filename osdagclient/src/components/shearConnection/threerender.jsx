@@ -287,6 +287,7 @@ function Model({ modelPaths, selectedView }) {
 
       {/* Controls */}
       <OrbitControls enableDamping={true} target={[0, 0, 0]} />
+      
     </group>
   );
 }

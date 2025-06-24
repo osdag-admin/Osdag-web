@@ -50,9 +50,9 @@ module_dict = [
         "path":"Connection/Moment Connection/",
     },
     {
-        "key": "Cover Plate Bolted Connection",
-        "image": "/static/images/modules/cover_plate_bolted_connection.png",
-        "name": "Cover Plate Bolted",
+        "key": "Cover Plate Welded Connection",
+        "image": "/static/images/modules/cover_plate_welded_connection.png",
+        "name": "Cover Plate Welded",
         "path": "Connection/Moment Connection/",
     },
     {
