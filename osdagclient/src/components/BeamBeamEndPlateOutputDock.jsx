@@ -136,7 +136,9 @@ const BeamBeamEndplateOutputDock = ({ output, selectedOption }) => {
             {fields.map(({ key, label }, index) => {
               const entry = output?.[key];
               const isModalTrigger =
-                key in customDetails || key in customImages || key in grooveImage;
+                key in customDetails ||
+                key in customImages ||
+                key in grooveImage;
               return (
                 <div key={index} className="component-grid">
                   <div className="component-grid-align">

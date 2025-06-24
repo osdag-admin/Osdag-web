@@ -326,6 +326,21 @@ function CoverPlateBolted() {
     bolt_grade: true,
   });
 
+  const [renderBoolean, setRenderBoolean] = useState(false);
+  const [modelKey, setModelKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedView, setSelectedView] = useState("Model");
+  const options = ["Model", "Beam", "Connector"];
+  const { position: cameraPos, fov } = useViewCamera(
+    "CoverPlateBolted",
+    selectedView
+  );
+  const cameraRef = useRef();
+  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
+  const triggerScreenshotCapture = () => {
+    setScreenshotTrigger(true);
+  };
+
   useEffect(() => {
     // Reset to default state when component mounts
     resetToDefaultState();

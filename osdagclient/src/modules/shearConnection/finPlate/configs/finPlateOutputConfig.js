@@ -1,53 +1,39 @@
 export const coverPlateBoltedOutputConfig = {
   // Output sections and field mappings
   sections: {
-    "Member Capacity": [
-      { key: "MemberCapacityModal", label: "Member Capacity" },
-    ],
     Bolt: [
       { key: "Bolt.Diameter", label: "Diameter (mm)" },
-      { key: "Bolt.Grade_Provided", label: "Property Class" },
+      { key: "Bolt.PropertyClass", label: "Property Class" },
+      { key: "Bolt.ShearCapacity", label: "shear Capacity (KN)" },
+      { key: "Bolt.BoltForce", label: "Bolt Force (KN)" },
+      { key: "Bolt.BoltColumn", label: "Bolt Column (nos)" },
+      { key: "Bolt.BoltRows", label: "Bolt Rows (nos)" },
+      { key: "BoltCapacityModal", label: "Capacity" },
     ],
-    "Bolt Capacities": [
-      { key: "BoltFlangeCapacityModal", label: "Flange Bolt Capacity" },
-      { key: "BoltWebCapacityModal", label: "Web Bolt Capacity" },
+    Plate: [
+      { key: "Plate.Thickness", label: "Thickness (mm)" },
+      { key: "Plate.Height", label: "Height (mm)" },
+      { key: "Plate.Length", label: "Length (mm)" },
+      { key: "PlateSpacingModal", label: "Spacing" },
     ],
-    "Web Splice Plate": [
-      { key: "Web_Plate.Height (mm)", label: "Height (mm)" },
-      { key: "Web_Plate.Width", label: "Width (mm)" },
-      { key: "Web_Plate.Thickness", label: "Thickness (mm)*" },
-      { key: "WebSpacingDetailsModal", label: "Spacing (mm)" },
-      { key: "WebCapacityModal", label: "Capacity" },
+    "Section Details": [
+      { key: "SectionDetailsCapacityModal", label: "Capacity" },
     ],
-    "Flange Splice Plate Outer Plate": [
-      { key: "Flange_Plate.Width (mm)", label: "Width (mm)" },
-      { key: "flange_plate.Length", label: "Length (mm)" },
-      { key: "Connector.Flange_Plate.Thickness_list", label: "Thickness (mm)" },
-      { key: "FlangeSpacingDetailsModal", label: "Spacing (mm)" },
-      { key: "FlangeCapacityModal", label: "Capacity" },
-    ],
-    "Inner Plate": [
-      { key: "Flange_Plate.InnerWidth", label: "Width (mm)" },
-      { key: "flange_plate.InnerLength", label: "Length (mm)" },
-      { key: "flange_plate.innerthickness_provided", label: "Thickness (mm)" },
+    Weld: [
+      { key: "Weld.Size", label: "Size (mm)" },
+      { key: "Weld.Strength", label: "Strength (N/mm2)" },
+      { key: "Weld.Stress", label: "Stress (N/mm)" },
     ],
   },
 
   // Modal trigger mappings
   modals: {
-    WebSpacingDetailsModal: { type: "spacing", buttonText: "Web Spacing" },
-    FlangeSpacingDetailsModal: {
-      type: "spacing",
-      buttonText: "Flange Spacing",
+    BoltCapacityModal: { type: "capacity", buttonText: "Bolt Capacity" },
+    PlateSpacingModal: { type: "spacing", buttonText: "Plate Spacing" },
+    SectionDetailsCapacityModal: {
+      type: "capacity",
+      buttonText: "Sectin Details Capacity",
     },
-    WebCapacityModal: { type: "capacity", buttonText: "Web Capacity" },
-    FlangeCapacityModal: { type: "capacity", buttonText: "Flange Capacity" },
-    BoltWebCapacityModal: { type: "details", buttonText: "Web Bolt Capacity" },
-    BoltFlangeCapacityModal: {
-      type: "details",
-      buttonText: "Flange Bolt Capacity",
-    },
-    MemberCapacityModal: { type: "details", buttonText: "Member Capacity" },
   },
 
   // Modal type configurations (NO JSX HERE)

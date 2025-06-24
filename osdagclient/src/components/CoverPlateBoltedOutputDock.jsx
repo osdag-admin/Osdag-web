@@ -4,7 +4,7 @@ import { Input, Modal } from "antd";
 import spacingIMG from "../assets/spacing_3.png";
 import Lshear from "../assets/L_Shear.png";
 import Ushear from "../assets/U.png";
-import Ushear1 from "../assets/path14979-8.jpg"
+import Ushear1 from "../assets/path14979-8.jpg";
 
 const customMapping = {
   "Member Capacity": [{ key: "MemberCapacityModal", label: "Member Capacity" }],
@@ -167,7 +167,7 @@ const modalButtonNames = {
   FlangeCapacityModal: "Flange Capacity",
   BoltWebCapacityModal: "Web Bolt Capacity",
   BoltFlangeCapacityModal: "Flange Bolt Capacity",
-  MemberCapacityModal: "Member Capacity"
+  MemberCapacityModal: "Member Capacity",
 };
 
 const CoverPlateBoltedOutputDock = ({ output }) => {
