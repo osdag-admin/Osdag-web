@@ -138,10 +138,102 @@ function CoverPlateBolted() {
     createDesignReport,
     getSupportedData,
     deleteSession,
+    resetModuleState,
   } = useContext(ModuleContext);
 
   if (displaySaveInputPopup)
     [setTimeout(() => setDisplaySaveInputPopup(false), 4000)];
+
+  const [renderBoolean, setRenderBoolean] = useState(false);
+  const [modelKey, setModelKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedView, setSelectedView] = useState("Model");
+  const options = ["Model", "Beam", "Connector"];
+  const { position: cameraPos, fov } = useViewCamera(
+    "CoverPlateBolted",
+    selectedView
+  );
+  const cameraRef = useRef();
+  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
+  const triggerScreenshotCapture = () => {
+    setScreenshotTrigger(true);
+  };
+
+  // Add a comprehensive reset function that resets both local and context state
+  const resetToDefaultState = () => {
+    console.log("COVERPLATE: Starting complete reset");
+
+    if (resetModuleState) {
+      resetModuleState();
+    }
+
+    setRenderBoolean(false);
+    setModelKey(0);
+    setOutput(null);
+    setLogs(null);
+    setDisplayOutput(false);
+    setLoading(false);
+
+    setInputs({
+      bolt_hole_type: "Standard",
+      bolt_diameter: [],
+      bolt_grade: [],
+      bolt_slip_factor: "0.3",
+      bolt_tension_type: "Pre-tensioned",
+      bolt_type: "Bearing Bolt",
+      flange_plate_preferences: "Outside",
+      flange_plate_thickness: [],
+      connector_material: "E 250 (Fe 410 W)A",
+      web_plate_thickness: [],
+      design_method: "Limit State Design",
+      detailing_corr_status: "No",
+      detailing_edge_type: "Sheared or hand flame cut",
+      detailing_gap: "3",
+      load_axial: "100",
+      load_moment: "70",
+      load_shear: "50",
+      material: "E 250 (Fe 410 W)A",
+      member_designation: "MB 300",
+      member_material: "E 250 (Fe 410 W)A",
+      module: "Beam-to-Beam Cover Plate Bolted Connection",
+    });
+
+    setBoltDiameterSelect("All");
+    setFlangeThicknessSelect("All");
+    setWebThicknessSelect("All");
+    setPropertyClassSelect("All");
+    setAllSelected({
+      flange_plate_thickness: true,
+      web_plate_thickness: true,
+      bolt_diameter: true,
+      bolt_grade: true,
+    });
+
+    setModalOpen(false);
+    setModalpropertyClassListOpen(false);
+    setFlangePlateThicknessModal(false);
+    setWebPlateThicknessModal(false);
+    setDesignPrefModalStatus(false);
+    setShowModal(false);
+    setConfirmationModal(false);
+    setDisplaySaveInputPopup(false);
+    setCreateDesignReportBool(false);
+
+    setSelectedDiameterNewItems([]);
+    setSelectedpropertyClassListItems([]);
+    setSelectedFlangePlateThicknessItems([]);
+    setSelectedWebPlateThicknessItems([]);
+
+    setSelectedView("Model");
+    setScreenshotTrigger(false);
+
+    console.log("COVERPLATE: Complete reset finished");
+  };
+
+  //simple function to check unsaved work
+  const hasUnsavedWork = () => {
+    return !!(output || renderBoolean);
+  };
 
   const [inputs, setInputs] = useState({
     bolt_hole_type: "Standard",
@@ -167,6 +259,63 @@ function CoverPlateBolted() {
     module: "Beam-to-Beam Cover Plate Bolted Connection",
   });
 
+  //navigation and reseting
+  const [confirmationType, setConfirmationType] = useState("reset");
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [navigationSource, setNavigationSource] = useState(null);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [isLoadingModalVisible, setIsLoadingModalVisible] = useState(false);
+  const [loadingStage, setLoadingStage] = useState("");
+
+  useEffect(() => {
+    //Protect against browser refresh and direct URL changes
+    const handleBeforeUnload = (event) => {
+      if (hasUnsavedWork()) {
+        const message =
+          "You have unsaved design progress. Are you sure you want to leave?";
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
+      }
+    };
+
+    //Protect against browser back button
+    const handlePopState = (event) => {
+      if (hasUnsavedWork() && !allowNavigation) {
+        // Prevent back navigation by pushing current state back
+        window.history.pushState(
+          null,
+          "",
+          "/design/connections/beam-to-beam-splice/cover_plate_bolted"
+        );
+
+        // Show confirmation modal and mark as back navigation
+        setConfirmationType("navigation");
+        setNavigationSource("back");
+        setShowResetConfirmation(true);
+
+        console.log("BACK BUTTON: Prevented navigation due to unsaved work");
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [output, renderBoolean, allowNavigation]);
+
+  // Separate useEffect to manage history state
+  useEffect(() => {
+    // Only add history entry when there's unsaved work
+    if (hasUnsavedWork()) {
+      window.history.pushState(null, "", window.location.pathname);
+    }
+  }, [output, renderBoolean]);
+
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] =
     useState(false);
   const [flangePlateThicknessModal, setFlangePlateThicknessModal] =
@@ -179,32 +328,35 @@ function CoverPlateBolted() {
     bolt_grade: true,
   });
 
-  const [renderBoolean, setRenderBoolean] = useState(false);
-  const [modelKey, setModelKey] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [selectedView, setSelectedView] = useState("Model");
-  const options = ["Model", "Beam", "Connector"];
-  const { position: cameraPos, fov } = useViewCamera("CoverPlateBolted",selectedView);
-  const cameraRef = useRef();
-  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
-  const triggerScreenshotCapture = () => {
-    setScreenshotTrigger(true);
-  };
-
   useEffect(() => {
-    createSession("Cover Plate Bolted Connection");
+    // Reset to default state when component mounts
+    resetToDefaultState();
+
+    // Small delay before new session
+    setTimeout(() => {
+      console.log("COVERPLATE: Creating new session");
+      createSession("Cover Plate Bolted Connection");
+    }, 100);
   }, []);
 
   useEffect(() => {
     return () => {
       if (
-        location.pathname !=
+        window.location.pathname !==
         "/design/connections/beam-to-beam-splice/cover_plate_bolted"
       ) {
-        deleteSession("Cover Plate Bolted Connection");
+        // Only do cleanup if navigation is allowed or no unsaved work
+        if (!hasUnsavedWork() || allowNavigation) {
+          console.log("CLEANUP: Proceeding with session deletion");
+          deleteSession("Cover Plate Bolted Connection");
+          setTimeout(() => {
+            resetToDefaultState();
+          }, 50);
+          setAllowNavigation(false);
+        }
       }
     };
-  }, []);
+  }, [allowNavigation]);
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === "Customized") {
@@ -372,10 +524,12 @@ function CoverPlateBolted() {
         Module: "Beam-to-Beam Cover Plate Bolted Connection",
       };
       console.log(param);
+
+      setIsLoadingModalVisible(true);
+      setLoadingStage("Generating design calculations...");
+
       createDesign(param, "Cover-Plate-Bolted-Connection");
       setDisplayOutput(true);
-
-      setLoading(true);
       setModelKey((prev) => prev + 1); //Forces model to reload
     }
   };
@@ -459,6 +613,12 @@ function CoverPlateBolted() {
       console.log("Received raw .obj data:", cadModelPaths);
       setRenderBoolean(true);
       setLoading(false);
+
+      // Hide loading modal when model is ready
+      setTimeout(() => {
+        setIsLoadingModalVisible(false);
+        setLoadingStage("");
+      }, 500);
     } else {
       setRenderBoolean(false);
     }
@@ -576,43 +736,56 @@ function CoverPlateBolted() {
   };
 
   const handleReset = () => {
-    // resetting the inputs
-    setInputs({
-      bolt_diameter: inputs.bolt_diameter,
-      bolt_grade: inputs.bolt_grade,
-      bolt_type: "Bearing Bolt",
-      connector_material: inputs.connector_material,
-      load_shear: "",
-      load_moment: "",
-      load_axial: "",
-      module: "Cover Plate Bolted Connection",
-      flange_plate_thickness: inputs.flange_plate_thickness,
-      flange_plate_preferences: "Outside",
-      web_plate_thickness: inputs.web_plate_thickness,
-      member_designation: "Select Section",
-    });
+    setConfirmationType("reset");
+    setShowResetConfirmation(true);
+  };
 
-    // reset setAllSelected
-    setAllSelected({
-      plate_thickness: true,
-      bolt_diameter: true,
-      bolt_grade: true,
-    });
+  const handleHomeClick = () => {
+    if (hasUnsavedWork()) {
+      setConfirmationType("navigation");
+      setNavigationSource("home"); //home navigation
+      setShowResetConfirmation(true);
+    } else {
+      navigate("/home");
+    }
+  };
 
-    setBoltDiameterSelect("All");
-    setPropertyClassSelect("All");
-    setFlangeThicknessSelect("All");
-    setWebThicknessSelect("All");
-    handleAllSelectWebPT("All"); // for thickness
-    handleAllSelectFlangePT("All"); // for thickness
-    handleSelectChangePropertyClass("All"); // for property Class
-    handleSelectChangeBoltBeam("All"); // for bolt diameter
+  const performReset = () => {
+    if (confirmationType === "navigation") {
+      console.log(`USER CONFIRMED NAVIGATION - source: ${navigationSource}`);
 
-    // reset CAD model
-    setRenderBoolean(false);
+      // Set flag to allow navigation
+      setAllowNavigation(true);
 
-    // reset Output values dock
-    setOutput(null);
+      // Close modal first
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+
+      // Small delay then navigate
+      setTimeout(() => {
+        // First cleanup the session and state
+        deleteSession("Cover Plate Bolted Connection");
+        resetToDefaultState();
+
+        // Manual destinations
+        if (navigationSource === "home") {
+          console.log("Navigating to home");
+          navigate("/home");
+        } else if (navigationSource === "back") {
+          console.log("Navigating to connections page");
+          navigate("/design-type/connections");
+        }
+
+        setAllowNavigation(false);
+        setNavigationSource(null);
+      }, 100);
+    } else {
+      console.log("USER CONFIRMED RESET - starting targeted reset");
+      resetToDefaultState();
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+      console.log("RESET: User confirmed - targeted reset completed");
+    }
   };
 
   // Diameter mm
@@ -758,12 +931,7 @@ function CoverPlateBolted() {
           )}
 
           <div className="element">
-            <div
-              className="home-btn"
-              onClick={() => {
-                navigate("/home");
-              }}
-            >
+            <div className="home-btn" onClick={handleHomeClick}>
               Home
             </div>
           </div>
@@ -1112,14 +1280,13 @@ function CoverPlateBolted() {
                 <p>Loading Model...</p>
               </div>
             ) : renderBoolean ? (
-              <div
-                className="cadModel"
-              >
-                <Canvas gl={{ antialias: true, preserveDrawingBuffer: true }} 
-                onCreated={({ gl }) => {
-                  gl.setClearColor("#ADD8E6"); // set background inside WebGL itself, not just CSS
-                }}>
-
+              <div className="cadModel">
+                <Canvas
+                  gl={{ antialias: true, preserveDrawingBuffer: true }}
+                  onCreated={({ gl }) => {
+                    gl.setClearColor("#ADD8E6"); // set background inside WebGL itself, not just CSS
+                  }}
+                >
                   <PerspectiveCamera
                     ref={cameraRef}
                     makeDefault
@@ -1271,7 +1438,6 @@ function CoverPlateBolted() {
                     <Button type="button" onClick={handleSaveProfile}>
                       Save Profile
                     </Button>
-                  
                   </div>
                   <Row
                     gutter={[16, 16]}
@@ -1446,6 +1612,99 @@ function CoverPlateBolted() {
       ) : (
         <br />
       )}
+
+      {/* Reset Confirmation Modal */}
+      <Modal
+        open={showResetConfirmation}
+        title={
+          <span>
+            {confirmationType === "reset"
+              ? "Confirm Reset"
+              : "Unsaved Progress"}
+          </span>
+        }
+        onCancel={() => {
+          setShowResetConfirmation(false);
+          setConfirmationType("reset");
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => setShowResetConfirmation(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="confirm"
+            type="primary"
+            style={{ background: "rgb(135, 91, 91)", color: "white" }}
+            onClick={performReset}
+          >
+            {confirmationType === "reset"
+              ? "Yes, Reset Everything"
+              : "Yes, Leave Page"}
+          </Button>,
+        ]}
+        width={500}
+      >
+        <div>
+          <p>
+            {confirmationType === "reset"
+              ? "Are you sure you want to reset all inputs and clear the current design?"
+              : "You have unsaved design progress. Are you sure you want to leave?"}
+          </p>
+          <br />
+          <p>
+            <strong>This will lose all your current work.</strong>
+          </p>
+        </div>
+      </Modal>
+
+      {/* Loading Modal */}
+      <Modal
+        open={isLoadingModalVisible}
+        footer={null}
+        closable={false}
+        maskClosable={false}
+        centered
+        width={400}
+        className="loading-modal"
+        styles={{
+          body: {
+            textAlign: "center",
+            padding: "40px 20px",
+          },
+        }}
+      >
+        <div className="loading-content">
+          <div
+            style={{
+              fontSize: "18px",
+              marginBottom: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            Processing Design
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <div
+              className="spinner"
+              style={{
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #3498db",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                animation: "spin 1s linear infinite",
+                margin: "0 auto",
+              }}
+            ></div>
+          </div>
+          <div style={{ fontSize: "14px", color: "#666" }}>
+            {loadingStage || "Please wait while we generate your results..."}
+          </div>
+          <div style={{ marginTop: "10px", fontSize: "12px", color: "#999" }}>
+            This may take a few moments
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

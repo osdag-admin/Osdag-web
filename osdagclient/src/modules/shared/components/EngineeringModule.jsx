@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Html, PerspectiveCamera } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
-import { Input, Modal } from "antd";
+import { Input, Modal, Button } from "antd";
 
 import { useEngineeringModule } from "../hooks/useEngineeringModule";
 import { InputSection } from "../components/InputSection";
@@ -12,7 +12,7 @@ import { DesignReportModal } from "../components/DesignReportModal";
 import useViewCamera from "./btobViewCamera";
 import Model from "./btobRender";
 import Logs from "../../../components/Logs";
-import MomentDropdownMenu from "../../../components/MomentDropDownMenu";
+import UnifiedDropdownMenu from "../utils/UnifiedDropdownMenu";
 import ScreenshotCapture from "../../../components/ScreenShotCapture";
 import DesignPrefSections from "../../../components/DesignPrefSections";
 
@@ -66,6 +66,16 @@ export const EngineeringModule = ({
     extraState,
     setExtraState,
 
+    // Navigation and Reset states
+    showResetConfirmation,
+    setShowResetConfirmation,
+    confirmationType,
+    setConfirmationType,
+    isLoadingModalVisible,
+    setIsLoadingModalVisible,
+    loadingStage,
+    setLoadingStage,
+
     // Actions
     updateModalState,
     updateSelectionState,
@@ -73,16 +83,30 @@ export const EngineeringModule = ({
     toggleAllSelected,
     handleSubmit,
     handleReset,
+    handleHomeClick,
+    performReset,
     handleCreateDesignReport,
     handleOkDesignReport,
     handleCancelDesignReport,
   } = useEngineeringModule(moduleConfig);
+
+   // Get connectivity for FinPlate module
+  const getConnectivity = () => {
+    if (moduleConfig.cameraKey === "FinPlate") {
+      return extraState?.selectedOption || inputs?.connectivity;
+    }
+    return null;
+  };
+
   const { position: cameraPos, fov } = useViewCamera(
     moduleConfig.cameraKey,
-    selectedView
+    selectedView,
+    getConnectivity()
   );
 
-  // Determine view options based on module sessionName or cameraKey
+
+
+// Determine view options based on module sessionName or cameraKey
   const getViewOptions = () => {
     if (moduleConfig.sessionName === "Beam-to-Column End Plate Connection") {
       return ["Model", "Beam", "Column", "Connector"];
@@ -115,7 +139,7 @@ export const EngineeringModule = ({
       {/* Navigation */}
       <div className="module_nav">
         {menuItems.map((item, index) => (
-          <MomentDropdownMenu
+          <UnifiedDropdownMenu
             key={index}
             label={item.label}
             dropdown={item.dropdown}
@@ -126,6 +150,10 @@ export const EngineeringModule = ({
             logs={logs}
             setCreateDesignReportBool={setCreateDesignReportBool}
             triggerScreenshotCapture={triggerScreenshotCapture}
+            selectedOption={extraState.selectedOption}
+            setSelectedOption={(value) =>
+              setExtraState({ ...extraState, selectedOption: value })
+            }
           />
         ))}
 
@@ -136,7 +164,7 @@ export const EngineeringModule = ({
         )}
 
         <div className="element">
-          <div className="home-btn" onClick={() => navigate("/home")}>
+          <div className="home-btn" onClick={handleHomeClick}>
             Home
           </div>
         </div>
@@ -260,7 +288,7 @@ export const EngineeringModule = ({
         output={output}
       />
 
-      {/* Modals */}
+      {/* Customization Modals */}
       {moduleConfig.modalConfig.map((modal) => (
         <CustomizationModal
           key={modal.key}
@@ -296,6 +324,111 @@ export const EngineeringModule = ({
           />
         </Modal>
       )}
+
+      {/* Reset Confirmation Modal */}
+      <Modal
+        open={showResetConfirmation}
+        title={
+          <span>
+            {confirmationType === "reset"
+              ? "Confirm Reset"
+              : "Unsaved Progress"}
+          </span>
+        }
+        onCancel={() => {
+          setShowResetConfirmation(false);
+          setConfirmationType("reset");
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => setShowResetConfirmation(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="confirm"
+            type="primary"
+            style={{ background: "rgb(135, 91, 91)", color: "white" }}
+            onClick={performReset}
+          >
+            {confirmationType === "reset"
+              ? "Yes, Reset Everything"
+              : "Yes, Leave Page"}
+          </Button>,
+        ]}
+        width={500}
+      >
+        <div>
+          <p>
+            {confirmationType === "reset"
+              ? "Are you sure you want to reset all inputs and clear the current design?"
+              : "You have unsaved design progress. Are you sure you want to leave?"}
+          </p>
+          <br />
+          <p>
+            <strong>This will lose all your current work.</strong>
+          </p>
+        </div>
+      </Modal>
+
+      {/* Loading Modal */}
+      <Modal
+        open={isLoadingModalVisible}
+        footer={null}
+        closable={false}
+        maskClosable={false}
+        centered
+        width={400}
+        className="loading-modal"
+        styles={{
+          body: {
+            textAlign: "center",
+            padding: "40px 20px",
+          },
+        }}
+      >
+        <div className="loading-content">
+          <div
+            style={{
+              fontSize: "18px",
+              marginBottom: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            Processing Design
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <div
+              className="spinner"
+              style={{
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #3498db",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                animation: "spin 1s linear infinite",
+                margin: "0 auto",
+              }}
+            ></div>
+          </div>
+          <div style={{ fontSize: "14px", color: "#666" }}>
+            {loadingStage || "Please wait while we generate your results..."}
+          </div>
+          <div style={{ marginTop: "10px", fontSize: "12px", color: "#999" }}>
+            This may take a few moments
+          </div>
+        </div>
+      </Modal>
+
+      {/* CSS for spinner animation */}
+      <style jsx>{`
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 };

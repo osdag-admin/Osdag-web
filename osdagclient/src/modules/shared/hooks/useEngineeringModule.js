@@ -1,7 +1,10 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
 
 export const useEngineeringModule = (moduleConfig) => {
+  const navigate = useNavigate();
+  
   const {
     beamList,
     columnList,
@@ -21,6 +24,7 @@ export const useEngineeringModule = (moduleConfig) => {
     getSupportedData,
     getDesingPrefData,
     deleteSession,
+    resetModuleState,
   } = useContext(ModuleContext);
 
   // Core state management
@@ -93,6 +97,14 @@ export const useEngineeringModule = (moduleConfig) => {
     companyLogoName: "",
   });
 
+  // Navigation and reset states
+  const [confirmationType, setConfirmationType] = useState("reset");
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [navigationSource, setNavigationSource] = useState(null);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [isLoadingModalVisible, setIsLoadingModalVisible] = useState(false);
+  const [loadingStage, setLoadingStage] = useState("");
+
   // Other states
   const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
@@ -101,16 +113,131 @@ export const useEngineeringModule = (moduleConfig) => {
   const [selectedView, setSelectedView] = useState("Model");
   const [screenshotTrigger, setScreenshotTrigger] = useState(false);
 
-  // Initialize session
+  // Helper function to check if there's unsaved work
+  const hasUnsavedWork = () => {
+    return !!(output || renderBoolean);
+  };
+
+  // Comprehensive reset function
+  const resetToDefaultState = () => {
+    console.log(`${moduleConfig.sessionName}: Starting complete reset`);
+
+    if (resetModuleState) {
+      resetModuleState();
+    }
+
+    setRenderBoolean(false);
+    setModelKey(0);
+    setOutput(null);
+    setLogs(null);
+    setDisplayOutput(false);
+    setLoading(false);
+
+    setInputs(moduleConfig.defaultInputs);
+    setExtraState(getInitialExtraState());
+
+    // Reset selection states
+    setSelectionStates(
+      moduleConfig.selectionConfig.reduce((acc, selection) => {
+        acc[selection.key] = selection.defaultValue || "All";
+        return acc;
+      }, {})
+    );
+
+    setAllSelected(
+      moduleConfig.selectionConfig.reduce((acc, selection) => {
+        acc[selection.inputKey] = true;
+        return acc;
+      }, {})
+    );
+
+    // Reset modal states
+    setModalStates(
+      moduleConfig.modalConfig.reduce((acc, modal) => {
+        acc[modal.key] = false;
+        return acc;
+      }, {})
+    );
+
+    setSelectedItems(
+      moduleConfig.selectionConfig.reduce((acc, selection) => {
+        acc[selection.inputKey] = [];
+        return acc;
+      }, {})
+    );
+
+    setDesignPrefModalStatus(false);
+    setConfirmationModal(false);
+    setDisplaySaveInputPopup(false);
+    setCreateDesignReportBool(false);
+    setSelectedView("Model");
+    setScreenshotTrigger(false);
+
+    console.log(`${moduleConfig.sessionName}: Complete reset finished`);
+  };
+
+  // Initialize session and navigation protection
   useEffect(() => {
-    createSession(moduleConfig.sessionName);
-    console.log("Session created for:", moduleConfig.sessionName);
-    return () => {
-      if (location.pathname !== moduleConfig.routePath) {
-        deleteSession(moduleConfig.sessionName);
+    resetToDefaultState();
+
+    setTimeout(() => {
+      console.log(`${moduleConfig.sessionName}: Creating new session`);
+      createSession(moduleConfig.sessionName);
+    }, 100);
+  }, []);
+
+  // Navigation protection
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (hasUnsavedWork()) {
+        const message = "You have unsaved design progress. Are you sure you want to leave?";
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
       }
     };
-  }, []);
+
+    const handlePopState = (event) => {
+      if (hasUnsavedWork() && !allowNavigation) {
+        window.history.pushState(null, "", moduleConfig.routePath);
+        setConfirmationType("navigation");
+        setNavigationSource("back");
+        setShowResetConfirmation(true);
+        console.log("BACK BUTTON: Prevented navigation due to unsaved work");
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [output, renderBoolean, allowNavigation, moduleConfig.routePath]);
+
+  // Manage history state
+  useEffect(() => {
+    if (hasUnsavedWork()) {
+      window.history.pushState(null, "", window.location.pathname);
+    }
+  }, [output, renderBoolean]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (window.location.pathname !== moduleConfig.routePath) {
+        if (!hasUnsavedWork() || allowNavigation) {
+          console.log("CLEANUP: Proceeding with session deletion");
+          deleteSession(moduleConfig.sessionName);
+          setTimeout(() => {
+            resetToDefaultState();
+          }, 50);
+          setAllowNavigation(false);
+        }
+      }
+    };
+  }, [allowNavigation, moduleConfig.routePath, moduleConfig.sessionName]);
 
   // Handle design logs
   useEffect(() => {
@@ -121,8 +248,10 @@ export const useEngineeringModule = (moduleConfig) => {
         console.log(error);
         setOutput(null);
       }
+    } else {
+      setLogs(null);
     }
-  }, [designLogs]);
+  }, [designLogs, displayOutput]);
 
   // Handle design data - Both modules use same flat structure now
   useEffect(() => {
@@ -146,13 +275,19 @@ export const useEngineeringModule = (moduleConfig) => {
         setOutput(null);
       }
     }
-  }, [designData]);
+  }, [designData, displayOutput]);
 
   // Handle CAD model rendering
   useEffect(() => {
     if (renderCadModel && cadModelPaths) {
       setRenderBoolean(true);
       setLoading(false);
+      
+      // Hide loading modal when model is ready
+      setTimeout(() => {
+        setIsLoadingModalVisible(false);
+        setLoadingStage("");
+      }, 500);
     } else {
       setRenderBoolean(false);
     }
@@ -176,7 +311,7 @@ export const useEngineeringModule = (moduleConfig) => {
         "Beam-Beam": "Beam-Beam",
       };
 
-      const connectivity = extraState.selectedOption || inputs.connectivity;
+      const connectivity = extraState?.selectedOption || inputs.connectivity;
 
       if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
         if (inputs.column_section && inputs.beam_section) {
@@ -204,6 +339,13 @@ export const useEngineeringModule = (moduleConfig) => {
     extraState.selectedOption,
     inputs.connectivity,
   ]);
+
+  // Auto-hide save input popup
+  useEffect(() => {
+    if (displaySaveInputPopup) {
+      setTimeout(() => setDisplaySaveInputPopup(false), 4000);
+    }
+  }, [displaySaveInputPopup]);
 
   const updateModalState = (modalKey, isOpen) => {
     setModalStates((prev) => ({
@@ -250,31 +392,60 @@ export const useEngineeringModule = (moduleConfig) => {
       thicknessList,
     }, extraState);
 
+    // Show loading modal
+    setIsLoadingModalVisible(true);
+    setLoadingStage("Generating design calculations...");
+
     createDesign(param, moduleConfig.designType);
     setDisplayOutput(true);
-    setLoading(true);
     setModelKey((prev) => prev + 1);
   };
 
   const handleReset = () => {
-    setInputs(moduleConfig.defaultInputs);
-    setAllSelected(
-      moduleConfig.selectionConfig.reduce((acc, selection) => {
-        acc[selection.inputKey] = true;
-        return acc;
-      }, {})
-    );
+    setConfirmationType("reset");
+    setShowResetConfirmation(true);
+  };
 
-    // Reset selection states
-    moduleConfig.selectionConfig.forEach((selection) => {
-      updateSelectionState(selection.key, "All");
-    });
+  const handleHomeClick = () => {
+    if (hasUnsavedWork()) {
+      setConfirmationType("navigation");
+      setNavigationSource("home");
+      setShowResetConfirmation(true);
+    } else {
+      navigate("/home");
+    }
+  };
 
-    // Reset extraState to initial values
-    setExtraState(getInitialExtraState());
+  const performReset = () => {
+    if (confirmationType === "navigation") {
+      console.log(`USER CONFIRMED NAVIGATION - source: ${navigationSource}`);
 
-    setRenderBoolean(false);
-    setOutput(null);
+      setAllowNavigation(true);
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+
+      setTimeout(() => {
+        deleteSession(moduleConfig.sessionName);
+        resetToDefaultState();
+
+        if (navigationSource === "home") {
+          console.log("Navigating to home");
+          navigate("/home");
+        } else if (navigationSource === "back") {
+          console.log("Navigating to connections page");
+          navigate("/design-type/connections");
+        }
+
+        setAllowNavigation(false);
+        setNavigationSource(null);
+      }, 100);
+    } else {
+      console.log("USER CONFIRMED RESET - starting targeted reset");
+      resetToDefaultState();
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+      console.log("RESET: User confirmed - targeted reset completed");
+    }
   };
 
   const saveOutput = () => {
@@ -290,7 +461,7 @@ export const useEngineeringModule = (moduleConfig) => {
       thicknessList,
     }, extraState);
 
-    // Add output data to the submission data - Both modules use same flat structure now
+    // Add output data to the submission data
     for (const key in output) {
       if (output.hasOwnProperty(key)) {
         const { label, val } = output[key];
@@ -303,8 +474,7 @@ export const useEngineeringModule = (moduleConfig) => {
 
     // Convert to CSV and download
     data = convertToCSV(data);
-    const csvContent =
-      "data:text/csv;charset=utf-8," + encodeURIComponent(data);
+    const csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(data);
     const link = document.createElement("a");
     link.setAttribute("href", csvContent);
     link.setAttribute("download", "output.csv");
@@ -399,6 +569,16 @@ export const useEngineeringModule = (moduleConfig) => {
     extraState,
     setExtraState,
 
+    // Navigation and Reset states
+    showResetConfirmation,
+    setShowResetConfirmation,
+    confirmationType,
+    setConfirmationType,
+    isLoadingModalVisible,
+    setIsLoadingModalVisible,
+    loadingStage,
+    setLoadingStage,
+
     // Actions
     updateModalState,
     updateSelectionState,
@@ -406,6 +586,8 @@ export const useEngineeringModule = (moduleConfig) => {
     toggleAllSelected,
     handleSubmit,
     handleReset,
+    handleHomeClick,
+    performReset,
     saveOutput,
     handleCreateDesignReport,
     handleOkDesignReport,

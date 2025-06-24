@@ -25,12 +25,12 @@ import jwt_decode from 'jwt-decode';
 import EndPlate from './components/shearConnection/EndPlate';
 import CleatAngle from './components/shearConnection/CleatAngle';
 import SeatedAngle from './components/shearConnection/SeatedAngle';
-import CoverPlateBolted from "./components/momentConnection/beamToBeamSplice/CoverPlateBolted";
-import BeamBeamEndPlate from "./components/momentConnection/beamToBeamSplice/BeamBeamEndPlate";
+import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
+import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
 import BoltedToEndPage from './components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage';
 
 // module imports
-import FinePlate from "./components/shearConnection/FinePlate";
+import FinPlate from "./modules/FinPlate/FinPlate";
 import CoverPlateWelded from "./components/momentConnection/beamToBeamSplice/CoverPlateWelded";
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
 import { clearSessionsOnNavigation } from "./utils/sessionManager";
@@ -58,7 +58,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/design-type/:designType" element={<Window />} />
         {/* Wrap FinePlate with a route that checks authentication */}
-        <Route path="/design/:designType/fin_plate" element={<FinePlate />} />
+        <Route path="/design/:designType/fin_plate" element={<FinPlate />} />
         <Route path="/design/:designType/end_plate" element={<EndPlate />} />
         <Route
           path="/design/:designType/cleat_angle"

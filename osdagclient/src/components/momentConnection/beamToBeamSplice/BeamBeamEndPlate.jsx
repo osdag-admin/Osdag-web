@@ -155,10 +155,108 @@ function BeamBeamEndPlate() {
     createDesignReport,
     getSupportedData,
     deleteSession,
+    resetModuleState,
   } = useContext(ModuleContext);
 
   if (displaySaveInputPopup)
     [setTimeout(() => setDisplaySaveInputPopup(false), 4000)];
+
+  const [confirmationType, setConfirmationType] = useState("reset");
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [navigationSource, setNavigationSource] = useState(null);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [isLoadingModalVisible, setIsLoadingModalVisible] = useState(false);
+  const [loadingStage, setLoadingStage] = useState("");
+
+  const [renderBoolean, setRenderBoolean] = useState(false);
+  const [modelKey, setModelKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedView, setSelectedView] = useState("Model");
+  const options = ["Model", "Beam", "Connector"];
+  const { position: cameraPos, fov } = useViewCamera(
+    "BeamBeamEndPlate",
+    selectedView
+  );
+  const cameraRef = useRef();
+  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
+  const triggerScreenshotCapture = () => {
+    setScreenshotTrigger(true);
+  };
+
+  //reset function that resets both local and context state
+  const resetToDefaultState = () => {
+    console.log("BEAMBEAMENDPLATE: Starting complete reset");
+
+    if (resetModuleState) {
+      resetModuleState();
+    }
+
+    setRenderBoolean(false);
+    setModelKey(0);
+    setOutput(null);
+    setLogs(null);
+    setDisplayOutput(false);
+    setLoading(false);
+
+    setInputs({
+      bolt_hole_type: "Standard",
+      bolt_diameter: [],
+      bolt_grade: [],
+      bolt_slip_factor: "0.3",
+      bolt_tension_type: "Non pre-tensioned",
+      bolt_type: "Bearing Bolt",
+      connectivity: "Coplanar Tension-Compression Flange",
+      plate_thickness: [],
+      connector_material: "E 250 (Fe 410 W)A",
+      design_method: "Limit State Design",
+      detailing_corr_status: "No",
+      detailing_edge_type: "Sheared or hand flame cut",
+      detailing_gap: "0",
+      load_axial: "100",
+      load_moment: "100",
+      load_shear: "100",
+      material: "E 250 (Fe 410 W)A",
+      supported_designation: "WPB 900 X 300 X 291.46",
+      supported_material: "E 250 (Fe 410 W)A",
+      module: "Beam-to-Beam End Plate Connection",
+      weld_fab: "Shop Weld",
+      weld_material_grade: "410",
+      weld_type: "Groove Weld",
+    });
+
+    setSelectedOption("Flushed - Reversible Moment");
+    setBoltDiameterSelect("All");
+    setThicknessSelect("All");
+    setPropertyClassSelect("All");
+    setAllSelected({
+      plate_thickness: true,
+      bolt_diameter: true,
+      bolt_grade: true,
+    });
+
+    setModalOpen(false);
+    setModalpropertyClassListOpen(false);
+    setPlateThicknessModal(false);
+    setDesignPrefModalStatus(false);
+    setShowModal(false);
+    setConfirmationModal(false);
+    setDisplaySaveInputPopup(false);
+    setCreateDesignReportBool(false);
+
+    setSelectedDiameterNewItems([]);
+    setSelectedpropertyClassListItems([]);
+    setSelectedPlateThicknessItems([]);
+
+    setSelectedView("Model");
+    setScreenshotTrigger(false);
+
+    console.log("BEAMBEAMENDPLATE: Complete reset finished");
+  };
+
+  //simple function to check unsaved work
+  const hasUnsavedWork = () => {
+    return !!(output || renderBoolean);
+  };
 
   const [inputs, setInputs] = useState({
     bolt_hole_type: "Standard",
@@ -186,41 +284,93 @@ function BeamBeamEndPlate() {
     weld_type: "Groove Weld",
   });
 
+  useEffect(() => {
+    // 1. Protect against browser refresh and direct URL changes
+    const handleBeforeUnload = (event) => {
+      if (hasUnsavedWork()) {
+        const message =
+          "You have unsaved design progress. Are you sure you want to leave?";
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
+      }
+    };
+
+    // 2. Protect against browser back button
+    const handlePopState = (event) => {
+      if (hasUnsavedWork() && !allowNavigation) {
+        // Prevent back navigation by pushing current state back
+        window.history.pushState(
+          null,
+          "",
+          "/design/connections/beam-to-beam-splice/end_plate"
+        );
+
+        // Show confirmation modal and mark as back navigation
+        setConfirmationType("navigation");
+        setNavigationSource("back");
+        setShowResetConfirmation(true);
+
+        console.log("BACK BUTTON: Prevented navigation due to unsaved work");
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [output, renderBoolean, allowNavigation]);
+
+  // Separate useEffect to manage history state
+  useEffect(() => {
+    // Only add history entry when there's unsaved work
+    if (hasUnsavedWork()) {
+      window.history.pushState(null, "", window.location.pathname);
+    }
+  }, [output, renderBoolean]);
+
   const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] =
     useState(false);
-  const [plateThicknessModal, setPlateThicknessModal] =
-    useState(false);
+  const [plateThicknessModal, setPlateThicknessModal] = useState(false);
   const [allSelected, setAllSelected] = useState({
     plate_thickness: true,
     bolt_diameter: true,
     bolt_grade: true,
   });
 
-  const [renderBoolean, setRenderBoolean] = useState(false);
-  const [modelKey, setModelKey] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [selectedView, setSelectedView] = useState("Model");
-  const options = ["Model", "Beam", "Connector"];
-  const { position: cameraPos, fov } = useViewCamera("BeamBeamEndPlate",selectedView);
-  const cameraRef = useRef();
-  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
-  const triggerScreenshotCapture = () => {
-    setScreenshotTrigger(true);
-  };
-
   useEffect(() => {
-    createSession("Beam Beam End Plate Connection");
+    // Reset to default state when component mounts
+    resetToDefaultState();
+
+    // Small delay before new session
+    setTimeout(() => {
+      console.log("BEAMBEAMENDPLATE: Creating new session");
+      createSession("Beam Beam End Plate Connection");
+    }, 100);
   }, []);
 
   useEffect(() => {
     return () => {
       if (
-        location.pathname != "/design/connections/beam-to-beam-splice/end_plate"
+        window.location.pathname !==
+        "/design/connections/beam-to-beam-splice/end_plate"
       ) {
-        deleteSession("Beam Beam End Plate Connection");
+        // Only do cleanup if navigation is allowed or no unsaved work
+        if (!hasUnsavedWork() || allowNavigation) {
+          console.log("CLEANUP: Proceeding with session deletion");
+          deleteSession("Beam Beam End Plate Connection");
+          setTimeout(() => {
+            resetToDefaultState();
+          }, 50);
+          setAllowNavigation(false);
+        }
       }
     };
-  }, []);
+  }, [allowNavigation]);
 
   const handleSelectChangePropertyClass = (value) => {
     if (value === "Customized") {
@@ -364,10 +514,9 @@ function BeamBeamEndPlate() {
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity *": inputs.connectivity,
         EndPlateType: conn_map[selectedOption],
-        "Connector.Plate.Thickness_List":
-          allSelected.plate_thickness
-            ? thicknessList
-            : inputs.plate_thickness,
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness
+          ? thicknessList
+          : inputs.plate_thickness,
         "Connector.Material": inputs.supported_material,
         "Design.Design_Method": inputs.design_method,
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
@@ -385,10 +534,12 @@ function BeamBeamEndPlate() {
         Module: "Beam-to-Beam End Plate Connection",
       };
       console.log(param);
-      createDesign(param, "Tension-Member-Bolted-Design");
-      setDisplayOutput(true);
 
-      setLoading(true);
+      setIsLoadingModalVisible(true);
+      setLoadingStage("Generating design calculations...");
+
+      createDesign(param, "Beam-Beam-End-Plate-Connection");
+      setDisplayOutput(true);
       setModelKey((prev) => prev + 1); //Forces model to reload
     }
   };
@@ -472,6 +623,12 @@ function BeamBeamEndPlate() {
       console.log("Received raw .obj data:", cadModelPaths);
       setRenderBoolean(true);
       setLoading(false);
+
+      // Hide loading modal when model is ready
+      setTimeout(() => {
+        setIsLoadingModalVisible(false);
+        setLoadingStage("");
+      }, 500);
     } else {
       setRenderBoolean(false);
     }
@@ -546,10 +703,9 @@ function BeamBeamEndPlate() {
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
         "Connectivity *": inputs.connectivity,
         EndPlateType: conn_map[selectedOption],
-        "Connector.Plate.Thickness_List":
-          allSelected.plate_thickness
-            ? thicknessList
-            : inputs.plate_thickness,
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness
+          ? thicknessList
+          : inputs.plate_thickness,
         "Connector.Material": inputs.supported_material,
         "Design.Design_Method": inputs.design_method,
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
@@ -603,42 +759,56 @@ function BeamBeamEndPlate() {
   };
 
   const handleReset = () => {
-    // resetting the inputs
-    setInputs({
-      bolt_diameter: inputs.bolt_diameter,
-      bolt_grade: inputs.bolt_grade,
-      bolt_type: "Bearing Bolt",
-      supported_material: inputs.supported_material,
-      supported_designation: "Select Section",
-      connectivity: inputs.connectivity,
-      load_shear: "",
-      load_moment: "",
-      load_axial: "",
-      module: "Beam Beam End Plate Connection",
-      plate_thickness: inputs.plate_thickness,
-    });
+    setConfirmationType("reset");
+    setShowResetConfirmation(true);
+  };
 
-    setSelectedOption("Flushed - Reversible Moment");
+  const handleHomeClick = () => {
+    if (hasUnsavedWork()) {
+      setConfirmationType("navigation");
+      setNavigationSource("home"); //home navigation
+      setShowResetConfirmation(true);
+    } else {
+      navigate("/home");
+    }
+  };
 
-    // reset setAllSelected
-    setAllSelected({
-      plate_thickness: true,
-      bolt_diameter: true,
-      bolt_grade: true,
-    });
+  const performReset = () => {
+    if (confirmationType === "navigation") {
+      console.log(`USER CONFIRMED NAVIGATION - source: ${navigationSource}`);
 
-    setBoltDiameterSelect("All");
-    setPropertyClassSelect("All");
-    setThicknessSelect("All");
-    handleAllSelectPT("All"); // for thickness
-    handleSelectChangePropertyClass("All"); // for property Class
-    handleSelectChangeBoltBeam("All"); // for bolt diameter
+      // Set flag to allow navigation
+      setAllowNavigation(true);
 
-    // reset CAD model
-    setRenderBoolean(false);
+      // Close modal first
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
 
-    // reset Output values dock
-    setOutput(null);
+      // Small delay then navigate
+      setTimeout(() => {
+        // First cleanup the session and state
+        deleteSession("Beam Beam End Plate Connection");
+        resetToDefaultState();
+
+        // Manual destinations
+        if (navigationSource === "home") {
+          console.log("Navigating to home");
+          navigate("/home");
+        } else if (navigationSource === "back") {
+          console.log("Navigating to connections page");
+          navigate("/design-type/connections");
+        }
+
+        setAllowNavigation(false);
+        setNavigationSource(null);
+      }, 100);
+    } else {
+      console.log("USER CONFIRMED RESET - starting targeted reset");
+      resetToDefaultState();
+      setShowResetConfirmation(false);
+      setConfirmationType("reset");
+      console.log("RESET: User confirmed - targeted reset completed");
+    }
   };
 
   // Diameter mm
@@ -660,10 +830,8 @@ function BeamBeamEndPlate() {
   };
   //
   //plate_thickness
-  const [
-    selectedPlateThicknessItems,
-    setSelectedPlateThicknessItems,
-  ] = useState([]);
+  const [selectedPlateThicknessItems, setSelectedPlateThicknessItems] =
+    useState([]);
   const handleTransferChangeInPlateThickness = (nextTargetKeys) => {
     setSelectedPlateThicknessItems(nextTargetKeys);
     setInputs({ ...inputs, plate_thickness: nextTargetKeys });
@@ -778,12 +946,7 @@ function BeamBeamEndPlate() {
           )}
 
           <div className="element">
-            <div
-              className="home-btn"
-              onClick={() => {
-                navigate("/home");
-              }}
-            >
+            <div className="home-btn" onClick={handleHomeClick}>
               Home
             </div>
           </div>
@@ -800,7 +963,6 @@ function BeamBeamEndPlate() {
               <h3>Connecting Members</h3>
               <div className="component-grid">
                 <div className="component-grid-align">
-
                   <h4>Connectivity *</h4>
                   <Select
                     value={inputs.connectivity}
@@ -1052,10 +1214,7 @@ function BeamBeamEndPlate() {
               <div className="component-grid">
                 <div className="component-grid-align">
                   <h4>Thickness(mm)</h4>
-                  <Select
-                    onSelect={handleAllSelectPT}
-                    value={thicknessSelect}
-                  >
+                  <Select onSelect={handleAllSelectPT} value={thicknessSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -1090,7 +1249,7 @@ function BeamBeamEndPlate() {
 
               <h3>Weld</h3>
               <div className="component-grid">
-              <div className="component-grid-align">
+                <div className="component-grid-align">
                   <h4>Type</h4>
                   <Select
                     value={inputs.weld_type}
@@ -1183,7 +1342,12 @@ function BeamBeamEndPlate() {
 
           {/* Right */}
           <div className="superMain_right">
-            {<BeamBeamEndplateOutputDock output={output} selectedOption={selectedOption} />}
+            {
+              <BeamBeamEndplateOutputDock
+                output={output}
+                selectedOption={selectedOption}
+              />
+            }
 
             <div className="outputdock-btn">
               <Input
@@ -1472,6 +1636,99 @@ function BeamBeamEndPlate() {
       ) : (
         <br />
       )}
+
+      {/* Add Reset Confirmation Modal */}
+      <Modal
+        open={showResetConfirmation}
+        title={
+          <span>
+            {confirmationType === "reset"
+              ? "Confirm Reset"
+              : "Unsaved Progress"}
+          </span>
+        }
+        onCancel={() => {
+          setShowResetConfirmation(false);
+          setConfirmationType("reset");
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => setShowResetConfirmation(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="confirm"
+            type="primary"
+            style={{ background: "rgb(135, 91, 91)", color: "white" }}
+            onClick={performReset}
+          >
+            {confirmationType === "reset"
+              ? "Yes, Reset Everything"
+              : "Yes, Leave Page"}
+          </Button>,
+        ]}
+        width={500}
+      >
+        <div>
+          <p>
+            {confirmationType === "reset"
+              ? "Are you sure you want to reset all inputs and clear the current design?"
+              : "You have unsaved design progress. Are you sure you want to leave?"}
+          </p>
+          <br />
+          <p>
+            <strong>This will lose all your current work.</strong>
+          </p>
+        </div>
+      </Modal>
+
+      {/* Loading Modal */}
+      <Modal
+        open={isLoadingModalVisible}
+        footer={null}
+        closable={false}
+        maskClosable={false}
+        centered
+        width={400}
+        className="loading-modal"
+        styles={{
+          body: {
+            textAlign: "center",
+            padding: "40px 20px",
+          },
+        }}
+      >
+        <div className="loading-content">
+          <div
+            style={{
+              fontSize: "18px",
+              marginBottom: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            Processing Design
+          </div>
+          <div style={{ marginBottom: "20px" }}>
+            <div
+              className="spinner"
+              style={{
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #3498db",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                animation: "spin 1s linear infinite",
+                margin: "0 auto",
+              }}
+            ></div>
+          </div>
+          <div style={{ fontSize: "14px", color: "#666" }}>
+            {loadingStage || "Please wait while we generate your results..."}
+          </div>
+          <div style={{ marginTop: "10px", fontSize: "12px", color: "#999" }}>
+            This may take a few moments
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }

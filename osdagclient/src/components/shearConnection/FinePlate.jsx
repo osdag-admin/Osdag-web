@@ -286,6 +286,7 @@ function FinePlate() {
   const [confirmationType, setConfirmationType] = useState("reset");
   const [allowNavigation, setAllowNavigation] = useState(false);
   const [navigationSource, setNavigationSource] = useState(null);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
   //simple function to check unsaved work
   const hasUnsavedWork = () => {
@@ -323,7 +324,7 @@ function FinePlate() {
 
         // Show confirmation modal and mark as back navigation
         setConfirmationType("navigation");
-        setNavigationSource("back"); // Mark this as back navigation
+        setNavigationSource("back");
         setShowResetConfirmation(true);
 
         console.log("BACK BUTTON: Prevented navigation due to unsaved work");
@@ -334,14 +335,19 @@ function FinePlate() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     window.addEventListener("popstate", handlePopState);
 
-    // Add initial state to enable popstate detection
-    window.history.pushState(null, "", window.location.pathname);
-
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("popstate", handlePopState);
     };
   }, [output, renderBoolean, allowNavigation]);
+
+  // Separate useEffect to manage history state
+  useEffect(() => {
+    // Only add history entry when there's unsaved work
+    if (hasUnsavedWork()) {
+      window.history.pushState(null, "", window.location.pathname);
+    }
+  }, [output, renderBoolean]); // Only trigger when unsaved work changes
 
   useEffect(() => {
     return () => {
@@ -820,7 +826,6 @@ function FinePlate() {
     }
   };
 
-  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const handleReset = () => {
     setConfirmationType("reset");
     setShowResetConfirmation(true);
@@ -1088,7 +1093,7 @@ function FinePlate() {
 
           <div className="element">
             <div className="home-btn" onClick={handleHomeClick}>
-            {/* <div
+              {/* <div
               className="home-btn"
               onClick={async () => {
                 // Clear session before navigating to home

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Modal, Row, Col, Input, Button } from 'antd';
+import React, { useState } from 'react';
+import { Modal, Row, Col, Input, Button, Upload } from 'antd';
 
 export const DesignReportModal = ({
   isOpen,
@@ -9,6 +9,7 @@ export const DesignReportModal = ({
   setDesignReportInputs,
   output
 }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
   
   const handleFieldChange = (field, value) => {
     setDesignReportInputs(prev => ({
@@ -26,6 +27,63 @@ export const DesignReportModal = ({
       companyLogo: imageFile,
       companyLogoName: imageFileName,
     }));
+  };
+
+  const handleProfileFileChange = (file) => {
+    setSelectedFile(file);
+    // Prevent upload
+    return false;
+  };
+
+  const handleUseProfile = () => {
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const contents = event.target.result;
+        const lines = contents.split("\n");
+
+        lines.forEach((line) => {
+          const [field, value] = line.split(":");
+          if (field && value) {
+            const trimmedField = field.trim();
+            const trimmedValue = value.trim();
+
+            if (trimmedField === "CompanyName") {
+              handleFieldChange('companyName', trimmedValue);
+            } else if (trimmedField === "Designer") {
+              handleFieldChange('designer', trimmedValue);
+            } else if (trimmedField === "Group/TeamName") {
+              handleFieldChange('groupTeamName', trimmedValue);
+            }
+          }
+        });
+      };
+      reader.readAsText(selectedFile);
+    }
+  };
+
+  const handleSaveProfile = () => {
+    const profileSummary = `CompanyLogo: C:/Users/SURAJ/Pictures/codeup.png
+CompanyName: ${designReportInputs.companyName}
+Designer: ${designReportInputs.designer}
+Group/TeamName: ${designReportInputs.groupTeamName}`;
+
+    const blob = new Blob([profileSummary], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${designReportInputs.companyName}.txt`;
+
+    link.style.display = "none";
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleOkClick = () => {
@@ -105,6 +163,29 @@ export const DesignReportModal = ({
             />
           </Col>
         </Row>
+
+        {/* Profile Management */}
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            justifyContent: "center",
+            gap: "10px",
+          }}
+        >
+          <Upload
+            beforeUpload={handleProfileFileChange}
+            showUploadList={false}
+          >
+            <Button>Select Profile File</Button>
+          </Upload>
+          <Button type="button" onClick={handleUseProfile}>
+            Use Profile
+          </Button>
+          <Button type="button" onClick={handleSaveProfile}>
+            Save Profile
+          </Button>
+        </div>
 
         {/* Project Title */}
         <Row gutter={[16, 16]} align="middle" style={{ marginBottom: "5px" }}>
