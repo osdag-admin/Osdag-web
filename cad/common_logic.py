@@ -2405,14 +2405,19 @@ class CommonDesignLogic(object):
                 else:
                     print("self.TObj: ", self.TObj.shape)   
                     final_model = self.TObj.shape
-                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.
-
-        if cadlist and len(cadlist) > 1:
-            final_model = cadlist[0]
-            for model in cadlist[1:]:
-                final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
-        elif cadlist and len(cadlist) == 1:
-            final_model = cadlist[0]
+                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.        # Handle case where cadlist might be a single CAD object instead of a list
+        if cadlist:
+            # Check if cadlist is actually a list (has len method)
+            try:
+                if len(cadlist) > 1:
+                    final_model = cadlist[0]
+                    for model in cadlist[1:]:
+                        final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+                elif len(cadlist) == 1:
+                    final_model = cadlist[0]
+            except TypeError:
+                # cadlist is not a list, it's a single CAD object
+                final_model = cadlist
 
         return final_model
 

@@ -3,8 +3,8 @@ export const beamToColumnEndPlateOutputConfig = {
     "Critical Bolt Design": [
       { key: "Bolt.Diameter", label: "Diameter (mm)" },
       { key: "Bolt.Grade_Provided", label: "Property Class" },
-      { key: "Bolt.ShearDemandTotal", label: "Shear Demand (kN)" },
-      { key: "Bolt.ShearCapacity", label: "Shear Capacity (kN)" },
+      { key: "Bolt.Force (kN)", label: "Shear Demand (kN)" },
+      { key: "Bolt.Shear", label: "Shear Capacity (kN)" },
       { key: "Bolt.Bearing", label: "Bearing Capacity (kN)" },
       { key: "Bolt.Betalg", label: "β<sub>lg</sub>" },
       { key: "Bolt.Capacity", label: "Bolt Capacity" },
@@ -28,14 +28,30 @@ export const beamToColumnEndPlateOutputConfig = {
     "End Plate": [
       { key: "Plate.Height", label: "Height (mm)" },
       { key: "Plate.Width", label: "Width (mm)" },
-      { key: "Plate.Thickness", label: "Thickness (mm)" }
+      { key: "Plate.Thickness", label: "Thickness (mm)" },
+      { key: "Plate.MomentCapacity", label: "Moment Capacity (kNm)" }
+    ],
+    "Weld": [
+        { key: "Weld.Size", label: "Size (mm)" },
+        { key: "Weld.Length", label: "Total Length (mm)" },
+        { key: "Weld.NormalStress", label: "Normal Stress (N/mm2)" },
+        { key: "Weld.ShearStress", label: "Shear Stress (N/mm2)" },
+        { key: "Weld.StressCombined", label: "Equivalent Stress (N/mm2)" },
+        { key: "Weld.Strength", label: "Strength (N/mm2)" },
+        { key: "Weld.Type", label: "Type" }
     ],
     "Continuity Plate": [
       { key: "ContinuityPlateModal", label: "Continuity Plate Details" },
       { key: "ContinuityPlate.Number", label: "Number of Plates" }
     ],
     "Column Web Stiffener Plate": [
-      { key: "WebStiffenerModal", label: "Web Stiffener Details" }
+      { key: "WebStiffenerModal", label: "Web Stiffener Details" },
+      { key: "WebStiffener.Number", label: "Number of Stiffener(s)" }
+    ],
+    "Stiffener": [
+        { key: "Stiffener.Length", label: "Length (mm)" },
+        { key: "Stiffener.Height", label: "Height (mm)" },
+        { key: "Stiffener.Thickness", label: "Thickness (mm)" }
     ]
   },
   modals: {

@@ -68,7 +68,11 @@ def validate_input(input_values: Dict[str, Any]) -> None:
     """Validate type for all values in design dict. Raise error when invalid"""
     try:
         required_keys = get_required_keys()
-        missing_keys = contains_keys(input_values, required_keys)
+        
+        # Filter out UI-specific keys that are not required by the backend module
+        filtered_input = {k: v for k, v in input_values.items() if k != "out_titles_status"}
+        
+        missing_keys = contains_keys(filtered_input, required_keys)
         if missing_keys != None:
             raise MissingKeyError(f"Required key '{missing_keys[0]}' is missing from input")
 
@@ -85,9 +89,9 @@ def validate_input(input_values: Dict[str, Any]) -> None:
             "Connector.Flange_Plate.Preferences"
         ]
         for key in string_fields:
-            if not isinstance(input_values[key], str):
+            if key in filtered_input and not isinstance(filtered_input[key], str):
                 raise InvalidInputTypeError(
-                    f"Field '{key}' must be a string, got {type(input_values[key]).__name__}"
+                    f"Field '{key}' must be a string, got {type(filtered_input[key]).__name__}"
                 )
 
         # Validate numeric fields
@@ -99,15 +103,16 @@ def validate_input(input_values: Dict[str, Any]) -> None:
             "Detailing.Gap"
         ]
         for key in numeric_fields:
-            value = input_values[key]
-            if not isinstance(value, str) or not float_able(value):
-                raise InvalidInputTypeError(
-                    f"Field '{key}' must be a string that can be converted to float, got '{value}'"
-                )
-            # Additional numeric validation
-            float_val = float(value)
-            if key == "Detailing.Gap" and float_val < 0:
-                raise ValueError(f"Gap value must be non-negative, got {float_val}")
+            if key in filtered_input:
+                value = filtered_input[key]
+                if not isinstance(value, str) or not float_able(value):
+                    raise InvalidInputTypeError(
+                        f"Field '{key}' must be a string that can be converted to float, got '{value}'"
+                    )
+                # Additional numeric validation
+                float_val = float(value)
+                if key == "Detailing.Gap" and float_val < 0:
+                    raise ValueError(f"Gap value must be non-negative, got {float_val}")
 
         # Validate plate thickness lists
         thickness_lists = [
@@ -115,20 +120,21 @@ def validate_input(input_values: Dict[str, Any]) -> None:
             "Connector.Web_Plate.Thickness_List"
         ]
         for key in thickness_lists:
-            thickness = input_values[key]
-            if not isinstance(thickness, list):
-                raise InvalidInputTypeError(
-                    f"Field '{key}' must be a list, got {type(thickness).__name__}"
-                )
-            if not validate_list_type(thickness, str):
-                raise InvalidInputTypeError(
-                    f"All items in '{key}' must be strings"
-                )
-            if not custom_list_validation(thickness, float_able):
-                invalid_items = [x for x in thickness if not float_able(x)]
-                raise InvalidInputTypeError(
-                    f"All items in '{key}' must be convertible to float. Invalid items: {invalid_items}"
-                )
+            if key in filtered_input:
+                thickness = filtered_input[key]
+                if not isinstance(thickness, list):
+                    raise InvalidInputTypeError(
+                        f"Field '{key}' must be a list, got {type(thickness).__name__}"
+                    )
+                if not validate_list_type(thickness, str):
+                    raise InvalidInputTypeError(
+                        f"All items in '{key}' must be strings"
+                    )
+                if not custom_list_validation(thickness, float_able):
+                    invalid_items = [x for x in thickness if not float_able(x)]
+                    raise InvalidInputTypeError(
+                        f"All items in '{key}' must be convertible to float. Invalid items: {invalid_items}"
+                    )
 
     except Exception as e:
         raise type(e)(f"Input validation failed: {str(e)}")
@@ -174,7 +180,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         flange_capacity
         + web_block_shear_pattern
     )
-
+    print('RAW OUTPUT', raw_output)  # Debugging output
     # Format output
     for param in raw_output:
         if param[2] == "TextBox":
@@ -198,6 +204,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     # Object that will create the CAD model.
     try : 
         cld = CommonDesignLogic(None, '', module.module , module.mainmodule)
+        print('CAD MODULE', module.mainmodule)  # Create CommonDesignLogic instance.
     except Exception as e : 
         print('error in cld e : ' , e)
     

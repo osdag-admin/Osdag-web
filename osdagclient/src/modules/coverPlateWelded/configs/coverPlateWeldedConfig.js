@@ -41,7 +41,6 @@ export const coverPlateWeldedConfig = {
     }
     return { isValid: true };
   },
-
   buildSubmissionParams: (inputs, allSelected, lists) => {
     return {
       "Connector.Flange_Plate.Preferences": inputs.flange_plate_preferences,
@@ -52,16 +51,17 @@ export const coverPlateWeldedConfig = {
         ? lists.thicknessList : inputs.web_plate_thickness,
       "Design.Design_Method": inputs.design_method,
       "Detailing.Gap": inputs.detailing_gap,
-      "Load.Axial": inputs.load_axial || "",
-      "Load.Moment": inputs.load_moment || "",
-      "Load.Shear": inputs.load_shear || "",
-      Material: inputs.material,
+      "Load.Axial": inputs.load_axial || "0",
+      "Load.Moment": inputs.load_moment || "0", 
+      "Load.Shear": inputs.load_shear || "0",
+      "Material": inputs.material,
       "Member.Designation": inputs.member_designation,
       "Member.Material": inputs.member_material,
-      Module: "Beam-to-Beam Cover Plate Welded Connection",
+      "Module": "Beam-to-Beam Cover Plate Welded Connection",
       "Weld.Fab": inputs.weld_fab,
       "Weld.Material_Grade_OverWrite": inputs.weld_material_grade_overwrite,
       "Weld.Type": inputs.weld_type,
+      "out_titles_status": [1, 1, 1, 1, 0]
     };
   },
 

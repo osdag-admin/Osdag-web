@@ -49,11 +49,15 @@ class CoverPlateWeldedInputData(InputDataBase):
                         # Continue without custom materials
                 
                 # Add custom material option    
-                materialList.append({"id": -1, "Grade": 'Custom'})
-                
-                # Define welding specific options
-                weldTypes = ['Fillet Weld', 'Groove Weld']
-                weldFab = ['Shop Weld', 'Field Weld']
+                materialList.append({"id": -1, "Grade": 'Custom'})                # Define welding specific options that match backend expectations
+                weldTypes = [
+                    {'value': 'Fillet Weld', 'label': 'Fillet Weld'},
+                    {'value': 'Groove Weld', 'label': 'Groove Weld'}
+                ]
+                weldFab = [
+                    {'value': 'Shop Weld', 'label': 'Shop Weld'},
+                    {'value': 'Field Weld', 'label': 'Field Weld'}
+                ]
                 PLATE_THICKNESS_SAIL = ['8', '10', '12', '14', '16', '18', '20', '22', '25', 
                                           '28', '32', '36', '40', '45', '50', '56', '63', '75', 
                                           '80', '90', '100', '110', '120']

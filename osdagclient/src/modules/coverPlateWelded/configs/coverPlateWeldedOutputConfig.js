@@ -2,114 +2,117 @@ export const coverPlateWeldedOutputConfig = {
   // Output sections and field mappings
   sections: {
     "Member Capacity": [
-      { key: "MemberCapacityModal", label: "Member Capacity" }
+      { key: "Section.MomCapacity", label: "Moment Capacity (kNm)" },
+      { key: "Section.ShearCapacity", label: "Shear Capacity (kN)" },
+      { key: "Section.AxialCapacity", label: "Axial Capacity (kN)" }
     ],
     "Web Splice Plate": [
       { key: "Web_Plate.Height (mm)", label: "Height (mm)" },
       { key: "Web_Plate.Width", label: "Width (mm)" },
-      { key: "Web_Plate.Thickness", label: "Thickness (mm)*" },
-      { key: "WebCapacityModal", label: "Capacity" },
+      { key: "Connector.Web_Plate.Thickness_List", label: "Thickness (mm)" },
+      { key: "WebCapacityModal", label: "Capacity Details" },
       { key: "WebWeldDetailsModal", label: "Weld Details" }
     ],
     "Flange Splice Plate": [
       { key: "Flange_Plate.Width (mm)", label: "Width (mm)" },
       { key: "flange_plate.Length", label: "Length (mm)" },
-      { key: "Connector.Flange_Plate.Thickness_list", label: "Thickness (mm)*" },
-      { key: "FlangeCapacityModal", label: "Capacity" },
+      { key: "Connector.Flange_Plate.Thickness_list", label: "Thickness (mm)" },
+      { key: "FlangeCapacityModal", label: "Capacity Details" },
       { key: "FlangeWeldDetailsModal", label: "Weld Details" }
+    ],
+    "Block Shear Pattern": [
+      { key: "BlockShearPatternModal", label: "View Details" }
     ]
   },
-
-  // Modal trigger mappings
   modals: {
-    WebWeldDetailsModal: { type: "spacing", buttonText: "Web Weld Details" },
-    FlangeWeldDetailsModal: { type: "spacing", buttonText: "Flange Weld Details" },
-    WebCapacityModal: { type: "capacity", buttonText: "Web Capacity" },
-    FlangeCapacityModal: { type: "capacity", buttonText: "Flange Capacity" },
-    WeldWebCapacityModal: { type: "details", buttonText: "Web Weld Capacity" },
-    WeldFlangeCapacityModal: { type: "details", buttonText: "Flange Weld Capacity" },
-    MemberCapacityModal: { type: "details", buttonText: "Member Capacity" }
+    WebWeldDetailsModal: { type: "webWeld", buttonText: "Web Weld Details" },
+    FlangeWeldDetailsModal: { type: "flangeWeld", buttonText: "Flange Weld Details" },
+    WebCapacityModal: { type: "webCapacity", buttonText: "Web Capacity" },
+    FlangeCapacityModal: { type: "flangeCapacity", buttonText: "Flange Capacity" },
+    MemberCapacityModal: { type: "details", buttonText: "Member Capacity" },
+    BlockShearPatternModal: { type: "blockShear", buttonText: "Block Shear Pattern" }
   },
-
-  // Modal type configurations (NO JSX HERE)
   modalTypes: {
-    spacing: {
-      title: "Weld Details",
-      width: "68%",
-      layout: "two-column", // ← Configuration instead of JSX
-      hasImage: true
+    webWeld: {
+      title: "Web Plate Weld",
+      width: "35%",
+      layout: "single-column",
+      hasImage: false
     },
-    
+    flangeWeld: {
+      title: "Flange Plate Weld",
+      width: "35%",
+      layout: "single-column",
+      hasImage: false
+    },
+    webCapacity: {
+      title: "Web Capacity",
+      width: "35%",
+      layout: "single-column",
+      hasImage: false
+    },
+    flangeCapacity: {
+      title: "Flange Capacity",
+      width: "35%",
+      layout: "single-column",
+      hasImage: false
+    },
     details: {
       title: "Capacity Details",
       width: "35%",
-      layout: "single-column", // ← Configuration instead of JSX
+      layout: "single-column",
       hasImage: false
     },
-
-    capacity: {
-      title: "Plate Capacity Details", 
+    blockShear: {
+      title: "Block Shear Pattern",
       width: "68%",
-      layout: "two-column", // ← Configuration instead of JSX
+      layout: "two-column",
       hasImage: true
     }
   },
-
-  // Modal data - what fields appear in each modal
   modalData: {
-    spacing: {
+    webWeld: {
       WebWeldDetailsModal: [
-        { key: "Web_weld.effective_length_web_weld", label: "Effective Length (mm)" },
-        { key: "Web_weld.weld_size_web_weld", label: "Weld Size (mm)" },
-        { key: "Web_weld.throat_thickness_web_weld", label: "Throat Thickness (mm)" },
-        { key: "Web_weld.weld_strength_web_weld", label: "Weld Strength (N/mm)" }
-      ],
+        { key: "Web_Weld.Size", label: "Web Weld Size (mm)" },
+        { key: "Web_Weld.Strength", label: "Web Weld Strength (N/mm)" },
+        { key: "bolt.long_joint", label: "Strength Red.Factor" },
+        { key: "Weld.Strength_red", label: "Red.Strength (N/mm)" },
+        { key: "Web_Weld.Stress", label: "Web Weld Stress (N/mm)" }
+      ]
+    },
+    flangeWeld: {
       FlangeWeldDetailsModal: [
-        { key: "Flange_weld.effective_length_flange_weld", label: "Effective Length (mm)" },
-        { key: "Flange_weld.weld_size_flange_weld", label: "Weld Size (mm)" },
-        { key: "Flange_weld.throat_thickness_flange_weld", label: "Throat Thickness (mm)" },
-        { key: "Flange_weld.weld_strength_flange_weld", label: "Weld Strength (N/mm)" }
+        { key: "Flange_Weld.Size", label: "Flange Weld Size (mm)" },
+        { key: "Flange_Weld.Strength", label: "Flange Weld Strength (N/mm)" },
+        { key: "bolt.long_joint", label: "Strength Red.Factor" },
+        { key: "Weld.Strength_red", label: "Red.Strength (N/mm)" },
+        { key: "Flange_Weld.Stress", label: "Flange Weld Stress (N/mm)" }
       ]
     },
-    
-    capacity: {
+    webCapacity: {
       WebCapacityModal: [
-        { key: "section.Tension_capacity_web_web_capacity", label: "Web Tension Capacity (kN)" },
-        { key: "Web_plate.capacity_web_capacity", label: "Web Plate Tension Capacity (kN)" },
-        { key: "web_plate.shear_capacity_web_plate_web_capacity", label: "Web Plate Shear Capacity (kN)" },
-        { key: "Web_Plate.MomDemand_web_capacity", label: "Web Moment Demand (kNm)" }
-      ],
-      FlangeCapacityModal: [
-        { key: "Section.flange_capacity_flange_capacity", label: "Flange Tension Capacity (kN)" },
-        { key: "flange_plate.tension_capacity_flange_plate_flange_capacity", label: "Flange Plate Tension Capacity (kN)" }
+        { key: "section.Tension_capacity_web", label: "Web Tension Capacity (kN)" },
+        { key: "Web_plate.capacity", label: "Web Plate Tension Capacity (kN)" },
+        { key: "web_plate.shear_capacity_web_plate", label: "Web Plate Shear Capacity (kN)" }
       ]
     },
-    
+    flangeCapacity: {
+      FlangeCapacityModal: [
+        { key: "Section.flange_capacity", label: "Flange Tension Capacity (kN)" },
+        { key: "flange_plate.tension_capacity_flange_plate", label: "Flange Plate Tension Capacity (kN)" }
+      ]
+    },
     details: {
       MemberCapacityModal: [
         { key: "Section.AxialCapacity", label: "Axial Capacity Member (kN)" },
         { key: "Section.MomCapacity", label: "Moment Capacity Member (kNm)" },
         { key: "Section.ShearCapacity", label: "Shear Capacity Member (kN)" }
-      ],
-      WeldFlangeCapacityModal: [
-        { key: "Flange_weld.effective_length_flange_weld_capacity", label: "Effective Length (mm)" },
-        { key: "Flange_weld.throat_area_flange_weld_capacity", label: "Throat Area (mm²)" },
-        { key: "Flange_weld.stress_flange_weld_capacity", label: "Weld Stress (N/mm²)" },
-        { key: "Flange_weld.shear_capacity_flange_weld_capacity", label: "Shear Capacity (kN)" },
-        { key: "Flange_weld.tension_capacity_flange_weld_capacity", label: "Tension Capacity (kN)" },
-        { key: "Flange_weld.resultant_stress_flange_weld_capacity", label: "Resultant Stress (N/mm²)" },
-        { key: "Flange_weld.capacity_flange_weld_capacity", label: "Capacity (kN)" },
-        { key: "Flange_weld.force_flange_weld_capacity", label: "Weld Force (kN)" }
-      ],
-      WeldWebCapacityModal: [
-        { key: "Web_weld.effective_length_web_weld_capacity", label: "Effective Length (mm)" },
-        { key: "Web_weld.throat_area_web_weld_capacity", label: "Throat Area (mm²)" },
-        { key: "Web_weld.stress_web_weld_capacity", label: "Weld Stress (N/mm²)" },
-        { key: "Web_weld.shear_capacity_web_weld_capacity", label: "Shear Capacity (kN)" },
-        { key: "Web_weld.tension_capacity_web_weld_capacity", label: "Tension Capacity (kN)" },
-        { key: "Web_weld.resultant_stress_web_weld_capacity", label: "Resultant Stress (N/mm²)" },
-        { key: "Web_weld.capacity_web_weld_capacity", label: "Capacity (kN)" },
-        { key: "Web_weld.force_web_weld_capacity", label: "Weld Force (kN)" }
+      ]
+    },
+    blockShear: {
+      BlockShearPatternModal: [
+        { key: "Weld.Lw", label: "Lw (mm)" },
+        { key: "Weld.Hw", label: "Hw (mm)" }
       ]
     }
   }
