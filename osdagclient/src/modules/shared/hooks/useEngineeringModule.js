@@ -13,6 +13,9 @@ export const useEngineeringModule = (moduleConfig) => {
     boltDiameterList,
     thicknessList,
     propertyClassList,
+    angleList,
+    channelList,
+    sectionProfileList,
     designLogs,
     designData,
     displayPDF,
@@ -25,6 +28,7 @@ export const useEngineeringModule = (moduleConfig) => {
     getDesingPrefData,
     deleteSession,
     resetModuleState,
+    getBeamMaterialList,
   } = useContext(ModuleContext);
 
   // Core state management
@@ -183,6 +187,11 @@ export const useEngineeringModule = (moduleConfig) => {
     setTimeout(() => {
       console.log(`${moduleConfig.sessionName}: Creating new session`);
       createSession(moduleConfig.sessionName);
+      
+      // Load module-specific data
+      if (moduleConfig.cameraKey === "TensionMember" && getBeamMaterialList) {
+        getBeamMaterialList(moduleConfig.designType);
+      }
     }, 100);
   }, []);
 

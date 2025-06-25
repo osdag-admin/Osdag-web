@@ -30,7 +30,6 @@ class Tension_bolted(Member):
     def __init__(self):
         super(Tension_bolted, self).__init__()
         self.design_status = False
-        self.mainmodule = "Member"
 
     ###############################################
     # Design Preference Functions Start
@@ -813,7 +812,7 @@ class Tension_bolted(Member):
 
     def set_input_values(self, design_dictionary):
         # Map frontend keys to backend keys
-        print("Setting input values for Tension_bolted class.", design_dictionary)
+        # print("Setting input values for Tension_bolted class.", design_dictionary)
         super(Tension_bolted, self).set_input_values(design_dictionary)
         print("************* Input values set successfully *************")
         self.module = design_dictionary[KEY_MODULE]
@@ -1069,11 +1068,12 @@ class Tension_bolted(Member):
             else:
                 pass
 
+        print("*****************")
         for selectedsize in self.sizelist:
             
             self.section_size = self.select_section(design_dictionary,selectedsize)
+            # print("The selected section size is: ", self.bolt)
             self.bolt_diameter_min= min(self.bolt.bolt_diameter)
-
             self.edge_dist_min = IS800_2007.cl_10_2_4_2_min_edge_end_dist(self.bolt_diameter_min,self.bolt.bolt_hole_type,
                                                                           'machine_flame_cut')
             self.d_0_min = IS800_2007.cl_10_2_1_bolt_hole_size(self.bolt_diameter_min,
@@ -1425,7 +1425,7 @@ class Tension_bolted(Member):
 
         if self.bolt_design_status == True:
             self.design_status = True
-            print("bolt ok")
+            # print("bolt ok")
             self.get_bolt_grade(design_dictionary)
 
         else:
@@ -1707,7 +1707,7 @@ class Tension_bolted(Member):
             # self.initial_member_capacity(design_dictionary, previous_size)
             if len(self.sizelist)>=2:
                 size = self.section_size_1.designation
-                print("recheck",size )
+                # print("recheck",size )
                 self.initial_member_capacity(design_dictionary, size)
             else:
                 self.design_status = False
@@ -1945,7 +1945,7 @@ class Tension_bolted(Member):
                 if len(self.sizelist) >= 2:
                     size = self.section_size_1.designation
                     # dia = self.bolt.bolt_diameter_provided
-                    print("recheck", size)
+                    # print("recheck", size)
                     self.initial_member_capacity(design_dictionary, size)
 
                 else:
@@ -1958,11 +1958,11 @@ class Tension_bolted(Member):
         else:
             # print(self.plate_tension_capacity, "hsdvdhsd")
             if self.plate_tension_capacity < max_tension_yield and self.res_force < max_tension_yield:
-                print(self.section_size_1.designation, "hsdvdhsd")
+                # print(self.section_size_1.designation, "hsdvdhsd")
                 # self.initial_member_capacity(design_dictionary, previous_size=self.section_size_1.designation)
                 if len(self.sizelist) >= 2:
                     size = self.section_size_1.designation
-                    print("recheck", size)
+                    # print("recheck", size)
                     self.initial_member_capacity(design_dictionary, size)
                 else:
                     self.design_status = False

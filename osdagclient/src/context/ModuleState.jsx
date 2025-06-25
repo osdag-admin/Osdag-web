@@ -23,6 +23,7 @@ let initialValue = {
   propertyClassList: [],
   angleList: [],
   channelList: [],
+  sectionProfileList: ["Angles", "Back to Back Angles", "Star Angles", "Channels"],
   topAngleList: [],
   sessionCreated: false,
   sendNextRequests: false,

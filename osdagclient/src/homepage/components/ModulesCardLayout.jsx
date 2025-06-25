@@ -13,50 +13,20 @@ const MODULE_SUBMODULES = {
     { key: "truss", label: "Truss Connection" },
   ],
   TensionMember: [
-    { key: "singleangle", label: "Single Angle" },
-    { key: "doubleangle", label: "Double Angle" },
-    { key: "plate", label: "Plate" },
+    { key: "tension", label: "Tension Member" },
   ],
   CompressionMember: [
-    { key: "singleangle", label: "Single Angle" },
-    { key: "doubleangle", label: "Double Angle" },
-    { key: "builtup", label: "Built-up Section" },
+    { key: "compression", label: "Compression Member" },
   ],
   FlexureMember: [
-    { key: "ibeam", label: "I-Beam" },
-    { key: "channel", label: "Channel Section" },
-    { key: "box", label: "Box Section" },
+    { key: "flexure", label: "Flexure Member" },
   ],
-  'Beam-Column': [
-    { key: "strongaxis", label: "Strong Axis" },
-    { key: "weakaxis", label: "Weak Axis" },
-    { key: "biaxial", label: "Biaxial Bending" },
-  ],
-  PlateGirder: [
-    { key: "welded", label: "Welded Plate Girder" },
-    { key: "bolted", label: "Bolted Plate Girder" },
-    { key: "hybrid", label: "Hybrid Plate Girder" },
-  ],
-  Truss: [
-    { key: "pratt", label: "Pratt Truss" },
-    { key: "warren", label: "Warren Truss" },
-    { key: "howe", label: "Howe Truss" },
-  ],
-  '2DFrame': [
-    { key: "portal", label: "Portal Frame" },
-    { key: "gabled", label: "Gabled Frame" },
-    { key: "sway", label: "Sway Frame" },
-  ],
-  '3DFrame': [
-    { key: "industrial", label: "Industrial Frame" },
-    { key: "commercial", label: "Commercial Frame" },
-    { key: "residential", label: "Residential Frame" },
-  ],
-  GroupDesign: [
-    { key: "group1", label: "Group Design 1" },
-    { key: "group2", label: "Group Design 2" },
-    { key: "group3", label: "Group Design 3" },
-  ],
+  'Beam-Column': [],
+  PlateGirder: [],
+  Truss: [],
+  '2DFrame': [],
+  '3DFrame': [],
+  GroupDesign: [],
 };
 
 // Content for "connections" submodules (complex/nested)
@@ -65,8 +35,10 @@ const CONNECTIONS_TAB_CONTENT = {
     {
       label: "Shear Connections",
       options: [
-        { key: "sc1", label: "Shear Connection 1", img: coverPlateBolted },
-        { key: "sc2", label: "Shear Connection 2", img: coverPlateWelded },
+        { key: "fp", label: "Fin Plate", img: coverPlateBolted },
+        { key: "ca", label: "Cleat Angle", img: endPlate },
+        { key: "ep", label: "End Plate", img: endPlate },
+        { key: "sa", label: "Seated Angle", img: endPlate },
       ],
     },
   ],
@@ -86,263 +58,57 @@ const CONNECTIONS_TAB_CONTENT = {
     {
       label: "Column to Column Splice",
       options: [
-        { key: "ep1", label: "End Plate", img: endPlate },
+        { key: "cpb", label: "Cover Plate Bolted", img: coverPlateBolted },
         { key: "cpw", label: "Cover Plate Welded", img: coverPlateWelded },
-        { key: "ep2", label: "End Plate", img: endPlate },
+        { key: "ep", label: "End Plate", img: endPlate },
       ],
     },
     {
       label: "PEB",
-      options: [
-        { key: "ep", label: "End Plate", img: endPlate },
-        { key: "cpw", label: "Cover Plate Welded", img: coverPlateWelded },
-      ],
+      options: [],
     },
   ],
   base: [
     {
       label: "Base Plates",
       options: [
-        { key: "bp1", label: "Base Plate 1", img: endPlate },
-        { key: "bp2", label: "Base Plate 2", img: coverPlateBolted },
+        { key: "bp", label: "Base Plate Connection", img: endPlate },
       ],
     },
   ],
   truss: [
     {
       label: "Truss Connections",
-      options: [
-        { key: "tc1", label: "Truss Connection 1", img: coverPlateBolted },
-        { key: "tc2", label: "Truss Connection 2", img: coverPlateWelded },
-      ],
+      options: [],
     },
   ],
 };
 
 // Generic submodule content for other modules (simple, no nesting)
 const GENERIC_SUBMODULE_CONTENT = {
-  singleangle: [
+  tension: [
     {
-      label: "Single Angle",
+      label: "Tension Member",
       options: [
-        { key: "sa1", label: "Design 1", img: coverPlateBolted },
-        { key: "sa2", label: "Design 2", img: coverPlateWelded },
+        { key: "boltedtoendplate", label: "Bolted to End Plate", img: coverPlateBolted },
+        { key: "weldedtoendplate", label: "Welded to End Plate", img: coverPlateWelded },
       ],
     },
   ],
-  doubleangle: [
+  compression: [
     {
-      label: "Double Angle",
+      label: "Compression Member",
       options: [
-        { key: "da1", label: "Design 1", img: coverPlateBolted },
-        { key: "da2", label: "Design 2", img: coverPlateWelded },
+        { key: "struts", label: "Struts in Trusses", img: coverPlateBolted },
       ],
     },
   ],
-  plate: [
+  flexure: [
     {
-      label: "Plate",
+      label: "Flexure Member",
       options: [
-        { key: "pl1", label: "Design 1", img: endPlate },
-        { key: "pl2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  builtup: [
-    {
-      label: "Built-up Section",
-      options: [
-        { key: "bu1", label: "Design 1", img: coverPlateWelded },
-        { key: "bu2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  ibeam: [
-    {
-      label: "I-Beam",
-      options: [
-        { key: "ib1", label: "Design 1", img: coverPlateBolted },
-        { key: "ib2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  channel: [
-    {
-      label: "Channel Section",
-      options: [
-        { key: "ch1", label: "Design 1", img: endPlate },
-        { key: "ch2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  box: [
-    {
-      label: "Box Section",
-      options: [
-        { key: "bx1", label: "Design 1", img: coverPlateWelded },
-        { key: "bx2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  strongaxis: [
-    {
-      label: "Strong Axis",
-      options: [
-        { key: "sa1", label: "Design 1", img: coverPlateBolted },
-        { key: "sa2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  weakaxis: [
-    {
-      label: "Weak Axis",
-      options: [
-        { key: "wa1", label: "Design 1", img: endPlate },
-        { key: "wa2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  biaxial: [
-    {
-      label: "Biaxial Bending",
-      options: [
-        { key: "bb1", label: "Design 1", img: coverPlateWelded },
-        { key: "bb2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  welded: [
-    {
-      label: "Welded Plate Girder",
-      options: [
-        { key: "wp1", label: "Design 1", img: coverPlateBolted },
-        { key: "wp2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  bolted: [
-    {
-      label: "Bolted Plate Girder",
-      options: [
-        { key: "bp1", label: "Design 1", img: endPlate },
-        { key: "bp2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  hybrid: [
-    {
-      label: "Hybrid Plate Girder",
-      options: [
-        { key: "hp1", label: "Design 1", img: coverPlateWelded },
-        { key: "hp2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  pratt: [
-    {
-      label: "Pratt Truss",
-      options: [
-        { key: "pt1", label: "Design 1", img: coverPlateBolted },
-        { key: "pt2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  warren: [
-    {
-      label: "Warren Truss",
-      options: [
-        { key: "wt1", label: "Design 1", img: endPlate },
-        { key: "wt2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  howe: [
-    {
-      label: "Howe Truss",
-      options: [
-        { key: "ht1", label: "Design 1", img: coverPlateWelded },
-        { key: "ht2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  portal: [
-    {
-      label: "Portal Frame",
-      options: [
-        { key: "pf1", label: "Design 1", img: coverPlateBolted },
-        { key: "pf2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  gabled: [
-    {
-      label: "Gabled Frame",
-      options: [
-        { key: "gf1", label: "Design 1", img: endPlate },
-        { key: "gf2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  sway: [
-    {
-      label: "Sway Frame",
-      options: [
-        { key: "sf1", label: "Design 1", img: coverPlateWelded },
-        { key: "sf2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  industrial: [
-    {
-      label: "Industrial Frame",
-      options: [
-        { key: "if1", label: "Design 1", img: coverPlateBolted },
-        { key: "if2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  commercial: [
-    {
-      label: "Commercial Frame",
-      options: [
-        { key: "cf1", label: "Design 1", img: endPlate },
-        { key: "cf2", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  residential: [
-    {
-      label: "Residential Frame",
-      options: [
-        { key: "rf1", label: "Design 1", img: coverPlateWelded },
-        { key: "rf2", label: "Design 2", img: endPlate },
-      ],
-    },
-  ],
-  group1: [
-    {
-      label: "Group Design 1",
-      options: [
-        { key: "gd1", label: "Design 1", img: coverPlateBolted },
-        { key: "gd2", label: "Design 2", img: coverPlateWelded },
-      ],
-    },
-  ],
-  group2: [
-    {
-      label: "Group Design 2",
-      options: [
-        { key: "gd3", label: "Design 1", img: endPlate },
-        { key: "gd4", label: "Design 2", img: coverPlateBolted },
-      ],
-    },
-  ],
-  group3: [
-    {
-      label: "Group Design 3",
-      options: [
-        { key: "gd5", label: "Design 1", img: coverPlateWelded },
-        { key: "gd6", label: "Design 2", img: endPlate },
+        { key: "ssb", label: "Simply Supported Beam", img: endPlate },
+        { key: "cb", label: "Cantilever Beam", img: coverPlateBolted },
       ],
     },
   ],

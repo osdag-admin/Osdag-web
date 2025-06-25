@@ -27,13 +27,15 @@ import CleatAngle from './components/shearConnection/CleatAngle';
 import SeatedAngle from './components/shearConnection/SeatedAngle';
 import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
 import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
-import BoltedToEndPage from './components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage';
+import BoltedToEnd from './modules/TensionMembers/BoltedToEnd/BoltedToEnd';
 
 // module imports
 import FinPlate from "./modules/FinPlate/FinPlate";
 import CoverPlateWelded from "./components/momentConnection/beamToBeamSplice/CoverPlateWelded";
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
 import { clearSessionsOnNavigation } from "./utils/sessionManager";
+import Homepage from "./homepage/pages/Homepage";
+import SelectModulePage from "./homepage/pages/SelectModulePage";
 
 let renderedOnce = false
 
@@ -54,8 +56,10 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root loggedIn={loggedIn} />}>
-        <Route path="/home" element={<Mainwindow />} />
+        <Route path="/home" element={<Window />} />
+        {/* <Route path="/home" element={<Homepage />} /> */}
         <Route path="/" element={<LoginPage />} />
+        <Route path="/:moduleName" element={<SelectModulePage />} />
         <Route path="/design-type/:designType" element={<Window />} />
         {/* Wrap FinePlate with a route that checks authentication */}
         <Route path="/design/:designType/fin_plate" element={<FinPlate />} />
@@ -78,7 +82,7 @@ function App() {
         />
         <Route
           path='/design/:designType/bolted_to_end_gusset'
-          element={<BoltedToEndPage />}
+          element={<BoltedToEnd />}
         />
         <Route
           path="/design/:designType/beam-to-beam-splice/cover_plate_welded"

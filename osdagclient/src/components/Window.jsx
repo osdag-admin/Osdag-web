@@ -92,7 +92,7 @@ const Window = () => {
     getSubDesignTypes(designType, name);
   }, [activeTab]);
 
-  if (!results) return <div>Module Under Development</div>;
+  // if (!results) return <div>Module Under Development</div>;
 
   return (
     <>
