@@ -30,6 +30,8 @@ from osdag_api.utils import (
 
 import osdag_api.modules.moment_connection_common as mcc
 from OCC.Core import BRepTools
+from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
+from OCC.Core.IGESControl import IGESControl_Writer
 from cad.common_logic import CommonDesignLogic
 from design_type.connection.beam_cover_plate_weld import BeamCoverPlateWeld
 import sys
@@ -195,16 +197,64 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     return output, logs
 
 
+# def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
+#     """Generate the CAD model from input values as a BREP file. Return file path."""
+#     if section not in ("Model", "Beam", "Connector"):  # Error checking: If section is valid.
+#         raise InvalidInputTypeError(
+#             "section", "'Model', 'Beam' or 'Connector'")
+#     module = create_from_input(input_values)  # Create module from input.
+#     # Object that will create the CAD model.
+#     try : 
+#         cld = CommonDesignLogic(None, '', module.module , module.mainmodule)
+#         print('CAD MODULE', module.mainmodule)  # Create CommonDesignLogic instance.
+#     except Exception as e : 
+#         print('error in cld e : ' , e)
+    
+#     try : 
+#         # Setup the calculations object for generating CAD model.
+#         mcc.setup_for_cad(cld, module)
+#     except Exception as e : 
+#         traceback.print_exc()
+#         print('Error in setting up cad e : ' , e)
+
+#     # The section of the module that will be generated.
+#     cld.component = section
+    
+#     try : 
+#         model = cld.create2Dcad()  # Generate CAD Model.
+#     except Exception as e :
+#         print('Error in cld.create2Dcad() e : ' , e)
+#         return False
+
+#     # check if the cad_models folder exists or not 
+#     # if no, then create one 
+#     if(not os.path.exists(os.path.join(os.getcwd() , "file_storage/cad_models/"))) :
+#         print('path does not exists cad_models , creating one')
+#         os.mkdir(os.path.join(os.getcwd() , "file_storage/cad_models/"))
+      
+#     print('2d model : ' , model)
+#     # os.system("clear")  # clear the terminal
+#     file_name = session + "_" + section + ".brep"
+#     file_path = "file_storage/cad_models/" + file_name
+#     print('brep file path in create_cad_model : ' , file_path)
+
+#     try : 
+#         BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+#     except Exception as e : 
+#         print('Writing to BREP file failed e : ' , e)
+    
+#     return file_path
+
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
     if section not in ("Model", "Beam", "Connector"):  # Error checking: If section is valid.
         raise InvalidInputTypeError(
             "section", "'Model', 'Beam' or 'Connector'")
     module = create_from_input(input_values)  # Create module from input.
+    print('module from input values : ' , module)
     # Object that will create the CAD model.
     try : 
         cld = CommonDesignLogic(None, '', module.module , module.mainmodule)
-        print('CAD MODULE', module.mainmodule)  # Create CommonDesignLogic instance.
     except Exception as e : 
         print('error in cld e : ' , e)
     
@@ -238,6 +288,28 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
 
     try : 
         BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+        
+        if section == "Model":
+            # Save STEP
+            step_writer = STEPControl_Writer()
+            step_writer.Transfer(model, STEPControl_AsIs)
+            step_file_path = file_path.replace(".brep", ".step")
+            full_step_file_path = os.path.join(os.getcwd(), step_file_path)
+            if step_writer.Write(full_step_file_path) == 1:
+                print(f"STEP file saved at {full_step_file_path}")
+            else:
+                print("Warning: Failed to save STEP file!")
+
+            # Save IGES
+            iges_writer = IGESControl_Writer()
+            iges_writer.AddShape(model)
+            iges_file_path = file_path.replace(".brep", ".iges")
+            full_iges_file_path = os.path.join(os.getcwd(), iges_file_path)
+            if iges_writer.Write(full_iges_file_path) == 1:
+                print(f"IGES file saved at {full_iges_file_path}")
+            else:
+                print("Warning: Failed to save IGES file!")
+        
     except Exception as e : 
         print('Writing to BREP file failed e : ' , e)
     
