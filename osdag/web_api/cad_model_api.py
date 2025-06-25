@@ -85,21 +85,21 @@ class CADGeneration(View):
         parent_dir = os.path.dirname(os.path.dirname(current_dir))
         macro_path = os.path.join(parent_dir, 'freecad_utils/open_brep_file.FCMacro')
     
-        # Determine sections based on the session type
+        # Determine sections based on the session type and what each backend module expects
         if session_type == "FinPlate":
-            sections = ["Model", "Beam", "Column", "FinPlate"]
+            sections = ["Model", "Beam", "Column", "Plate"]
         elif session_type == "CleatAngle":
             sections = ["Model", "Beam", "Column", "CleatAngle"]
         elif session_type == "EndPlate":
-            sections = ["Model", "Beam", "Column", "EndPlate"]
+            sections = ["Model", "Beam", "Column", "Plate"]
         elif session_type == "SeatedAngle":
             sections = ["Model", "Beam", "Column", "SeatedAngle"]
         elif session_type == "CoverPlateBolted":
-            sections = ["Model", "Beam", "CoverPlate"]
+            sections = ["Model", "Beam", "Plate"]
         elif session_type == "BeamBeamEndPlate":
             sections = ["Model", "Beam", "EndPlate"]
         elif session_type == "CoverPlateWelded":
-            sections = ["Model", "Beam", "CoverPlate"]
+            sections = ["Model", "Beam", "Plate"]
         elif session_type == "BeamToColumnEndPlate":
             sections = ["Model", "Beam", "Column", "EndPlate"]
         elif session_type == "TensionMember":

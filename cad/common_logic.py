@@ -303,7 +303,7 @@ class CommonDesignLogic(object):
 
         A = self.module_class
 
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             # A = self.module_class()
             # A = FinPlateConnection()
             plate = Plate(L=A.plate.height, W=A.plate.length, T=A.plate.thickness_provided)
@@ -336,7 +336,7 @@ class CommonDesignLogic(object):
 
 
         # --Notch dimensions
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             gap = A.plate.gap
             notchObj = Notch(R1=notch_R1,
                              height=notch_height,
@@ -385,7 +385,7 @@ class CommonDesignLogic(object):
         # nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
         nut = Nut(R=bolt_R, T=nut_T, H=nut_Ht, innerR1=bolt_r)
 
-        if self.connection == KEY_DISP_FINPLATE:  # finBeamWebBeamWeb/endBeamWebBeamWeb
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':  # finBeamWebBeamWeb/endBeamWebBeamWeb
             nut_space = A.supported_section.web_thickness + A.plate.thickness_provided + nut_T
             nutBoltArray = finNutBoltArray(A.bolt,  A.plate, nut, bolt, nut_space)
             beamwebconn = FinBeamWebBeamWeb(supporting, supported, notchObj, plate, Fweld1, nutBoltArray, gap)
@@ -516,7 +516,7 @@ class CommonDesignLogic(object):
         bolt = Bolt(R=bolt_R, T=bolt_T, H=bolt_Ht, r=bolt_r)
         nut = Nut(R=bolt_R, T=nut_T, H=nut_Ht, innerR1=bolt_r)
 
-        if self.connection == KEY_DISP_FINPLATE:  # finColWebBeamWeb
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':  # finColWebBeamWeb
             gap = A.plate.gap
             nut_space = A.supported_section.web_thickness + int(A.plate.thickness_provided) + nut_T
             nutBoltArray = finNutBoltArray(A.bolt, A.plate, nut, bolt, nut_space)
@@ -557,7 +557,7 @@ class CommonDesignLogic(object):
 
         A = self.module_class
 
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             # A = self.module_class()
             # A = FinPlateConnection()
             gap = A.plate.gap
@@ -628,7 +628,7 @@ class CommonDesignLogic(object):
         # nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
         nut = Nut(R=bolt_R, T=nut_T, H=nut_Ht, innerR1=bolt_r)
 
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             nut_space = A.supported_section.web_thickness+ int(A.plate.thickness_provided) + nut_T
             # nutBoltArray = finNutBoltArray(A, nut, bolt, nut_space)  # finColFlangeBeamWeb
             # colflangeconn = finColFlangeBeamWeb(column, beam, Fweld1, plate, nutBoltArray, gap)
@@ -1725,7 +1725,7 @@ class CommonDesignLogic(object):
             self.loc = A.connectivity
 
 
-            if self.loc == "Column Flange-Beam Web" and self.connection == KEY_DISP_FINPLATE:
+            if self.loc == "Column Flange-Beam Web" and (self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection'):
                 # pass
                 # print("hghghghg")
                 self.display.View.SetProj(OCC.Core.V3d.V3d_XnegYnegZpos)

@@ -150,7 +150,7 @@ const LoginPage = () => {
             const response = await verifyEmail(verifyEmails);
             if (response && response.success) {
                 globalOTP = localStorage.getItem('otp');
-                setInputDisabled(false);
+            setInputDisabled(false);
                 setSuccessMessage("OTP sent successfully to your email");
             } else {
                 setGeneralError(response?.message || "Failed to send OTP");
@@ -217,9 +217,9 @@ const LoginPage = () => {
             const response = await ForgetPassword(fPasswordNewPass);
             if (response && response.success) {
                 setSuccessMessage("Password updated successfully! You can now log in.");
-                handleFPasswordModalClose();
+            handleFPasswordModalClose();
                 setTimeout(() => {
-                    window.location.href = '/';
+            window.location.href = '/';
                 }, 2000);
             } else {
                 setGeneralError(response?.message || "Failed to update password");
@@ -261,15 +261,15 @@ const LoginPage = () => {
                 if (response && response.success) {
                     localStorage.setItem("username", username);
                     if (response.isGuest) {
-                        navigate('/home');
+                    navigate('/home');
                     } else {
                         // For regular users, they need email verification
                         setVerifyEmailModalVisible(true);
                     }
                 } else {
                     setGeneralError(response?.message || "Login failed");
-                }
             }
+        }
         } catch (error) {
             setGeneralError("An unexpected error occurred. Please try again.");
         } finally {
@@ -295,7 +295,7 @@ const LoginPage = () => {
             
             if (response && response.success) {
                 localStorage.setItem("email", guestEmail);
-                navigate('/home');
+            navigate('/home');
             } else {
                 setGeneralError("Failed to enter guest mode. Please try again.");
             }
@@ -500,16 +500,16 @@ const LoginPage = () => {
                             loading={isOTPLoading}
                             disabled={!verifyEmails.trim()}
                         >
-                            Get OTP
-                        </Button>
+                        Get OTP
+                    </Button>
                         <Button 
                             key="verifyemailbtn" 
                             type="primary"
                             onClick={handleVerify}
                             disabled={isInputDisabled || !otp.trim()}
                         >
-                            Verify
-                        </Button>
+                        Verify
+                    </Button>
                     </div>
                 </div>
             </Modal>

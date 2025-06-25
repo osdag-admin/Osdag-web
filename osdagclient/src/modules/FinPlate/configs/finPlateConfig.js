@@ -3,7 +3,7 @@ export const finPlateConfig = {
   routePath: "/design/connections/shear/fin_plate",
   designType: "Fin-Plate-Connection",
   cameraKey: "FinPlate",
-  cadOptions: ["Model", "Beam", "Column", "FinPlate"],
+  cadOptions: ["Model", "Beam", "Column", "Plate"],
   
   defaultInputs: {
     bolt_diameter: [],

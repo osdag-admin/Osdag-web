@@ -71,7 +71,7 @@ function Model({ modelPaths, selectedView }) {
     [parsedModels, texture]
   );
   const geometryEndplate = useMemo(
-    () => (parsedModels?.Endplate ? getGeometry(parsedModels.Endplate) : null),
+    () => (parsedModels?.EndPlate ? getGeometry(parsedModels.EndPlate) : null),
     [parsedModels, texture]
   );
 
@@ -301,8 +301,8 @@ function Model({ modelPaths, selectedView }) {
         </>
       )}
 
-      {/* Endplate Section - For Tension Members */}
-      {selectedView === "Endplate" && geometryEndplate && (
+      {/* EndPlate Section - For Beam-Beam End Plate and Tension Members */}
+      {(selectedView === "EndPlate" || selectedView === "Endplate") && geometryEndplate && (
         <>
           <mesh
             geometry={geometryEndplate}

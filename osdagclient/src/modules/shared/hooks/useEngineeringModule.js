@@ -4,7 +4,7 @@ import { ModuleContext } from "../../../context/ModuleState";
 
 export const useEngineeringModule = (moduleConfig) => {
   const navigate = useNavigate();
-  
+
   const {
     beamList,
     columnList,
@@ -29,7 +29,7 @@ export const useEngineeringModule = (moduleConfig) => {
     // Session functions removed for multi-module support
     getBoltDiameterList,
     getModuleData,
-    getThicknessList, 
+    getThicknessList,
     getPropertyClassList,
     getConnectivityList,
     getBeamMaterialList,
@@ -196,7 +196,7 @@ export const useEngineeringModule = (moduleConfig) => {
     setTimeout(() => {
       const moduleName = moduleConfig.designType;
       getModuleData(moduleName);
-      
+
     }, 100);
   }, []);
 
@@ -272,7 +272,7 @@ export const useEngineeringModule = (moduleConfig) => {
     if (displayOutput) {
       try {
         const formatedOutput = {};
-        
+
         // Both FinPlate and BeamBeamEndPlate use flat structure: { "Bolt.Diameter": { label, val } }
         for (const [key, value] of Object.entries(designData)) {
           const newKey = key;
@@ -282,7 +282,7 @@ export const useEngineeringModule = (moduleConfig) => {
             formatedOutput[newKey] = { label, val };
           }
         }
-        
+
         setOutput(formatedOutput);
       } catch (error) {
         console.log(error);
@@ -296,7 +296,7 @@ export const useEngineeringModule = (moduleConfig) => {
     if (renderCadModel && cadModelPaths) {
       setRenderBoolean(true);
       setLoading(false);
-      
+
       // Hide loading modal when model is ready
       setTimeout(() => {
         setIsLoadingModalVisible(false);
@@ -440,21 +440,21 @@ export const useEngineeringModule = (moduleConfig) => {
       setShowResetConfirmation(false);
       setConfirmationType("reset");
 
-              setTimeout(() => {
-          // Removed session deletion - no longer needed for multi-module support
-          resetToDefaultState();
+      setTimeout(() => {
+        // Removed session deletion - no longer needed for multi-module support
+        resetToDefaultState();
 
-          if (navigationSource === "home") {
-            console.log("Navigating to home");
-            navigate("/home");
-          } else if (navigationSource === "back") {
-            console.log("Navigating to connections page");
-            navigate("/design-type/connections");
-          }
+        if (navigationSource === "home") {
+          console.log("Navigating to home");
+          navigate("/home");
+        } else if (navigationSource === "back") {
+          console.log("Navigating to connections page");
+          navigate("/design-type/connections");
+        }
 
-          setAllowNavigation(false);
-          setNavigationSource(null);
-        }, 100);
+        setAllowNavigation(false);
+        setNavigationSource(null);
+      }, 100);
     } else {
       console.log("USER CONFIRMED RESET - starting targeted reset");
       resetToDefaultState();
