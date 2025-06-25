@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "antd";
 import "../../../../App.css";
 
-const BoltedToEndOutputDock = ({ output, extraState }) => {
+function BoltedToEndOutputDock({ output }) {
     const [isPatternModalOpen, setPatternModalOpen] = React.useState(false);
     const [patternData, setPatternData] = React.useState({
         title: "",
@@ -147,6 +147,6 @@ const BoltedToEndOutputDock = ({ output, extraState }) => {
             </div>
         </div>
     );
-};
+}
 
-export default BoltedToEndOutputDock; 
+export default BoltedToEndOutputDock;

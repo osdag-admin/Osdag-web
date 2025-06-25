@@ -40,12 +40,6 @@ export default function useViewCamera(moduleName, selectedView, connectivity = n
           },
         },
       },
-      TensionMember: {
-        Model: { position: [10, 8, 10], fov: 45 },
-        Member: { position: [8, 6, 8], fov: 40 },
-        Plate: { position: [-8, 6, -8], fov: 38 },
-        Endplate: { position: [-10, 8, -10], fov: 35 },
-      },
       default: {
         Model: { position: [10, 8, 10], fov: 40 },
         Beam: { position: [9, 7, 9], fov: 40 },

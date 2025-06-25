@@ -34,9 +34,6 @@ export const EngineeringModule = ({
     boltDiameterList,
     thicknessList,
     propertyClassList,
-    angleList,
-    channelList,
-    sectionProfileList,
     cadModelPaths,
 
     // State
@@ -116,8 +113,6 @@ export const EngineeringModule = ({
     }
     if (moduleConfig.cameraKey === "FinPlate") {
       return ["Model", "Beam", "Column", "Plate"];
-    } else if (moduleConfig.cameraKey === "TensionMember") {
-      return ["Model", "Member", "Plate", "Endplate"];
     }
     return ["Model", "Beam", "Connector"];
   };
@@ -133,9 +128,6 @@ export const EngineeringModule = ({
     boltDiameterList,
     thicknessList,
     propertyClassList,
-    angleList,
-    channelList,
-    sectionProfileList,
   };
 
   const triggerScreenshotCapture = () => {
@@ -286,7 +278,7 @@ export const EngineeringModule = ({
         </div>
       </div>
 
-      {/* Designreport separate modal */}
+      {/* Design Report Modal */}
       <DesignReportModal
         isOpen={createDesignReportBool}
         onCancel={handleCancelDesignReport}
@@ -297,32 +289,19 @@ export const EngineeringModule = ({
       />
 
       {/* Customization Modals */}
-      {moduleConfig.modalConfig.map((modal) => {
-        let dataSource = contextData[modal.dataSource] || [];
-        
-        // Handle dynamic list for section designations
-        if (modal.dataSource === 'dynamicList' && modal.inputKey === 'section_designation') {
-          if (inputs.section_profile && inputs.section_profile.includes("Angle")) {
-            dataSource = contextData.angleList || [];
-          } else {
-            dataSource = contextData.channelList || [];
+      {moduleConfig.modalConfig.map((modal) => (
+        <CustomizationModal
+          key={modal.key}
+          isOpen={modalStates[modal.key]}
+          onClose={() => updateModalState(modal.key, false)}
+          title="Customized"
+          dataSource={contextData[modal.dataSource] || []}
+          selectedItems={selectedItems[modal.inputKey]}
+          onTransferChange={(nextTargetKeys) =>
+            updateSelectedItems(modal.inputKey, nextTargetKeys)
           }
-        }
-        
-        return (
-          <CustomizationModal
-            key={modal.key}
-            isOpen={modalStates[modal.key]}
-            onClose={() => updateModalState(modal.key, false)}
-            title="Customized"
-            dataSource={dataSource}
-            selectedItems={selectedItems[modal.inputKey]}
-            onTransferChange={(nextTargetKeys) =>
-              updateSelectedItems(modal.inputKey, nextTargetKeys)
-            }
-          />
-        );
-      })}
+        />
+      ))}
 
       {/* Design Preferences Modal */}
       {designPrefModalStatus && (

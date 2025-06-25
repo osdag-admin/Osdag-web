@@ -30,6 +30,8 @@ class Tension_bolted(Member):
     def __init__(self):
         super(Tension_bolted, self).__init__()
         self.design_status = False
+        self.mainmodule = "Member"
+        self.logs = []
 
     ###############################################
     # Design Preference Functions Start
@@ -895,7 +897,6 @@ class Tension_bolted(Member):
                                            subkey=design_dictionary[KEY_LOCATION], D_a=self.section.a,
                                            B_b=self.section.b, T_t=self.section.thickness)
                 
-                
                 sec_gyr[self.section.designation] = self.min_radius_gyration
                 if self.loc == "Long Leg":
                     sec_depth.append(self.section.max_leg)
@@ -1067,8 +1068,6 @@ class Tension_bolted(Member):
                 self.sizelist.remove(previous_size)
             else:
                 pass
-
-        print("*****************")
         for selectedsize in self.sizelist:
             
             self.section_size = self.select_section(design_dictionary,selectedsize)
@@ -1703,7 +1702,6 @@ class Tension_bolted(Member):
         else:
             # print("recheck")
             # previous_size = self.section_size_1.designation
-            # self.initial_member_capacity(design_dictionary, previous_size)
             # self.initial_member_capacity(design_dictionary, previous_size)
             if len(self.sizelist)>=2:
                 size = self.section_size_1.designation

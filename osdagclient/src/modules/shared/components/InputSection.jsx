@@ -7,10 +7,6 @@ import CFBW from "../../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png";
 import CWBW from "../../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png";
 import BB from "../../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png";
 import ErrorImg from "../../../assets/notSelected.png";
-import ANGLES from "../../../assets/TensionMember/angles.png";
-import BACK_TO_BACK_ANGLES from "../../../assets/TensionMember/back_back_angles.png";
-import STAR_ANGLES from "../../../assets/TensionMember/star_angles.png";
-import CHANNELS from "../../../assets/TensionMember/channels.png";
 
 const { Option } = Select;
 
@@ -28,7 +24,7 @@ export const InputSection = ({
 }) => {
   const [imageSource, setImageSource] = useState("");
 
-  // Handle image selection for various field types
+  // Handle connectivity selection with image (for FinePlate)
   useEffect(() => {
     if (extraState.selectedOption) {
       const connectivityImageMap = {
@@ -53,24 +49,6 @@ export const InputSection = ({
       }
     }
   }, [extraState.selectedOption]);
-
-  // Handle section profile image selection
-  useEffect(() => {
-    if (inputs.section_profile) {
-      const sectionProfileImageMap = {
-        "Angles": ANGLES,
-        "Back to Back Angles": BACK_TO_BACK_ANGLES,
-        "Star Angles": STAR_ANGLES,
-        "Channels": CHANNELS,
-      };
-      
-      if (sectionProfileImageMap[inputs.section_profile]) {
-        setImageSource(sectionProfileImageMap[inputs.section_profile]);
-      } else {
-        setImageSource(ErrorImg);
-      }
-    }
-  }, [inputs.section_profile]);
 
   const handleCustomizableSelect = (field, value) => {
     if (value === "Customized") {
@@ -155,17 +133,6 @@ export const InputSection = ({
                 <Option key={index} value={item}>
                   {item}
                 </Option>
-              ))}
-            </Select>
-          );
-        } else if (field.options === 'sectionProfileList') {
-          return (
-            <Select
-              value={inputs[field.key]}
-              onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
-            >
-              {contextData.sectionProfileList?.map((profile, index) => (
-                <Option key={index} value={profile}>{profile}</Option>
               ))}
             </Select>
           );
@@ -255,23 +222,6 @@ export const InputSection = ({
           </Select>
         );
 
-      case 'conditionalSelect':
-        const conditionResult = field.condition ? field.condition(inputs) : true;
-        const optionsToUse = field.options[conditionResult] || field.options.false || [];
-        
-        return (
-          <Select
-            value={inputs[field.key]}
-            onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
-          >
-            {optionsToUse.map((option, index) => (
-              <Option key={index} value={option.value}>
-                {option.label}
-              </Option>
-            ))}
-          </Select>
-        );
-
       default:
         return (
           <Input
@@ -300,9 +250,8 @@ export const InputSection = ({
                 <h4>{field.label}</h4>
                 {renderField(field)}
               </div>
-              {/* Render image for various field types */}
-              {((field.type === 'connectivitySelect' || field.type === 'endPlateSelect') || 
-                (field.hasImage && imageSource)) && (
+              {/* Render image separately for connectivity and endPlateSelect types */}
+              {(field.type === 'connectivitySelect' || field.type === 'endPlateSelect') && imageSource && (
                 <div className="connectionimg">
                   <img
                     src={imageSource}
