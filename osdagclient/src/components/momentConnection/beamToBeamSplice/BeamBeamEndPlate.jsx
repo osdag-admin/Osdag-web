@@ -185,7 +185,6 @@ function BeamBeamEndPlate() {
 
   //reset function that resets both local and context state
   const resetToDefaultState = () => {
-    console.log("BEAMBEAMENDPLATE: Starting complete reset");
 
     if (resetModuleState) {
       resetModuleState();
@@ -250,7 +249,6 @@ function BeamBeamEndPlate() {
     setSelectedView("Model");
     setScreenshotTrigger(false);
 
-    console.log("BEAMBEAMENDPLATE: Complete reset finished");
   };
 
   //simple function to check unsaved work

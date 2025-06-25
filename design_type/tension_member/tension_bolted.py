@@ -814,9 +814,10 @@ class Tension_bolted(Member):
 
     def set_input_values(self, design_dictionary):
         # Map frontend keys to backend keys
-        # print("Setting input values for Tension_bolted class.", design_dictionary)
+        print("Setting input values for Tension_bolted class.", design_dictionary)
         super(Tension_bolted, self).set_input_values(design_dictionary)
         print("************* Input values set successfully *************")
+        
         self.module = design_dictionary[KEY_MODULE]
         self.sizelist = design_dictionary[KEY_SECSIZE]
         self.sec_profile = design_dictionary[KEY_SEC_PROFILE]

@@ -8,7 +8,7 @@ import { Input, Modal } from "antd";
 import { useEngineeringModule } from "../hooks/useEngineeringModule";
 import { InputSection } from "../components/InputSection";
 import { CustomizationModal } from "../components/CustomizationModal";
-import { DesignReportModal } from "../components/DesignReportModal"; 
+import { DesignReportModal } from "../components/DesignReportModal";
 import useViewCamera from "./btobViewCamera";
 import Model from "./btobRender";
 import Logs from "../../../components/Logs";
@@ -28,10 +28,19 @@ export const EngineeringModule = ({
   const {
     // Context data
     beamList,
+    columnList,
+    connectivityList,
     materialList,
     boltDiameterList,
     thicknessList,
     propertyClassList,
+    angleList,
+    channelList,
+    sectionProfileList,
+    topAngleList,
+    weldTypes,
+    weldFab,
+    endPlateTypeList,
     cadModelPaths,
 
     // State
@@ -80,15 +89,25 @@ export const EngineeringModule = ({
     moduleConfig.cameraKey,
     selectedView
   );
-  const options = ["Model", "Beam", "Connector"];
+  const options = moduleConfig.cadOptions || ["Model", "Beam", "Connector"];
 
   const contextData = {
     beamList,
+    columnList,
+    connectivityList,
     materialList,
     boltDiameterList,
     thicknessList,
     propertyClassList,
+    angleList,
+    channelList,
+    sectionProfileList,
+    topAngleList,
+    weldTypes,
+    weldFab,
+    endPlateTypeList,
   };
+
 
   const triggerScreenshotCapture = () => {
     setScreenshotTrigger(true);
@@ -165,9 +184,8 @@ export const EngineeringModule = ({
                 onClick={() => setSelectedView(option)}
               >
                 <div
-                  className={`option-box ${
-                    selectedView === option ? "selected" : ""
-                  }`}
+                  className={`option-box ${selectedView === option ? "selected" : ""
+                    }`}
                 ></div>
                 <span className="option-label">{option}</span>
               </div>
@@ -249,19 +267,43 @@ export const EngineeringModule = ({
       />
 
       {/* Modals */}
-      {moduleConfig.modalConfig.map((modal) => (
-        <CustomizationModal
-          key={modal.key}
-          isOpen={modalStates[modal.key]}
-          onClose={() => updateModalState(modal.key, false)}
-          title="Customized"
-          dataSource={contextData[modal.dataSource] || []}
-          selectedItems={selectedItems[modal.inputKey]}
-          onTransferChange={(nextTargetKeys) =>
-            updateSelectedItems(modal.inputKey, nextTargetKeys)
+      {moduleConfig.modalConfig.map((modal) => {
+        // Get dynamic data source for section designation modal
+        let dataSource = contextData[modal.dataSource] || [];
+
+        if (modal.key === "sectionDesignation" && moduleConfig.inputSections) {
+          // Find the section designation field configuration
+          const sectionDesignationField = moduleConfig.inputSections
+            .flatMap(section => section.fields)
+            .find(field => field.modalKey === "sectionDesignation");
+
+          if (sectionDesignationField && sectionDesignationField.getDynamicDataSource) {
+            dataSource = sectionDesignationField.getDynamicDataSource(inputs, contextData);
+       
+            // Check for duplicates in dynamic section list
+            const duplicates = dataSource.filter((item, index) => dataSource.indexOf(item) !== index);
+            if (duplicates.length > 0) {
+              console.warn(`⚠️ Duplicate items found in section designation list:`, duplicates);
+              // Remove duplicates
+              dataSource = [...new Set(dataSource)];
+            }
           }
-        />
-      ))}
+        }
+
+        return (
+          <CustomizationModal
+            key={modal.key}
+            isOpen={modalStates[modal.key]}
+            onClose={() => updateModalState(modal.key, false)}
+            title="Customized"
+            dataSource={dataSource}
+            selectedItems={selectedItems[modal.inputKey]}
+            onTransferChange={(nextTargetKeys) =>
+              updateSelectedItems(modal.inputKey, nextTargetKeys)
+            }
+          />
+        );
+      })}
 
       {/* Design Preferences Modal */}
       {designPrefModalStatus && (

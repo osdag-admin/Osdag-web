@@ -32,15 +32,15 @@ class ModuleApiType(_Protocol):
         """Generate the CAD model from input values as a BREP file. Return file path."""
         pass
 module_dict : Dict[str, ModuleApiType] = {
-    'Fin Plate Connection': fin_plate_connection,
-    'End Plate Connection': end_plate_connection,
-    'Cleat Angle Connection': cleat_angle_connection,
-    'Seated Angle Connection': seated_angle_connection,
-    'Cover Plate Bolted Connection': cover_plate_bolted_connection,
-    'Beam Beam End Plate Connection': beam_beam_end_plate_connection,
-    'Cover Plate Welded Connection': cover_plate_welded_connection,
-    'Beam-to-Column End Plate Connection': beam_column_end_plate,
-    'Tension Member Bolted Design': bolted_tension_member,
+    'Fin-Plate-Connection': fin_plate_connection,
+    'End-Plate-Connection': end_plate_connection,
+    'Cleat-Angle-Connection': cleat_angle_connection,
+    'Seated-Angle-Connection': seated_angle_connection,
+    'Cover-Plate-Bolted-Connection': cover_plate_bolted_connection,
+    'Beam-Beam-End-Plate-Connection': beam_beam_end_plate_connection,
+    'Cover-Plate-Welded-Connection': cover_plate_welded_connection,
+    'Beam-to-Column-End-Plate-Connection': beam_column_end_plate,
+    'Tension-Member-Bolted-Design': bolted_tension_member,
 } 
 
 def get_module_api(module_id: str) -> ModuleApiType:

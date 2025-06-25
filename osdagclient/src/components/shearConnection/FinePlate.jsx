@@ -161,7 +161,6 @@ function FinePlate() {
 
   // Add a comprehensive reset function that resets both local and context state
   const resetToDefaultState = () => {
-    console.log("FINPLATE: Starting complete reset");
 
     if (resetModuleState) {
       resetModuleState();
@@ -226,7 +225,6 @@ function FinePlate() {
     setSelectedView("Model");
     setScreenshotTrigger(false);
 
-    console.log("FINPLATE: Complete reset finished");
   };
 
   if (displaySaveInputPopup)
@@ -1097,9 +1095,7 @@ function FinePlate() {
               className="home-btn"
               onClick={async () => {
                 // Clear session before navigating to home
-                await import('../../utils/sessionManager').then(({ clearSessionsOnNavigation }) => {
-                  clearSessionsOnNavigation();
-                });
+                        // Session clearing no longer needed
                 navigate("/home");
               }}
             > */}

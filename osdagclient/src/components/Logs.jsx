@@ -7,7 +7,6 @@ const Logs = ({ logs }) => {
     // Reset endOfDesignLog when logs prop changes or becomes null/empty
     useEffect(() => {
         if (!logs || logs.length === 0) {
-            console.log("🧹 LOGS: Clearing endOfDesignLog - no logs");
             setEndOfDesignLog("");
             return;
         }

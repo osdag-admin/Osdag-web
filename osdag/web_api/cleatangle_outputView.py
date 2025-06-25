@@ -57,7 +57,7 @@ class CleatAngleOutputData(APIView):
 
         # Get input values and module from request
         input_values = request.data
-        module_name = input_values.get('Module', 'Cleat Angle Connection')
+        module_name = input_values.get('Module', 'Cleat-Angle-Connection')
         
         print('Module name:', module_name)
         print('Input values received:', input_values)

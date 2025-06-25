@@ -35,35 +35,37 @@ import uuid
 class CreateDesignReport(APIView):
 
     def post(self, request):
-        # print('request.metadata : ' , request.data)
-        # metadata = request.data
-        # obtain teh cookies
+        # Get metadata and design data from request
         metadata = request.data.get('metadata')
-        print('metadata : ' , metadata)
+        module_id = request.data.get('module_id')
+        input_values = request.data.get('input_values') 
+        design_status = request.data.get('design_status', True)
+        logs = request.data.get('logs', [])
         
-        # Step 1: Map all cookie keys to their respective create_from_input functions
-        module_cookie_map = {
-            'fin_plate_connection_session': fin_plate_create_from_input,
-            'end_plate_connection_session': end_plate_create_from_input,
-            'cleat_angle_connection_session': cleat_angle_create_from_input,
-            'seated_angle_connection': seated_angle_create_from_input,
-            'cover_plate_bolted_connection_session': cover_plate_bolted_create_from_input,
-            'beam_beam_end_plate_connection_session': beam_beam_end_plate_create_from_input,
-            'cover_plate_welded_connection_session': cover_plate_welded_create_from_input,
-            'beam_to_column_end_plate_connection_session':beam_to_column_end_plate_create_from_input,
-            'tension_member_bolted_design_session': tension_member_bolted_create_from_input
+        print('metadata:', metadata)
+        print('module_id:', module_id)
+        print('input_values:', input_values)
+        
+        # Map module IDs to their respective create_from_input functions
+        module_function_map = {
+            'Fin-Plate-Connection': fin_plate_create_from_input,
+            'End-Plate-Connection': end_plate_create_from_input,
+            'Cleat-Angle-Connection': cleat_angle_create_from_input,
+            'Seated-Angle-Connection': seated_angle_create_from_input,
+            'Cover-Plate-Bolted-Connection': cover_plate_bolted_create_from_input,
+            'Beam-Beam-End-Plate-Connection': beam_beam_end_plate_create_from_input,
+            'Cover-Plate-Welded-Connection': cover_plate_welded_create_from_input,
+            'Beam-to-Column-End-Plate-Connection': beam_to_column_end_plate_create_from_input,
+            'Tension-Member-Bolted-Design': tension_member_bolted_create_from_input
         }
         
-        cookie_id = None
-        create_module_func = None
-
-        for cookie_key, create_func in module_cookie_map.items():
-            if cookie_key in request.COOKIES:
-                cookie_id = request.COOKIES.get(cookie_key)
-                create_module_func = create_func
-                break
-        
-        print("cookie_id:", cookie_id)
+        if not module_id or module_id not in module_function_map:
+            return Response({"error": "Invalid or missing module_id"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not input_values:
+            return Response({"error": "Missing input_values"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        create_module_func = module_function_map[module_id]
 
         # obtain the currenct working directory as it gets changed in the osdag desktop code, then 
         # we will use the same value to bring it back to the current directory 
@@ -71,16 +73,9 @@ class CreateDesignReport(APIView):
         print('current_directory : '  , current_directory)
 
 
-        # obtain the input_values, logs, design_status from using the cookie_id
-        designObject = Design.objects.get(cookie_id=cookie_id)
-        input_values = designObject.input_values
-        design_status = designObject.design_status
-        logs = designObject.logs
-        print('input_values : ', input_values)
-        print('type of input_values : ', type(input_values))
-        print('logs : ', logs)
-        print('logs type ; ', type(logs))
-        print('design_status : ' , design_status )
+        print('input_values type:', type(input_values))
+        print('logs type:', type(logs))
+        print('design_status:', design_status)
 
         if (metadata is None or metadata == ''):
             print('The metadata is None ')
@@ -178,13 +173,6 @@ class GetPDF(APIView):
 
     def get(self, request):
         print('Inside get PDF')
-
-        # check cookie
-        try:
-            cookie_id = request.COOKIES.get('fin_plate_connection_session')
-            print('cookie id in getPDF:', cookie_id)
-        except Exception as e:
-            print('e:', e)
 
         # obtain the param from the Query
         report_id = request.GET.get('report_id')

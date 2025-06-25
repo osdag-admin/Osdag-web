@@ -14,16 +14,33 @@ import { decode as base64_decode, encode as base64_encode } from "base-64";
 let initialValue = {
   error_msg: "",
   currentModuleName: "",
-  connectivityList: [],
-  columnList: [],
-  beamList: [],
+  
+  // Common fields for all modules
   materialList: [],
   boltDiameterList: [],
   thicknessList: [],
   propertyClassList: [],
+  
+  // Structural elements
+  beamList: [],
+  columnList: [],
+  connectivityList: [],
+  
+  // Angle-specific (cleat angle, seated angle)
   angleList: [],
-  channelList: [],
   topAngleList: [],
+  
+  // Tension member specific
+  sectionProfileList: [],
+  channelList: [],
+  
+  // Welded connection specific
+  weldTypes: [],
+  weldFab: [],
+  
+  // End plate specific
+  endPlateTypeList: [],
+  
   // Session variables removed for multi-module support
   designLogs: [],
   designData: {},
@@ -65,7 +82,7 @@ export const ModuleProvider = ({ children }) => {
   // actions
   const getConnectivityList = async (moduleName) => {
     try {
-      state.currentModuleName = moduleName;
+      dispatch({ type: "SET_CURRENT_MODULE_NAME", payload: moduleName });
       const response = await fetch(
         `${BASE_URL}populate?moduleName=${moduleName}`,
         {
@@ -202,9 +219,8 @@ export const ModuleProvider = ({ children }) => {
     update = false,
     type
   ) => {
-    state.currentModuleName = moduleName;
+    dispatch({ type: "SET_CURRENT_MODULE_NAME", payload: moduleName });
     try {
-      state.currentModuleName = moduleName;
       console.log("GETTING BEAM MATERIALS ", moduleName);
       const email = localStorage.getItem("email");
       // Build the URL with or without email if present
@@ -250,10 +266,10 @@ export const ModuleProvider = ({ children }) => {
   ) => {
     //console.log("here");
 
-    try {
-      console.log("GETTING LIST FOR :", moduleName);
-      state.currentModuleName = moduleName;
-      const email = localStorage.getItem("email");
+          try {
+        console.log("GETTING LIST FOR :", moduleName);
+        dispatch({ type: "SET_CURRENT_MODULE_NAME", payload: moduleName });
+        const email = localStorage.getItem("email");
       const response = await fetch(
         `${BASE_URL}populate?moduleName=${moduleName}&email=${email}`,
         {
@@ -348,146 +364,101 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
-  const getBoltDiameterList = async () => {
+  // Simplified: One API call to get ALL module data
+  const getModuleData = async (moduleName) => {
     try {
-      console.log("bolt diameter list opened");
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&boltDiameter=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_BOLT_DIAMETER_LIST", payload: jsonResponse });
+      
+      if (!moduleName) {
+        console.error("No module name provided for getModuleData");
+        return;
+      }
+
+      const email = localStorage.getItem("email");
+      let url = `${BASE_URL}populate?moduleName=${moduleName}`;
+      if (email) {
+        url += `&email=${encodeURIComponent(email)}`;
+      }
+
+      const response = await fetch(url, {
+        method: "GET",
+        mode: "cors",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to fetch module data: ${response.status}`);
+        return;
+      }
+
+      const data = await response.json();
+     
+      dispatch({ type: "SET_ALL_MODULE_DATA", payload: data });
+
     } catch (error) {
-      console.log("error : ", error);
+      console.error("Error loading module data:", error);
     }
   };
 
-  const getThicknessList = async () => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&thickness=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_THICKNESS_LIST", payload: jsonResponse });
-    } catch (error) {
-      console.log("error : ", error);
-    }
+  // Legacy functions for backward compatibility (simplified to use getModuleData)
+  const getBoltDiameterList = async (moduleName) => {
+    await getModuleData(moduleName);
   };
 
-  const getPropertyClassList = async () => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&propertyClass=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_PROPERTY_CLASS_LIST", payload: jsonResponse });
-    } catch (error) {
-      console.log("error : ", error);
-    }
+  const getThicknessList = async (moduleName) => {
+    await getModuleData(moduleName);
+  };
+
+  const getPropertyClassList = async (moduleName) => {
+    await getModuleData(moduleName);
   };
 
   const getCleatAngleList = async () => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&angleList=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_CLEAT_ANGLE_LIST", payload: jsonResponse });
-    } catch (error) {
-      console.log("error : ", error);
-    }
+    await getModuleData(state.currentModuleName);
   };
 
   const gettopAngleList = async () => {
-    console.log("top angle list opened");
-    try {
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&topAngleList=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_TOP_ANGLE", payload: jsonResponse });
-    } catch (error) {
-      console.log("error : ", error);
-    }
+    await getModuleData(state.currentModuleName);
   };
 
   const getTensionMemberAngleList = async () => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&angleList=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_CLEAT_ANGLE_LIST", payload: jsonResponse });
-    } catch (error) {
-      console.log("error : ", error);
-    }
+    await getModuleData(state.currentModuleName);
   };
 
   const getTensionMemberChannelList = async () => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}populate?moduleName=${state.currentModuleName}&channelList=Customized`,
-        {
-          method: "GET",
-          mode: "cors",
-          credentials: "include",
-        }
-      );
-      const jsonResponse = await response?.json();
-      dispatch({ type: "SET_CHANNEL_LIST", payload: jsonResponse });
-    } catch (error) {
-      console.log("error : ", error);
-    }
+    await getModuleData(state.currentModuleName);
   };
 
   const resetModuleState = () => {
-    console.log(" CONTEXT: Resetting module state");
     dispatch({ type: "RESET_MODULE_STATE" });
   };
 
-  const createCADModel = async (inputData) => {
+  const createCADModel = async (inputData, moduleId) => {
     try {
       console.log("Creating CAD model with input data:", inputData);
+      console.log("Module ID:", moduleId);
+      
+      // CAD generation now accepts POST with input data and module ID
       const response = await fetch(`${BASE_URL}design/cad`, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
-        body: JSON.stringify(inputData),
+        body: JSON.stringify({
+          module_id: moduleId,
+          input_values: inputData
+        }),
       });
 
-      const data = await response.json(); // Parse JSON response
+      if (!response.ok) {
+        console.error("CAD generation failed:", response.status);
+        const errorText = await response.text();
+        console.error("CAD error details:", errorText);
+        dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
+        return;
+      }
+
+      const data = await response.json();
 
       if (response.status === 201 && data.status === "success") {
         console.log("CAD Model Generated:", data.files);
@@ -500,13 +471,11 @@ export const ModuleProvider = ({ children }) => {
 
         console.log("Dispatched SET_CAD_MODEL_PATHS:", data.files);
       } else {
-        console.log(`API Error: ${response.status} - ${data.message}`);
-
-        console.log("Error in creating CAD model: ", data, response);
+        console.log(`CAD Generation Error: ${response.status} - ${data.message || 'Unknown error'}`);
         dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
       }
     } catch (error) {
-      console.log("Error in creating CAD model: ", error);
+      console.log("Error in creating CAD model:", error);
       dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
     }
   };
@@ -562,7 +531,7 @@ export const ModuleProvider = ({ children }) => {
       if (response.status == 201) {
         // call the thunk to create the CAD Model with the same input parameters
         try {
-          createCADModel(param);
+          createCADModel(param, module_id);
         } catch (error) {
           console.log("error in creating the CAD model from createDesign");
         }
@@ -799,18 +768,32 @@ export const ModuleProvider = ({ children }) => {
     <ModuleContext.Provider
       value={{
         // State variables
-        sectionProfileList: state.sectionProfileList,
-        connectivityList: state.connectivityList,
-        beamList: state.beamList,
-        columnList: state.columnList,
+        // Common fields for all modules
         materialList: state.materialList,
         currentModuleName: state.currentModuleName,
         boltDiameterList: state.boltDiameterList,
         thicknessList: state.thicknessList,
         propertyClassList: state.propertyClassList,
+        
+        // Structural elements
+        beamList: state.beamList,
+        columnList: state.columnList,
+        connectivityList: state.connectivityList,
+        
+        // Angle-specific (cleat angle, seated angle)
         angleList: state.angleList,
-        channelList: state.channelList,
         topAngleList: state.topAngleList,
+        
+        // Tension member specific
+        sectionProfileList: state.sectionProfileList,
+        channelList: state.channelList,
+        
+        // Welded connection specific
+        weldTypes: state.weldTypes,
+        weldFab: state.weldFab,
+        
+        // End plate specific
+        endPlateTypeList: state.endPlateTypeList,
         // Session-related state removed for multi-module support
         error_msg: state.error_msg,
         designData: state.designData,
@@ -831,6 +814,7 @@ export const ModuleProvider = ({ children }) => {
         getConnectivityList,
         getBeamMaterialList,
         getColumnBeamMaterialList,
+        getModuleData,
         getThicknessList,
         getBoltDiameterList,
         getPropertyClassList,

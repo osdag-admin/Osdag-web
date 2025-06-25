@@ -19,25 +19,27 @@ sys.stdout = open(os.devnull, "w")  # redirect stdout
 sys.stdout = old_stdout  # Reset log
 
 def get_required_keys() -> List[str]:
+    # Using the same KEY constants as backend for consistency
     abhisogal_keys = [
-        "Member.Profile",
-        "Member.Designation",
-        "Material",
-        "Connector.Plate.Thickness_List",
-        "Bolt.Diameter",
-        "Bolt.Grade",
-        "Bolt.Type",
-        "Bolt.Bolt_Hole_Type",
-        "Bolt.Slip_Factor",
-        "Connector.Material",
-        "Design.Design_Method",
-        "Detailing.Corrosive_Influences",
-        "Detailing.Edge_type",
-        "Detailing.Gap",
-        "Load.Axial",
-        "Member.Length",
-        "Conn_Location",
-        "Module"
+        "Member.Profile",           # KEY_SEC_PROFILE
+        "Member.Designation",       # KEY_SECSIZE
+        "Material",                 # KEY_MATERIAL
+        "Member.Material",          # KEY_SEC_MATERIAL
+        "Connector.Plate.Thickness_List",  # KEY_PLATETHK
+        "Bolt.Diameter",            # KEY_D
+        "Bolt.Grade",              # KEY_GRD
+        "Bolt.Type",               # KEY_TYP
+        "Bolt.Bolt_Hole_Type",     # KEY_DP_BOLT_HOLE_TYPE
+        "Bolt.Slip_Factor",        # KEY_DP_BOLT_SLIP_FACTOR
+        "Connector.Material",      # KEY_CONNECTOR_MATERIAL
+        "Design.Design_Method",    # KEY_DP_DESIGN_METHOD
+        "Detailing.Corrosive_Influences",  # KEY_DP_DETAILING_CORROSIVE_INFLUENCES
+        "Detailing.Edge_type",     # KEY_DP_DETAILING_EDGE_TYPE
+        "Detailing.Gap",          # KEY_DP_DETAILING_GAP
+        "Load.Axial",             # KEY_AXIAL
+        "Member.Length",          # KEY_LENGTH
+        "Conn_Location",          # KEY_LOCATION
+        "Module"                  # KEY_MODULE
     ]
     print("in boltedtensionmember.py: get_required_keys called, returning:", abhisogal_keys)
     return abhisogal_keys
@@ -265,6 +267,7 @@ def create_from_input(input_values: Dict[str, Any]) -> Tension_bolted:
     except Exception as e:
         print("in bolted_tension_member.py: Exception in set_input_values:", e)
         print("in bolted_tension_member.py: Error in setting the input values")
+    
     return module
 
 

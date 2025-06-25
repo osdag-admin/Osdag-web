@@ -11,10 +11,17 @@ class TensionMemberBoltedOutputData(APIView):
     def post(self, request):
         # Get input values and module from request
         input_values = request.data
-        module_name = input_values.get('Module', 'Tension Member Bolted Design')
+        module_name = input_values.get('Module', 'Tension-Member-Bolted-Design')
         
         print('in tension_outputView.py: Processing request for module:', module_name)
-        print('in tension_outputView.py: Input values received:', input_values)
+        print('in tension_outputView.py: Input values keys:', list(input_values.keys()))
+        print('in tension_outputView.py: Module field value:', input_values.get('Module', 'NOT_FOUND'))
+        
+        # Check if we have the required fields
+        required_fields = ["Member.Profile", "Member.Designation", "Material", "Module"]
+        missing_fields = [field for field in required_fields if field not in input_values]
+        if missing_fields:
+            print('in tension_outputView.py: Missing required fields:', missing_fields)
         
         # Get module API
         try:

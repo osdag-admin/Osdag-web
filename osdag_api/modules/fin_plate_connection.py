@@ -30,6 +30,7 @@ import osdag_api.modules.shear_connection_common as scc
 from OCC.Core import BRepTools
 from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
 from OCC.Core.IGESControl import IGESControl_Writer
+from OCC.Core.Message import Message_ProgressRange
 # from OCC.Core.StlAPI import StlAPI_Writer
 # from OCC.Core.TopoDS import TopoDS_Solid, TopoDS_Shell
 from cad.common_logic import CommonDesignLogic
@@ -376,9 +377,9 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
-    if section not in ("Model", "Beam", "Column", "Plate"):  # Error checking: If section is valid.
+    if section not in ("Model", "Beam", "Column", "FinPlate"):  # Error checking: If section is valid.
         raise InvalidInputTypeError(
-            "section", "'Model', 'Beam', 'Column' or 'Plate'")
+            "section", "'Model', 'Beam', 'Column' or 'FinPlate'")
     module = create_from_input(input_values)  # Create module from input.
     print('module from input values : ' , module)
     # Object that will create the CAD model.
@@ -416,7 +417,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     print('brep file path in create_cad_model : ' , file_path)
 
     try : 
-        BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+        BRepTools.breptools.Write(model, file_path, Message_ProgressRange()) # Generate CAD Model
         
         # Only if it's 'Model' section, save extra formats
         if section == "Model":

@@ -28,6 +28,7 @@ export const useEngineeringModule = (moduleConfig) => {
     resetModuleState,
     // Session functions removed for multi-module support
     getBoltDiameterList,
+    getModuleData,
     getThicknessList, 
     getPropertyClassList,
     getConnectivityList,
@@ -134,7 +135,6 @@ export const useEngineeringModule = (moduleConfig) => {
 
   // Comprehensive reset function
   const resetToDefaultState = () => {
-    console.log(`${moduleConfig.sessionName}: Starting complete reset`);
 
     if (resetModuleState) {
       resetModuleState();
@@ -186,33 +186,17 @@ export const useEngineeringModule = (moduleConfig) => {
     setCreateDesignReportBool(false);
     setSelectedView("Model");
     setScreenshotTrigger(false);
-
-    console.log(`${moduleConfig.sessionName}: Complete reset finished`);
   };
 
-  // Initialize module data (removed session system for better UX - allows multiple modules)
+  // Initialize module data
   useEffect(() => {
     resetToDefaultState();
 
-    // Directly fetch required data instead of using session system
-    // This allows multiple modules to work simultaneously
+    // Simplified: One API call gets ALL module data
     setTimeout(() => {
-      console.log(`${moduleConfig.sessionName}: Initializing module data`);
+      const moduleName = moduleConfig.designType;
+      getModuleData(moduleName);
       
-      // Fetch common data for all modules
-      getBoltDiameterList();
-      getThicknessList();
-      getPropertyClassList();
-      
-      // Fetch module-specific data based on module type
-      if (moduleConfig.cameraKey === "FinPlate") {
-        getConnectivityList("Fin-Plate-Connection");
-      } else if (moduleConfig.cameraKey === "TensionMember") {
-        getBeamMaterialList("Tension-Member-Bolted-Design");
-        getTensionMemberAngleList();
-        getTensionMemberChannelList();
-      }
-      // Add other module-specific data fetching as needed
     }, 100);
   }, []);
 

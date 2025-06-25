@@ -52,6 +52,7 @@ export const InputSection = ({
   }, [extraState.selectedOption]);
 
   const handleCustomizableSelect = (field, value) => {
+
     if (value === "Customized") {
       if (inputs[field.key].length !== 0) {
         setInputs({ ...inputs, [field.key]: inputs[field.key] });
@@ -99,6 +100,14 @@ export const InputSection = ({
             </Select>
           );
         } else if (field.options === 'materialList') {
+   
+          // Check for duplicates in materialList
+          const grades = contextData.materialList?.map(item => item.Grade) || [];
+          const duplicateGrades = grades.filter((grade, index) => grades.indexOf(grade) !== index);
+          if (duplicateGrades.length > 0) {
+            console.warn(`⚠️ Duplicate grades found in materialList:`, duplicateGrades);
+          }
+
           return (
             <Select
               value={inputs[field.key] || contextData.materialList[0].Grade}
@@ -111,7 +120,7 @@ export const InputSection = ({
               }}
             >
               {contextData.materialList.map((item, index) => (
-                <Option key={index} value={item.id}>{item.Grade}</Option>
+                <Option key={`${item.id}-${index}`} value={item.id}>{item.Grade}</Option>
               ))}
             </Select>
           );
@@ -198,6 +207,13 @@ export const InputSection = ({
         );
 
       case 'sectionProfileList':
+        // Check for duplicates in sectionProfileList
+        const profiles = contextData.sectionProfileList || [];
+        const duplicateProfiles = profiles.filter((profile, index) => profiles.indexOf(profile) !== index);
+        if (duplicateProfiles.length > 0) {
+          console.warn(`⚠️ Duplicate profiles found in sectionProfileList:`, duplicateProfiles);
+        }
+
         return (
           <Select
             value={inputs[field.key]}
@@ -210,7 +226,7 @@ export const InputSection = ({
             }}
           >
             {(contextData.sectionProfileList || []).map((profile, index) => (
-              <Option key={index} value={profile}>
+              <Option key={`${profile}-${index}`} value={profile}>
                 {profile}
               </Option>
             ))}
@@ -256,13 +272,13 @@ export const InputSection = ({
   return (
     <div>
       <h3>{section.title}</h3>
-            <div className="component-grid">
+      <div className="component-grid">
         {section.fields.map((field, index) => {
           // Check conditional display again for the entire field container
           if (field.conditionalDisplay && !field.conditionalDisplay(extraState)) {
             return null;
           }
-          
+
           return (
             <div key={index}>
               {field.type === 'image' ? (

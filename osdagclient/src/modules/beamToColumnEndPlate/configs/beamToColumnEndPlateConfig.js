@@ -1,8 +1,9 @@
 export const beamToColumnEndPlateConfig = {
-  sessionName: "Beam-to-Column End Plate Connection",
-  routePath: "/design/connections/beam-to-column/end_plate",
+  sessionName: "Beam to Column End Plate Connection",
+  routePath: "/design/connections/column-beam/end_plate",
   designType: "Beam-to-Column-End-Plate-Connection",
   cameraKey: "BeamToColumnEndPlate",
+  cadOptions: ["Model", "Beam", "Column", "EndPlate"],
   
   defaultInputs: {
     bolt_hole_type: "Standard",
@@ -85,7 +86,7 @@ export const beamToColumnEndPlateConfig = {
       "Weld.Fab": inputs.weld_fab,
       "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
       "Weld.Type": inputs.weld_type,
-      Module: "Beam-to-Column End Plate Connection",
+      Module: "Beam-to-Column-End-Plate-Connection",
     };
   },
   inputSections: [

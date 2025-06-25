@@ -3,6 +3,7 @@ export const beamBeamEndPlateConfig = {
   routePath: "/design/connections/beam-to-beam-splice/end_plate",
   designType: "Beam-Beam-End-Plate-Connection",
   cameraKey: "BeamBeamEndPlate",
+  cadOptions: ["Model", "Beam", "EndPlate"],
   
   defaultInputs: {
     bolt_hole_type: "Standard",
@@ -24,7 +25,7 @@ export const beamBeamEndPlateConfig = {
     material: "E 250 (Fe 410 W)A",
     supported_designation: "WPB 900 X 300 X 291.46",
     supported_material: "E 250 (Fe 410 W)A",
-    module: "Beam-to-Beam End Plate Connection",
+    module: "Beam-Beam-End-Plate-Connection",
     weld_fab: "Shop Weld",
     weld_material_grade: "410",
     weld_type: "Groove Weld",
@@ -83,7 +84,7 @@ export const beamBeamEndPlateConfig = {
       "Weld.Fab": inputs.weld_fab,
       "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
       "Weld.Type": inputs.weld_type,
-      Module: "Beam-to-Beam End Plate Connection",
+      Module: "Beam-Beam-End-Plate-Connection",
     };
   },
 

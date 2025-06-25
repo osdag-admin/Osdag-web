@@ -1,8 +1,9 @@
 export const finPlateConfig = {
   sessionName: "Fin Plate Connection",
-  routePath: "/design/connections/fin_plate",
+  routePath: "/design/connections/shear/fin_plate",
   designType: "Fin-Plate-Connection",
   cameraKey: "FinPlate",
+  cadOptions: ["Model", "Beam", "Column", "FinPlate"],
   
   defaultInputs: {
     bolt_diameter: [],
@@ -91,7 +92,7 @@ export const finPlateConfig = {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "Fin Plate Connection",
+        "Module": "Fin-Plate-Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? lists.thicknessList : inputs.plate_thickness,
@@ -117,7 +118,7 @@ export const finPlateConfig = {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "Fin Plate Connection",
+        "Module": "Fin-Plate-Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? lists.thicknessList : inputs.plate_thickness,

@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { GlobalContext } from '../context/GlobalState'
 import { useContext } from 'react'
-import { clearSessionsOnNavigation } from '../utils/sessionManager'
+
 
 let initialRender = false;
 
@@ -41,21 +41,15 @@ function Sidebar() {
 
   const navigate = useNavigate();
 
-  const handleModuleNavigation = async (moduleName) => {
-    // Clear any existing module sessions before navigating to a new module
-    await clearSessionsOnNavigation();
+  const handleModuleNavigation = (moduleName) => {
     navigate(`design-type/${moduleName.toLowerCase().replaceAll("_", "-")}`);
   };
 
-  const handleHomeNavigation = async () => {
-    // Clear any existing module sessions when going to home
-    await clearSessionsOnNavigation();
+  const handleHomeNavigation = () => {
     navigate('/home');
   };
 
-  const handleUserAccountNavigation = async () => {
-    // Clear any existing module sessions when going to user account
-    await clearSessionsOnNavigation();
+  const handleUserAccountNavigation = () => {
     navigate('/user');
   };
 
@@ -78,8 +72,7 @@ function Sidebar() {
 
           {isGuestOrnot === 'guest' ? (
             <div className="sidebar-item">
-              <button onClick={async () => {     
-                await clearSessionsOnNavigation();
+              <button onClick={() => {     
                 window.location.href = '/';
               }}>
                 Login

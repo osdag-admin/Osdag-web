@@ -5,6 +5,7 @@ import osdag_api.modules.moment_connection_common as mcc
 from OCC.Core import BRepTools
 from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
 from OCC.Core.IGESControl import IGESControl_Writer
+from OCC.Core.Message import Message_ProgressRange
 from cad.common_logic import CommonDesignLogic
 # Will log a lot of unnessecary data.
 from design_type.connection.beam_beam_end_plate_splice import BeamBeamEndPlateSplice
@@ -346,9 +347,9 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
-    if section not in ("Model", "Beam", "Connector"):  # Error checking: If section is valid.
+    if section not in ("Model", "Beam", "EndPlate"):  # Error checking: If section is valid.
         raise InvalidInputTypeError(
-            "section", "'Model', 'Beam' or 'Connector'")
+            "section", "'Model', 'Beam' or 'EndPlate'")
     module = create_from_input(input_values)  # Create module from input.
     print('module from input values : ' , module)
     # Object that will create the CAD model.
@@ -386,7 +387,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     print('brep file path in create_cad_model : ' , file_path)
 
     try : 
-        BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+        BRepTools.breptools.Write(model, file_path, Message_ProgressRange()) # Generate CAD Model
         
         if section == "Model":
             # Save STEP

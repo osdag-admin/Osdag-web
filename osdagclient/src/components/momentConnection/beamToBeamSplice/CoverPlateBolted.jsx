@@ -161,7 +161,6 @@ function CoverPlateBolted() {
 
   // Add a comprehensive reset function that resets both local and context state
   const resetToDefaultState = () => {
-    console.log("COVERPLATE: Starting complete reset");
 
     if (resetModuleState) {
       resetModuleState();
@@ -227,7 +226,6 @@ function CoverPlateBolted() {
     setSelectedView("Model");
     setScreenshotTrigger(false);
 
-    console.log("COVERPLATE: Complete reset finished");
   };
 
   //simple function to check unsaved work

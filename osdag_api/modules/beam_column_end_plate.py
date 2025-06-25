@@ -3,6 +3,7 @@ from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 import osdag_api.modules.moment_connection_common as scc
 from OCC.Core import BRepTools
+from OCC.Core.Message import Message_ProgressRange
 from cad.common_logic import CommonDesignLogic
 # Will log a lot of unnessecary data.
 from design_type.connection.beam_column_end_plate import BeamColumnEndPlate
@@ -484,9 +485,9 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     logger.info(f"Creating CAD model for section: {section}, session: {session}")
     
     # Validate section value
-    if section not in ("Model", "Beam", "Column", "Connector"):  # Error checking: If section is valid.
+    if section not in ("Model", "Beam", "Column", "EndPlate"):  # Error checking: If section is valid.
         logger.error(f"Invalid section: {section}")
-        raise InvalidInputTypeError("section", "'Model', 'Beam', 'Column' or 'Connector'")
+        raise InvalidInputTypeError("section", "'Model', 'Beam', 'Column' or 'EndPlate'")
     
     try:
         # Create module from input
@@ -559,7 +560,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     try:
         # Write model to file
         logger.debug(f"Writing model to BREP file: {file_path}")
-        BRepTools.breptools.Write(model, file_path)
+        BRepTools.breptools.Write(model, file_path, Message_ProgressRange())
         logger.info(f"CAD model successfully written to: {file_path}")
     except Exception as e:
         logger.error(f"Writing to BREP file failed: {str(e)}")

@@ -34,7 +34,6 @@ import FinPlate from "./modules/FinPlate/FinPlate";
 import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
 
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
-import { clearSessionsOnNavigation } from "./utils/sessionManager";
 import Homepage from "./homepage/pages/Homepage";
 
 let renderedOnce = false
@@ -46,13 +45,6 @@ function App() {
   // using redux variables
   const { isLoggedIn, userLogin } = useContext(UserContext);
   let loggedIn = false;
-
-  console.log("isLoggedIn : ", isLoggedIn);
-
-  useEffect(() => {
-    console.log("isLogged in useEffect : ", isLoggedIn);
-  }, [isLoggedIn]);
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root loggedIn={loggedIn} />}>
@@ -124,7 +116,7 @@ const Root = (loggedIn) => {
 
     // Clear sessions when navigating to non-design pages
     if (currentPath === '/' || currentPath === '/home' || currentPath.startsWith('/user')) {
-      clearSessionsOnNavigation().catch(console.error);
+      
     }
   }, []);
 
@@ -134,8 +126,7 @@ const Root = (loggedIn) => {
     // then, implemented access_token checking and decoding
     if (localStorage.getItem("access")) {
       const decodedAccessToken = jwt_decode(localStorage.getItem("access"));
-      console.log("decodedAccessToken : ", decodedAccessToken);
-      console.log("Date.now() / 1000 : ", Date.now() / 1000);
+     
       // check expiration
       if (
         decodedAccessToken.exp > Date.now() / 1000 &&
@@ -144,7 +135,7 @@ const Root = (loggedIn) => {
       ) {
         // the user should automatically be logged in
         loggedIn = true;
-        console.log("loggedIn : ", loggedIn);
+        
         userLogin(
           decodedAccessToken.username,
           "", // Don't pass password for security
@@ -154,14 +145,11 @@ const Root = (loggedIn) => {
       } else {
         // login again
         loggedIn = false;
-        console.log("loggedIn : ", loggedIn);
       }
 
-      console.log("isLoggedIn in root : ", loggedIn);
     } else {
       // login again
       loggedIn = false;
-      console.log("loggedIn : ", loggedIn);
     }
 
     renderedOnce = true;

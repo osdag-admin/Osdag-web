@@ -3,6 +3,7 @@ export const coverPlateBoltedConfig = {
   routePath: "/design/connections/beam-to-beam-splice/cover_plate_bolted",
   designType: "Cover-Plate-Bolted-Connection",
   cameraKey: "CoverPlateBolted",
+  cadOptions: ["Model", "Beam", "CoverPlate"],
   
   defaultInputs: {
     bolt_hole_type: "Standard",
@@ -25,7 +26,7 @@ export const coverPlateBoltedConfig = {
     material: "E 250 (Fe 410 W)A",
     member_designation: "MB 300",
     member_material: "E 250 (Fe 410 W)A",
-    module: "Beam-to-Beam Cover Plate Bolted Connection",
+    module: "Cover-Plate-Bolted-Connection",
   },
 
   modalConfig: [
@@ -75,7 +76,7 @@ export const coverPlateBoltedConfig = {
       Material: inputs.material,
       "Member.Designation": inputs.member_designation,
       "Member.Material": inputs.member_material,
-      Module: "Beam-to-Beam Cover Plate Bolted Connection",
+      Module: "Cover-Plate-Bolted-Connection",
     };
   },
 

@@ -3,13 +3,21 @@ import BACK_TO_BACK_ANGLES from "../../../../assets/TensionMember/back_back_angl
 import STAR_ANGLES from "../../../../assets/TensionMember/star_angles.png";
 import CHANNELS from "../../../../assets/TensionMember/channels.png";
 import ErrorImg from "../../../../assets/notSelected.png";
+import {
+  KEY_MODULE, KEY_SEC_PROFILE, KEY_LOCATION, KEY_SECSIZE, KEY_MATERIAL,
+  KEY_LENGTH, KEY_AXIAL, KEY_D, KEY_TYP, KEY_GRD, KEY_DP_BOLT_HOLE_TYPE,
+  KEY_DP_BOLT_SLIP_FACTOR, KEY_CONNECTOR_MATERIAL, KEY_DP_DETAILING_EDGE_TYPE,
+  KEY_DP_DETAILING_GAP, KEY_DP_DETAILING_CORROSIVE_INFLUENCES,
+  KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL
+} from "../../../../constants/DesignKeys";
 
 export const boltedToEndConfig = {
   sessionName: "Tension Member Bolted Design",
   routePath: "/design/tension-member/bolted_to_end_gusset",
   designType: "Tension-Member-Bolted-Design",
   cameraKey: "TensionMember",
-  
+  cadOptions: ["Model", "Member", "Plate", "Endplate"],
+
   defaultInputs: {
     bolt_diameter: [],
     bolt_grade: [],
@@ -36,7 +44,7 @@ export const boltedToEndConfig = {
     { key: "boltDiameter", inputKey: "bolt_diameter", dataSource: "boltDiameterList" },
     { key: "propertyClass", inputKey: "bolt_grade", dataSource: "propertyClassList" },
     { key: "plateThickness", inputKey: "plate_thickness", dataSource: "thicknessList" },
-    { key: "sectionDesignation", inputKey: "section_designation", dataSource: "dynamicSectionList" },
+    { key: "sectionDesignation", inputKey: "section_designation", dataSource: null }, // Dynamic data source handled in EngineeringModule
   ],
 
   selectionConfig: [
@@ -82,10 +90,10 @@ export const boltedToEndConfig = {
   },
 
   validateInputs: (inputs) => {
-    if (!inputs.section_designation || 
-        !inputs.length || 
-        !inputs.axial_force ||
-        inputs.section_designation === "Select Section") {
+    if (!inputs.section_designation ||
+      !inputs.length ||
+      !inputs.axial_force ||
+      inputs.section_designation === "Select Section") {
       return { isValid: false, message: "Please input all the required fields" };
     }
     return { isValid: true };
@@ -105,35 +113,35 @@ export const boltedToEndConfig = {
     };
 
     const dynamicSectionList = boltedToEndConfig.getDynamicSectionList(
-      inputs.section_profile, 
-      lists.angleList, 
+      inputs.section_profile,
+      lists.angleList,
       lists.channelList
     );
 
     return {
-      "Bolt.Bolt_Hole_Type": String(inputs.bolt_hole_type),
-      "Bolt.Diameter": getArrayParam(allSelected.bolt_diameter, lists.boltDiameterList, inputs.bolt_diameter),
-      "Bolt.Grade": getArrayParam(allSelected.bolt_grade, lists.propertyClassList, inputs.bolt_grade),
-      "Bolt.Slip_Factor": String(inputs.bolt_slip_factor),
-      "Bolt.Type": String(inputs.bolt_type),
-      "Connector.Material": String(inputs.connector_material),
-      "Material": String(inputs.material),
-      "Member.Material": String(inputs.material),
-      "Design.Design_Method": String(inputs.design_method),
-      "Detailing.Corrosive_Influences": String(inputs.detailing_corr_status),
-      "Detailing.Edge_type": String(inputs.detailing_edge_type),
-      "Detailing.Gap": String(inputs.detailing_gap),
-      "Load.Axial": String(inputs.axial_force),
-      "Member.Designation": getArrayParam(
-        allSelected.section_designation,
-        dynamicSectionList,
-        inputs.section_designation
-      ),
-      "Member.Length": String(inputs.length),
-      "Member.Profile": String(inputs.section_profile),
-      "Conn_Location": String(inputs.location),
-      "Module": "Tension Member Bolted Design",
-      "Connector.Plate.Thickness_List": getArrayParam(allSelected.plate_thickness, lists.thicknessList, inputs.plate_thickness),
+      [KEY_DP_BOLT_HOLE_TYPE]: String(inputs.bolt_hole_type),
+      [KEY_D]: getArrayParam(allSelected.bolt_diameter, lists.boltDiameterList, inputs.bolt_diameter),
+      [KEY_GRD]: getArrayParam(allSelected.bolt_grade, lists.propertyClassList, inputs.bolt_grade),
+      [KEY_DP_BOLT_SLIP_FACTOR]: String(inputs.bolt_slip_factor),
+      [KEY_TYP]: String(inputs.bolt_type),
+      [KEY_CONNECTOR_MATERIAL]: String(inputs.connector_material),
+      [KEY_MATERIAL]: String(inputs.material),
+      [KEY_SEC_MATERIAL]: String(inputs.material),
+      [KEY_DP_DESIGN_METHOD]: String(inputs.design_method),
+      [KEY_DP_DETAILING_CORROSIVE_INFLUENCES]: String(inputs.detailing_corr_status),
+      [KEY_DP_DETAILING_EDGE_TYPE]: String(inputs.detailing_edge_type),
+      [KEY_DP_DETAILING_GAP]: String(inputs.detailing_gap),
+      [KEY_AXIAL]: String(inputs.axial_force),
+      [KEY_SECSIZE]: allSelected.section_designation
+        ? dynamicSectionList  // Entire list if "All" selected
+        : (Array.isArray(inputs.section_designation)
+          ? inputs.section_designation
+          : [inputs.section_designation || ""]),
+      [KEY_LENGTH]: String(inputs.length),
+      [KEY_SEC_PROFILE]: String(inputs.section_profile),
+      [KEY_LOCATION]: String(inputs.location),
+      [KEY_MODULE]: "Tension-Member-Bolted-Design",
+      [KEY_PLATETHK]: getArrayParam(allSelected.plate_thickness, lists.thicknessList, inputs.plate_thickness),
     };
   },
 
@@ -186,8 +194,8 @@ export const boltedToEndConfig = {
           modalKey: "sectionDesignation",
           getDynamicDataSource: (inputs, contextData) => {
             return boltedToEndConfig.getDynamicSectionList(
-              inputs.section_profile, 
-              contextData.angleList, 
+              inputs.section_profile,
+              contextData.angleList,
               contextData.channelList
             );
           }
