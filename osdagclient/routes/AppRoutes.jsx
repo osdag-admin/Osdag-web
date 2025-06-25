@@ -10,7 +10,7 @@ import CleatAngle from "../src/components/shearConnection/CleatAngle";
 import SeatedAngle from "../src/components/shearConnection/SeatedAngle";
 import CoverPlateBolted from "../src/components/momentConnection/beamToBeamSplice/CoverPlateBolted";
 import BeamBeamEndPlate from "../src/components/momentConnection/beamToBeamSplice/BeamBeamEndPlate";
-import BoltedToEndPage from "../src/components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage";
+import BoltedToEnd from "../src/modules/TensionMembers/BoltedToEnd/BoltedToEnd";
 import CoverPlateWelded from "../src/components/momentConnection/beamToBeamSplice/CoverPlateWelded";
 import BeamToColumnEndPlate from "../src/components/momentConnection/BeamToColumnEndPlate";
 import UserAccount from "../src/components/userAccount/UserAccount";
@@ -43,7 +43,7 @@ const momentConnectionRoutes = [
 ];
 
 const tensionMemberRoutes = [
-  { path: "/design/:designType/bolted_to_end_gusset", element: <BoltedToEndPage /> },
+  { path: "/design/:designType/bolted_to_end_gusset", element: <BoltedToEnd /> },
 ];
 
 // Combine all routes

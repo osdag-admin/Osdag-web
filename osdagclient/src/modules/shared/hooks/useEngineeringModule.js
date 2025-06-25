@@ -13,6 +13,9 @@ export const useEngineeringModule = (moduleConfig) => {
     boltDiameterList,
     thicknessList,
     propertyClassList,
+    angleList,
+    channelList,
+    sectionProfileList,
     designLogs,
     designData,
     displayPDF,
@@ -73,6 +76,11 @@ export const useEngineeringModule = (moduleConfig) => {
     if (moduleConfig.cameraKey === "FinPlate") {
       return {
         selectedOption: "Column Flange-Beam-Web", // Default for FinPlate
+      };
+    } else if (moduleConfig.cameraKey === "TensionMember") {
+      return {
+        selectedProfile: "Back to Back Angles",
+        imageSource: moduleConfig.getSectionImage ? moduleConfig.getSectionImage("Back to Back Angles") : null,
       };
     }
     return {
@@ -245,8 +253,8 @@ export const useEngineeringModule = (moduleConfig) => {
       try {
         setLogs(designLogs);
       } catch (error) {
-        console.log(error);
-        setOutput(null);
+        console.log("Error setting logs:", error);
+        setLogs(null);
       }
     } else {
       setLogs(null);
@@ -390,6 +398,8 @@ export const useEngineeringModule = (moduleConfig) => {
       boltDiameterList,
       propertyClassList,
       thicknessList,
+      angleList,
+      channelList,
     }, extraState);
 
     // Show loading modal
@@ -459,6 +469,8 @@ export const useEngineeringModule = (moduleConfig) => {
       boltDiameterList,
       propertyClassList,
       thicknessList,
+      angleList,
+      channelList,
     }, extraState);
 
     // Add output data to the submission data
@@ -533,6 +545,9 @@ export const useEngineeringModule = (moduleConfig) => {
     boltDiameterList,
     thicknessList,
     propertyClassList,
+    angleList,
+    channelList,
+    sectionProfileList,
     displayPDF,
     renderCadModel,
     cadModelPaths,

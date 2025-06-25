@@ -32,13 +32,13 @@ export const InputSection = ({
         "Column Web-Beam-Web": CWBW,
         "Beam-Beam": BB,
       };
-      
+
       const endPlateImageMap = {
         "Flushed - Reversible Moment": FRM,
         "Extended One Way - Irreversible Moment": EOWIM,
         "Extended Both Ways - Reversible Moment": EBWRM,
       };
-      
+
       // Check if it's a connectivity or end plate selection
       if (connectivityImageMap[extraState.selectedOption]) {
         setImageSource(connectivityImageMap[extraState.selectedOption]);
@@ -157,11 +157,11 @@ export const InputSection = ({
 
       case 'connectivitySelect':
         return (
-          <Select 
+          <Select
             onSelect={(value) => {
               setExtraState({ ...extraState, selectedOption: value });
-              setInputs({ ...inputs, connectivity: value, output: null }); 
-            }} 
+              setInputs({ ...inputs, connectivity: value, output: null });
+            }}
             value={extraState.selectedOption || inputs.connectivity}
           >
             {(contextData.connectivityList || []).map((item, index) => (
@@ -217,10 +217,56 @@ export const InputSection = ({
             onSelect={(value) => handleCustomizableSelect(field, value)}
             value={selectionStates[field.selectionKey]}
           >
-            <Option value="Customized">Customized</Option>
             <Option value="All">All</Option>
+            <Option value="Customized">Customized</Option>
           </Select>
         );
+
+      case 'sectionProfileList':
+        return (
+          <Select
+            value={inputs[field.key]}
+            onSelect={(value) => {
+              if (field.onChange) {
+                field.onChange(value, inputs, setInputs, contextData, extraState, setExtraState);
+              } else {
+                setInputs({ ...inputs, [field.key]: value });
+              }
+            }}
+          >
+            {(contextData.sectionProfileList || []).map((profile, index) => (
+              <Option key={index} value={profile}>
+                {profile}
+              </Option>
+            ))}
+          </Select>
+        );
+
+      case 'dynamicSelect':
+        const options = field.getOptions ? field.getOptions(inputs, extraState) : [];
+        return (
+          <Select
+            value={inputs[field.key]}
+            onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
+          >
+            {options.map((option, index) => (
+              <Option key={index} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
+        );
+
+      case 'image':
+        const imageUrl = field.imageSource ? field.imageSource(extraState) : null;
+        return imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={field.label || "Section Profile"}
+            height={field.height || "100px"}
+            width={field.width || "100px"}
+          />
+        ) : null;
 
       default:
         return (
@@ -237,7 +283,7 @@ export const InputSection = ({
   return (
     <div>
       <h3>{section.title}</h3>
-      <div className="component-grid">
+            <div className="component-grid">
         {section.fields.map((field, index) => {
           // Check conditional display again for the entire field container
           if (field.conditionalDisplay && !field.conditionalDisplay(extraState)) {
@@ -246,10 +292,16 @@ export const InputSection = ({
           
           return (
             <div key={index}>
-              <div className="component-grid-align">
-                <h4>{field.label}</h4>
-                {renderField(field)}
-              </div>
+              {field.type === 'image' ? (
+                <div className="connectionimg">
+                  {renderField(field)}
+                </div>
+              ) : (
+                <div className="component-grid-align">
+                  <h4>{field.label}</h4>
+                  {renderField(field)}
+                </div>
+              )}
               {/* Render image separately for connectivity and endPlateSelect types */}
               {(field.type === 'connectivitySelect' || field.type === 'endPlateSelect') && imageSource && (
                 <div className="connectionimg">

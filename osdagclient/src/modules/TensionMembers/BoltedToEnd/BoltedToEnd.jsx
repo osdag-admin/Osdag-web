@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { EngineeringModule } from '../../shared/components/EngineeringModule';
 import { boltedToEndConfig } from './configs/boltedToEndConfig';

@@ -113,6 +113,8 @@ export const EngineeringModule = ({
     }
     if (moduleConfig.cameraKey === "FinPlate") {
       return ["Model", "Beam", "Column", "Plate"];
+    } else if (moduleConfig.cameraKey === "TensionMember") {
+      return ["Model", "Member", "Plate", "Endplate"];
     }
     return ["Model", "Beam", "Connector"];
   };
@@ -289,19 +291,33 @@ export const EngineeringModule = ({
       />
 
       {/* Customization Modals */}
-      {moduleConfig.modalConfig.map((modal) => (
-        <CustomizationModal
-          key={modal.key}
-          isOpen={modalStates[modal.key]}
-          onClose={() => updateModalState(modal.key, false)}
-          title="Customized"
-          dataSource={contextData[modal.dataSource] || []}
-          selectedItems={selectedItems[modal.inputKey]}
-          onTransferChange={(nextTargetKeys) =>
-            updateSelectedItems(modal.inputKey, nextTargetKeys)
-          }
-        />
-      ))}
+      {moduleConfig.modalConfig.map((modal) => {
+        // Handle dynamic data source for tension member
+        let dataSource = contextData[modal.dataSource] || [];
+        
+        // Check if this is section designation modal and get dynamic data
+        const sectionField = moduleConfig.inputSections
+          .flatMap(section => section.fields)
+          .find(field => field.modalKey === modal.key);
+          
+        if (sectionField && sectionField.getDynamicDataSource) {
+          dataSource = sectionField.getDynamicDataSource(inputs, contextData);
+        }
+        
+        return (
+          <CustomizationModal
+            key={modal.key}
+            isOpen={modalStates[modal.key]}
+            onClose={() => updateModalState(modal.key, false)}
+            title="Customized"
+            dataSource={dataSource}
+            selectedItems={selectedItems[modal.inputKey]}
+            onTransferChange={(nextTargetKeys) =>
+              updateSelectedItems(modal.inputKey, nextTargetKeys)
+            }
+          />
+        );
+      })}
 
       {/* Design Preferences Modal */}
       {designPrefModalStatus && (

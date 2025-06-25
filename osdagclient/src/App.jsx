@@ -27,7 +27,7 @@ import CleatAngle from './components/shearConnection/CleatAngle';
 import SeatedAngle from './components/shearConnection/SeatedAngle';
 import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
 import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
-import BoltedToEndPage from './components/TensionMembers/BoltedToEnd/pages/BoltedToEndPage';
+import BoltedToEnd from './modules/TensionMembers/BoltedToEnd/BoltedToEnd';
 
 // module imports
 import FinPlate from "./modules/FinPlate/FinPlate";
@@ -80,7 +80,7 @@ function App() {
         />
         <Route
           path='/design/:designType/bolted_to_end_gusset'
-          element={<BoltedToEndPage />}
+          element={<BoltedToEnd />} 
         />
         <Route
           path="/design/:designType/beam-to-beam-splice/cover_plate_welded"

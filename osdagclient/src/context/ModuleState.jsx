@@ -440,6 +440,40 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
+  const getTensionMemberAngleList = async () => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}populate?moduleName=${state.currentModuleName}&angleList=Customized`,
+        {
+          method: "GET",
+          mode: "cors",
+          credentials: "include",
+        }
+      );
+      const jsonResponse = await response?.json();
+      dispatch({ type: "SET_CLEAT_ANGLE_LIST", payload: jsonResponse });
+    } catch (error) {
+      console.log("error : ", error);
+    }
+  };
+
+  const getTensionMemberChannelList = async () => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}populate?moduleName=${state.currentModuleName}&channelList=Customized`,
+        {
+          method: "GET",
+          mode: "cors",
+          credentials: "include",
+        }
+      );
+      const jsonResponse = await response?.json();
+      dispatch({ type: "SET_CHANNEL_LIST", payload: jsonResponse });
+    } catch (error) {
+      console.log("error : ", error);
+    }
+  };
+
   const createSession = async (module_id) => {
     console.log("Creating session for module: ", module_id);
     try {
@@ -502,6 +536,8 @@ export const ModuleProvider = ({ children }) => {
           );
         } else if (module_id == "Tension Member Bolted Design") {
           getBeamMaterialList("Tension-Member-Bolted-Design");
+          getTensionMemberAngleList();
+          getTensionMemberChannelList();
         }
 
         getBoltDiameterList();
@@ -886,6 +922,7 @@ export const ModuleProvider = ({ children }) => {
         thicknessList: state.thicknessList,
         propertyClassList: state.propertyClassList,
         angleList: state.angleList,
+        channelList: state.channelList,
         topAngleList: state.topAngleList,
         sessionCreated: state.sessionCreated,
         sendNextRequests: state.sendNextRequests,
@@ -927,6 +964,8 @@ export const ModuleProvider = ({ children }) => {
         addCustomMaterialToDB,
         downloadCADModel,
         resetModuleState,
+        getTensionMemberAngleList,
+        getTensionMemberChannelList,
       }}
     >
       {children}

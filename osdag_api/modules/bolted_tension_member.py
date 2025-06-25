@@ -283,8 +283,8 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     # print("in bolted_tension_member.py: raw_output_capacities:", raw_output_capacities)
     # raw_output_bolt_capacity = module.bolt_capacity_details(True)
     # print("in bolted_tension_member.py: raw_output_bolt_capacity:", raw_output_bolt_capacity)
-    # logs = module.logs
-    # print("in bolted_tension_member.py: logs:", logs)
+    logs = module.logs
+    print("in bolted_tension_member.py: logs:", logs)
     raw_output = raw_output_spacing + raw_output_text
     print("in bolted_tension_member.py: raw_output combined:", raw_output)
     for param in raw_output:
@@ -300,7 +300,8 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             }
             print(f"in bolted_tension_member.py: Added output[{key}] = {output[key]}")
     print("in bolted_tension_member.py: Final output dict:", output)
-    return output, []
+    print("in bolted_tension_member.py: Returning logs:", logs)
+    return output, logs
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
     if section not in ("Model", "Member", "Plate", "Endplate"):
