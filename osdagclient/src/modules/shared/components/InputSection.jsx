@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Select, Input } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Select, Input } from 'antd';
 import FRM from "../../../assets/flush_ep.png";
 import EOWIM from "../../../assets/owe_ep.png";
 import EBWRM from "../../../assets/extended.png";
@@ -20,8 +20,9 @@ export const InputSection = ({
   toggleAllSelected,
   contextData,
   extraState = {},
-  setExtraState = () => {},
+  setExtraState = () => { }
 }) => {
+
   const [imageSource, setImageSource] = useState("");
 
   // Handle connectivity selection with image (for FinePlate)
@@ -74,17 +75,15 @@ export const InputSection = ({
     }
 
     switch (field.type) {
-      case "select":
-        if (field.options === "beamList") {
+      case 'select':
+        if (field.options === 'beamList') {
           return (
             <Select
               value={inputs[field.key] || contextData.beamList[2]}
               onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
             >
               {contextData.beamList?.map((item, index) => (
-                <Option key={index} value={item}>
-                  {item}
-                </Option>
+                <Option key={index} value={item}>{item}</Option>
               ))}
             </Select>
           );
@@ -105,34 +104,14 @@ export const InputSection = ({
               value={inputs[field.key] || contextData.materialList[0].Grade}
               onSelect={(value) => {
                 if (field.onChange) {
-                  field.onChange(
-                    value,
-                    inputs,
-                    setInputs,
-                    contextData.materialList
-                  );
+                  field.onChange(value, inputs, setInputs, contextData.materialList);
                 } else {
                   setInputs({ ...inputs, [field.key]: value });
                 }
               }}
             >
-              {contextData.materialList?.map((item, index) => (
-                <Option key={index} value={item.id}>
-                  {item.Grade}
-                </Option>
-              ))}
-            </Select>
-          );
-        } else if (field.options === "columnList") {
-          return (
-            <Select
-              value={inputs[field.key] || contextData.columnList[0]}
-              onSelect={(value) => setInputs({ ...inputs, [field.key]: value })}
-            >
-              {contextData.columnList?.map((item, index) => (
-                <Option key={index} value={item}>
-                  {item}
-                </Option>
+              {contextData.materialList.map((item, index) => (
+                <Option key={index} value={item.id}>{item.Grade}</Option>
               ))}
             </Select>
           );
@@ -175,10 +154,8 @@ export const InputSection = ({
       case 'endPlateSelect':
         const conn_map = {
           "Flushed - Reversible Moment": "Flushed - Reversible Moment",
-          "Extended One Way - Irreversible Moment":
-            "Extended One Way - Irreversible Moment",
-          "Extended Both Ways - Reversible Moment":
-            "Extended Both Ways - Reversible Moment",
+          "Extended One Way - Irreversible Moment": "Extended One Way - Irreversible Moment",
+          "Extended Both Ways - Reversible Moment": "Extended Both Ways - Reversible Moment",
         };
 
         return (
@@ -197,7 +174,7 @@ export const InputSection = ({
           </Select>
         );
 
-      case "number":
+      case 'number':
         return (
           <Input
             type="text"
@@ -205,13 +182,11 @@ export const InputSection = ({
               event.target.value = event.target.value.replace(/[^0-9.]/g, "");
             }}
             value={inputs[field.key]}
-            onChange={(event) =>
-              setInputs({ ...inputs, [field.key]: event.target.value })
-            }
+            onChange={(event) => setInputs({ ...inputs, [field.key]: event.target.value })}
           />
         );
 
-      case "customizable":
+      case 'customizable':
         return (
           <Select
             onSelect={(value) => handleCustomizableSelect(field, value)}
@@ -272,9 +247,7 @@ export const InputSection = ({
         return (
           <Input
             value={inputs[field.key]}
-            onChange={(event) =>
-              setInputs({ ...inputs, [field.key]: event.target.value })
-            }
+            onChange={(event) => setInputs({ ...inputs, [field.key]: event.target.value })}
           />
         );
     }
