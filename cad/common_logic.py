@@ -172,7 +172,6 @@ class CommonDesignLogic(object):
         self.mainmodule = mainmodule
         self.connection = connection
         self.connectivityObj = None
-        self.module_class = mainmodule
         self.CPObj = None
         self.folder = folder
 
@@ -2282,7 +2281,6 @@ class CommonDesignLogic(object):
 
         final_model = None
         cadlist = []
-        print("ABhiijth")
         print("self.mainmodule", self.mainmodule)
         print("self.Component", self.component)
         print("self.connection", self.connection)
@@ -2319,7 +2317,7 @@ class CommonDesignLogic(object):
                     else:
                         cadlist = [self.CPObj.get_plate_models(), self.CPObj.get_welded_modules()]
                 else:
-                    final_model = self.CPObj.get_models()
+                    cadlist = self.CPObj.get_models()
 
             elif self.connection == KEY_DISP_BB_EP_SPLICE:
 
@@ -2361,7 +2359,7 @@ class CommonDesignLogic(object):
                     else:
                         cadlist = [self.CPObj.get_plate_models(), self.CPObj.get_welded_modules()]
                 else:
-                    final_model = self.CPObj.get_models()
+                    cadlist = self.CPObj.get_models()
 
             elif self.connection == KEY_DISP_COLUMNENDPLATE:
                 if self.component == "Column":
@@ -2388,9 +2386,8 @@ class CommonDesignLogic(object):
         elif self.mainmodule == "Member":
             print("Main module is Member", self.connection)
             if self.connection == KEY_DISP_TENSION_BOLTED or self.connection == KEY_DISP_TENSION_WELDED:
-                print("Connection is Tension Bolted or Welded", self.connection)
+                print("Connection is ", self.connection)
                 if self.component == "Member":
-                    
                     final_model = self.TObj.get_members_models()
                 elif self.component == "Plate":
                     if self.connection == KEY_DISP_TENSION_BOLTED:
@@ -2408,12 +2405,19 @@ class CommonDesignLogic(object):
                 else:
                     print("self.TObj: ", self.TObj.shape)   
                     final_model = self.TObj.shape
-                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.
-
-        if cadlist and len(cadlist) > 1:
-            final_model = cadlist[0]
-            for model in cadlist[1:]:
-                final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.        # Handle case where cadlist might be a single CAD object instead of a list
+        if cadlist:
+            # Check if cadlist is actually a list (has len method)
+            try:
+                if len(cadlist) > 1:
+                    final_model = cadlist[0]
+                    for model in cadlist[1:]:
+                        final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+                elif len(cadlist) == 1:
+                    final_model = cadlist[0]
+            except TypeError:
+                # cadlist is not a list, it's a single CAD object
+                final_model = cadlist
 
         return final_model
 

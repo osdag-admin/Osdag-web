@@ -2,13 +2,14 @@
     This file includes the CAD Model Generation and CAD Conversion API
     Update input values in database.
         CAD Model API (class CADGeneration(View)):
-            Accepts POST requests.
+            Accepts GET requests.
             Saves obj file as output in osdagclient/public/output-obj.obj 
             Returns ouput dir name as content_type text/plain.
-            Request must provide module identifier in POST data.
+            Request must provide session cookie id.
 """
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.views import View
+from osdag.models import Design
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from osdag_api import developed_modules, get_module_api
@@ -25,40 +26,77 @@ from rest_framework.response import Response
 @method_decorator(csrf_exempt, name='dispatch')
 class CADGeneration(View):
     """
-        CAD Model API (class CADGeneration(View)):
-            Accepts POST requests.
-            Returns BREP file as content_type text/plain.
-            Request must provide module identifier and input values in POST data.
+        Update input values in database.
+            CAD Model API (class CADGeneration(View)):
+                Accepts GET requests.
+                Returns BREP file as content_type text/plain.
+                Request must provide session cookie id.
     """
 
-    def post(self, request: HttpRequest):
-        try:
-            # Parse request data
-            if request.content_type == 'application/json':
-                data = json.loads(request.body)
-            else:
-                data = request.POST.dict()
-            
-            module_name = data.get('Module')
-            input_values = data
-            
-            if not module_name:
-                return JsonResponse({"status": "error", "message": "Module name is required"}, status=400)
-            
-            print(f"CAD Generation for module: {module_name}")
-            print(f"Input values: {input_values}")
-            
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": f"Error parsing request data: {str(e)}"}, status=400)
+    def get(self, request: HttpRequest):
+        # Get design session id
+        fin_plate_cookie_id = request.COOKIES.get("fin_plate_connection_session")
+        cleat_angle_cookie_id = request.COOKIES.get("cleat_angle_connection_session")
+        end_plate_cookie_id = request.COOKIES.get("end_plate_connection_session")
+        seated_angle_cookie_id = request.COOKIES.get("seated_angle_connection")
+        cover_plate_bolted_cookie_id = request.COOKIES.get("cover_plate_bolted_connection_session")
+        cover_plate_welded_cookie_id = request.COOKIES.get("cover_plate_welded_connection_session")
+        beam_column_end_plate_cookie_id = request.COOKIES.get("beam_to_column_end_plate_connection_session")
+        beam_beam_end_plate_cookie_id = request.COOKIES.get("beam_beam_end_plate_connection_session")
+        tension_member_bolted_cookie_id = request.COOKIES.get("tension_member_bolted_design_session")
+        print("cookieeeeee ", request.COOKIES)
+        #Ensure that at least one session exists
+        if not fin_plate_cookie_id and not cleat_angle_cookie_id and not seated_angle_cookie_id and not end_plate_cookie_id and not cover_plate_bolted_cookie_id and not beam_beam_end_plate_cookie_id and not cover_plate_welded_cookie_id and not beam_column_end_plate_cookie_id and not tension_member_bolted_cookie_id:
+            return JsonResponse({"status": "error", "message": "Please open a module"}, status=400)
+    
+        #determine the correct sessionId and fetch design session
+        if fin_plate_cookie_id:
+            cookie_id = fin_plate_cookie_id
+            session_type = "FinPlate"
+        elif cleat_angle_cookie_id:
+            cookie_id = cleat_angle_cookie_id
+            session_type = "CleatAngle"
+        elif end_plate_cookie_id:
+            cookie_id = end_plate_cookie_id
+            session_type = "EndPlate"
+        elif seated_angle_cookie_id:
+            cookie_id = seated_angle_cookie_id
+            session_type = "SeatedAngle"
+        elif cover_plate_bolted_cookie_id:
+            cookie_id = cover_plate_bolted_cookie_id
+            session_type = "CoverPlateBolted"
+        elif beam_beam_end_plate_cookie_id:
+            cookie_id = beam_beam_end_plate_cookie_id
+            session_type = "BeamBeamEndPlate"
+        elif cover_plate_welded_cookie_id:
+            cookie_id = cover_plate_welded_cookie_id
+            session_type = "CoverPlateWelded"
+        elif beam_column_end_plate_cookie_id:
+            cookie_id = beam_column_end_plate_cookie_id
+            session_type = "BeamToColumnEndPlate"
+        elif tension_member_bolted_cookie_id:
+            cookie_id = tension_member_bolted_cookie_id
+            session_type = "TensionMemberBoltedDesign"
+        print("session_type", session_type)
+        # # Error Checking: If design session exists.
+        # if not Design.objects.filter(cookie_id=cookie_id).exists():
+        #     # Return error response.
+        #     return HttpResponse("Error: This design session does not exist", status=404)
         
-        # Get module API
         try:
-            module_api = get_module_api(module_name)
+            design_session = Design.objects.get(cookie_id=cookie_id)
+            module_api = get_module_api(design_session.module_id)
+            input_values = design_session.input_values
+        except Design.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Design session not found"}, status=404)
         except Exception as e:
-            return JsonResponse({"status": "error", "message": f"Module not found: {str(e)}"}, status=404)
+            return JsonResponse({"status": "error", "message": f"Unable to retrieve session - {repr(e)}"}, status=500)
         
         # Check for FreeCAD availability
+        command = shutil.which("FreeCADCmd")
+        print(f"Detected FreeCADCmd path: {command}")
         command = "D:\\Program Files\\FreeCAD 1.0\\bin\\freecadcmd.exe"
+
         if not command:
             return JsonResponse({"status": "error", "message": "FreeCAD is not installed or not in system PATH."}, status=500)
         
@@ -67,53 +105,54 @@ class CADGeneration(View):
         parent_dir = os.path.dirname(os.path.dirname(current_dir))
         macro_path = os.path.join(parent_dir, 'freecad_utils/open_brep_file.FCMacro')
     
-        # Determine sections based on the module name
-        if "Fin-Plate" in module_name or "Fin Plate" in module_name:
+        # Determine sections based on the session type
+        if session_type == "FinPlate":
             sections = ["Model", "Beam", "Column", "Plate"]
-        elif "Cleat-Angle" in module_name or "Cleat Angle" in module_name:
+        elif session_type == "CleatAngle":
             sections = ["Model", "Beam", "Column", "cleatAngle"]
-        elif "End-Plate" in module_name or "End Plate" in module_name and "Beam-Beam" not in module_name:
+        elif session_type == "EndPlate":
             sections = ["Model", "Beam", "Column", "Plate"]
-        elif "Seated-Angle" in module_name or "Seated Angle" in module_name:
+        elif session_type == "SeatedAngle":
             sections = ["Model", "Beam", "Column", "SeatAngle"]
-        elif "Cover-Plate-Bolted" in module_name or "Cover Plate Bolted" in module_name:
+        elif session_type == "CoverPlateBolted":
             sections = ["Model", "Beam", "Connector"]
-        elif "Beam-Beam-End-Plate" in module_name or "Beam Beam End Plate" in module_name:
+        elif session_type == "BeamBeamEndPlate":
             sections = ["Model", "Beam", "Connector"]
-        elif "Cover-Plate-Welded" in module_name or "Cover Plate Welded" in module_name:
+        elif session_type == "CoverPlateWelded":
             sections = ["Model", "Beam", "Connector"]
-        elif "Beam-to-Column-End-Plate" in module_name or "Beam-to-Column End Plate" in module_name:
+        elif session_type == "BeamToColumnEndPlate":
             sections = ["Model", "Beam", "Column", "Connector"]
-        elif "Tension-Member-Bolted" in module_name or "Tension Member Bolted" in module_name:
-            sections = ["Model", "Member", "Plate", "Endplate"]
+        elif session_type == "TensionMemberBoltedDesign":
+            # sections = ["Plate"]
+            sections = ["Member","Model","Plate", "Endplate"]
         else:
             return JsonResponse({"status": "error", "message": "Unknown module type"}, status=400)
         
         # initialize the empty dictionary to hold model data
         output_files = {}
-        
-        # Generate a unique identifier for this request (can use timestamp or uuid)
-        import uuid
-        request_id = str(uuid.uuid4())[:8]
-        
+        # Fetch Design object once
+        designObject = design_session
         print("Design sections: ", sections)
         for section in sections:
             print(f'Generating section: {section}')
             try:
-                path = module_api.create_cad_model(input_values, section, request_id)
+                path = module_api.create_cad_model(input_values, section, cookie_id)
 
                 if not path:
                     print(f'Error generating {section}: create_cad_model() returned None or empty string')
                     continue  # Skip to the next section
                 
+                # Mark this section as successfully generated
                 print(f'{section} generated successfully')
+                designObject.cad_design_status = True
+                designObject.save()
 
                 # Convert and store file paths
                 path_to_file = os.path.join(parent_dir, path)
                 if not os.path.exists(path_to_file):
                     print(f'Generated file for {section} does not exist at: {path_to_file}')
                     continue
-                    
+                # output_obj_path = os.path.join(parent_dir, f'osdagclient/public/output-{section.lower()}.obj')
                 output_obj_path = path_to_file.replace(".brep", ".obj")
 
                 # Convert .brep to .obj using FreeCAD
