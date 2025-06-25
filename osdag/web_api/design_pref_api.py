@@ -15,15 +15,7 @@ class DesignPreference(APIView):
         supporting_section = request.GET.get("supporting_section")
         connectivity = request.GET.get("connectivity")
         material = request.GET.get("material")
-        cookie_id = request.COOKIES.get('fin_plate_connection_session')
-        # cookie_id = request.COOKIES.get('connection_session')
-
-        """
-        if cookie_id == None or cookie_id == '': 
-            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 
-        if not Design.objects.filter(cookie_id=cookie_id).exists(): 
-            return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
-        """
+        # Session validation removed - now stateless
 
         connector_material_details = []
         if material:
@@ -49,13 +41,7 @@ class MaterialDetails(APIView):
     def get(self, request):
         email = request.GET.get("email")
         material = request.GET.get("material")
-        cookie_id = request.COOKIES.get('fin_plate_connection_session')
-        # cookie_id = request.COOKIES.get('connection_session')
-
-        if cookie_id == None or cookie_id == '':
-            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 
-        if not Design.objects.filter(cookie_id=cookie_id).exists(): 
-            return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
+        # Session validation removed - now stateless
 
         if email:
             custom_materials = CustomMaterials.object.filter(email=email).values()
@@ -73,13 +59,7 @@ class MaterialDetails(APIView):
         fy_20_40 = request.data.get("fy_20_40")
         fy_40 = request.data.get("fy_40")
         fu = request.data.get("fu")
-        cookie_id = request.COOKIES.get('fin_plate_connection_session')
-        # cookie_id = request.COOKIES.get('connection_session')
-
-        if cookie_id == None or cookie_id == '': 
-            return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) 
-        if not Design.objects.filter(cookie_id=cookie_id).exists(): 
-            return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND)
+        # Session validation removed - now stateless
 
         alreadyExists = CustomMaterials.objects.filter(email=email, Grade=materialName).exists()
         if alreadyExists:

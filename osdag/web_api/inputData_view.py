@@ -67,55 +67,13 @@ class InputData(APIView):
         angleList = request.GET.get('angleList')
         topAngleList = request.GET.get('topAngleList')
         seatedAngleList = request.GET.get('seatedAngleList')
-        cookie_id = None
         
         if moduleName is not None:
-            print(moduleName)
+            print(f"Processing request for module: {moduleName}")
         else:
             print("module not found")
-        print(moduleName)
+            return Response({"error": "Module name is required"}, status=status.HTTP_400_BAD_REQUEST)
         
-        # cookie_id = request.COOKIES.get('fin_plate_connection_session')
-        
-        if(moduleName=='Fin-Plate-Connection'):
-            cookie_id = request.COOKIES.get('fin_plate_connection_session')
-            print('cookie_id inside input data: ' , cookie_id)
-
-        elif(moduleName=='Cleat-Angle-Connection'):
-            cookie_id=request.COOKIES.get('cleat_angle_connection_session')
-            print('cookie_id inside input data: ' , cookie_id)
-            
-        elif(moduleName=='End-Plate-Connection'):
-            cookie_id = request.COOKIES.get('end_plate_connection_session')
-            print('cookie_id inside end plate input data: ' , cookie_id)
-            
-        elif(moduleName=="Seated-Angle-Connection"):
-            cookie_id = request.COOKIES.get('seated_angle_connection')
-            print('cookie id in seated angle connection input data ', cookie_id)
-            
-        elif(moduleName=='Cover-Plate-Bolted-Connection'):
-            cookie_id = request.COOKIES.get('cover_plate_bolted_connection_session')
-            print('cookie id in cover plate bolted connection input data ', cookie_id)
-            
-        elif(moduleName=='Beam-Beam-End-Plate-Connection'):
-            cookie_id = request.COOKIES.get('beam_beam_end_plate_connection_session')
-            print('cookie id in beam beam bolted connection input data ', cookie_id)
-
-        elif(moduleName=='Cover-Plate-Welded-Connection'):
-            cookie_id = request.COOKIES.get('cover_plate_welded_connection_session')
-            print('cookie id in cover plate welded connection input data ', cookie_id)
-            
-        elif(moduleName=='Beam-to-Column-End-Plate-Connection'):
-            cookie_id = request.COOKIES.get('beam_to_column_end_plate_connection_session')
-            print('cookie id in beam to column end plate connection input data ', cookie_id)
-        elif(moduleName=='Tension-Member-Bolted-Design'):
-            cookie_id = request.COOKIES.get('tension_member_bolted_session')
-            print('cookie id in tension member bolted input data ', cookie_id)
-        # if cookie_id == None or cookie_id == '': # Error Checking: If design session id provided.
-        #     return Response("Error: Please open module", status=status.HTTP_400_BAD_REQUEST) # Returns error response.
-        # if not Design.objects.filter(cookie_id=cookie_id).exists(): # Error Checking: If design session exists.
-        #     print('The design session does not exists')
-        #     return Response("Error: This design session does not exist", status = status.HTTP_404_NOT_FOUND) # Return error response.
         if (not (moduleName in INPUT_DATA_FACTORY)):
             return Response({"error": "Bad Query Parameter (input data view)"}, status=status.HTTP_400_BAD_REQUEST)        
         print("///////////////////////////////////////// ", email)

@@ -115,11 +115,9 @@ function BoltedToEndPage() {
     displayPDF,
     renderCadModel,
     cadModelPaths,
-    createSession,
     createDesign,
     createDesignReport,
     getDesingPrefData,
-    deleteSession,
     getBeamMaterialList
   } = useContext(ModuleContext);
 
@@ -170,19 +168,11 @@ function BoltedToEndPage() {
     setScreenshotTrigger(true);
   };
 
-  useEffect(() => {
-    createSession("Tension Member Bolted Design");
-  }, []);
+  // Session creation removed - now stateless
 
 
 
-  useEffect(() => {
-    return () => {
-      if (location.pathname != "design/tension-member/bolted_to_end_gusset") {
-        deleteSession("Tension Member Bolted Design");
-      }
-    };
-  }, []);
+  // Session cleanup removed - now stateless
 
   // Handle property class select
   const handleSelectChangePropertyClass = (value) => {

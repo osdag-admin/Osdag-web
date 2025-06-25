@@ -46,97 +46,34 @@ Example input:
 @method_decorator(csrf_exempt, name='dispatch')
 class CoverPlateWeldedOutputData(APIView):
     def post(self, request):
-        print("Inside post method of Cover Plate Welded OutputData")
-
-        # obtaining the session, module_id, input_values
-        cookie_id = request.COOKIES.get('cover_plate_welded_connection_session')
-        module_api = get_module_api('Cover Plate Welded Connection')
+        # Get input values and module from request
         input_values = request.data
-        tempData = {
-            'cookie_id': cookie_id,
-            'module_id': 'Cover Plate Welded Connection',
-            'input_values': input_values
-        }
-        print('INPUT VALUES', input_values)
-
-        # obtaining the record from the Design model
+        module_name = input_values.get('Module', 'Cover Plate Welded Connection')
+        
+        print('Module name:', module_name)
+        print('Input values received:', input_values)
+        
+        # Get module API
         try:
-            designRecord = Design.objects.get(cookie_id=cookie_id)
-            serailizer = Design_Serializer(designRecord, data=tempData)
-
-            if serailizer.is_valid():
-                try:
-                    serailizer.save()
-                    print('Serializer saved successfully')
-                except Exception as save_err:
-                    error_msg = f"Error saving serializer: {str(save_err)}"
-                    print(error_msg)
-                    return Response({'error': error_msg}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                error_msg = f"Serializer validation failed: {serailizer.errors}"
-                print(error_msg)
-                return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
-
-        except Design.DoesNotExist:
-            error_msg = f"Design not found for cookie_id: {cookie_id}"
-            print(error_msg)
-            return Response({'error': error_msg}, status=status.HTTP_404_NOT_FOUND)
+            module_api = get_module_api(module_name)
+        except Exception as e:
+            print('Error getting module API:', e)
+            return JsonResponse({"data": {}, "logs": [], "success": False, "error": "Module not found"}, safe=False, status=400)
 
         output = {}
         logs = []
         new_logs = []
         
         try:
-            # Generate output from module API
             output, logs = module_api.generate_output(input_values)
-            print('OUTPUT OF MODULE:', output)
-            print('LOGS:', logs)
-            
-            # Process and deduplicate logs
-            try:
-                for log in logs:
-                    if log not in new_logs:
-                        new_logs.append(log)
-            except Exception as log_err:
-                print(f"Warning: Error processing logs: {str(log_err)}")
-                # Continue execution even if log processing fails
-                
+            for log in logs:
+                if log not in new_logs:
+                    new_logs.append(log)
         except Exception as e:
-            error_msg = f"Error generating output: {str(e)}\nTraceback: {traceback.format_exc()}"
-            print(error_msg)
-            return JsonResponse({
-                "data": {}, 
-                "logs": new_logs,
-                "success": False,
-                "error": error_msg
-            }, safe=False, status=400)
+            print('Exception raised:', e)
+            return JsonResponse({"data": {}, "logs": new_logs, "success": False, "error": str(e)}, safe=False, status=400)
 
-        try:
-            finalLogsString = self.combine_logs(new_logs)
-        except Exception as log_err:
-            print(f"Warning: Error combining logs: {str(log_err)}")
-            finalLogsString = str(new_logs)  # Fallback to string representation
-
-        try:
-            # save the logs, output, design_status in Design table
-            designObject = Design.objects.get(cookie_id=cookie_id)
-            designObject.logs = finalLogsString
-            designObject.output_values = output
-
-            # Validate weld output
-            output_result = self.check_output_validity(output)
-            designObject.design_status = output_result
-            
-            designObject.save()
-        except Exception as e:
-            print('Error saving design results:', e)
-            return Response("Error saving results", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return JsonResponse({
-            "data": output, 
-            "logs": new_logs, 
-            "success": True
-        }, safe=False, status=201)
+        return JsonResponse({"data": output, "logs": new_logs, "success": True}, safe=False, status=201)
 
     def combine_logs(self, logs):
         # Match bolted connection log format

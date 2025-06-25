@@ -24,10 +24,7 @@ let initialValue = {
   angleList: [],
   channelList: [],
   topAngleList: [],
-  sessionCreated: false,
-  sendNextRequests: false,
-  setTheCookie: false,
-  connectivityListObtained: false,
+  // Session variables removed for multi-module support
   designLogs: [],
   designData: {},
   renderCadModel: false,
@@ -64,9 +61,7 @@ export const ModuleContext = createContext(initialValue);
 export const ModuleProvider = ({ children }) => {
   const [state, dispatch] = useReducer(ModuleReducer, initialValue);
 
-  const cookieSetter = async () => {
-    dispatch({ type: "SET_COOKIE_FETCH", payload: "" });
-  };
+  // Session functions removed for multi-module support
   // actions
   const getConnectivityList = async (moduleName) => {
     try {
@@ -474,131 +469,22 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
-  const createSession = async (module_id) => {
-    console.log("Creating session for module: ", module_id);
-    try {
-      const requestData = { module_id: module_id };
-      console.log(requestData);
-      const response = await fetch(`${BASE_URL}sessions/create`, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(requestData),
-      });
-
-      const data = await response.json();
-      console.log(data);
-      if (data["status"] == "set") {
-        console.log("module_id : ", module_id);
-        // fetch the connectivityList
-        if (module_id == "Fin Plate Connection") {
-          getConnectivityList("Fin-Plate-Connection");
-          getColumnBeamMaterialList(
-            state.currentModuleName,
-            "Column-Flange-Beam-Web"
-          );
-        } else if (module_id == "Cleat Angle Connection") {
-          getConnectivityList("Cleat-Angle-Connection");
-          getCleatAngleList("Cleat-Angle-Connection");
-          getColumnBeamMaterialList(
-            state.currentModuleName,
-            "Column-Flange-Beam-Web"
-          );
-        } else if (module_id == "End Plate Connection") {
-          getConnectivityList("End-Plate-Connection");
-          getColumnBeamMaterialList(
-            state.currentModuleName,
-            "Column-Flange-Beam-Web"
-          );
-        } else if (module_id == "Seated Angle Connection") {
-          getConnectivityList("Seated-Angle-Connection");
-          getCleatAngleList("Seated-Angle-Connection");
-          gettopAngleList("Seated-Angle-Connection");
-          getColumnBeamMaterialList(
-            state.currentModuleName,
-            "Column-Flange-Beam-Web"
-          );
-        } else if (module_id == "Cover Plate Bolted Connection") {
-          getBeamMaterialList("Cover-Plate-Bolted-Connection");
-        } else if (module_id == "Beam Beam End Plate Connection") {
-          getBeamMaterialList("Beam-Beam-End-Plate-Connection");
-        } else if (module_id == "Cover Plate Welded Connection") {
-          getBeamMaterialList2("Cover-Plate-Welded-Connection");
-        } else if (module_id == "Beam-to-Column End Plate Connection") {
-          getConnectivityList("Beam-to-Column-End-Plate-Connection");
-          getBeamMaterialList("Beam-to-Column-End-Plate-Connection");
-          getColumnBeamMaterialList(
-            state.currentModuleName,
-            "Column-Flange-Beam-Web"
-          );
-        } else if (module_id == "Tension Member Bolted Design") {
-          getBeamMaterialList("Tension-Member-Bolted-Design");
-          getTensionMemberAngleList();
-          getTensionMemberChannelList();
-        }
-
-        getBoltDiameterList();
-        getThicknessList();
-        getPropertyClassList();
-    } else {
-        state.sendNextRequests = false;
-      }
-
-      if (response.status == 201) {
-        console.log("The Session has been set in the cookie");
-        state.sessionCreated = true;
-      } else if (response.status == 200) {
-        console.log("Already in the editing module");
-        state.sessionCreated = true;
-      } else {
-        console.log("There is an error in setting a session in the cookie");
-        state.sessionCreated = false;
-      }
-    } catch (err) {
-      console.log("Error in creating a session");
-      state.sessionCreated = false;
-    }
-  };
-
   const resetModuleState = () => {
     console.log(" CONTEXT: Resetting module state");
     dispatch({ type: "RESET_MODULE_STATE" });
   };
 
-  const deleteSession = async (module_id) => {
+  const createCADModel = async (inputData) => {
     try {
-      const requestData = { module_id: module_id };
-      console.log("Deleting session for:", requestData);
-
-      const response = await fetch(`${BASE_URL}sessions/delete`, {
+      console.log("Creating CAD model with input data:", inputData);
+      const response = await fetch(`${BASE_URL}design/cad`, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(requestData),
-      });
-      if (response.status === 200) {
-        console.log("The session has been deleted");
-      } else {
-        const errorData = await response.text(); // Read the error message
-        console.error("Error in deleting the session:", response, errorData);
-      }
-    } catch (err) {
-      console.log("Error in deleting the session from the catch block");
-    }
-  };
-
-  const createCADModel = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}design/cad`, {
-        method: "GET",
-        mode: "cors",
-        credentials: "include",
+        body: JSON.stringify(inputData),
       });
 
       const data = await response.json(); // Parse JSON response
@@ -609,7 +495,7 @@ export const ModuleProvider = ({ children }) => {
         // Store CAD `.obj` data instead of file paths
         dispatch({ type: "SET_CAD_MODEL_PATHS", payload: data.files });
 
-        // Trigger rendering in FinePlate.jsx
+        // Trigger rendering in modules
         dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: true });
 
         console.log("Dispatched SET_CAD_MODEL_PATHS:", data.files);
@@ -659,6 +545,7 @@ export const ModuleProvider = ({ children }) => {
 
   const createDesign = async (param, module_id) => {
     try {
+      console.log("Creating design with params:", param);
       const response = await fetch(`${BASE_URL}calculate-output/${module_id}`, {
         method: "POST",
         mode: "cors",
@@ -673,9 +560,9 @@ export const ModuleProvider = ({ children }) => {
       console.log("modulestate jsonResponse : ", jsonResponse);
       dispatch({ type: "SET_DESIGN_DATA_AND_LOGS", payload: jsonResponse });
       if (response.status == 201) {
-        // call the thunk to create the CAD Model
+        // call the thunk to create the CAD Model with the same input parameters
         try {
-          createCADModel();
+          createCADModel(param);
         } catch (error) {
           console.log("error in creating the CAD model from createDesign");
         }
@@ -924,9 +811,7 @@ export const ModuleProvider = ({ children }) => {
         angleList: state.angleList,
         channelList: state.channelList,
         topAngleList: state.topAngleList,
-        sessionCreated: state.sessionCreated,
-        sendNextRequests: state.sendNextRequests,
-        setTheCookie: state.setTheCookie,
+        // Session-related state removed for multi-module support
         error_msg: state.error_msg,
         designData: state.designData,
         designLogs: state.designLogs,
@@ -940,8 +825,7 @@ export const ModuleProvider = ({ children }) => {
         supporting_material_details: state.supporting_material_details,
         design_pref_defaults: state.design_pref_defaults,
 
-        // actions
-        cookieSetter,
+        // Session functions removed for multi-module support
 
         // Thunks
         getConnectivityList,
@@ -951,11 +835,7 @@ export const ModuleProvider = ({ children }) => {
         getBoltDiameterList,
         getPropertyClassList,
         createCADModel,
-        createSession,
-        deleteSession,
         createDesign,
-        createDesignReport,
-        saveCSV,
         getDesingPrefData,
         getSupportedData,
         updateSourceAndMechType,

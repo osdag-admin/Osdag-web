@@ -21,13 +21,19 @@ export const useEngineeringModule = (moduleConfig) => {
     displayPDF,
     renderCadModel,
     cadModelPaths,
-    createSession,
     createDesign,
     createDesignReport,
     getSupportedData,
     getDesingPrefData,
-    deleteSession,
     resetModuleState,
+    // Session functions removed for multi-module support
+    getBoltDiameterList,
+    getThicknessList, 
+    getPropertyClassList,
+    getConnectivityList,
+    getBeamMaterialList,
+    getTensionMemberAngleList,
+    getTensionMemberChannelList,
   } = useContext(ModuleContext);
 
   // Core state management
@@ -184,13 +190,29 @@ export const useEngineeringModule = (moduleConfig) => {
     console.log(`${moduleConfig.sessionName}: Complete reset finished`);
   };
 
-  // Initialize session and navigation protection
+  // Initialize module data (removed session system for better UX - allows multiple modules)
   useEffect(() => {
     resetToDefaultState();
 
+    // Directly fetch required data instead of using session system
+    // This allows multiple modules to work simultaneously
     setTimeout(() => {
-      console.log(`${moduleConfig.sessionName}: Creating new session`);
-      createSession(moduleConfig.sessionName);
+      console.log(`${moduleConfig.sessionName}: Initializing module data`);
+      
+      // Fetch common data for all modules
+      getBoltDiameterList();
+      getThicknessList();
+      getPropertyClassList();
+      
+      // Fetch module-specific data based on module type
+      if (moduleConfig.cameraKey === "FinPlate") {
+        getConnectivityList("Fin-Plate-Connection");
+      } else if (moduleConfig.cameraKey === "TensionMember") {
+        getBeamMaterialList("Tension-Member-Bolted-Design");
+        getTensionMemberAngleList();
+        getTensionMemberChannelList();
+      }
+      // Add other module-specific data fetching as needed
     }, 100);
   }, []);
 
@@ -231,13 +253,13 @@ export const useEngineeringModule = (moduleConfig) => {
     }
   }, [output, renderBoolean]);
 
-  // Cleanup on unmount
+  // Cleanup on unmount (simplified - no session deletion needed)
   useEffect(() => {
     return () => {
       if (window.location.pathname !== moduleConfig.routePath) {
         if (!hasUnsavedWork() || allowNavigation) {
-          console.log("CLEANUP: Proceeding with session deletion");
-          deleteSession(moduleConfig.sessionName);
+          console.log("CLEANUP: Proceeding with module cleanup");
+          // Removed session deletion - no longer needed
           setTimeout(() => {
             resetToDefaultState();
           }, 50);
@@ -245,7 +267,7 @@ export const useEngineeringModule = (moduleConfig) => {
         }
       }
     };
-  }, [allowNavigation, moduleConfig.routePath, moduleConfig.sessionName]);
+  }, [allowNavigation, moduleConfig.routePath]);
 
   // Handle design logs
   useEffect(() => {
@@ -434,21 +456,21 @@ export const useEngineeringModule = (moduleConfig) => {
       setShowResetConfirmation(false);
       setConfirmationType("reset");
 
-      setTimeout(() => {
-        deleteSession(moduleConfig.sessionName);
-        resetToDefaultState();
+              setTimeout(() => {
+          // Removed session deletion - no longer needed for multi-module support
+          resetToDefaultState();
 
-        if (navigationSource === "home") {
-          console.log("Navigating to home");
-          navigate("/home");
-        } else if (navigationSource === "back") {
-          console.log("Navigating to connections page");
-          navigate("/design-type/connections");
-        }
+          if (navigationSource === "home") {
+            console.log("Navigating to home");
+            navigate("/home");
+          } else if (navigationSource === "back") {
+            console.log("Navigating to connections page");
+            navigate("/design-type/connections");
+          }
 
-        setAllowNavigation(false);
-        setNavigationSource(null);
-      }, 100);
+          setAllowNavigation(false);
+          setNavigationSource(null);
+        }, 100);
     } else {
       console.log("USER CONFIRMED RESET - starting targeted reset");
       resetToDefaultState();
