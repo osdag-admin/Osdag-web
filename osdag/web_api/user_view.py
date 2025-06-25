@@ -51,43 +51,138 @@ def convert_to_32_bytes(input_string) :
 
 class SignupView(APIView):
     def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
-        email = request.data.get('email')
-        isGuest = request.data.get('isGuest')
+        try:
+            username = request.data.get("username")
+            password = request.data.get("password")
+            email = request.data.get('email')
+            isGuest = request.data.get('isGuest')
 
-        if User.objects.filter(username=username).exists():
-            return Response({'message': 'User already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            # Validate required fields
+            if not username or not password or not email:
+                return Response({
+                    'message': 'Username, email, and password are required',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create Django user with hashed password
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.save()
+            # Validate username
+            if len(username) < 3:
+                return Response({
+                    'message': 'Username must be at least 3 characters long',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        tempData = {
-            'username': username,
-            'email': email,
-            'allInputValueFiles': ['']
-        }
-        serializer = UserAccount_Serializer(data=tempData)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'The credentials have been created'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'message': 'user with this username already exists', 'code': 'unique'}, status=status.HTTP_400_BAD_REQUEST)
+            # Validate password
+            if len(password) < 8:
+                return Response({
+                    'message': 'Password must be at least 8 characters long',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Validate email format
+            import re
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, email):
+                return Response({
+                    'message': 'Please enter a valid email address',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                return Response({
+                    'message': 'Username already exists. Please choose a different username.',
+                    'error_type': 'duplicate_username'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                return Response({
+                    'message': 'An account with this email already exists. Please use a different email or try logging in.',
+                    'error_type': 'duplicate_email'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Create Django user with hashed password
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.save()
+
+            tempData = {
+                'username': username,
+                'email': email,
+                'allInputValueFiles': ['']
+            }
+            serializer = UserAccount_Serializer(data=tempData)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    'message': 'Account created successfully! You can now log in.',
+                    'success': True
+                }, status=status.HTTP_201_CREATED)
+            else:
+                # Clean up the Django user if serializer fails
+                user.delete()
+                return Response({
+                    'message': 'Failed to create user account. Please try again.',
+                    'error_type': 'serializer_error',
+                    'errors': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # Log the error for debugging
+            print(f"Signup error: {str(e)}")
+            return Response({
+                'message': 'An unexpected error occurred. Please try again.',
+                'error_type': 'server_error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ForgetPasswordView(APIView):
     def post(self, request):
-        password = request.data.get('password')
-        email = request.data.get('email')
-
         try:
-            user = User.objects.get(email=email)
-            user.set_password(password)
-            user.save()
-            # Do NOT update or store password in UserAccount!
-            return Response({'message': 'Password has been updated successfully'}, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
-            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+            password = request.data.get('password')
+            email = request.data.get('email')
+
+            # Validate required fields
+            if not password or not email:
+                return Response({
+                    'message': 'Email and new password are required',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Validate password
+            if len(password) < 8:
+                return Response({
+                    'message': 'Password must be at least 8 characters long',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Validate email format
+            import re
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, email):
+                return Response({
+                    'message': 'Please enter a valid email address',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                user = User.objects.get(email=email)
+                user.set_password(password)
+                user.save()
+                return Response({
+                    'message': 'Password has been updated successfully. You can now log in with your new password.',
+                    'success': True
+                }, status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                return Response({
+                    'message': 'No account found with this email address',
+                    'error_type': 'user_not_found'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(f"ForgetPassword error: {str(e)}")
+            return Response({
+                'message': 'An unexpected error occurred while updating password. Please try again.',
+                'error_type': 'server_error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class LogoutView(APIView) : 
@@ -105,78 +200,156 @@ class LogoutView(APIView) :
         
 
 class CheckEmailView(APIView): 
-    def post(self , request) : 
-        print('inside check email get')
+    def post(self, request): 
+        try:
+            print('inside check email post')
 
-        # obtain teh email 
-        email = request.data.get('email')
+            # obtain the email 
+            email = request.data.get('email')
 
-        # check if the email exists in the database or not 
-        # database query for checking if the email is present in the database or not 
-        try : 
-            emailobject = User.objects.get(email = email)
-            print('emailObject : ' , emailobject)
-        except User.DoesNotExist as e : 
-            # the email is not present in the the database 
-            print('email is not present in the database : ' , e)
+            # Validate email
+            if not email:
+                return Response({
+                    'message': 'Email is required',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'message' , "Email is not registered"} , status = status.HTTP_400_BAD_REQUEST)
+            # Validate email format
+            import re
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, email):
+                return Response({
+                    'message': 'Please enter a valid email address',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        # GENERATE AN OTP
-        # K -> is the number of digits in the OTP
-        OTP = ''.join(random.choices(string.digits, k = 6))   
-        print('OTP : ' , OTP)
+            # check if the email exists in the database or not 
+            try: 
+                emailobject = User.objects.get(email=email)
+                print('emailObject:', emailobject)
+            except User.DoesNotExist: 
+                # the email is not present in the database 
+                print('email is not present in the database')
+                return Response({
+                    'message': 'No account found with this email address. Please check your email or sign up for a new account.',
+                    'error_type': 'email_not_found'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        # send a mail to this email
-        # generate a random OTP and verify if the OTP generated is valid or not 
-        try : 
-            print('inside try')
-            send_mail(email  , OTP)
+            # GENERATE AN OTP
+            # K -> is the number of digits in the OTP
+            OTP = ''.join(random.choices(string.digits, k=6))   
+            print('OTP:', OTP)
 
-            # convert the OTP in a hash
-            return Response({'message' : 'OTP Sent' , 'OTP' : OTP} , status = status.HTTP_200_OK)
-        except : 
-            return Response({'message' : 'Failed to send the mail'} , status = status.HTTP_400_BAD_REQUEST)
-        
+            # send a mail to this email
+            try: 
+                print('Sending OTP email')
+                send_mail(email, OTP)
 
-    def get(self , request) : 
-        print('inside check email post')
+                # convert the OTP in a hash
+                return Response({
+                    'message': 'OTP sent successfully to your email',
+                    'OTP': OTP,
+                    'success': True
+                }, status=status.HTTP_200_OK)
+            except Exception as mail_error:
+                print(f'Failed to send email: {mail_error}')
+                return Response({
+                    'message': 'Failed to send OTP email. Please check your email address and try again.',
+                    'error_type': 'email_send_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'message' : 'Under development'} , status = status.HTTP_201_CREATED)
+        except Exception as e:
+            print(f'CheckEmail error: {str(e)}')
+            return Response({
+                'message': 'An unexpected error occurred. Please try again.',
+                'error_type': 'server_error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
 class LoginView(APIView):
     def post(self, request):
-        is_guest = request.data.get('isGuest')
-        if is_guest:
-            # Generate a unique guest username each time
-            guest_username = "guest_" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-            guest_email = guest_username + "@guest.com"
-            guest_password = User.objects.make_random_password()
-            user = User.objects.create_user(username=guest_username, email=guest_email, password=guest_password)
-            # Optionally, set user.is_active = False or limit permissions
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'message': 'Login successful',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'username': guest_username,
-                'email': guest_email
-            }, status=status.HTTP_200_OK)
+        try:
+            is_guest = request.data.get('isGuest')
+            
+            if is_guest:
+                # Generate a unique guest username each time
+                guest_username = "guest_" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+                guest_email = guest_username + "@guest.com"
+                guest_password = User.objects.make_random_password()
+                user = User.objects.create_user(username=guest_username, email=guest_email, password=guest_password)
+                # Optionally, set user.is_active = False or limit permissions
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'message': 'Guest login successful',
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'username': guest_username,
+                    'email': guest_email,
+                    'success': True
+                }, status=status.HTTP_200_OK)
 
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
+            # Regular user login
+            username = request.data.get('username')
+            password = request.data.get('password')
+
+            # Validate required fields
+            if not username or not password:
+                return Response({
+                    'message': 'Username and password are required',
+                    'error_type': 'validation_error'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if user exists
+            try:
+                user_obj = User.objects.get(username=username)
+            except User.DoesNotExist:
+                return Response({
+                    'message': 'No account found with this username. Please check your username or sign up for a new account.',
+                    'error_type': 'user_not_found'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if user is active
+            if not user_obj.is_active:
+                return Response({
+                    'message': 'Your account has been deactivated. Please contact support.',
+                    'error_type': 'account_deactivated'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Authenticate user
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                # Get user email for response
+                try:
+                    user_account = UserAccount.objects.get(username=username)
+                    email = user_account.email
+                    all_input_files_length = len(user_account.allInputValueFiles) if user_account.allInputValueFiles else 0
+                except UserAccount.DoesNotExist:
+                    email = user.email
+                    all_input_files_length = 0
+
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'message': 'Login successful',
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'email': email,
+                    'allInputValueFilesLength': all_input_files_length,
+                    'success': True
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'message': 'Invalid password. Please check your password and try again.',
+                    'error_type': 'invalid_credentials'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # Log the error for debugging
+            print(f"Login error: {str(e)}")
             return Response({
-                'message': 'Login successful',
-                'access': str(refresh.access_token),
-                'refresh': str(refresh)
-            }, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+                'message': 'An unexpected error occurred during login. Please try again.',
+                'error_type': 'server_error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ObtainInputFileView(APIView) : 

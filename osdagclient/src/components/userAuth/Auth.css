@@ -48,15 +48,47 @@
     border: solid 1px #0000003e;
     font-size: 13px;
     margin: 5px;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
 }
+
+.auth-container-2 form label input:focus{
+    outline: none;
+    border-color: #91b014;
+    box-shadow: 0 0 0 2px rgba(145, 176, 20, 0.1);
+}
+
+.auth-container-2 form label input.error{
+    border-color: #ff4d4f;
+}
+
+.auth-container-2 form label input.error:focus{
+    border-color: #ff4d4f;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1);
+}
+
+.error-text {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
 .verify-email-popup label input{
   padding: 10px;
   width: calc( 100% - 30px );
   border: solid 1px #0000003e;
   font-size: 13px;
   margin: 5px;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
 }
 
+.verify-email-popup label input:focus{
+    outline: none;
+    border-color: #91b014;
+    box-shadow: 0 0 0 2px rgba(145, 176, 20, 0.1);
+}
 
 .auth-container-2 form label:nth-child(1) h4,
 .auth-container-2 form label:nth-child(2) h4,
@@ -85,10 +117,21 @@
     transition: 0.2s;
     font-size: 13px;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.auth-btn:hover{
+.auth-btn:hover:not(:disabled){
     background-color: #7f9915;
+}
+
+.auth-btn:disabled {
+    background-color: #d9d9d9;
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+    cursor: not-allowed;
 }
 
 .handle-switch-btn{
@@ -97,8 +140,85 @@
     border: none;
     font-size: 13px;
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 
+.handle-switch-btn:hover:not(:disabled){
+    color: #7f9915;
+    text-decoration: underline;
+}
+
+.handle-switch-btn:disabled {
+    color: #d9d9d9;
+    cursor: not-allowed;
+}
+
+.google-guest-container {
+    margin-bottom: 16px;
+}
+
+.guest-signin-button {
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.guest-signin-button:hover:not(:disabled) {
+    background-color: #e6e6e6;
+    border-color: #b3b3b3;
+}
+
+.guest-signin-button:disabled {
+    background-color: #f5f5f5;
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+    cursor: not-allowed;
+}
+
+/* Modal improvements */
+.verify-email-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.verify-email-popup .login-logo {
+    align-self: center;
+    padding: 10px 0;
+}
+
+.verify-email-popup label {
+    display: flex;
+    flex-direction: column;
+}
+
+.verify-email-popup h4 {
+    margin-bottom: 8px;
+    margin-top: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .auth-container-2 form {
+        min-width: 300px;
+        margin: 0.5rem;
+        padding: 15px;
+    }
+    
+    .login-logo {
+        height: 80px !important;
+        width: 200px !important;
+    }
+}
 
   
   .google-signin-button {

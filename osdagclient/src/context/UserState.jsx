@@ -180,7 +180,7 @@ export const UserProvider = ({ children }) => {
         method: "POST",
         mode: "cors",
         headers: {
-          "Content-Type": "application/json", // Set the Content-Type header to JSON
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: username,
@@ -192,7 +192,8 @@ export const UserProvider = ({ children }) => {
 
       const jsonResponse = await response?.json();
       console.log("jsonResponse  : ", jsonResponse);
-      if (response.status == 201) {
+      
+      if (response.status === 201) {
         console.log("user successfully created");
 
         // call the thunk for creating the JWT token
@@ -203,30 +204,40 @@ export const UserProvider = ({ children }) => {
           type: "SET_SIGNUP_STATUS",
           payload: {
             isLoggedIn: false,
-            message: "User Successfully Signed up",
+            message: jsonResponse.message || "User Successfully Signed up",
+            success: true,
           },
         });
 
         console.log("isloggedIn in signup thunk : ", state.isLoggedIn);
+        return { success: true, message: jsonResponse.message };
       } else {
         console.log("response.status is not 201, failed to create a new user");
+        const errorMessage = jsonResponse.message || "Error in creating the User Account, please try again";
         dispatch({
           type: "SET_SIGNUP_STATUS",
           payload: {
             isLoggedIn: false,
-            message: "Error in creating the User Account, please try again",
+            message: errorMessage,
+            success: false,
+            error_type: jsonResponse.error_type || 'unknown_error',
           },
         });
+        return { success: false, message: errorMessage, error_type: jsonResponse.error_type };
       }
     } catch (err) {
       console.log("there is an error in user signup : ", err);
+      const errorMessage = "Network error occurred. Please check your connection and try again";
       dispatch({
         type: "SET_SIGNUP_STATUS",
         payload: {
           isLoggedIn: false,
-          message: "Server Error in creating User Account, please try again",
+          message: errorMessage,
+          success: false,
+          error_type: 'network_error',
         },
       });
+      return { success: false, message: errorMessage, error_type: 'network_error' };
     }
   };
 
@@ -235,12 +246,16 @@ export const UserProvider = ({ children }) => {
     console.log("in userlogin Context - username : ", username);
     console.log("in userlogin Context - isGuest : ", isGst);
 
-    if (JWTLogin == true) {
+    if (JWTLogin === true) {
       dispatch({
         type: "SET_LOGGING_STATUS",
-        payload: { isLoggedIn: true, message: "Login Successful" },
+        payload: { 
+          isLoggedIn: true, 
+          message: "Login Successful",
+          success: true 
+        },
       });
-      return;
+      return { success: true, message: "Login Successful" };
     }
 
     try {
@@ -248,7 +263,7 @@ export const UserProvider = ({ children }) => {
         method: "POST",
         mode: "cors",
         headers: {
-          "Content-Type": "application/json", // Set the Content-Type header to JSON
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: username,
@@ -260,86 +275,96 @@ export const UserProvider = ({ children }) => {
       const jsonResponse = await response?.json();
       console.log("jsonResponse : ", jsonResponse);
       console.log("jsonResponse msg : ", jsonResponse.message);
-      if (response.status == 200) {
+      
+      if (response.status === 200) {
         console.log("user logged in successfully in userLogin Context ");
-        console.log(
-          "isloggedin inside logging below if response 200" + state.isLoggedIn
-        );
+        console.log("isloggedin inside logging below if response 200" + state.isLoggedIn);
 
         console.log("Line number 194 inside status 200 way to create token...");
+        
         // create a new jwt token
-        if (isGst == false) {
+        if (isGst === false) {
           createJWTToken(username, password);
           localStorage.setItem("userType", "user");
           localStorage.setItem("username", username);
-          localStorage.setItem("email", jsonResponse.email);
+          localStorage.setItem("email", jsonResponse.email || "");
           localStorage.setItem(
             "allInputValueFilesLength",
-            jsonResponse.allInputValueFilesLength
+            jsonResponse.allInputValueFilesLength || 0
           );
         } else {
           localStorage.setItem("userType", "guest");
+          localStorage.setItem("username", jsonResponse.username || "Guest");
+          localStorage.setItem("email", jsonResponse.email || "");
         }
+        
         // set the login variable to true
-        if (isGst == true) {
-          dispatch({
-            type: "SET_LOGGING_STATUS",
-            payload: { isLoggedIn: false, message: jsonResponse.message },
-          });
-        } else {
-          dispatch({
-            type: "SET_LOGGING_STATUS",
-            payload: { isLoggedIn: true, message: jsonResponse.message },
-          });
-        }
+        const loginStatus = isGst !== true;
+        dispatch({
+          type: "SET_LOGGING_STATUS",
+          payload: { 
+            isLoggedIn: loginStatus, 
+            message: jsonResponse.message,
+            success: true 
+          },
+        });
 
         state.loginCredValid = true;
-        console.log("Done dispatch isLog set true  ");
-
+        console.log("Done dispatch isLog set true");
         console.log("Local storage set");
-        console.log(
-          "isloggedin inside logging below local storage " + state.isLoggedIn
-        );
+        console.log("isloggedin inside logging below local storage " + state.isLoggedIn);
 
-        return jsonResponse.message;
+        return { 
+          success: true, 
+          message: jsonResponse.message,
+          isGuest: isGst === true
+        };
       } else {
         console.log("response.status!=200, user not logged in");
-        if (jsonResponse.message == "The User Account does not exists") {
-          dispatch({
-            type: "SET_LOGGING_STATUS",
-            payload: {
-              isLoggedIn: false,
-              message: "The User Account does not exists",
-            },
-          });
-          return jsonResponse.message;
-        } else if (jsonResponse.message == "Invalid credentials") {
-          dispatch({
-            type: "SET_LOGGING_STATUS",
-            payload: {
-              isLoggedIn: false,
-              message: "Invalid Credentials, please try again",
-            },
-          });
-          return jsonResponse.message;
-        } else {
-          dispatch({
-            type: "SET_LOGGING_STATUS",
-            payload: { isLoggedIn: false, message: "Error while logging" },
-          });
-          return jsonResponse.message;
-        }
+        const errorMessage = jsonResponse.message || "Login failed";
+        const errorType = jsonResponse.error_type || 'unknown_error';
+        
+        // Set loginCredValid to false for any login failure
+        state.loginCredValid = false;
+        
+        dispatch({
+          type: "SET_LOGGING_STATUS",
+          payload: {
+            isLoggedIn: false,
+            message: errorMessage,
+            success: false,
+            error_type: errorType,
+          },
+        });
+        
+        return { 
+          success: false, 
+          message: errorMessage, 
+          error_type: errorType 
+        };
       }
     } catch (err) {
-      console.log("error in logging in");
+      console.log("error in logging in", err);
+      const errorMessage = "Network error occurred. Please check your connection and try again";
+      
+      // Set loginCredValid to false for network errors
+      state.loginCredValid = false;
+      
       dispatch({
         type: "SET_LOGGING_STATUS",
         payload: {
           isLoggedIn: false,
-          message: "Server error occured while logging in, please try again",
+          message: errorMessage,
+          success: false,
+          error_type: 'network_error',
         },
       });
-      return "Server error occured while logging in, please try again";
+      
+      return { 
+        success: false, 
+        message: errorMessage, 
+        error_type: 'network_error' 
+      };
     }
   };
 
@@ -454,14 +479,8 @@ export const UserProvider = ({ children }) => {
       });
 
       const jsonResponse = await response?.json();
-      if (response.status == 200) {
+      if (response.status === 200) {
         console.log("the OTP has been sent to the email");
-
-        // obtain the OTP, hash it and store it in the localstorage
-        // const otp = jsonResponse.('otp')
-        // encode the OTP
-        // const encoded_otp = base64_encode(otp)
-        // const encoded_email = base64_encode(email)
 
         // set the OTP in the localStorage
         console.log("OTP : ", jsonResponse.OTP);
@@ -470,30 +489,40 @@ export const UserProvider = ({ children }) => {
 
         dispatch({
           type: "SET_CHECKEMAIL_STATUS",
-          payload: { OTPSent: true, message: "The OTP has been sent" },
+          payload: { 
+            OTPSent: true, 
+            message: jsonResponse.message || "The OTP has been sent",
+            success: true 
+          },
         });
+        return { success: true, message: jsonResponse.message };
       } else {
         console.log("response.status!=200 while checking the email");
+        const errorMessage = jsonResponse.message || "failed to send the OTP, try again";
         dispatch({
           type: "SET_CHECKEMAIL_STATUS",
           payload: {
             OTPSent: false,
-            message: "failed to send the OTP, try again",
+            message: errorMessage,
+            success: false,
+            error_type: jsonResponse.error_type || 'unknown_error',
           },
         });
+        return { success: false, message: errorMessage, error_type: jsonResponse.error_type };
       }
     } catch (err) {
-      console.log(
-        "There is an error in the server while checking the email : ",
-        err
-      );
+      console.log("There is an error in the server while checking the email : ", err);
+      const errorMessage = "Network error occurred. Please check your connection and try again";
       dispatch({
         type: "SET_CHECKEMAIL_STATUS",
         payload: {
           OTPSent: false,
-          message: "Server error in sending the OTP, please try again",
+          message: errorMessage,
+          success: false,
+          error_type: 'network_error',
         },
       });
+      return { success: false, message: errorMessage, error_type: 'network_error' };
     }
   };
 
@@ -502,9 +531,6 @@ export const UserProvider = ({ children }) => {
     console.log("newPassword : ", newPassword);
     // obtain the stored email from the localStorage and delete the email, OTP
     let Lemail = localStorage.getItem("email");
-    // const email = base64_decode(encoded_email)
-    // localStorage.removeItem('email')
-    // localStorage.removeItem('otp')
     console.log("email : ", Lemail);
 
     try {
@@ -522,39 +548,47 @@ export const UserProvider = ({ children }) => {
 
       const jsonResponse = await response?.json();
       console.log("jsonResponse : ", jsonResponse);
-      if (response.status == 200) {
+      if (response.status === 200) {
         console.log("password updated");
-
-        dispatch({
-          type: "SET_FORGETPASSWORD_STATE",
-          payload: {
-            passwordSet: true,
-            passwordSetMessage: "New password has been set",
-          },
-        });
-      } else {
-        console.log("response.status!=200 on forget password");
 
         dispatch({
           type: "SET_FORGETPASSWORD_STATUS",
           payload: {
-            passwordSet: false,
-            passwordSetMessage:
-              "Failed to update the password , please try again",
+            passwordSet: true,
+            passwordSetMessage: jsonResponse.message || "New password has been set",
+            success: true,
           },
         });
+        return { success: true, message: jsonResponse.message };
+      } else {
+        console.log("response.status!=200 on forget password");
+        const errorMessage = jsonResponse.message || "Failed to update the password, please try again";
+        
+        dispatch({
+          type: "SET_FORGETPASSWORD_STATUS",
+          payload: {
+            passwordSet: false,
+            passwordSetMessage: errorMessage,
+            success: false,
+            error_type: jsonResponse.error_type || 'unknown_error',
+          },
+        });
+        return { success: false, message: errorMessage, error_type: jsonResponse.error_type };
       }
     } catch (err) {
-      console.log("Server error in updating the password");
+      console.log("Server error in updating the password", err);
+      const errorMessage = "Network error occurred. Please check your connection and try again";
 
       dispatch({
         type: "SET_FORGETPASSWORD_STATUS",
         payload: {
           passwordSet: false,
-          passwordSetMessage:
-            "Server error in updating the password, please try again",
+          passwordSetMessage: errorMessage,
+          success: false,
+          error_type: 'network_error',
         },
       });
+      return { success: false, message: errorMessage, error_type: 'network_error' };
     }
   };
 

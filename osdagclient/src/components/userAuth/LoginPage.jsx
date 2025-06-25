@@ -4,7 +4,7 @@ import './Auth.css';
 import icon from '../../assets/logo-osdag.png';
 // import { createJWTToken } from '../../context/ModuleState';
 import { UserContext } from '../../context/UserState';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Alert, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 const generateRandomString = (length) => {
@@ -21,21 +21,43 @@ let globalOTP = null;
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const { userSignup, userLogin, loginCredValid, verifyEmail, ForgetPassword, isLoggedIn, setIsLoggedIn, LoginMessage } = useContext(UserContext)
-    const [isSignup, setIsSignup] = useState(false)
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [verifyEmailModalVisible, setVerifyEmailModalVisible] = useState(false);
-    const [verifyEmails, setVerifyEmail] = useState('')
-    const [otp, setOtp] = useState('')
-    const [isInputDisabled, setInputDisabled] = useState(true);
-    const [toggleForgotPassword, setToggleForgotPassword] = useState(false)
+    const { 
+        userSignup, 
+        userLogin, 
+        loginCredValid, 
+        verifyEmail, 
+        ForgetPassword, 
+        isLoggedIn, 
+        setIsLoggedIn, 
+        LoginMessage,
+        SignupMessage,
+        OTPMessage 
+    } = useContext(UserContext);
 
+    // Form states
+    const [isSignup, setIsSignup] = useState(false);
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    
+    // Loading states
+    const [isLoading, setIsLoading] = useState(false);
+    const [isOTPLoading, setIsOTPLoading] = useState(false);
+    
+    // Error states
+    const [errors, setErrors] = useState({});
+    const [generalError, setGeneralError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+
+    // Modal states
+    const [verifyEmailModalVisible, setVerifyEmailModalVisible] = useState(false);
+    const [verifyEmails, setVerifyEmail] = useState('');
+    const [otp, setOtp] = useState('');
+    const [isInputDisabled, setInputDisabled] = useState(true);
+    const [toggleForgotPassword, setToggleForgotPassword] = useState(false);
     const [fPasswordModalVisible, setFPasswordModalVisible] = useState(false);
-    const [fPasswordEmail, setFPasswordEmail] = useState('')
-    const [fPasswordNewPass, setFPasswordNewPass] = useState('')
-    // const [isChecked, setIsChecked] = useState(false);
+    const [fPasswordEmail, setFPasswordEmail] = useState('');
+    const [fPasswordNewPass, setFPasswordNewPass] = useState('');
 
     useEffect(() => {
         console.log("inside use effect in login page and isloggedin is:" + isLoggedIn)
@@ -48,151 +70,212 @@ const LoginPage = () => {
         }
     }, [isLoggedIn]);
 
+    // Clear errors when switching between login/signup
+    useEffect(() => {
+        setErrors({});
+        setGeneralError('');
+        setSuccessMessage('');
+    }, [isSignup]);
+
+    // Validation functions
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!username.trim()) {
+            newErrors.username = 'Username is required';
+        } else if (username.length < 3) {
+            newErrors.username = 'Username must be at least 3 characters long';
+        }
+
+        if (isSignup && !email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (isSignup && !validateEmail(email)) {
+            newErrors.email = 'Please enter a valid email address';
+        }
+
+        if (!password.trim()) {
+            newErrors.password = 'Password is required';
+        } else if (password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters long';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSwitch = () => {
-        setIsSignup(!isSignup)
-    }
+        setIsSignup(!isSignup);
+        setUsername('');
+        setEmail('');
+        setPassword('');
+    };
 
     // Handle EmailVerification
     const handleVerifyEmailModal = () => {
         setVerifyEmailModalVisible(true);
-        setToggleForgotPassword(true)
-
+        setToggleForgotPassword(true);
+        setVerifyEmail('');
+        setOtp('');
+        setInputDisabled(true);
     };
 
     const handleVerifyEmailModalClose = () => {
         setVerifyEmailModalVisible(false);
-        setToggleForgotPassword(false)
+        setToggleForgotPassword(false);
+        setVerifyEmail('');
+        setOtp('');
+        setInputDisabled(true);
     };
 
-    const handleVerifyEmail = () => {
-
-        if (verifyEmails == "") {
-            alert("Enter Email")
+    const handleVerifyEmail = async () => {
+        if (!verifyEmails.trim()) {
+            setGeneralError("Please enter your email address");
             return;
         }
 
-        try {
-
-            const response = JSON.stringify(verifyEmail(verifyEmails));
-            globalOTP = localStorage.getItem('otp')
-            // alert(response.message+": "+ globalOTP)
-            console.log("OTP received:", globalOTP);
-
-            // Enable the input if needed
-            setInputDisabled(false);
-        } catch (error) {
-            console.error("Error in OTP:", error);
-
+        if (!validateEmail(verifyEmails)) {
+            setGeneralError("Please enter a valid email address");
+            return;
         }
 
+        setIsOTPLoading(true);
+        setGeneralError('');
+
+        try {
+            const response = await verifyEmail(verifyEmails);
+            if (response && response.success) {
+                globalOTP = localStorage.getItem('otp');
+                setInputDisabled(false);
+                setSuccessMessage("OTP sent successfully to your email");
+            } else {
+                setGeneralError(response?.message || "Failed to send OTP");
+            }
+        } catch (error) {
+            setGeneralError("Error sending OTP. Please try again.");
+        } finally {
+            setIsOTPLoading(false);
+        }
     };
 
     const handleVerify = () => {
-        // Get the OTP value from local storage
+        if (!otp.trim()) {
+            setGeneralError("Please enter the OTP");
+            return;
+        }
+
         const storedOTP = localStorage.getItem('otp');
 
         if (storedOTP === otp) {
-            console.log('loginCredValid : ', loginCredValid)
-            console.log('OTP verification successful.');
             localStorage.removeItem('otp');
             globalOTP = null;
-            alert("OTP verification successful.")
+            setSuccessMessage("OTP verification successful");
+            
             if (loginCredValid && !toggleForgotPassword) {
-                console.log('setting isLoggedIn')
-                setIsLoggedIn(true)
+                setIsLoggedIn(true);
             } else if (toggleForgotPassword) {
                 handleFPasswordModal();
                 handleVerifyEmailModalClose();
             }
-
-
         } else {
-            console.log('OTP verification failed.');
-            alert("Enter Validate OTP")
+            setGeneralError("Invalid OTP. Please check and try again.");
         }
     };
-
-    // End++++++++++++++++++++++++++++++++++++++++++
 
     // Handle Forgot password
     const handleFPasswordModal = () => {
         setFPasswordModalVisible(true);
+        setFPasswordEmail('');
+        setFPasswordNewPass('');
     };
 
     const handleFPasswordModalClose = () => {
         setFPasswordModalVisible(false);
+        setFPasswordEmail('');
+        setFPasswordNewPass('');
     };
 
-    const handleFPassword = () => {
-        console.log("FP:" + fPasswordEmail)
-        if (fPasswordNewPass == fPasswordEmail) {
-
-            ForgetPassword(fPasswordNewPass)
-            alert("Password has been Changed")
-            handleFPasswordModalClose();
-            window.location.href = '/';
-        }
-        else {
-            alert("Enter Valid New password")
-        }
-
-
-    };
-    // End++++++++++++++++++++++++++++++++++++++++++
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!username || !password) {
-            alert('Enter email and password')
+    const handleFPassword = async () => {
+        if (!fPasswordNewPass.trim()) {
+            setGeneralError("Please enter a new password");
             return;
         }
 
+        if (fPasswordNewPass.length < 8) {
+            setGeneralError("Password must be at least 8 characters long");
+            return;
+        }
+
+        setIsLoading(true);
+        setGeneralError('');
+
+        try {
+            const response = await ForgetPassword(fPasswordNewPass);
+            if (response && response.success) {
+                setSuccessMessage("Password updated successfully! You can now log in.");
+                handleFPasswordModalClose();
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                setGeneralError(response?.message || "Failed to update password");
+            }
+        } catch (error) {
+            setGeneralError("Error updating password. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
+
+        setIsLoading(true);
+        setGeneralError('');
+        setSuccessMessage('');
+
         try {
             if (isSignup) {
-
-                if (!email) {
-                    alert("Enter a name to continue")
-                    return;
+                const response = await userSignup(username, email, password, false);
+                
+                if (response && response.success) {
+                    setSuccessMessage("Account created successfully! You can now log in.");
+                    setIsSignup(false);
+                    setUsername('');
+                    setEmail('');
+                    setPassword('');
+                } else {
+                    setGeneralError(response?.message || "Failed to create account");
                 }
-
-                // register
-                console.log('input signup data : ')
-                console.log('username : ', username)
-                console.log('email : ', email)
-                console.log('password : ', password)
-                userSignup(username, email, password, false)
-                setIsSignup(false)
-
-
             } else {
-                console.log('email getting passed : ', email)
-                userLogin(username, password, false).then((message) => {
-                    // alert("Message while Login : "+ message)
-                    localStorage.setItem("username", username)
-                })
-
-                if (!loginCredValid) {
-                    console.log('There is an error in loggin in ')
-                    console.log('login message : ', LoginMessage)
-                    alert(LoginMessage)
-                } else if (loginCredValid) {
-                    console.log('login Message ; ', LoginMessage)
-                    setVerifyEmailModalVisible(true)
-                    navigate('/home');
+                const response = await userLogin(username, password, false);
+                
+                if (response && response.success) {
+                    localStorage.setItem("username", username);
+                    if (response.isGuest) {
+                        navigate('/home');
+                    } else {
+                        // For regular users, they need email verification
+                        setVerifyEmailModalVisible(true);
+                    }
+                } else {
+                    setGeneralError(response?.message || "Login failed");
                 }
-
-                // navigation
-
-
             }
+        } catch (error) {
+            setGeneralError("An unexpected error occurred. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
-        catch (error) {
-            console.log('Error occurred while obtaining the token', error);
-            alert('There was an error during login/signup.');
-        }
-    }
+    };
 
     // Google Auth
     const handleGoogleSignIn = () => {
@@ -200,23 +283,26 @@ const LoginPage = () => {
     };
     // Guest 
 
-    const handleGuestSignIn = () => {
+    const handleGuestSignIn = async () => {
+        setIsLoading(true);
+        setGeneralError('');
+
         try {
-
-            let GuestEmail = `GUEST.${generateRandomString(10)}`;
-            GuestEmail += "@gmail.com"
-            const GuestUserPassword = generateRandomString(12);
-            console.log('Guest email : ', GuestEmail)
-            console.log('guest password : ', GuestUserPassword)
-            // setting the isGuest to true
-            userLogin(GuestEmail, GuestUserPassword, true)
-            localStorage.setItem("email", GuestEmail);
-            console.log("Done and state is :" + isLoggedIn)
-            navigate('/home');
-
-        } catch (e) {
-            console.log('Error occurred while guest mode', e);
-            alert('There was an error during login As Guest .');
+            let guestEmail = `GUEST.${generateRandomString(10)}@gmail.com`;
+            const guestPassword = generateRandomString(12);
+            
+            const response = await userLogin(guestEmail, guestPassword, true);
+            
+            if (response && response.success) {
+                localStorage.setItem("email", guestEmail);
+                navigate('/home');
+            } else {
+                setGeneralError("Failed to enter guest mode. Please try again.");
+            }
+        } catch (error) {
+            setGeneralError("Error entering guest mode. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -228,35 +314,86 @@ const LoginPage = () => {
                 <div className='auth-container-2'>
                     {!isSignup && <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300} />}
 
+                    {/* Display general alerts */}
+                    {generalError && (
+                        <Alert
+                            message={generalError}
+                            type="error"
+                            showIcon
+                            closable
+                            onClose={() => setGeneralError('')}
+                            style={{ marginBottom: '16px', width: '400px' }}
+                        />
+                    )}
+                    
+                    {successMessage && (
+                        <Alert
+                            message={successMessage}
+                            type="success"
+                            showIcon
+                            closable
+                            onClose={() => setSuccessMessage('')}
+                            style={{ marginBottom: '16px', width: '400px' }}
+                        />
+                    )}
+
                     <div className='google-guest-container'>
                         {/*<button className="google-signin-button" onClick={handleGoogleSignIn}>
                     <img className="google-logo" src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
                     Sign in with Google
                 </button> */}
-                        <button className="guest-signin-button" onClick={handleGuestSignIn}>
-                            Guest Mode
+                        <button 
+                            className="guest-signin-button" 
+                            onClick={handleGuestSignIn}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? <Spin size="small" /> : 'Guest Mode'}
                         </button>
                     </div>
                     <form onSubmit={handleSubmit}>
                         {
                             isSignup && (
                                 <label htmlFor="email">
-                                    <h4>Email</h4>
-                                    <input type="email" name='email' id='email' onChange={(e) => { setEmail(e.target.value) }} />
+                                    <h4>Email *</h4>
+                                    <input 
+                                        type="email" 
+                                        name='email' 
+                                        id='email' 
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        style={{ borderColor: errors.email ? '#ff4d4f' : '' }}
+                                    />
+                                    {errors.email && <span style={{ color: '#ff4d4f', fontSize: '12px' }}>{errors.email}</span>}
                                 </label>
 
                             )
                         }
                         <label htmlFor='name'>
-                            <h4>Username</h4>
-                            <input type="text" id='name' name='name' onChange={(e) => { setUsername(e.target.value) }} />
+                            <h4>Username *</h4>
+                            <input 
+                                type="text" 
+                                id='name' 
+                                name='name' 
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                style={{ borderColor: errors.username ? '#ff4d4f' : '' }}
+                            />
+                            {errors.username && <span style={{ color: '#ff4d4f', fontSize: '12px' }}>{errors.username}</span>}
                         </label>
 
                         <label >
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <h4>Password</h4>
+                                <h4>Password *</h4>
                             </div>
-                            <input type="password" name='password' id='password' onChange={(e) => { setPassword(e.target.value) }} />
+                            <input 
+                                type="password" 
+                                name='password' 
+                                id='password' 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                style={{ borderColor: errors.password ? '#ff4d4f' : '' }}
+                            />
+                            {errors.password && <span style={{ color: '#ff4d4f', fontSize: '12px' }}>{errors.password}</span>}
                             {!isSignup && <p style={{ color: "#91b014", fontSize: '13px' }} onClick={handleVerifyEmailModal} >Forgot Password?</p>}
                         </label>
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -279,11 +416,11 @@ const LoginPage = () => {
                                 </div>
                             )
                         }
-                        <button type='submit' className='auth-btn'>{isSignup ? 'Sign up' : 'Log in'}</button>
+                        <button type='submit' className='auth-btn' disabled={isLoading}>{isLoading ? <Spin size="small" /> : (isSignup ? 'Sign up' : 'Log in')}</button>
                         {
                             isSignup && (
                                 <p style={{ color: "#666767", fontSize: "13px" }}>
-                                    By clicking “Sign up”, you agree to our
+                                    By clicking "Sign up", you agree to our
                                     <span style={{ color: "#91b014" }}> terms of<br /> service</span>,
                                     <span style={{ color: "#91b014" }}> privacy policy</span> and
                                     <span style={{ color: "#91b014" }}> cookie policy</span>
@@ -293,7 +430,7 @@ const LoginPage = () => {
                     </form>
                     <p>
                         {isSignup ? 'Already have an account?' : "Don't have an account?"}
-                        <button type='button' className='handle-switch-btn' onClick={handleSwitch}>{isSignup ? "Log in" : 'sign up'}</button>
+                        <button type='button' className='handle-switch-btn' onClick={handleSwitch} disabled={isLoading}>{isSignup ? "Log in" : 'sign up'}</button>
                     </p>
                 </div>
             </section>
@@ -307,54 +444,118 @@ const LoginPage = () => {
                         Cancel
                     </Button>,
                 ]}
+                maskClosable={false}
             >
                 <div className='verify-email-popup'>
                     <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300} />
+                    
+                    {generalError && (
+                        <Alert
+                            message={generalError}
+                            type="error"
+                            showIcon
+                            style={{ marginBottom: '16px' }}
+                        />
+                    )}
+                    
+                    {successMessage && (
+                        <Alert
+                            message={successMessage}
+                            type="success"
+                            showIcon
+                            style={{ marginBottom: '16px' }}
+                        />
+                    )}
+                    
                     <label htmlFor="verifyemail">
-                        <h4> Email :</h4>
-                        <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => { setVerifyEmail(e.target.value) }} />
+                        <h4>Email:</h4>
+                        <input 
+                            type="email" 
+                            name='verifyemail' 
+                            id='verifyemail' 
+                            value={verifyEmails}
+                            onChange={(e) => setVerifyEmail(e.target.value)}
+                            placeholder="Enter your email address"
+                        />
                     </label>
+                    
                     <label htmlFor="otp">
-                        <h4> Enter OTP :</h4>
-                        <input type="otp" name='otp' id='otp' onChange={(e) => { setOtp(e.target.value) }} disabled={isInputDisabled} />
+                        <h4>Enter OTP:</h4>
+                        <input 
+                            type="text" 
+                            name='otp' 
+                            id='otp' 
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)} 
+                            disabled={isInputDisabled}
+                            placeholder="Enter 6-digit OTP"
+                            maxLength={6}
+                        />
                     </label>
-                    <Button key="getotp" onClick={handleVerifyEmail}>
-                        Get OTP
-                    </Button>
-                    <Button key="verifyemailbtn" onClick={handleVerify}>
-                        Verify
-                    </Button>
-
-
+                    
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                        <Button 
+                            key="getotp" 
+                            onClick={handleVerifyEmail}
+                            loading={isOTPLoading}
+                            disabled={!verifyEmails.trim()}
+                        >
+                            Get OTP
+                        </Button>
+                        <Button 
+                            key="verifyemailbtn" 
+                            type="primary"
+                            onClick={handleVerify}
+                            disabled={isInputDisabled || !otp.trim()}
+                        >
+                            Verify
+                        </Button>
+                    </div>
                 </div>
             </Modal>
 
             {/* Forgot Password Popup */}
             <Modal
-                title="Forgot Password"
+                title="Reset Password"
                 visible={fPasswordModalVisible}
                 onCancel={handleFPasswordModalClose}
                 footer={[
                     <Button key="cancel" onClick={handleFPasswordModalClose}>
                         Cancel
                     </Button>,
+                    <Button 
+                        key="update" 
+                        type="primary" 
+                        onClick={handleFPassword}
+                        loading={isLoading}
+                        disabled={!fPasswordNewPass.trim()}
+                    >
+                        Update Password
+                    </Button>,
                 ]}
+                maskClosable={false}
             >
-                <div className='verify-email-popup'>
-                    <img src={icon} alt='stack overflow' className='login-logo' height={110} width={300} />
-                    <label htmlFor="verifyemail">
-                        <h4>New Password :</h4>
-                        <input type="verifyemail" name='verifyemail' id='verifyemail' onChange={(e) => { setFPasswordEmail(e.target.value) }} />
+                <div>
+                    {generalError && (
+                        <Alert
+                            message={generalError}
+                            type="error"
+                            showIcon
+                            style={{ marginBottom: '16px' }}
+                        />
+                    )}
+                    
+                    <label htmlFor="newpassword">
+                        <h4>New Password:</h4>
+                        <input 
+                            type="password" 
+                            name='newpassword' 
+                            id='newpassword' 
+                            value={fPasswordNewPass}
+                            onChange={(e) => setFPasswordNewPass(e.target.value)}
+                            placeholder="Enter new password (min 8 characters)"
+                        />
                     </label>
-                    <label htmlFor="verifyemail">
-                        <h4>Confirm Password :</h4>
-                        <input type="password" name='newPassword' id='newPassword' onChange={(e) => { setFPasswordNewPass(e.target.value) }} />
-                    </label>
-                    <Button key="submitverifyemail" onClick={handleFPassword}>
-                        Change password
-                    </Button>
-
-
                 </div>
             </Modal>
 
