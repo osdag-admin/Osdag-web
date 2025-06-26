@@ -15,6 +15,7 @@ import CoverPlateWelded from "../src/components/momentConnection/beamToBeamSplic
 import BeamToColumnEndPlate from "../src/components/momentConnection/BeamToColumnEndPlate";
 import UserAccount from "../src/components/userAccount/UserAccount";
 import ProtectedRoute from "./ProtectedRoute";
+import SimplySupportedBeam from '../src/modules/flexuralMember/simplySupportedBeam';
 
 // Group routes by type for better organization
 const publicRoutes = [
@@ -46,6 +47,10 @@ const tensionMemberRoutes = [
   { path: "/design/:designType/bolted_to_end_gusset", element: <BoltedToEnd /> },
 ];
 
+const flexuralMemberRoutes = [
+  { path: "/design/:designType/simply_supported_beam", element: <SimplySupportedBeam /> },
+];
+
 // Combine all routes
 const routes = [
   ...publicRoutes, // Public routes don't need protection
@@ -62,6 +67,10 @@ const routes = [
     element: <ProtectedRoute>{route.element}</ProtectedRoute> 
   })),
   ...tensionMemberRoutes.map(route => ({ 
+    ...route, 
+    element: <ProtectedRoute>{route.element}</ProtectedRoute> 
+  })),
+  ...flexuralMemberRoutes.map(route => ({ 
     ...route, 
     element: <ProtectedRoute>{route.element}</ProtectedRoute> 
   })),

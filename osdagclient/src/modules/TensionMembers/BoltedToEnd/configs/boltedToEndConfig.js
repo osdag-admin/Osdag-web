@@ -1,7 +1,7 @@
-import ANGLES from "../../../../assets/TensionMember/angles.png";
+import ANGLES from "../../../../assets/TensionMember/Angles.png";
 import BACK_TO_BACK_ANGLES from "../../../../assets/TensionMember/back_back_angles.png";
 import STAR_ANGLES from "../../../../assets/TensionMember/star_angles.png";
-import CHANNELS from "../../../../assets/TensionMember/channels.png";
+import CHANNELS from "../../../../assets/TensionMember/Channels.png";
 import ErrorImg from "../../../../assets/notSelected.png";
 import {
   KEY_MODULE, KEY_SEC_PROFILE, KEY_LOCATION, KEY_SECSIZE, KEY_MATERIAL,
