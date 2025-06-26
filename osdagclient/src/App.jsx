@@ -20,21 +20,21 @@ import UserAccount from "./components/userAccount/UserAccount";
 // New component for the login page
 import LoginPage from "./components/userAuth/LoginPage";
 
-// jwt imports 
-import jwt_decode from 'jwt-decode';
-import EndPlate from './components/shearConnection/EndPlate';
-import CleatAngle from './components/shearConnection/CleatAngle';
-import SeatedAngle from './components/shearConnection/SeatedAngle';
+// jwt imports
+import jwt_decode from "jwt-decode";
+import EndPlate from "./components/shearConnection/EndPlate";
+import SeatedAngle from "./components/shearConnection/SeatedAngle";
 import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
 import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
-import BoltedToEnd from './modules/TensionMembers/BoltedToEnd/BoltedToEnd';
+import BoltedToEnd from "./modules/TensionMembers/BoltedToEnd/BoltedToEnd";
 
 // module imports
-import FinPlate from "./modules/FinPlate/FinPlate";
 import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
 
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
 import Homepage from "./homepage/pages/Homepage";
+import FinPlate from "./modules/shearConnection/endPlate/FinPlate";
+import CleatAngle from "./modules/shearConnection/cleatAngle/CleatAngle";
 
 let renderedOnce = false
 

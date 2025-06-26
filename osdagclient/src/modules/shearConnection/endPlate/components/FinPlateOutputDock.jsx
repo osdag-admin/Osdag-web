@@ -1,6 +1,6 @@
 import React from "react";
 import { BaseOutputDock } from "../../../shared/components/BaseOutputDock";
-import { finPlateOutputConfig } from "../configs/finPlateOutputConfig";
+import { finPlateOutputConfig } from "../../finPlate/configs/finPlateOutputConfig";
 
 const FinPlateOutputDock = ({ output }) => {
   return (
