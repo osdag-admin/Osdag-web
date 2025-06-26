@@ -713,8 +713,12 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
-  const createDesignReport = async (params) => {
+  const createDesignReport = async (params, moduleId = null, inputValues = null, designStatus = true, logs = []) => {
     console.log("params  : ", params);
+    console.log("moduleId  : ", moduleId);
+    console.log("inputValues  : ", inputValues);
+    console.log("designStatus  : ", designStatus);
+    console.log("logs  : ", logs);
 
     // store the companyLogo in the server fileSystem
     const logoFullPath = params.companyLogo
@@ -744,6 +748,10 @@ export const ModuleProvider = ({ children }) => {
             AdditionalComments: params.additionalComments,
             Client: params.client,
           },
+          module_id: moduleId,
+          input_values: inputValues,
+          design_status: designStatus,
+          logs: logs,
         }),
       });
 
@@ -849,6 +857,7 @@ export const ModuleProvider = ({ children }) => {
         resetModuleState,
         getTensionMemberAngleList,
         getTensionMemberChannelList,
+        createDesignReport,
       }}
     >
       {children}

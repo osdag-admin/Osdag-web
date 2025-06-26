@@ -32,6 +32,7 @@ import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
 
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
 import Homepage from "./homepage/pages/Homepage";
+import SelectModulePage from "./homepage/pages/SelectModulePage";
 import FinPlate from "./modules/shearConnection/endPlate/FinPlate";
 import CleatAngle from "./modules/shearConnection/cleatAngle/CleatAngle";
 import EndPlate from "./modules/shearConnection/endPlate/EndPlate";
@@ -47,11 +48,27 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root loggedIn={loggedIn} />}>
-        <Route path="/home" element={<Mainwindow />} />
-        {/* <Route path="/home" element={<Homepage />} /> */}
+        {/* <Route path="/home" element={<Mainwindow />} /> */}
+        <Route path="/home" element={<Homepage />} />
         <Route path="/" element={<LoginPage />} />
+        <Route path="/Connections" element={<SelectModulePage />} />
+        <Route path="/TensionMember" element={<SelectModulePage />} />
+        <Route path="/CompressionMember" element={<SelectModulePage />} />
+        <Route path="/FlexureMember" element={<SelectModulePage />} />
+        <Route path="/Beam-Column" element={<SelectModulePage />} />
+        <Route path="/PlateGirder" element={<SelectModulePage />} />
+        <Route path="/Truss" element={<SelectModulePage />} />
+        <Route path="/2DFrame" element={<SelectModulePage />} />
+        <Route path="/3DFrame" element={<SelectModulePage />} />
+        <Route path="/GroupDesign" element={<SelectModulePage />} />
         <Route path="/design-type/:designType" element={<Window />} />
-        {/* Wrap FinePlate with a route that checks authentication */}
+        {/* Shear Connection Routes */}
+        <Route path="/design/connections/shear/fin_plate" element={<FinPlate />} />
+        <Route path="/design/connections/shear/end_plate" element={<EndPlate />} />
+        <Route path="/design/connections/shear/cleat_angle" element={<CleatAngle />} />
+        <Route path="/design/connections/shear/seated_angle" element={<SeatedAngle />} />
+        
+        {/* Legacy Routes - Keep for backward compatibility */}
         <Route path="/design/:designType/fin_plate" element={<FinPlate />} />
         <Route path="/design/:designType/end_plate" element={<EndPlate />} />
         <Route
@@ -70,6 +87,10 @@ function App() {
           path="/design/:designType/beam-to-beam-splice/end_plate"
           element={<BeamBeamEndPlate />}
         />
+        {/* Tension Member Routes */}
+        <Route path="/design/tension-member/bolted_to_end_gusset" element={<BoltedToEnd />} />
+        
+        {/* Legacy Tension Routes */}
         <Route
           path='/design/:designType/bolted_to_end_gusset'
           element={<BoltedToEnd />}
@@ -78,6 +99,8 @@ function App() {
           path="/design/:designType/beam-to-beam-splice/cover_plate_welded"
           element={<CoverPlateWelded />}
         />
+        {/* Beam to Column Routes */}
+        <Route path="/design/connections/column-beam/end_plate" element={<BeamToColumnEndPlate />} />
         <Route
           path="/design/connections/beam-to-column/end_plate"
           element={<BeamToColumnEndPlate />}
@@ -163,7 +186,7 @@ const Root = (loggedIn) => {
   return (
     <>
       {/* Show Sidebar when authenticated and not on a design page */}
-      {!isLoginPage && !isDesignPage && !isUserProfilePage && <Sidebar />}
+      {/* {!isLoginPage && !isDesignPage && !isUserProfilePage && <Sidebar />} */}
       <Outlet />
     </>
   );

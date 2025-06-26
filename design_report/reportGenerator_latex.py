@@ -375,17 +375,35 @@ class CreateLatex(Document):
 
         with doc.create(Section('Design Log')):
             doc.append(pyl.Command('Needspace', arguments=NoEscape(r'10\baselineskip')))
-            logger_msgs=reportsummary['logger_messages'].split('\n')
-            for msg in logger_msgs:
-                if('WARNING' in msg):
-                    colour='blue'
-                elif('INFO' in msg):
-                    colour='OsdagGreen'
-                elif('ERROR' in msg):
-                    colour='red'
-                else:
-                    continue
-                doc.append(TextColor(colour,'\n'+msg))
+            # Handle both old string format and new list format for logger_messages
+            if isinstance(reportsummary['logger_messages'], list):
+                # New format: list of dictionaries with 'msg' and 'type' keys
+                for log_entry in reportsummary['logger_messages']:
+                    if isinstance(log_entry, dict) and 'msg' in log_entry and 'type' in log_entry:
+                        msg = log_entry['msg']
+                        log_type = log_entry['type'].upper()
+                        if log_type == 'WARNING':
+                            colour = 'blue'
+                        elif log_type == 'INFO':
+                            colour = 'OsdagGreen'
+                        elif log_type == 'ERROR':
+                            colour = 'red'
+                        else:
+                            colour = 'black'
+                        doc.append(TextColor(colour, '\n' + msg))
+            else:
+                # Old format: single string with newlines
+                logger_msgs = reportsummary['logger_messages'].split('\n')
+                for msg in logger_msgs:
+                    if('WARNING' in msg):
+                        colour='blue'
+                    elif('INFO' in msg):
+                        colour='OsdagGreen'
+                    elif('ERROR' in msg):
+                        colour='red'
+                    else:
+                        continue
+                    doc.append(TextColor(colour,'\n'+msg))
         try:
             doc.generate_pdf(filename, compiler='pdflatex', clean_tex=False)
         except:

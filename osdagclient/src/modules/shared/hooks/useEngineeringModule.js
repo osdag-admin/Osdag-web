@@ -543,7 +543,33 @@ export const useEngineeringModule = (moduleConfig) => {
       alert("Please submit the design first.");
       return;
     }
-    createDesignReport(designReportInputs);
+
+    // Build the input values for the design report
+    const inputValues = moduleConfig.buildSubmissionParams(
+      inputs,
+      allSelected,
+      {
+        boltDiameterList,
+        propertyClassList,
+        thicknessList,
+        angleList,
+        channelList,
+      },
+      extraState
+    );
+
+    // Determine the module ID based on the module config
+    const moduleId = moduleConfig.designType;
+    
+    // Pass all required parameters to createDesignReport
+    createDesignReport(
+      designReportInputs,  // form data
+      moduleId,            // module identifier
+      inputValues,         // input data used for design
+      true,                // design was successful (since we have output)
+      logs || []           // design logs
+    );
+    
     handleCancelDesignReport();
   };
 

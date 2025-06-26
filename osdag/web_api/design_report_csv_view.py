@@ -144,6 +144,7 @@ class CreateDesignReport(APIView):
             print(resultBoolean)
         except Exception as e:
             print('e : ', e)
+            resultBoolean = False  # Set default value if save_design fails
         
         if(resultBoolean):
             print('The LaTEX file has been created successfully')

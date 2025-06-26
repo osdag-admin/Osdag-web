@@ -4,11 +4,11 @@ import Header from '../components/Header';
 import MainContent from '../components/MainContent';
 import Footer from '../components/Footer';
 import { useParams } from 'react-router-dom';
-import TabbedConnectionSelector from '../components/ModulesCardLayout';
+import TabbedModulePage from '../components/ModulesCardLayout';
 
 const SelectModulePage = () => {
     const [showSideBar, setshowSideBar] = useState(false);
-    // No modulename param in the URL, so this will be undefined
+    // Get module name from URL path
     const modulename = window.location.pathname.split('/')[1];
     console.log("endpoint : ", modulename);
     return (
@@ -31,7 +31,7 @@ const SelectModulePage = () => {
 
                     {/* Main Content */}
                     <div className="flex-1 lg:overflow-y-auto">
-                        <TabbedConnectionSelector />
+                        <TabbedModulePage />
                     </div>
 
                     {/* Footer */}

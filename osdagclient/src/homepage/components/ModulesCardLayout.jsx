@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import coverPlateBolted from "../../assets/ShearConnection/sc_fin_plate.png";
 import coverPlateWelded from "../../assets/ShearConnection/sc_fin_plate.png";
 import endPlate from "../../assets/ShearConnection/sc_fin_plate.png";
@@ -114,8 +114,52 @@ const GENERIC_SUBMODULE_CONTENT = {
   ],
 };
 
+// Route mapping for different modules
+const MODULE_ROUTES = {
+  // Shear Connections
+  fp: "/design/connections/shear/fin_plate",
+  ca: "/design/connections/shear/cleat_angle", 
+  ep: "/design/connections/shear/end_plate",
+  sa: "/design/connections/shear/seated_angle",
+  // Moment Connections - Beam to Beam
+  cpb: "/design/connections/beam-to-beam-splice/cover_plate_bolted",
+  cpw: "/design/connections/beam-to-beam-splice/cover_plate_welded",
+  // Tension Members
+  boltedtoendplate: "/design/tension-member/bolted_to_end_gusset",
+  weldedtoendplate: "/design/tension-member/welded_to_end_gusset", // Add this route if needed
+  // Base Plate
+  bp: "/design/connections/base_plate", // Add this route if needed
+};
+
 // SectionCards component for rendering section cards
-const SectionCards = ({ section }) => (
+const SectionCards = ({ section, activeSubmodule }) => {
+  const navigate = useNavigate();
+  
+  const handleModuleClick = (optionKey, sectionLabel) => {
+    // Special handling for end plate modules based on context
+    if (optionKey === "ep") {
+      if (activeSubmodule === "moment") {
+        if (sectionLabel === "Beam to Beam Splice") {
+          navigate("/design/connections/beam-to-beam-splice/end_plate");
+                 } else if (sectionLabel === "Beam to Column Splice") {
+           navigate("/design/connections/column-beam/end_plate");
+        } else {
+          // Default for other moment connections (Column to Column, etc.)
+          navigate("/design/connections/beam-to-beam-splice/end_plate");
+        }
+             } else {
+         // Default to shear end plate
+         navigate("/design/connections/shear/end_plate");
+       }
+    } else {
+      const route = MODULE_ROUTES[optionKey];
+      if (route) {
+        navigate(route);
+      }
+    }
+  };
+
+  return (
   <div
     className="flex-1 min-w-[380px] border-2 border-osdag-border rounded-xl mb-8 px-4 py-4 shadow-card dark:text-gray-300"
   >
@@ -133,6 +177,7 @@ const SectionCards = ({ section }) => (
           <div
             className="absolute cursor-pointer text-center left-0 right-0 bottom-[-40px] opacity-0 group-hover:bottom-0 group-hover:opacity-100
               text-osdag-green font-bold text-base border-t bg-white border-osdag-border rounded-b-lg py-2 transition-all duration-200"
+            onClick={() => handleModuleClick(opt.key, section.label)}
           >
             Open
           </div>
@@ -140,10 +185,13 @@ const SectionCards = ({ section }) => (
       ))}
     </div>
   </div>
-);
+  );
+};
 
 const TabbedModulePage = () => {
-  const { moduleName } = useParams();
+  // Get module name from URL path since we're not using params
+  const moduleName = window.location.pathname.split('/')[1];
+  const navigate = useNavigate();
   const submodules = MODULE_SUBMODULES[moduleName] || [];
   const [activeSubmodule, setActiveSubmodule] = useState(submodules[0]?.key);
   console.log("Active moduleName:", moduleName);
@@ -181,7 +229,7 @@ const TabbedModulePage = () => {
           ? (CONNECTIONS_TAB_CONTENT[activeSubmodule] || [])
           : (GENERIC_SUBMODULE_CONTENT[activeSubmodule] || [])
         ).map((section) => (
-          <SectionCards key={section.label} section={section} />
+          <SectionCards key={section.label} section={section} activeSubmodule={activeSubmodule} />
         ))}
       </div>
     </div>

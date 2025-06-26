@@ -590,7 +590,7 @@ class Connection(Main):
                     flag1 = True
             else:
                 flag1 = True
-            if design_dictionary[KEY_MODULE] == KEY_DISP_FINPLATE:
+            if design_dictionary[KEY_MODULE] == KEY_DISP_FINPLATE or design_dictionary[KEY_MODULE] == 'Fin-Plate-Connection':
                 selected_plate_thk = list(np.float_(design_dictionary[KEY_PLATETHK]))
                 supported_section = Beam(designation=design_dictionary[KEY_SUPTDSEC],material_grade=design_dictionary[KEY_MATERIAL])
                 available_plates = [i for i in selected_plate_thk if i >= supported_section.web_thickness]
@@ -727,7 +727,7 @@ class Connection(Main):
                                   KEY_REPORT_ZPZ: round(self.supported_section.plast_sec_mod_z * 1e-3, 2),
                                   KEY_REPORT_ZPY: round(self.supported_section.plast_sec_mod_y * 1e-3, 2)}
 
-            if self.module == KEY_DISP_FINPLATE or self.module == KEY_DISP_ENDPLATE:
+            if self.module == KEY_DISP_FINPLATE or self.module == 'Fin-Plate-Connection' or self.module == KEY_DISP_ENDPLATE or self.module == 'End-Plate-Connection':
                 self.report_input = \
                     {KEY_MAIN_MODULE: self.mainmodule,
                      KEY_MODULE: self.module,
