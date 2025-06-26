@@ -84,10 +84,19 @@ export const useEngineeringModule = (moduleConfig) => {
       return {
         selectedOption: "Column Flange-Beam-Web", // Default for FinPlate
       };
+    } else if (moduleConfig.cameraKey === "CleatAngle") {
+      return {
+        selectedOption: "Column Flange-Beam-Web", // Default for CleatAngle
+      };
     } else if (moduleConfig.cameraKey === "TensionMember") {
       return {
         selectedProfile: "Back to Back Angles",
         imageSource: moduleConfig.getSectionImage ? moduleConfig.getSectionImage("Back to Back Angles") : null,
+      };
+    }
+    if (moduleConfig.cameraKey === "EndPlate") {
+      return {
+        selectedOption: "Column Flange-Beam-Web", // Default for shear EndPlate
       };
     }
     return {
@@ -190,11 +199,19 @@ export const useEngineeringModule = (moduleConfig) => {
 
   // Initialize module data
   useEffect(() => {
+    console.log("CleatAngle - Initializing module data for:", moduleConfig.designType);
+    console.log("CleatAngle - Module config:", moduleConfig);
+    console.log("CleatAngle - Camera key:", moduleConfig.cameraKey);
+    
     resetToDefaultState();
+    
+    console.log("CleatAngle - After reset, inputs:", inputs);
+    console.log("CleatAngle - After reset, extraState:", extraState);
 
     // Simplified: One API call gets ALL module data
     setTimeout(() => {
       const moduleName = moduleConfig.designType;
+      console.log("CleatAngle - Calling getModuleData with:", moduleName);
       getModuleData(moduleName);
 
     }, 100);
@@ -271,6 +288,10 @@ export const useEngineeringModule = (moduleConfig) => {
   useEffect(() => {
     if (displayOutput) {
       try {
+        console.log("CleatAngle - Processing design data:", designData);
+        console.log("CleatAngle - Design data keys:", Object.keys(designData || {}));
+        console.log("CleatAngle - Display output:", displayOutput);
+        
         const formatedOutput = {};
 
         // Both FinPlate and BeamBeamEndPlate use flat structure: { "Bolt.Diameter": { label, val } }
@@ -278,13 +299,14 @@ export const useEngineeringModule = (moduleConfig) => {
           const newKey = key;
           const label = value.label;
           const val = value.value;
+          console.log(`CleatAngle - Processing key: ${key}, label: ${label}, val: ${val}`);
           if (val !== undefined && val !== null) {
             formatedOutput[newKey] = { label, val };
           }
         }
         setOutput(formatedOutput);
       } catch (error) {
-        console.log(error);
+        console.log("CleatAngle - Error processing design data:", error);
         setOutput(null);
       }
     }

@@ -367,6 +367,7 @@ export const ModuleProvider = ({ children }) => {
   // Simplified: One API call to get ALL module data
   const getModuleData = async (moduleName) => {
     try {
+      console.log("CleatAngle - getModuleData called with moduleName:", moduleName);
       
       if (!moduleName) {
         console.error("No module name provided for getModuleData");
@@ -378,6 +379,8 @@ export const ModuleProvider = ({ children }) => {
       if (email) {
         url += `&email=${encodeURIComponent(email)}`;
       }
+
+      console.log("CleatAngle - Making request to URL:", url);
 
       const response = await fetch(url, {
         method: "GET",
@@ -391,8 +394,11 @@ export const ModuleProvider = ({ children }) => {
       }
 
       const data = await response.json();
+      console.log("CleatAngle - Received data from API:", data);
+      console.log("CleatAngle - ConnectivityList in response:", data.connectivityList);
      
       dispatch({ type: "SET_ALL_MODULE_DATA", payload: data });
+      console.log("CleatAngle - Dispatched SET_ALL_MODULE_DATA");
 
     } catch (error) {
       console.error("Error loading module data:", error);
@@ -514,7 +520,9 @@ export const ModuleProvider = ({ children }) => {
 
   const createDesign = async (param, module_id) => {
     try {
-      console.log("Creating design with params:", param);
+      console.log("CleatAngle - Creating design with params:", param);
+      console.log("CleatAngle - Module ID:", module_id);
+      
       const response = await fetch(`${BASE_URL}calculate-output/${module_id}`, {
         method: "POST",
         mode: "cors",
@@ -525,24 +533,35 @@ export const ModuleProvider = ({ children }) => {
         credentials: "include",
         body: JSON.stringify(param),
       });
+      
+      console.log("CleatAngle - Response status:", response.status);
       const jsonResponse = await response?.json();
-      console.log("modulestate jsonResponse : ", jsonResponse);
+      console.log("CleatAngle - modulestate jsonResponse:", jsonResponse);
+      console.log("CleatAngle - Response data keys:", Object.keys(jsonResponse?.data || {}));
+      console.log("CleatAngle - Response data:", jsonResponse?.data);
+      console.log("CleatAngle - Response logs:", jsonResponse?.logs);
+      
       dispatch({ type: "SET_DESIGN_DATA_AND_LOGS", payload: jsonResponse });
+      
       if (response.status == 201) {
-        // call the thunk to create the CAD Model with the same input parameters
-        try {
-          createCADModel(param, module_id);
-        } catch (error) {
-          console.log("error in creating the CAD model from createDesign");
+        // Only attempt CAD generation if we have valid output
+        if (jsonResponse?.data && Object.keys(jsonResponse.data).length > 0) {
+          console.log("CleatAngle - Valid output found, attempting CAD generation");
+          try {
+            createCADModel(param, module_id);
+          } catch (error) {
+            console.log("CleatAngle - Error in creating the CAD model from createDesign:", error);
+          }
+        } else {
+          console.log("CleatAngle - No valid output found, skipping CAD generation");
         }
       } else if (response.status == 400) {
-        console.log("BAD input values", response);
-
+        console.log("CleatAngle - BAD input values", response);
         // set the render CAD to false to display the default image only
         dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
       }
     } catch (error) {
-      console.log("Error in creating the design");
+      console.log("CleatAngle - Error in creating the design:", error);
     }
   };
 

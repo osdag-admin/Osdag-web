@@ -1,7 +1,7 @@
 export const endPlateConfig = {
   sessionName: "End Plate Connection",
   routePath: "/design/connections/shear/end_plate",
-  designType: "Shear-Connection",
+  designType: "End-Plate-Connection",
   cameraKey: "EndPlate",
 
   defaultInputs: {
@@ -9,14 +9,14 @@ export const endPlateConfig = {
     bolt_grade: [],
     bolt_type: "Bearing Bolt",
     connector_material: "E 250 (Fe 410 W)A",
-    load_shear: "70",
-    load_axial: "30",
-    module: "End Plate Connection",
+    load_shear: "20",
+    load_axial: "10",
+    connectivity: "Column Flange-Beam-Web",
     plate_thickness: [],
     beam_section: "MB 300",
     column_section: "HB 150",
-    primary_beam: "JB 200",
-    secondary_beam: "JB 150",
+    primary_beam: "MB 300",
+    secondary_beam: "MB 300",
     supported_material: "E 165 (Fe 290)",
     supporting_material: "E 165 (Fe 290)",
     bolt_hole_type: "Standard",
@@ -28,7 +28,7 @@ export const endPlateConfig = {
     detailing_corr_status: "No",
     design_method: "Limit State Design",
     bolt_tension_type: "Pre-tensioned",
-    module: "End Plate",
+    module: "End Plate Connection",
   },
 
   modalConfig: [
@@ -63,31 +63,56 @@ export const endPlateConfig = {
     },
   ],
 
-  validateInputs: (inputs) => {
-    if (
-      !inputs.beam_section ||
-      !inputs.column_section ||
-      inputs.beam_section === "Select Section" ||
-      inputs.column_section === "Select Section"
-    ) {
-      return { isValid: false, message: "Please input all the fields" };
+  validateInputs: (inputs, extraState) => {
+    const connectivity = extraState?.selectedOption || inputs.connectivity;
+    
+    if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
+      if (
+        !inputs.beam_section ||
+        !inputs.column_section ||
+        inputs.beam_section === "Select Section" ||
+        inputs.column_section === "Select Section" ||
+        inputs.beam_section === "" ||
+        inputs.column_section === ""
+      ) {
+        return { isValid: false, message: "Please select all sections from the dropdown lists" };
+      }
+    } else if (connectivity === "Beam-Beam") {
+      if (!inputs.primary_beam || !inputs.secondary_beam || 
+          inputs.primary_beam === "" || inputs.secondary_beam === "") {
+        return { isValid: false, message: "Please select all beam sections from the dropdown lists" };
+      }
     }
     return { isValid: true };
   },
 
-  buildSubmissionParams: (inputs, allSelected, lists) => {
-    return {
+  buildSubmissionParams: (inputs, allSelected, lists, extraState) => {
+    const conn_map = {
+      "Column Flange-Beam-Web": "Column Flange-Beam Web",
+      "Column Web-Beam-Web": "Column Web-Beam Web", 
+      "Beam-Beam": "Beam-Beam",
+    };
+    
+    const connectivity = extraState?.selectedOption || inputs.connectivity || "Column Flange-Beam-Web";
+    
+    console.log("End Plate - buildSubmissionParams inputs:", inputs);
+    console.log("End Plate - connectivity:", connectivity);
+    console.log("End Plate - extraState:", extraState);
+    console.log("End Plate - allSelected:", allSelected);
+    console.log("End Plate - lists:", lists);
+    
+    const params = {
       "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
       "Bolt.Diameter": allSelected.bolt_diameter
-        ? boltDiameterList
+        ? lists.boltDiameterList
         : inputs.bolt_diameter,
       "Bolt.Grade": allSelected.bolt_grade
-        ? propertyClassList
+        ? lists.propertyClassList
         : inputs.bolt_grade,
       "Bolt.Slip_Factor": inputs.bolt_slip_factor,
       "Bolt.TensionType": inputs.bolt_tension_type,
       "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
-      Connectivity: conn_map[selectedOption],
+      "Connectivity": conn_map[connectivity] || connectivity,
       "Connector.Material": inputs.connector_material,
       "Design.Design_Method": inputs.design_method,
       "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
@@ -95,19 +120,21 @@ export const endPlateConfig = {
       "Detailing.Gap": inputs.detailing_gap,
       "Load.Axial": inputs.load_axial || "",
       "Load.Shear": inputs.load_shear || "",
-      Material: inputs.connector_material,
-      "Member.Supported_Section.Designation": inputs.beam_section,
+      "Material": inputs.connector_material,
+      "Member.Supported_Section.Designation": connectivity === "Beam-Beam" ? inputs.secondary_beam : inputs.beam_section,
       "Member.Supported_Section.Material": inputs.supported_material,
-      "Member.Supporting_Section.Designation": inputs.column_section,
+      "Member.Supporting_Section.Designation": connectivity === "Beam-Beam" ? inputs.primary_beam : inputs.column_section,
       "Member.Supporting_Section.Material": inputs.supporting_material,
-      Module: "End Plate Connection",
+      "Module": "End-Plate-Connection",
       "Weld.Fab": inputs.weld_fab,
       "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
       "Connector.Plate.Thickness_List": allSelected.plate_thickness
-        ? thicknessList
+        ? lists.thicknessList
         : inputs.plate_thickness,
-      Module: "End Plate Connection",
     };
+    
+    console.log("End Plate - Final submission params:", params);
+    return params;
   },
 
   inputSections: [
@@ -117,56 +144,53 @@ export const endPlateConfig = {
         {
           key: "connectivity",
           label: "Connectivity",
-          type: "select",
-          options: "connectivityList",
-          required: true,
-          onChange: (value, inputs, setInputs) => {
-            setInputs({ ...inputs, connectivity: value });
-          },
+          type: "connectivitySelect"
         },
-        ...(inputs.connectivity === "Beam-Beam"
-          ? [
-              {
-                key: "primary_beam",
-                label: "Primary Beam*",
-                type: "select",
-                options: "beamList",
-                defaultValue: "beamList[2]",
-                required: true,
-              },
-              {
-                key: "secondary_beam",
-                label: "Secondary Beam*",
-                type: "select",
-                options: "beamList",
-                defaultValue: "beamList[0]",
-                required: true,
-              },
-            ]
-          : [
-              {
-                key: "column_section",
-                label: "Column Section*",
-                type: "select",
-                options: "columnList",
-                defaultValue: "columnList[0]",
-                required: true,
-              },
-              {
-                key: "beam_section",
-                label: "Beam Section*",
-                type: "select",
-                options: "beamList",
-                defaultValue: "beamList[28]",
-                required: true,
-              },
-            ]),
+        {
+          key: "primary_beam",
+          label: "Primary Beam*",
+          type: "select",
+          options: "beamList",
+          conditionalDisplay: (extraState) => {
+            const connectivity = extraState?.selectedOption;
+            return connectivity === "Beam-Beam";
+          }
+        },
+        {
+          key: "secondary_beam",
+          label: "Secondary Beam*",
+          type: "select",
+          options: "beamList",
+          conditionalDisplay: (extraState) => {
+            const connectivity = extraState?.selectedOption;
+            return connectivity === "Beam-Beam";
+          }
+        },
+        {
+          key: "column_section",
+          label: "Column Section*",
+          type: "select",
+          options: "columnList",
+          conditionalDisplay: (extraState) => {
+            const connectivity = extraState?.selectedOption;
+            return connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web";
+          }
+        },
+        {
+          key: "beam_section",
+          label: "Beam Section*",
+          type: "select",
+          options: "beamList",
+          conditionalDisplay: (extraState) => {
+            const connectivity = extraState?.selectedOption;
+            return connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web";
+          }
+        },
         {
           key: "connector_material",
           label: "Material",
           type: "select",
           options: "materialList",
-          defaultValue: "materialList[0].Grade",
           onChange: (value, inputs, setInputs, materialList, setShowModal) => {
             if (value == -1) {
               setShowModal(true);
@@ -224,12 +248,11 @@ export const endPlateConfig = {
       fields: [
         {
           key: "plate_thickness",
-          label: "Type",
-          type: "select",
-          options: [
-            { value: "Outside", label: "Outside" },
-            { value: "Outside + Inside", label: "Outside + Inside" },
-          ],
+          label: "Thickness(mm)",
+          type: "customizable",
+          selectionKey: "thicknessSelect",
+          modalKey: "plateThickness",
+          dataSource: "thicknessList",
         },
       ],
     },

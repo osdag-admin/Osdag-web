@@ -1,4 +1,4 @@
-export const finPlateOutputConfig = {
+export const cleatAngleOutputConfig = {
   sections: {
     "Cleat Angle": [
       { key: "Cleat.Angle", label: "Cleat Angle Designation" },
@@ -32,10 +32,9 @@ export const finPlateOutputConfig = {
 
   modals: {
     SupportedSpacingModal: { type: "spacing", buttonText: "Supported Spacing" },
-    SupportingSpacingModal: {
-      type: "spacing",
-      buttonText: "Supporting Spacing",
-    },
+    SupportingSpacingModal: { type: "spacing", buttonText: "Supporting Spacing" },
+    CapacityModal_supported: { type: "details", buttonText: "Capacity Details" },
+    CapacityModal_supporting: { type: "details", buttonText: "Capacity Details" },
   },
 
   modalTypes: {
@@ -63,7 +62,7 @@ export const finPlateOutputConfig = {
 
   modalData: {
     spacing: {
-      Spacing_Supported: [
+      SupportedSpacingModal: [
         { key: "Bolt.Bearing_supported", label: "Bearing Capacity (kN)" },
         { key: "Bolt.Shear_supported", label: "Shear Capacity (kN)" },
         { key: "Bolt.Betalg_supported", label: "β<sub>lg</sub>" },
@@ -71,8 +70,25 @@ export const finPlateOutputConfig = {
         { key: "Bolt.Capacity_supported", label: "Bolt Value (kN)" },
         { key: "Bolt.Force (kN)_supported", label: "Bolt Shear Force (kN)" },
       ],
-
-      Spacing_Supporting: [
+      SupportingSpacingModal: [
+        { key: "Bolt.Bearing_supporting", label: "Bearing Capacity (kN)" },
+        { key: "Bolt.Shear_supporting", label: "Shear Capacity (kN)" },
+        { key: "Bolt.Betalg_supporting", label: "β<sub>lg</sub>" },
+        { key: "Bolt.Betalj_supporting", label: "β<sub>lj</sub>" },
+        { key: "Bolt.Capacity_supporting", label: "Bolt Value (kN)" },
+        { key: "Bolt.Force (kN)_supporting", label: "Bolt Shear Force (kN)" },
+      ],
+    },
+    details: {
+      CapacityModal_supported: [
+        { key: "Bolt.Bearing_supported", label: "Bearing Capacity (kN)" },
+        { key: "Bolt.Shear_supported", label: "Shear Capacity (kN)" },
+        { key: "Bolt.Betalg_supported", label: "β<sub>lg</sub>" },
+        { key: "Bolt.Betalj_supported", label: "β<sub>lj</sub>" },
+        { key: "Bolt.Capacity_supported", label: "Bolt Value (kN)" },
+        { key: "Bolt.Force (kN)_supported", label: "Bolt Shear Force (kN)" },
+      ],
+      CapacityModal_supporting: [
         { key: "Bolt.Bearing_supporting", label: "Bearing Capacity (kN)" },
         { key: "Bolt.Shear_supporting", label: "Shear Capacity (kN)" },
         { key: "Bolt.Betalg_supporting", label: "β<sub>lg</sub>" },

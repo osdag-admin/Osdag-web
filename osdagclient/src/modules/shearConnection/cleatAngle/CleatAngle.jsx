@@ -1,7 +1,7 @@
 import React from "react";
 import { EngineeringModule } from "../../shared/components/EngineeringModule";
 import { cleatAngleConfig } from "./configs/cleatAngleConfig";
-import CleatAngleOutputDock from "./components/CleanAngleOutputDock";
+import CleatAngleOutputDock from "./components/CleatAngleOutputDock";
 import { menuItems } from "../../shared/utils/moduleUtils";
 
 function CleatAngle() {

@@ -22,7 +22,6 @@ import LoginPage from "./components/userAuth/LoginPage";
 
 // jwt imports
 import jwt_decode from "jwt-decode";
-import EndPlate from "./components/shearConnection/EndPlate";
 import SeatedAngle from "./components/shearConnection/SeatedAngle";
 import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
 import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
@@ -35,8 +34,8 @@ import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndP
 import Homepage from "./homepage/pages/Homepage";
 import FinPlate from "./modules/shearConnection/endPlate/FinPlate";
 import CleatAngle from "./modules/shearConnection/cleatAngle/CleatAngle";
-
-let renderedOnce = false
+import EndPlate from "./modules/shearConnection/endPlate/EndPlate";
+let renderedOnce = false;
 
 function App() {
   // State to track user authentication status

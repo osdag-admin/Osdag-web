@@ -195,7 +195,9 @@ export default (state, action) => {
           }
       case 'SET_ALL_MODULE_DATA':
           // Single action to set all module data at once
-        
+          console.log("CleatAngle - ModuleReducer SET_ALL_MODULE_DATA action received");
+          console.log("CleatAngle - Action payload:", action.payload);
+          console.log("CleatAngle - ConnectivityList in payload:", action.payload.connectivityList);
           
           const newState = {
               ...state,
@@ -226,7 +228,8 @@ export default (state, action) => {
               endPlateTypeList: action.payload.endPlateTypeList || [],
           };
           
-        
+          console.log("CleatAngle - New state after SET_ALL_MODULE_DATA:", newState);
+          console.log("CleatAngle - New connectivity list:", newState.connectivityList);
           
           return newState;
       case 'RESET_MODULE_STATE':

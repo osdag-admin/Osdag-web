@@ -18,8 +18,12 @@ class CleatAngleInputData(InputDataBase):
             response['connectivityList'] = ['Column Flange-Beam-Web', 'Column Web-Beam-Web', 'Beam-Beam']
 
             # Column and Beam Lists
-            response['columnList'] = list(Columns.objects.values_list('Designation', flat=True))
-            response['beamList'] = list(Beams.objects.values_list('Designation', flat=True))
+            columnList = list(Columns.objects.values_list('Designation', flat=True))
+            beamList = list(Beams.objects.values_list('Designation', flat=True))
+            print(f"CleatAngle - First 10 columns: {columnList[:10]}")
+            print(f"CleatAngle - First 10 beams: {beamList[:10]}")
+            response['columnList'] = columnList
+            response['beamList'] = beamList
 
             # Material List
             materialList = list(Material.objects.all().values())

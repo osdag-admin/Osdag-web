@@ -13,7 +13,6 @@ import sys
 import os
 from typing import Dict, Any, List
 import traceback
-
 old_stdout = sys.stdout  # Backup log
 sys.stdout = open(os.devnull, "w")  # redirect stdout
 sys.stdout = old_stdout  # Reset log
@@ -270,19 +269,34 @@ def create_module() -> CleatAngleConnection:
 def create_from_input(input_values: Dict[str, Any]) -> CleatAngleConnection:
     """Create an instance of the cleat angle connection module design class from input values."""
     # validate_input(input_values)
+    print('CleatAngle - create_from_input called with input_values:', input_values)
+    
     try : 
         module = create_module()  # Create module instance.
+        print('CleatAngle - create_module successful, module:', module)
     except Exception as e : 
         print('e in create_module : ' , e) 
         print('error in creating module')
+        traceback.print_exc()
+        return None
     
     # Set the input values on the module instance.
+    print('CleatAngle - About to call module.set_input_values')
+    print('CleatAngle - Section designations in input:')
+    print('  - Supporting Section (Column):', input_values.get('Member.Supporting_Section.Designation'))
+    print('  - Supported Section (Beam):', input_values.get('Member.Supported_Section.Designation'))
+    print('  - Connectivity:', input_values.get('Connectivity'))
+    
     try : 
         module.set_input_values(input_values)
+        print('CleatAngle - module.set_input_values successful')
     except Exception as e : 
+        
         traceback.print_exc()
         print('e in set_input_values : ' , e)
         print('error in setting the input values')
+        print('CleatAngle - Exception type:', type(e))
+        print('CleatAngle - Exception args:', e.args)
 
     return module
 
@@ -297,17 +311,67 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         }
     }
     """
+    print('CleatAngle - generate_output called with input_values:', input_values)
+    
     output = {}  # Dictionary for formatted values
     module = create_from_input(input_values)  # Create module from input.
     print('module : ' , module)
     print('type of module : ' , type(module))
 
-    # Generate output values in unformatted form.
-    raw_output_text = module.output_values(True)
-    raw_output_spacing = module.spacing(True)  # Generate output val
-    # raw_output_capacities = module.capacities(True)
-    raw_bolt_capacity_supported = module.bolt_capacity_details_supported(True)
-    raw_bolt_capacity_suporting = module.bolt_capacity_details_suporting(True)
+    if module is None:
+        print('CleatAngle - Module creation failed, returning empty output')
+        return {}, []
+
+    # Check if module has required attributes
+    if not hasattr(module, 'output_values'):
+        print('CleatAngle - Module does not have output_values method')
+        return {}, []
+
+    print('CleatAngle - About to call module output methods')
+    
+    try:
+        # Check if module has required attributes for output generation
+        required_attrs = ['cleat', 'bolt', 'sptd_leg', 'spting_leg']
+        missing_attrs = []
+        for attr in required_attrs:
+            if not hasattr(module, attr):
+                missing_attrs.append(attr)
+        
+        if missing_attrs:
+            print(f'CleatAngle - Module missing required attributes: {missing_attrs}')
+            print('CleatAngle - This indicates set_input_values failed. Module not properly initialized.')
+            return {}, []
+            
+        # Generate output values in unformatted form.
+        raw_output_text = module.output_values(True)
+        print('CleatAngle - raw_output_text:', raw_output_text)
+        print(f'CleatAngle - raw_output_text length: {len(raw_output_text)}')
+    except Exception as e:
+        print('CleatAngle - Error calling output_values:', e)
+        traceback.print_exc()
+        raw_output_text = []
+        
+    try:
+        raw_output_spacing = module.spacing(True)  # Generate output val
+        print('CleatAngle - raw_output_spacing:', raw_output_spacing)
+    except Exception as e:
+        print('CleatAngle - Error calling spacing:', e)
+        raw_output_spacing = []
+        
+    try:
+        # raw_output_capacities = module.capacities(True)
+        raw_bolt_capacity_supported = module.bolt_capacity_details_supported(True)
+        print('CleatAngle - raw_bolt_capacity_supported:', raw_bolt_capacity_supported)
+    except Exception as e:
+        print('CleatAngle - Error calling bolt_capacity_details_supported:', e)
+        raw_bolt_capacity_supported = []
+        
+    try:
+        raw_bolt_capacity_suporting = module.bolt_capacity_details_suporting(True)
+        print('CleatAngle - raw_bolt_capacity_suporting:', raw_bolt_capacity_suporting)
+    except Exception as e:
+        print('CleatAngle - Error calling bolt_capacity_details_suporting:', e)
+        raw_bolt_capacity_suporting = []
     
     # Add suffixes to duplicate-prone supported keys
     raw_supported = [
@@ -323,7 +387,19 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     ]
     
     logs = module.logs
+    print(f'CleatAngle - Module logs: {logs}')
+    print(f'CleatAngle - Module logs length: {len(logs)}')
+    print(f'CleatAngle - Module logs type: {type(logs)}')
+    
+    # Ensure logs is a list if empty
+    if not logs:
+        logs = ["No logs generated"]
+        print("CleatAngle - Setting default logs message")
+    
     raw_output = raw_output_spacing + raw_output_text + raw_supported + raw_supporting
+    print(f'CleatAngle - Total raw_output items: {len(raw_output)}')
+    print(f'CleatAngle - Raw output sample: {raw_output[:5] if raw_output else "Empty"}')
+    
     # os.system("clear")
     # Loop over all the text values and add them to ouptut dict.
     for param in raw_output:
@@ -331,11 +407,16 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             key = param[0]  # id/key
             label = param[1]  # label text.
             value = param[3]  # Value as string.
+            print(f'CleatAngle - Adding to output: {key} = {value}')
             output[key] = {
                 "key": key,
                 "label": label,
                 "value": value
             }  # Set label, key and value in output
+    
+    print(f'CleatAngle - Final output keys: {list(output.keys())}')
+    print(f'CleatAngle - Final output size: {len(output)}')
+    print(f'CleatAngle - Final logs being returned: {logs}')
     return output, logs
 
 #we do not have plate in just like in finplate case, we have cleatAngle which is combination of angle & nutbolts
@@ -344,7 +425,22 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     if section not in ("Model", "Beam", "Column", "CleatAngle"):  # Error checking: If section is valid.
         raise InvalidInputTypeError(
             "section", "'Model', 'Beam', 'Column' or 'CleatAngle'")
-    module = create_from_input(input_values)  # Cr`eate module from input.
+    
+    # First check if we have valid output before attempting CAD generation
+    try:
+        output, logs = generate_output(input_values)
+        print(f'CleatAngle CAD - Checking output before CAD generation: {len(output)} keys')
+        
+        if not output or len(output) == 0:
+            print('CleatAngle CAD - No valid output found. Cannot generate CAD model.')
+            raise ValueError("Cannot generate CAD model: No valid design output found. Please ensure the design calculation completed successfully.")
+            
+        print('CleatAngle CAD - Valid output found, proceeding with CAD generation')
+    except Exception as e:
+        print(f'CleatAngle CAD - Error checking output: {e}')
+        raise ValueError(f"Cannot generate CAD model: Design calculation failed - {str(e)}")
+    
+    module = create_from_input(input_values)  # Create module from input.
     print('module from input values : ' , module)
     # Object that will create the CAD model.
     try : 

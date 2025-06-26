@@ -599,13 +599,15 @@ class CleatAngleConnection(ShearConnection):
     #     return super().set_input_values(design_dictionary)
 
     def set_input_values(self, design_dictionary):
-        print(design_dictionary)
+        print("CleatAngle - set_input_values called with:", design_dictionary)
 
         super().set_input_values(design_dictionary)
         self.module = design_dictionary[KEY_MODULE]
         self.cleat_list = design_dictionary[KEY_ANGLE_LIST]
         self.cleat_material_grade = design_dictionary[KEY_CONNECTOR_MATERIAL]
-        print(self.cleat_list)
+        print("CleatAngle - cleat_list:", self.cleat_list)
+        print("CleatAngle - cleat_material_grade:", self.cleat_material_grade)
+        
         self.bolt2 = Bolt(grade=design_dictionary[KEY_GRD], diameter=design_dictionary[KEY_D],
                          bolt_type=design_dictionary[KEY_TYP],
                          bolt_hole_type=design_dictionary[KEY_DP_BOLT_HOLE_TYPE],
@@ -617,15 +619,20 @@ class CleatAngleConnection(ShearConnection):
         self.sptd_leg = Plate(material_grade=design_dictionary[KEY_CONNECTOR_MATERIAL],gap=design_dictionary[KEY_DP_DETAILING_GAP])
         self.spting_leg = Plate(material_grade=design_dictionary[KEY_CONNECTOR_MATERIAL],gap=design_dictionary[KEY_DP_DETAILING_GAP])
 
-        # logger.info("Input values are set. Checking if angle of required thickness is available")
-
+        print("CleatAngle - About to call check_available_cleat_thk")
         self.check_available_cleat_thk()
 
     def check_available_cleat_thk(self):
+        print("CleatAngle - check_available_cleat_thk called")
+        print("CleatAngle - cleat_list:", self.cleat_list)
+        print("CleatAngle - connectivity:", self.connectivity)
+        
         self.thickness_list = []
         self.cleat_list_thk = []
         self.leg_lengths = []
         min_thickness = self.supported_section.web_thickness / 2
+        print("CleatAngle - min_thickness required:", min_thickness)
+        
         if self.connectivity == VALUES_CONN_1[0]:
             self.available_length = (self.supporting_section.flange_width - self.supported_section.web_thickness )/2
         elif self.connectivity == VALUES_CONN_1[1]:
@@ -633,38 +640,56 @@ class CleatAngleConnection(ShearConnection):
                                 2 * self.supporting_section.root_radius - self.supported_section.web_thickness) / 2
         else:
             self.available_length = math.inf
+            
+        print("CleatAngle - available_length:", self.available_length)
 
         for designation in self.cleat_list:
-            cleat = Angle(designation=designation, material_grade=self.cleat_material_grade)
-            if cleat.thickness*2 >= self.supported_section.web_thickness and cleat.leg_a_length <= self.available_length:
-                self.cleat_list_thk.append(designation)
-                print("added", designation)
-                print(self.cleat_list_thk)
-            else:
-                if cleat.thickness not in self.thickness_list:
-                    self.thickness_list.append(cleat.thickness)
-                    print("added", designation, self.thickness_list)
-                if cleat.leg_a_length not in self.leg_lengths:
-                    self.leg_lengths.append(cleat.leg_a_length)
-                    print("added", designation, self.leg_lengths)
+            print(f"CleatAngle - Checking angle designation: {designation}")
+            try:
+                cleat = Angle(designation=designation, material_grade=self.cleat_material_grade)
+                print(f"CleatAngle - Angle {designation} - thickness: {cleat.thickness}, leg_a_length: {cleat.leg_a_length}")
+                
+                if cleat.thickness*2 >= self.supported_section.web_thickness and cleat.leg_a_length <= self.available_length:
+                    self.cleat_list_thk.append(designation)
+                    print(f"CleatAngle - Added {designation} to cleat_list_thk")
+                    print("CleatAngle - cleat_list_thk:", self.cleat_list_thk)
+                else:
+                    print(f"CleatAngle - Rejected {designation} - thickness check: {cleat.thickness*2 >= self.supported_section.web_thickness}, length check: {cleat.leg_a_length <= self.available_length}")
+                    if cleat.thickness not in self.thickness_list:
+                        self.thickness_list.append(cleat.thickness)
+                        print("CleatAngle - added thickness", designation, self.thickness_list)
+                    if cleat.leg_a_length not in self.leg_lengths:
+                        self.leg_lengths.append(cleat.leg_a_length)
+                        print("CleatAngle - added leg_length", designation, self.leg_lengths)
+            except Exception as e:
+                print(f"CleatAngle - Error creating Angle {designation}: {e}")
 
-        # self.cleat_list_leg = []
+        print("CleatAngle - Final cleat_list_thk:", self.cleat_list_thk)
+        
         if self.cleat_list_thk:
-            # logger.info("Required cleat thickness available. Doing preliminary member checks")
+            print("CleatAngle - Found suitable angles, calling member_capacity")
             self.member_capacity()
         else:
+            print("CleatAngle - No suitable angles found")
             if self.connectivity in VALUES_CONN_1:
-                logger.error("Cleat Angle should have minimum thickness of {} and maximum leg length of {}."
-                             .format(min_thickness,round(self.available_length,2)))
-                self.logs.append({"msg":"Cleat Angle should have minimum thickness of {} and maximum leg length of {}."
-                             .format(min_thickness,round(self.available_length,2))})
+                error_msg = "Cleat Angle should have minimum thickness of {} and maximum leg length of {}.".format(min_thickness,round(self.available_length,2))
+                print("CleatAngle - Error:", error_msg)
+                logger.error(error_msg)
+                self.logs.append({"msg": error_msg})
             else:
-                logger.error(
-                    "Cleat Angle should have minimum thickness of %2.2f." % min_thickness)
-                self.logs.append({"msg":"Cleat Angle should have minimum thickness of %2.2f." % min_thickness})
+                error_msg = "Cleat Angle should have minimum thickness of %2.2f." % min_thickness
+                print("CleatAngle - Error:", error_msg)
+                logger.error(error_msg)
+                self.logs.append({"msg": error_msg})
     def member_capacity(self):
+        print("CleatAngle - member_capacity called")
         super(CleatAngleConnection, self).member_capacity()
         self.supported_section.low_shear_capacity = round(0.6 * self.supported_section.shear_yielding_capacity, 2)
+
+        print("CleatAngle - supported_section.low_shear_capacity:", self.supported_section.low_shear_capacity / 1000)
+        print("CleatAngle - load.shear_force:", self.load.shear_force)
+        print("CleatAngle - supporting_section.tension_yielding_capacity:", self.supporting_section.tension_yielding_capacity / 1000)
+        print("CleatAngle - load.axial_force:", self.load.axial_force)
 
         if self.supported_section.low_shear_capacity / 1000 > self.load.shear_force and \
                     self.supporting_section.tension_yielding_capacity / 1000 > self.load.axial_force:
@@ -677,21 +702,21 @@ class CleatAngleConnection(ShearConnection):
                 self.load.shear_force = min(round(0.15 * self.supported_section.shear_yielding_capacity / 1000, 0),
                                             40.0)
 
-            print("preliminary member check is satisfactory. Checking available Bolt Diameters")
+            print("CleatAngle - preliminary member check is satisfactory. Checking available Bolt Diameters")
             self.supported_section.design_status = True
             self.select_bolt_dia_beam()
 
         else:
+            print("CleatAngle - Member capacity check failed")
             self.design_status = False
-            logger.warning(
-                " : The shear yielding capacity (low shear case) {} and/or tension yielding capacity {} is less "
-                "than the applied load. Define a large/larger section(s) or decrease the load."
-                .format(round(self.supported_section.low_shear_capacity / 1000, 2),
-                        round(self.supported_section.tension_yielding_capacity / 1000, 2)))
-            print(
-                "The preliminary member check(s) have failed. Select a large/larger section(s) or decrease load and re-design.")
+            error_msg = " : The shear yielding capacity (low shear case) {} and/or tension yielding capacity {} is less than the applied load. Define a large/larger section(s) or decrease the load.".format(round(self.supported_section.low_shear_capacity / 1000, 2), round(self.supporting_section.tension_yielding_capacity / 1000, 2))
+            print("CleatAngle - Error:", error_msg)
+            logger.warning(error_msg)
+            print("CleatAngle - The preliminary member check(s) have failed. Select a large/larger section(s) or decrease load and re-design.")
 
     def select_bolt_dia_beam(self):
+        print("CleatAngle - select_bolt_dia_beam called")
+        print("CleatAngle - cleat_list_thk:", self.cleat_list_thk)
 
         self.output = []
         self.beta_lj_sptd = 1.0
@@ -699,14 +724,18 @@ class CleatAngleConnection(ShearConnection):
         trial = 0
 
         self.min_plate_height = self.supported_section.min_plate_height()
-        print(self.min_plate_height, "is min height")
+        print("CleatAngle - min_plate_height:", self.min_plate_height)
         self.max_plate_height = self.supported_section.max_plate_height(self.connectivity,
                                                                               self.supported_section.notch_ht)
-
-
+        print("CleatAngle - max_plate_height:", self.max_plate_height)
 
         for self.cleatangle in self.cleat_list_thk:
+            print(f"CleatAngle - Trying cleat angle: {self.cleatangle}")
             self.cleat = Angle(designation=self.cleatangle, material_grade=self.cleat_material_grade)
+            print(f"CleatAngle - Created cleat object: {self.cleat}")
+            print(f"CleatAngle - cleat.designation: {self.cleat.designation}")
+            print(f"CleatAngle - cleat.thickness: {self.cleat.thickness}")
+            print(f"CleatAngle - cleat.leg_a_length: {self.cleat.leg_a_length}")
             # self.sptd_leg.thickness_provided = self.cleat.thickness
             bolts_required_previous = 2
             self.bolt.bolt_PC_provided = self.bolt.bolt_grade[-1]

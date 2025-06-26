@@ -74,10 +74,17 @@ class CleatAngleOutputData(APIView):
         new_logs = []
         try:
             try:
+                print('Calling module_api.generate_output with input_values:', input_values)
                 output, logs = module_api.generate_output(input_values)
+                print('generate_output returned - output:', output)
+                print('generate_output returned - logs:', logs)
             except Exception as e : 
                 print('e : ' , e)
                 print('Error in generating the output and logs')
+                print('Exception type:', type(e))
+                print('Exception args:', e.args)
+                import traceback
+                print('Full traceback:', traceback.format_exc())
             
             for log in logs:
                 # removing duplicates
@@ -86,11 +93,16 @@ class CleatAngleOutputData(APIView):
 
         except Exception as e:
             print('Exception raised : ' , e)
+            print('Exception type:', type(e))
+            print('Exception args:', e.args)
+            import traceback
+            print('Full traceback:', traceback.format_exc())
             return JsonResponse({"data": {}, "logs": new_logs,
                                 "success": False, "error": str(e)}, safe=False , status = 400)
         
         print('new_logs : ' , new_logs)
         print('type of new_logs : ' , type(new_logs))
+        print('Final output being returned:', output)
 
         return JsonResponse({"data": output, "logs": new_logs, "success": True}, safe=False , status = 201)
 
