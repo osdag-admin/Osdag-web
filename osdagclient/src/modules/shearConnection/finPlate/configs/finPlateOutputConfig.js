@@ -1,197 +1,88 @@
-export const coverPlateBoltedOutputConfig = {
-  // Output sections and field mappings
+export const finPlateOutputConfig = {
   sections: {
-    Bolt: [
+    "Bolt": [
       { key: "Bolt.Diameter", label: "Diameter (mm)" },
-      { key: "Bolt.PropertyClass", label: "Property Class" },
-      { key: "Bolt.ShearCapacity", label: "shear Capacity (KN)" },
-      { key: "Bolt.BoltForce", label: "Bolt Force (KN)" },
-      { key: "Bolt.BoltColumn", label: "Bolt Column (nos)" },
-      { key: "Bolt.BoltRows", label: "Bolt Rows (nos)" },
-      { key: "BoltCapacityModal", label: "Capacity" },
+      { key: "Bolt.Shear", label: "Shear Capacity (kN)" },
+      { key: "Bolt.Bearing", label: "Bearing Capacity (kN)" },
+      { key: "Bolt.Capacity", label: "Capacity (kN)" },
+      { key: "Bolt.Force (kN)", label: "Bolt Force (kN)" },
+      { key: "Bolt.Line", label: "Bolt Columns (nos)" },
+      { key: "Bolt.OneLine", label: "Bolt Rows (nos)" },
+      { key: "SpacingModal", label: "Spacing" },
     ],
-    Plate: [
+    "Plate": [
       { key: "Plate.Thickness", label: "Thickness (mm)" },
       { key: "Plate.Height", label: "Height (mm)" },
       { key: "Plate.Length", label: "Length (mm)" },
-      { key: "PlateSpacingModal", label: "Spacing" },
+      { key: "PlateCapacityModal", label: "Capacity" },
     ],
     "Section Details": [
-      { key: "SectionDetailsCapacityModal", label: "Capacity" },
+      { key: "SectionCapacityModal", label: "Capacity" },
     ],
-    Weld: [
+    "Weld": [
       { key: "Weld.Size", label: "Size (mm)" },
       { key: "Weld.Strength", label: "Strength (N/mm2)" },
       { key: "Weld.Stress", label: "Stress (N/mm)" },
     ],
   },
 
-  // Modal trigger mappings
   modals: {
-    BoltCapacityModal: { type: "capacity", buttonText: "Bolt Capacity" },
-    PlateSpacingModal: { type: "spacing", buttonText: "Plate Spacing" },
-    SectionDetailsCapacityModal: {
-      type: "capacity",
-      buttonText: "Sectin Details Capacity",
-    },
+    SpacingModal: { type: "spacing", buttonText: "Spacing" },
+    PlateCapacityModal: { type: "capacity", buttonText: "Capacity" },
+    SectionCapacityModal: { type: "capacity", buttonText: "Capacity" }
   },
 
-  // Modal type configurations (NO JSX HERE)
   modalTypes: {
     spacing: {
       title: "Spacing Details",
       width: "68%",
-      layout: "two-column", // ← Configuration instead of JSX
+      layout: "two-column",
       hasImage: true,
+      note: "Representative image for Spacing Details - 3 x 3 pattern considered"
     },
-
-    details: {
-      title: "Capacity Details",
-      width: "35%",
-      layout: "single-column", // ← Configuration instead of JSX
-      hasImage: false,
-    },
-
     capacity: {
-      title: "Plate Capacity Details",
+      title: "Capacity Details", 
       width: "68%",
-      layout: "two-column", // ← Configuration instead of JSX
+      layout: "capacity-complex",
       hasImage: true,
-    },
+      note: "Representative image for Failure Pattern (Half Plate) - 2 x 3 Bolt pattern considered"
+    }
   },
 
-  // Modal data - what fields appear in each modal
   modalData: {
     spacing: {
-      WebSpacingDetailsModal: [
-        {
-          key: "Web_plate.pitch_provided_web_spacing",
-          label: "Pitch Distance (mm)",
-        },
-        {
-          key: "Web_plate.end_dist_provided _web_spacing",
-          label: "End Distance (mm)",
-        },
-        {
-          key: "Web_plate.gauge_provided _web_spacing",
-          label: "Gauge Distance (mm)",
-        },
-        {
-          key: "Web_plate.edge_dist_provided_web_spacing",
-          label: "Edge Distance (mm)",
-        },
-      ],
-      FlangeSpacingDetailsModal: [
-        {
-          key: "Flange_plate.pitch_provided_flange_spacing",
-          label: "Pitch Distance (mm)",
-        },
-        {
-          key: "Flange_plate.end_dist_provided _flange_spacing",
-          label: "End Distance",
-        },
-        {
-          key: "Flange_plate.gauge_provided _flange_spacing",
-          label: "Gauge Distance (mm)",
-        },
-        {
-          key: "Flange_plate.edge_dist_provided_flange_spacing",
-          label: "Edge Distance (mm)",
-        },
-      ],
+      SpacingModal: [
+        { key: "Bolt.Pitch", label: "Pitch Distance (mm)" },
+        { key: "Bolt.EndDist", label: "End Distance (mm)" },
+        { key: "Bolt.Gauge", label: "Gauge Distance (mm)" },
+        { key: "Bolt.EdgeDist", label: "Edge Distance (mm)" },
+      ]
     },
-
     capacity: {
-      WebCapacityModal: [
-        {
-          key: "section.Tension_capacity_web_web_capacity",
-          label: "Web Tension Capacity (kN)",
-        },
-        {
-          key: "Web_plate.capacity_web_capacity",
-          label: "Web Plate Tension Capacity (kN)",
-        },
-        {
-          key: "web_plate.shear_capacity_web_plate_web_capacity",
-          label: "Web Plate Shear Capacity (kN)",
-        },
-        {
-          key: "Web_Plate.MomDemand_web_capacity",
-          label: "Web Moment Demand (kNm)",
-        },
+      PlateCapacityModal: [
+        { key: "Plate.Shear", label: "Shear Yielding Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
+        { key: "Plate.Rupture", label: "Rupture Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
+        { key: "Plate.BlockShear", label: "Block Shear Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
+        
+        { key: "Plate.TensionYield", label: "Tension Yielding Capacity (kN)", section: "Failure due Tension in Plate" },
+        { key: "Plate.TensionRupture", label: "Tension Rupture Capacity (kN)", section: "Failure due Tension in Plate" },
+        { key: "Plate.BlockShearAxial", label: "Axial Block Shear Capacity (kN)", section: "Failure due Tension in Plate" },
+        
+        { key: "Plate.MomDemand", label: "Moment Demand (kNm)", section: "Moment Analysis" },
+        { key: "Plate.MomCapacity", label: "Moment Capacity (kNm)", section: "Moment Analysis" },
       ],
-      FlangeCapacityModal: [
-        {
-          key: "Section.flange_capacity_flange_capacity",
-          label: "Flange Tension Capacity (kN)",
-        },
-        {
-          key: "flange_plate.tension_capacity_flange_plate_flange_capacity",
-          label: "Flange Plate Tension Capacity (kN)",
-        },
-      ],
-    },
-
-    details: {
-      MemberCapacityModal: [
-        { key: "Section.AxialCapacity", label: "Axial Capacity Member (kN)" },
-        { key: "Section.MomCapacity", label: "Moment Capacity Member (kNm)" },
-        { key: "Section.ShearCapacity", label: "Shear Capacity Member (kN)" },
-      ],
-      BoltFlangeCapacityModal: [
-        {
-          key: "Flange_plate.Bolt_Line_flange_bolt_capacity",
-          label: "Bolt Lines ",
-        },
-        {
-          key: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
-          label: "Bolts in One Line ",
-        },
-        {
-          key: "Flange_plate.Bolt_required_flange_bolt_capacity",
-          label: "Bolts Required",
-        },
-        {
-          key: "Bolt.Shear_flange_bolt_capacity",
-          label: "Shear Capacity (kN)",
-        },
-        {
-          key: "Bolt.Bearing_flange_bolt_capacity",
-          label: "Bearing Capacity (kN)",
-        },
-        {
-          key: "flange_bolt.large_grip_flange_bolt_capacity",
-          label: "Large Grip Red.Factor",
-        },
-        {
-          key: "flange_plate.red,factor_flange_bolt_capacity",
-          label: "Long Joint Red.Factor",
-        },
-        { key: "Bolt.Capacity_flange_bolt_capacity", label: "Capacity (kN)" },
-        {
-          key: "Bolt.Force (kN)_flange_bolt_capacity",
-          label: "Bolt Force (kN)",
-        },
-      ],
-      BoltWebCapacityModal: [
-        { key: "Web_plate.Bolt_Line_web_bolt_capacity", label: "Bolt Lines " },
-        {
-          key: "Web_plate.Bolt_OneLine_web_bolt_capacity",
-          label: "Bolts in One Line ",
-        },
-        {
-          key: "Web_plate.Bolt_required_web_bolt_capacity",
-          label: "Bolts Required",
-        },
-        { key: "Bolt.Shear_web_bolt_capacity", label: "Shear Capacity (kN)" },
-        {
-          key: "Bolt.Bearing_web_bolt_capacity",
-          label: "Bearing Capacity (kN)",
-        },
-        { key: "web_plate.red,factor_web_bolt_capacity", label: "Red. Factor" },
-        { key: "Bolt.Capacity_web_bolt_capacity", label: "Capacity (kN)" },
-        { key: "Bolt.Force (kN)_web_bolt_capacity", label: "Bolt Force (kN)" },
-      ],
-    },
-  },
+      SectionCapacityModal: [
+        { key: "Member.shear_yielding", label: "Shear Yielding Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
+        { key: "Member.shear_rupture", label: "Rupture Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
+        { key: "Member.shear_blockshear", label: "Block Shear Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
+        
+        { key: "Member.tension_yielding", label: "Tension Yielding Capacity (kN)", section: "Failure due Tension in Plate" },
+        { key: "Member.tension_rupture", label: "Tension Rupture Capacity (kN)", section: "Failure due Tension in Plate" },
+        { key: "Member.tension_blockshear", label: "Axial Block Shear Capacity (kN)", section: "Failure due Tension in Plate" },
+        
+        { key: "Plate.MomDemand", label: "Moment Demand (kNm)", section: "Moment Analysis" },
+        { key: "Section.MomCapacity", label: "Moment Capacity (kNm)", section: "Moment Analysis" },
+      ]
+    }
+  }
 };

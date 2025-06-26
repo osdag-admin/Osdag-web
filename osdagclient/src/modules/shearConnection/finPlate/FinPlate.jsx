@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { EngineeringModule } from "../../shared/components/EngineeringModule";
 import { finPlateConfig } from "./configs/finPlateConfig";
@@ -10,7 +11,7 @@ function FinPlate() {
       moduleConfig={finPlateConfig}
       OutputDockComponent={FinPlateOutputDock}
       menuItems={menuItems}
-      title="Cover Plate Bolted Connection"
+      title="Fin Plate Connection"
     />
   );
 }
