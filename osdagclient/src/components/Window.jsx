@@ -19,6 +19,7 @@ import mc_ctc_cpw from "../assets/MomentConnection/mc_ctc_cpw.png";
 import mc_ctc_ep from "../assets/MomentConnection/mc_ctc_ep.png";
 import mc_btc_ep from "../assets/MomentConnection/mc_btc_ep.png";
 import base_plate from "../assets/BasePlate/base_plate.png";
+import simply_supported_beam from "../assets/simply-supported-beam.jpg";
 
 const image_map = {
   bolted_to_end,
@@ -35,6 +36,7 @@ const image_map = {
   mc_ctc_ep,
   mc_btc_ep,
   base_plate,
+  simply_supported_beam,
 };
 
 const Window = () => {
@@ -48,8 +50,13 @@ const Window = () => {
 
     // Radio selected ,Background change
     const [selectedItemBack, setSelectedItemBack] = useState(null);
+    const isFlexureDesignType = designType === "flexure" || designType === "flexural_member" || designType === "flexural_members";
+    
     const wrapper = () => {
-        getDesignTypes(designType)
+        // Skip API calls for flexure types as they are hardcoded
+        if (!isFlexureDesignType) {
+            getDesignTypes(designType)
+        }
     }
 
   useEffect(() => {
@@ -92,7 +99,8 @@ const Window = () => {
     getSubDesignTypes(designType, name);
   }, [activeTab]);
 
-  // if (!results) return <div>Module Under Development</div>;
+  // Show flexure module directly if it's a flexure design type, otherwise show "Module Under Development" if no results
+  if (!results && !isFlexureDesignType) return <div>Module Under Development</div>;
 
   return (
     <>
@@ -342,6 +350,63 @@ const Window = () => {
                             subtypeName
                           );
                         }
+                      }
+                    }}
+                  >
+                    Start
+                  </button>
+                </div>
+              </center>
+            </>
+          )}
+          {/* Hardcoded Flexural Member - Simply Supported */}
+          {isFlexureDesignType && (
+            <>
+              <div className="content-tabs">
+                <div>
+                  <div className="conn-grid-container">
+                    <div
+                      className={`conn-grid-item ${
+                        selectedItemBack === "simply_supported_beam" ? "selected" : ""
+                      }`}
+                    >
+                      <p>Simply Supported Beam</p>
+                      <div className="conn-grid-container-option">
+                        <input
+                          type="radio"
+                          value="simply_supported_beam"
+                          name="flexure-module"
+                          onClick={() => {
+                            setSelectedDesign("simply_supported_beam");
+                            setSelectedItemBack("simply_supported_beam");
+                          }}
+                        />
+                        <img
+                          src={simply_supported_beam}
+                          alt="Simply Supported Beam"
+                          onClick={() => {
+                            const radioInput = document.querySelector(
+                              `input[type="radio"][value="simply_supported_beam"]`
+                            );
+                            if (radioInput) {
+                              radioInput.checked = true;
+                              setSelectedDesign("simply_supported_beam");
+                              setSelectedItemBack("simply_supported_beam");
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <center>
+                <div className="">
+                  <button
+                    className="start-btn"
+                    onClick={() => {
+                      if (selectedDesign === "simply_supported_beam") {
+                        navigate(`/design/${designType}/${selectedDesign}`);
                       }
                     }}
                   >

@@ -141,6 +141,8 @@ export const EngineeringModule = ({
         return ["Model", "Beam", "Column", "CleatAngle"];
       case "SeatedAngle":
         return ["Model", "Beam", "Column", "SeatedAngle"];
+      case "FlexuralMember":
+        return ["Model", "Beam"];
       default:
         return ["Model", "Beam", "Connector"];
     }
@@ -377,19 +379,38 @@ export const EngineeringModule = ({
       />
 
       {/* Customization Modals */}
-      {moduleConfig.modalConfig.map((modal) => (
-        <CustomizationModal
-          key={modal.key}
-          isOpen={modalStates[modal.key]}
-          onClose={() => updateModalState(modal.key, false)}
-          title="Customized"
-          dataSource={contextData[modal.dataSource] || []}
-          selectedItems={selectedItems[modal.inputKey]}
-          onTransferChange={(nextTargetKeys) =>
-            updateSelectedItems(modal.inputKey, nextTargetKeys)
+      {moduleConfig.modalConfig.map((modal) => {
+        // Handle dynamic data sources
+        let dataSource = [];
+        
+        if (modal.dataSource) {
+          // Static data source from contextData
+          dataSource = contextData[modal.dataSource] || [];
+        } else {
+          // Dynamic data source - find the field with getDynamicDataSource
+          const dynamicField = moduleConfig.inputSections
+            .flatMap(section => section.fields)
+            .find(field => field.modalKey === modal.key && field.getDynamicDataSource);
+          
+          if (dynamicField && dynamicField.getDynamicDataSource) {
+            dataSource = dynamicField.getDynamicDataSource(inputs, contextData) || [];
           }
-        />
-      ))}
+        }
+
+        return (
+          <CustomizationModal
+            key={modal.key}
+            isOpen={modalStates[modal.key]}
+            onClose={() => updateModalState(modal.key, false)}
+            title="Customized"
+            dataSource={dataSource}
+            selectedItems={selectedItems[modal.inputKey]}
+            onTransferChange={(nextTargetKeys) =>
+              updateSelectedItems(modal.inputKey, nextTargetKeys)
+            }
+          />
+        );
+      })}
 
       {/* Design Preferences Modal */}
       {designPrefModalStatus && (

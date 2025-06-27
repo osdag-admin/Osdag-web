@@ -28,6 +28,7 @@ import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
 import BoltedToEnd from "./modules/TensionMembers/BoltedToEnd/BoltedToEnd";
 
 // module imports
+import FinPlate from "./modules/shearConnection/finPlate/FinPlate";
 import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
 
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
@@ -36,6 +37,8 @@ import SelectModulePage from "./homepage/pages/SelectModulePage";
 import FinPlate from "./modules/shearConnection/endPlate/FinPlate";
 import CleatAngle from "./modules/shearConnection/cleatAngle/CleatAngle";
 import EndPlate from "./modules/shearConnection/endPlate/EndPlate";
+import SimplySupportedBeam from "./modules/flexuralMember/simplySupportedBeam";
+
 let renderedOnce = false;
 
 function App() {
@@ -105,7 +108,11 @@ function App() {
           path="/design/connections/beam-to-column/end_plate"
           element={<BeamToColumnEndPlate />}
         />
-        <Route path='/user' element={<UserAccount />} />
+        <Route
+          path="/design/:designType/simply_supported_beam"
+          element={<SimplySupportedBeam />}
+        />
+        <Route path="/user" element={<UserAccount />} />
       </Route>
     )
   );

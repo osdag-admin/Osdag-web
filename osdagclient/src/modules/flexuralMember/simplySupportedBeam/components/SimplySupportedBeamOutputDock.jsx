@@ -1,17 +1,20 @@
-import PropTypes from 'prop-types';
+import React from "react";
+import { BaseOutputDock } from "../../../shared/components/BaseOutputDock";
+import { simplySupportedBeamOutputConfig } from "../configs/simplySupportedBeamOutputConfig";
 
-const SimplySupportedBeamOutputDock = ({ outputData }) => {
+function SimplySupportedBeamOutputDock({ output }) {
+  console.log("SimplySupportedBeamOutputDock rendering with output:", output);
+  console.log("Using config:", simplySupportedBeamOutputConfig);
+  
   return (
-    <div>
-      <h3>Simply Supported Beam Output</h3>
-      <pre>{JSON.stringify(outputData, null, 2)}</pre>
-      {/* TODO: Render output fields nicely using config */}
+    <div className="OutputDock">
+      <BaseOutputDock 
+        output={output} 
+        outputConfig={simplySupportedBeamOutputConfig}
+        title="Simply Supported Beam Output"
+      />
     </div>
   );
-};
-
-SimplySupportedBeamOutputDock.propTypes = {
-  outputData: PropTypes.any,
-};
+}
 
 export default SimplySupportedBeamOutputDock; 

@@ -98,6 +98,13 @@ export const useEngineeringModule = (moduleConfig) => {
       return {
         selectedOption: "Column Flange-Beam-Web", // Default for shear EndPlate
       };
+    } else if (moduleConfig.cameraKey === "FlexuralMember") {
+      return {
+        selectedProfile: "Beams",
+        imageSource: moduleConfig.getSectionImage
+          ? moduleConfig.getSectionImage("Beams")
+          : null,
+      };
     }
     return {
       selectedOption: "Flushed - Reversible Moment", // Default for BeamBeamEndPlate
@@ -421,13 +428,20 @@ export const useEngineeringModule = (moduleConfig) => {
       return;
     }
 
-    const param = moduleConfig.buildSubmissionParams(inputs, allSelected, {
-      boltDiameterList,
-      propertyClassList,
-      thicknessList,
-      angleList,
-      channelList,
-    }, extraState);
+    const param = moduleConfig.buildSubmissionParams(
+      inputs,
+      allSelected,
+      {
+        boltDiameterList,
+        propertyClassList,
+        thicknessList,
+        angleList,
+        channelList,
+        beamList,
+        columnList,
+      },
+      extraState
+    );
 
     // Show loading modal
     setIsLoadingModalVisible(true);
@@ -492,13 +506,20 @@ export const useEngineeringModule = (moduleConfig) => {
       return;
     }
 
-    let data = moduleConfig.buildSubmissionParams(inputs, allSelected, {
-      boltDiameterList,
-      propertyClassList,
-      thicknessList,
-      angleList,
-      channelList,
-    }, extraState);
+    let data = moduleConfig.buildSubmissionParams(
+      inputs,
+      allSelected,
+      {
+        boltDiameterList,
+        propertyClassList,
+        thicknessList,
+        angleList,
+        channelList,
+        beamList,
+        columnList,
+      },
+      extraState
+    );
 
     // Add output data to the submission data
     for (const key in output) {

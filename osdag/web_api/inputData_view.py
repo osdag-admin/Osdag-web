@@ -16,6 +16,7 @@ from .inputdata.beam_beam_end_plate_input import BeamBeamEndPlateInputData
 from .inputdata.cover_plate_weld_input import CoverPlateWeldedInputData
 from .inputdata.beam_to_column_end_plate_input import BeamToColumnEndPlateInputData
 from .inputdata.tension_member_bolted_input import TensionMemberBoltedInputData
+from .inputdata.simply_supported_beam_input import SimplySupportedBeamInputData
 
 INPUT_DATA_FACTORY = {
     'Fin-Plate-Connection': FinPlateInputData(),
@@ -26,7 +27,8 @@ INPUT_DATA_FACTORY = {
     'Beam-Beam-End-Plate-Connection': BeamBeamEndPlateInputData(),
     'Cover-Plate-Welded-Connection': CoverPlateWeldedInputData(),
     'Beam-to-Column-End-Plate-Connection': BeamToColumnEndPlateInputData(),
-    'Tension-Member-Bolted-Design': TensionMemberBoltedInputData()
+    'Tension-Member-Bolted-Design': TensionMemberBoltedInputData(),
+    'Simply-Supported-Beam': SimplySupportedBeamInputData()
 }
 
 

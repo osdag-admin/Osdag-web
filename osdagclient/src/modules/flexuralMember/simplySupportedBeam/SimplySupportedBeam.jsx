@@ -1,15 +1,18 @@
 import React from 'react';
-import simplySupportedBeamConfig from './configs/simplySupportedBeamConfig';
+import { EngineeringModule } from '../../shared/components/EngineeringModule';
+import { simplySupportedBeamConfig } from './configs/simplySupportedBeamConfig';
+import SimplySupportedBeamOutputDock from './components/SimplySupportedBeamOutputDock';
+import { menuItems } from '../../shared/utils/moduleUtils';
 
-const SimplySupportedBeam = () => {
-  // This will be replaced with the actual form and logic
+function SimplySupportedBeam() {
   return (
-    <div>
-      <h2>Simply Supported Beam (Flexural Member)</h2>
-      <pre>{JSON.stringify(simplySupportedBeamConfig, null, 2)}</pre>
-      {/* TODO: Render input form and output using config */}
-    </div>
+    <EngineeringModule
+      moduleConfig={simplySupportedBeamConfig}
+      OutputDockComponent={SimplySupportedBeamOutputDock}
+      menuItems={menuItems}
+      title="Simply Supported Beam (Flexural Member)"
+    />
   );
-};
+}
 
 export default SimplySupportedBeam; 

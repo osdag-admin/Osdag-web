@@ -41,6 +41,13 @@ export default function useViewCamera(moduleName, selectedView, connectivity = n
         // Fallback for legacy "Connector" view
         Connector: { position: [-8, 6, -8], fov: 38 },
       },
+      FlexuralMember: {
+        Model: { position: [12, 10, 8], fov: 35 },
+        Beam: { position: [10, 8, 6], fov: 40 },
+        // Fallback for legacy views
+        Member: { position: [10, 8, 6], fov: 40 },
+        Connector: { position: [10, 8, 6], fov: 40 },
+      },
       FinPlate: {
         Model: { position: [10, 8, 10], fov: 40 },
         Beam: { position: [9, 7, 9], fov: 40 },

@@ -17,24 +17,24 @@ sys.stdout = open(os.devnull, "w")  # redirect stdout
 sys.stdout = old_stdout  # Reset log
 
 def get_required_keys() -> List[str]:
-    # These should match the keys expected by Flexure.input_values()
+    # These should match the keys sent by frontend (which now match Common.py constants)
     return [
-        "Module",
+        "Module",                   # KEY_MODULE
         "Member.Profile",           # KEY_SEC_PROFILE
         "Member.Designation",       # KEY_SECSIZE
         "Material",                 # KEY_MATERIAL
         "Member.Material",          # KEY_SEC_MATERIAL
-        "Design.Design_Method",     # KEY_DP_DESIGN_METHOD
+        "Design.Design_Method",     # KEY_DESIGN_TYPE_FLEXURE
         "Design.Allowable_Class",   # KEY_ALLOW_CLASS
         "Design.Effective_Area_Parameter", # KEY_EFFECTIVE_AREA_PARA
-        "Design.Length_Overwrite",  # KEY_LENGTH_OVERWRITE
-        "Design.Bearing_Length",    # KEY_BEARING_LENGTH
+        "Length.Overwrite",         # KEY_LENGTH_OVERWRITE - corrected to match Common.py
+        "Bearing.Length",           # KEY_BEARING_LENGTH - corrected to match Common.py
         "Load.Shear",               # KEY_SHEAR
         "Load.Moment",              # KEY_MOMENT
         "Member.Length",            # KEY_LENGTH
         "Support.Type",             # KEY_SUPPORT
-        "Torsional.Restraint",      # KEY_TORSIONAL_RES
-        "Warping.Restraint",        # KEY_WARPING_RES
+        "Torsion.restraint",        # KEY_TORSIONAL_RES - corrected to match Common.py
+        "Warping.restraint",        # KEY_WARPING_RES - corrected to match Common.py
     ]
 
 def validate_input(input_values: Dict[str, Any]) -> None:
@@ -42,39 +42,71 @@ def validate_input(input_values: Dict[str, Any]) -> None:
     missing_keys = contains_keys(input_values, required_keys)
     if missing_keys is not None:
         raise MissingKeyError(missing_keys[0])
-    # Add type checks as needed (example: string, float, etc.)
-    # For brevity, only presence is checked here.
 
 def create_module() -> Flexure:
     module = Flexure()
+    # Initialize logger for the module instance
     module.set_osdaglogger(None)
     return module
 
 def create_from_input(input_values: Dict[str, Any]) -> Flexure:
     module = create_module()
-    # Map input_values to Flexure expected keys
-    # This mapping may need to be adjusted based on actual frontend/backend contract
+    
+    # Debug: Print all incoming input values
+    print("=== DEBUG: Input values received ===")
+    for key, value in input_values.items():
+        print(f"  {key}: {value}")
+    print("=== End Debug ===")
+    
+    # Handle array conversion for Member.Designation
+    member_designation = input_values.get('Member.Designation', '')
+    if isinstance(member_designation, str):
+        if member_designation == '[]':
+            member_designation = []
+        elif member_designation.startswith('[') and member_designation.endswith(']'):
+            # Try to parse as JSON array
+            try:
+                import json
+                member_designation = json.loads(member_designation)
+            except:
+                member_designation = [member_designation]  # Fallback to single item array
+    elif not isinstance(member_designation, list):
+        member_designation = [str(member_designation)]
+    
+    # Validate that section designations are provided  
+    if not member_designation or member_designation == []:
+        print(f"ERROR: No section designations provided! Frontend should populate this from beamList/columnList.")
+        member_designation = []
+    
+    # Map input_values to exact keys expected by Flexure.set_input_values
+    # Using the actual constant string values from Common.py
     design_dict = {
-        # These keys must match what Flexure.set_input_values expects
+        # Map frontend keys to exact constant values from Common.py
         'Module': input_values.get('Module', 'Simply-Supported-Beam'),
-        'SectionProfile': input_values.get('Member.Profile', ''),
-        'SectionList': input_values.get('Member.Designation', ''),
+        'Member.Profile': input_values.get('Member.Profile', ''),
+        'Member.Designation': member_designation,  # Use processed array
         'Material': input_values.get('Material', ''),
-        'SectionMaterial': input_values.get('Member.Material', ''),
-        'DesignTypeFlexure': input_values.get('Design.Design_Method', ''),
-        'AllowClass': input_values.get('Design.Allowable_Class', ''),
-        'EffectiveAreaPara': input_values.get('Design.Effective_Area_Parameter', ''),
-        'LengthOverwrite': input_values.get('Design.Length_Overwrite', ''),
-        'BearingLength': input_values.get('Design.Bearing_Length', ''),
-        'Shear': input_values.get('Load.Shear', ''),
-        'Moment': input_values.get('Load.Moment', ''),
-        'Length': input_values.get('Member.Length', ''),
-        'Support': input_values.get('Support.Type', ''),
-        'TorsionalRestraint': input_values.get('Torsional.Restraint', ''),
-        'WarpingRestraint': input_values.get('Warping.Restraint', ''),
+        'Member.Material': input_values.get('Member.Material', ''),
+        'Flexure.Type': input_values.get('Flexure.Type', 'Major Laterally Supported'),  # Frontend sends beam bending type
+        'Design.Allowable_Class': input_values.get('Design.Allowable_Class', ''),
+        'Design.Effective_Area_Parameter': input_values.get('Design.Effective_Area_Parameter', ''),
+        'Length.Overwrite': input_values.get('Length.Overwrite', ''),        # Frontend now sends Length.Overwrite 
+        'Bearing.Length': input_values.get('Bearing.Length', ''),            # Frontend now sends Bearing.Length
+        'Load.Shear': input_values.get('Load.Shear', ''),
+        'Load.Moment': input_values.get('Load.Moment', ''),
+        'Member.Length': input_values.get('Member.Length', ''),
+        'Flexure.Support': input_values.get('Flexure.Support', ''),  # Frontend sends "Simply Supported" as Flexure.Support
+        'Torsion.restraint': input_values.get('Torsion.restraint', ''),      # Frontend now sends Torsion.restraint
+        'Warping.restraint': input_values.get('Warping.restraint', ''),      # Frontend now sends Warping.restraint
+        'Loading.Condition': 'Normal',                                       # Default loading condition for simply supported beams
     }
-    # The actual keys must match those used in Flexure.set_input_values
-    # You may need to adjust the above mapping
+    
+    # Debug: Print the design dictionary being passed to the module
+    print("=== DEBUG: Design dictionary passed to flexural module ===")
+    for key, value in design_dict.items():
+        print(f"  {key}: {value}")
+    print("=== End Debug ===")
+    
     module.set_input_values(design_dict)
     return module
 
@@ -93,7 +125,7 @@ def generate_output(input_values: Dict[str, Any]):
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value
             }
     return output, logs
 

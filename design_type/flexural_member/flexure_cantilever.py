@@ -22,18 +22,18 @@ import math
 import numpy as np
 from ...Common import *
 # from ..connection.moment_connection import MomentConnection
-from ...utils.common.material import *
-from ...utils.common.load import Load
-from ...utils.common.component import ISection, Material
-from ...utils.common.component import *
+from utils.common.material import *
+from utils.common.load import Load
+from utils.common.component import ISection, Material
+from utils.common.component import *
 from ..member import Member
 from ...Report_functions import *
 from ...design_report.reportGenerator_latex import CreateLatex
-from ...utils.common.common_calculation import *
+from utils.common.common_calculation import *
 from ..tension_member import *
-from ...utils.common.Section_Properties_Calculator import BBAngle_Properties
-from ...utils.common import is800_2007
-from ...utils.common.component import *
+from utils.common.Section_Properties_Calculator import BBAngle_Properties
+from utils.common import is800_2007
+from utils.common.component import *
 
 # TODO DEBUG
 class Flexure_Cantilever(Member):
@@ -429,19 +429,20 @@ class Flexure_Cantilever(Member):
 
         out_list = []
 
-        t1 = (None, DISP_TITLE_STRUT_SECTION, TYPE_TITLE, None, True)
+        t1 = (None, DISP_TITLE_SECTION, TYPE_TITLE, None, True)
 
         out_list.append(t1)
 
-        t1 = (KEY_TITLE_OPTIMUM_DESIGNATION, KEY_DISP_TITLE_OPTIMUM_DESIGNATION, TYPE_TEXTBOX,
+        t1 = (KEY_DESIGNATION, KEY_DISP_DESIGNATION, TYPE_TEXTBOX,
               self.result_designation if flag else '', True)
         out_list.append(t1)
 
-        t1 = (
-        KEY_OPTIMUM_UR_COMPRESSION, KEY_DISP_OPTIMUM_UR_COMPRESSION, TYPE_TEXTBOX, round(self.result_UR,3) if flag else '', True)
+        t1 = ("UtilizationRatio", "Utilization Ratio", TYPE_TEXTBOX, 
+              round(self.result_UR,3) if flag and hasattr(self, 'result_UR') else 'N/A', True)
         out_list.append(t1)
 
-        t1 = (KEY_OPTIMUM_SC, KEY_DISP_OPTIMUM_SC, TYPE_TEXTBOX, self.result_section_class if flag else '', True)
+        t1 = ("SectionClass", "Section Class", TYPE_TEXTBOX, 
+              self.result_section_class if flag and hasattr(self, 'result_section_class') else 'N/A', True)
         out_list.append(t1)
 
 
@@ -696,6 +697,17 @@ class Flexure_Cantilever(Member):
         self.sec_list = design_dictionary[KEY_SECSIZE]
         print(f"\n Inside set_input_values{self.sec_profile}")
         print(f"\n sec_profile{self.sec_list}")
+        
+        # Handle 'All' case by expanding to actual beam designations
+        if 'All' in self.sec_list:
+            from Common import connectdb
+            if self.sec_profile in ['Beams', 'Beams and Columns']:
+                all_beams = connectdb("Beams", call_type="popup")  # Get all beam designations
+                # Remove 'All' and replace with actual beam designations (limit to first 10 for performance)
+                self.sec_list = [item for item in self.sec_list if item != 'All']
+                self.sec_list.extend(all_beams[:10])  # Add first 10 beams for analysis
+                print(f"Expanded 'All' to first 10 beam sections: {self.sec_list[:5]}...")
+        
         self.main_material = design_dictionary[KEY_MATERIAL]
         self.material = design_dictionary[KEY_SEC_MATERIAL]
 
@@ -788,7 +800,7 @@ class Flexure_Cantilever(Member):
         """Perform design of struct"""
         # checking DP inputs
 
-        self.optimization_tab_check(self)
+        self.optimization_tab_check()
         # print( "self.material_property",self.material_property.fy)
         # self.input_modifier(self)
         # print( "self.material_property",self.material_property.fy)
@@ -810,7 +822,7 @@ class Flexure_Cantilever(Member):
             self.effective_area_factor = 1.0
             # self.design_status = False
             # self.design_status_list.append(self.design_status)
-            self.optimization_tab_check(self)
+            self.optimization_tab_check()
         elif (self.steel_cost_per_kg < 0.10) or (self.effective_area_factor > 1.0) or (self.effective_area_factor < 0):
             # No suggested range in Description
             logger.warning(
@@ -873,6 +885,7 @@ class Flexure_Cantilever(Member):
         if (
             self.sec_profile == VALUES_SECTYPE[1]
             or self.sec_profile == "I-section"
+            or self.sec_profile == "Beams and Columns"
         ):  # I-section
             self.section_property = ISection(
                 designation=section, material_grade=self.material
@@ -1249,12 +1262,12 @@ class Flexure_Cantilever(Member):
         return bending_strength_section
     def bending_strength_girder(self):
         print('Inside bending_strength of girder ')
-        web_class = IS800_2007.Table2_i(
+        web_class = IS800_2007.table2_i(
             (self.section_property.flange_width - self.section_property.web_thickness)/2,
             self.section_property.flange_thickness,
             self.material_property.fy, self.section_property.type
         )[0]
-        flange_class = IS800_2007.Table2_i(
+        flange_class = IS800_2007.table2_i(
             self.section_property.depth - 2 * self.section_property.flange_thickness,
             self.section_property.web_thickness,
             self.material_property.fy,self.section_property.type
@@ -1421,12 +1434,12 @@ class Flexure_Cantilever(Member):
             self.section_property = self.section_connect_database(self, trial_section)
             print(f"Type of section{self.section_property.designation}")
             if self.section_property.type == "Rolled":
-                web_class = IS800_2007.Table2_iii(
+                web_class = IS800_2007.table2_iii(
                     self.section_property.depth - 2*(self.section_property.flange_thickness + self.section_property.root_radius),
                     self.section_property.web_thickness,
                     self.material_property.fy,
                 )
-                flange_class = IS800_2007.Table2_i(
+                flange_class = IS800_2007.table2_i(
                     self.section_property.flange_width / 2,
                     self.section_property.flange_thickness,
                     self.material_property.fy,self.section_property.type
@@ -1434,7 +1447,7 @@ class Flexure_Cantilever(Member):
                 web_ratio = (self.section_property.depth - 2*(self.section_property.flange_thickness + self.section_property.root_radius)) / self.section_property.web_thickness
                 flange_ratio = self.section_property.flange_width / 2  /self.section_property.flange_thickness
             else:
-                flange_class = IS800_2007.Table2_i(
+                flange_class = IS800_2007.table2_i(
                     (
                         (self.section_property.flange_width / 2)
                         # - (self.section_property.web_thickness / 2)
@@ -1444,7 +1457,7 @@ class Flexure_Cantilever(Member):
                     self.section_property.type,
                 )[0]
 
-                web_class = IS800_2007.Table2_iii(
+                web_class = IS800_2007.table2_iii(
                     (
                         self.section_property.depth - 2*(self.section_property.flange_thickness + self.section_property.root_radius)
                     ),

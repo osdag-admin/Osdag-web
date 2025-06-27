@@ -347,6 +347,148 @@ KEY_DISP_TENSION_WELDED = 'Tension Member Design - Welded to End Gusset'
 KEY_DISP_COMPRESSION = 'Compression Member'
 KEY_DISP_BB_EP_SPLICE = 'Beam-to-Beam End Plate Connection'
 
+###################################
+#Flexure Members
+###################################
+KEY_Plastic = "Plastic"
+KEY_Compact = "Compact"
+KEY_SemiCompact = "Semi-Compact"
+KEY_Flexure_Member_MAIN_MODULE = 'Flexure Member'
+KEY_DISP_FLEXURE = 'Flexural Members - Simply Supported'
+KEY_DISP_FLEXURE2 = 'Flexural Members - Cantilever'
+KEY_DISP_FLEXURE3 = 'Flexural Members'
+
+KEY_DISP_PLASTIC_STRENGTH_MOMENT = 'Plastic Strength (kNm)'
+KEY_DISP_Bending_STRENGTH_MOMENT = 'Bending Strength (kNm)'
+KEY_DISP_LTB_Bending_STRENGTH_MOMENT = 'Lateral Torsional Buckling Strength (kNm)'
+
+KEY_DISP_betab_constatnt= 'Beta<sub>b</sub>'
+KEY_betab_constatnt= 'Beta.Constant'
+KEY_BUCKLING_STRENGTH= 'Buckling.Strength'
+KEY_DISP_BUCKLING_STRENGTH= 'Buckling Strength (kN)'
+KEY_WEB_CRIPPLING= 'Crippling.Strength'
+KEY_DISP_CRIPPLING_STRENGTH = 'Crippling Strength (kN)'
+KEY_DISP_LTB= 'Lateral Torsional Buckling Details'
+KEY_DISP_Elastic_CM= 'Critical Moment (M<sub>cr</sub>)' # Elastic 
+KEY_DISP_Elastic_CM_latex= 'Elastic Critical Moment(kNm)' # 
+KEY_DISP_T_constatnt= 'Torsional Constant (mm<sup>4</sup>)' #  (I<sub>t</sub>)
+KEY_DISP_W_constatnt= 'Warping Constant (mm<sup>6</sup>)' # (I<sub>w</sub>)
+KEY_LTB= 'L.T.B.Details'
+KEY_Elastic_CM= 'Elastic.Moment'
+KEY_T_constatnt= 'T.Constant'
+KEY_W_constatnt= 'W.Constant'
+KEY_IMPERFECTION_FACTOR_LTB = 'Imperfection.LTB'
+KEY_SR_FACTOR_LTB = 'SR.LTB'
+KEY_NON_DIM_ESR_LTB = 'NDESR.LTB'
+# KEY_LTB= 'Lateral Torsional Buckling Details'
+KEY_WEB_BUCKLING= 'Web Buckling Details'
+KEY_BEARING_LENGTH = 'Bearing.Length'
+# Simply_Supported_img = str(files("osdag.data.ResourceFiles.images").joinpath("ss_beam.png"))
+# Cantilever_img = str(files("osdag.data.ResourceFiles.images").joinpath("c_beam.png"))
+KEY_LENGTH_OVERWRITE = 'Length.Overwrite'
+KEY_DISPP_LENGTH_OVERWRITE = 'Effective Length Parameter'
+KEY_DISP_BEAM_MOMENT = 'Bending Moment (kNm)(M<sub>z-z</sub>)'
+KEY_DISP_BEAM_MOMENT_Latex = 'Bending Moment (kNm)' # ($M_{z-z}$)
+KEY_SUPP_TYPE = 'Member.Type'
+DISP_TITLE_ISECTION = 'I Sections'
+
+KEY_DISP_DESIGN_TYPE_FLEXURE = 'Laterally Supported'
+KEY_DESIGN_TYPE_FLEXURE = 'Flexure.Type'
+KEY_BEAM_SUPP_TYPE = 'Support Type *'
+KEY_BEAM_SUPP_TYPE_DESIGN = 'Design Support Type'
+KEY_DISP_DESIGN_TYPE2_FLEXURE = 'Laterally Unsupported'
+KEY_DESIGN_TYPE2_FLEXURE = 'Laterally.Unsupported'
+KEY_DISP_BENDING = 'Axis of Bending'
+KEY_DISP_BENDING1 = 'Major'
+KEY_DISP_BENDING2 = 'Minor'
+VALUES_BENDING_TYPE = list((KEY_DISP_BENDING2, KEY_DISP_BENDING1))
+VALUES_SUPP_TYPE = list((KEY_DISP_DESIGN_TYPE_FLEXURE, KEY_DISP_DESIGN_TYPE2_FLEXURE)) #[KEY_DISP_DESIGN_TYPE_FLEXURE, KEY_DISP_DESIGN_TYPE2_FLEXURE]
+VALUES_SUPP_TYPE_temp = list((KEY_DISP_BENDING1 + " " + KEY_DISP_DESIGN_TYPE_FLEXURE, KEY_DISP_BENDING2 + " " + KEY_DISP_DESIGN_TYPE2_FLEXURE, KEY_DISP_BENDING1 + " " + KEY_DISP_DESIGN_TYPE2_FLEXURE)) #[KEY_DISP_DESIGN_TYPE_FLEXURE, KEY_DISP_DESIGN_TYPE2_FLEXURE]
+KEY_BENDING = 'Bending.type'
+KEY_SUPPORT = 'Flexure.Support'
+KEY_DISP_SUPPORT = 'End Conditions'
+KEY_DISP_SUPPORT1 = 'Simply Supported'
+KEY_DISP_SUPPORT2 = 'Cantilever'
+KEY_DISP_SUPPORT_LIST = list((KEY_DISP_SUPPORT1, KEY_DISP_SUPPORT2)) #[KEY_DISP_SUPPORT1, KEY_DISP_SUPPORT2]
+# KEY_SUPPORT1 = 'SimpSupport.Torsional'
+# KEY_SUPPORT2 = 'SimpSupport.Warping'
+KEY_DISP_LENGTH_BEAM = 'Effective Span (m)*'
+KEY_LOAD = 'Loading.Condition'
+KEY_DISP_LOAD = 'Loading Condition'
+KEY_DISP_LOAD1 ='Normal'
+KEY_DISP_LOAD2 = 'Destabilizing'
+KEY_DISP_LOAD_list = list((KEY_DISP_LOAD1, KEY_DISP_LOAD2))
+KEY_TORSIONAL_RES = 'Torsion.restraint'
+DISP_TORSIONAL_RES = 'Torsional restraint *'
+Torsion_Restraint1 = 'Fully Restrained'
+Torsion_Restraint2 = 'Partially Restrained-support connection'
+Torsion_Restraint3 = 'Partially Restrained-bearing support'
+Torsion_Restraint_list = list(( Torsion_Restraint1, Torsion_Restraint2, Torsion_Restraint3))
+KEY_WARPING_RES = 'Warping.restraint'
+DISP_WARPING_RES = 'Warping restraint *'
+Warping_Restraint1 = 'Both flanges fully restrained'
+Warping_Restraint2 = 'Compression flange fully restrained'
+# Warping_Restraint3 = 'Both flanges fully restrained'
+Warping_Restraint4 = 'Compressicm flange partially restrained'
+Warping_Restraint5 = 'Warping not restrained in both flanges'
+Warping_Restraint_list = list(( Warping_Restraint1, Warping_Restraint2, Warping_Restraint4, Warping_Restraint5))
+DISP_SUPPORT_RES = 'Support restraint *'
+KEY_SUPPORT_TYPE = 'Cantilever.Support'
+Support1 = 'Continous, with lateral restraint to top flange'
+Support2 = 'Continous, with partial torsional restraint'
+Support3 = 'Continous, with lateral and torsional restraint'
+Support4 = 'Restrained laterally, torsionally and against rotation on flange'
+Supprt_Restraint_list = list(( Support1, Support2, Support3, Support4))
+DISP_TOP_RES = 'Top restraint *'
+KEY_SUPPORT_TYPE2 = 'Cantilever.Top'
+Top1 = 'Free'
+Top2 = 'Lateral restraint to top flange'
+Top3 = 'Torsional rwstraint'
+Top4 = 'Lateral and Torsional restraint'
+Top_Restraint_list = list(( Top1, Top2, Top3, Top4))
+KEY_WEB_BUCKLING_option = ['Method A','Method B']
+KEY_BUCKLING_METHOD = 'Buckling.Method'
+KEY_ShearBuckling = 'Shear Buckling Design Method '
+KEY_ShearBucklingOption = 'S.B.Methods'
+KEY_DISP_SB_Option = ['Simple Post Critical', 'Tension Field Test']
+KEY_DISP_TENSION_HOLES = 'Tension Zone'
+KEY_DISP_Web_Buckling = 'Web Buckling'
+KEY_DISP_Utilization_Ratio = 'Utilization Ratio'
+KEY_DISP_Web_Buckling_Support = 'Web Buckling @Support'
+KEY_DISP_I_eff_latex = '$I_{eff}$web'
+KEY_DISP_A_eff_latex = '$A_{eff}$web'
+KEY_DISP_r_eff_latex = '$r_{eff}$web'
+KEY_DISP_K_v_latex = '$K_{v}$'
+KEY_DISP_Elastic_Critical_shear_stress_web = 'Elastic Critical Shear Stress Web($N/mm^2$)' #(\tau_{crc})
+KEY_DISP_Transverse_Stiffener_spacing = 'Spacing of Transverse Stiffeners(c)(mm)'
+KEY_DISP_slenderness_ratio_web = 'Web Slenderness ratio($\lambda_w$)'
+KEY_DISP_BUCKLING_STRENGTH= 'Buckling Resistance (kN)'
+KEY_DISP_reduced_moment= 'Reduced moment (Nmm)'
+# KEY_DISP_reduced_moment= 'Reduced moment (N_f)'
+KEY_DISP_tension_field_incline= 'Tension field inclination($\phi$)'
+KEY_DISP_Yield_Strength_Tension_field = 'Yield Strength of Tension field(f_v)($N/mm^2$)'
+KEY_DISP_AnchoragelengthTensionField= 'Anchorage length of Tension Field(s)(mm)'
+KEY_DISP_WidthTensionField= 'Width of Tension Field($w_{tf}$)'
+
+###################################
+# Plate Girder
+###################################
+KEY_PLATE_GIRDER_MAIN_MODULE = 'PLATE GIRDER'
+KEY_DISP_PLATE_GIRDER_WELDED = 'PLATE GIRDER - WELDED'
+KEY_tf = 'TF.Data'
+KEY_tw = 'TW.Data'
+KEY_dw = 'DW.Data'
+KEY_bf = 'BF.Data'
+KEY_DISP_tf = 'Flange Thickness(mm)'
+KEY_DISP_tw = 'Web Thickness(mm)'
+KEY_DISP_dw = 'Web Depth(mm)'
+KEY_DISP_bf = 'Flange Width(mm)'
+KEY_IntermediateStiffener = 'IntermediateStiffener.Data'
+KEY_DISP_IntermediateStiffener = 'Intermediate Stiffener'
+KEY_DISP_Plate_Girder_PROFILE = 'Section Profile'
+KEY_IntermediateStiffener_spacing = 'IntermediateStiffener.Spacing'
+KEY_DISP_IntermediateStiffener_spacing = 'Intermediate Stiffener Spacing'
+
 DISP_TITLE_CM = 'Connecting Members'
 
 ###################################
@@ -386,6 +528,7 @@ KEY_SUPTNGSEC_FY = 'Member.Supporting.Section.Fy'   #Extra Keys for DP Display
 
 KEY_LENGTH = 'Member.Length'
 KEY_SEC_PROFILE = 'Member.Profile'
+KEY_SEC_TYPE = 'Member.Type'
 
 KEY_SHEAR = 'Load.Shear'
 KEY_AXIAL = 'Load.Axial'
@@ -406,6 +549,7 @@ KEY_CONNECTOR_FY = 'Connector.Fy'               #Extra Keys for DP Display
 KEY_CONNECTOR_FY_20 = 'Connector.Fy_20'         #Extra Keys for DP Display
 KEY_CONNECTOR_FY_20_40 = 'Connector.Fy_20_40'   #Extra Keys for DP Display
 KEY_CONNECTOR_FY_40 = 'Connector.Fy_40'         #Extra Keys for DP Display
+KEY_CONNECTOR_GUSSET = 'Connector.GUSSET'         #Extra Keys for DP Display
 
 KEY_PLATETHK = 'Connector.Plate.Thickness_List'
 KEY_FLANGEPLATE_PREFERENCES = 'Connector.Flange_Plate.Preferences'
@@ -443,6 +587,10 @@ KEY_DP_DETAILING_GAP = 'Detailing.Gap'
 KEY_DP_DETAILING_CORROSIVE_INFLUENCES = 'Detailing.Corrosive_Influences'
 
 KEY_DP_DESIGN_METHOD = 'Design.Design_Method'
+
+# Additional flexure-related constants
+KEY_EFFECTIVE_AREA_PARA = 'Design.Effective_Area_Parameter'
+KEY_ALLOW_CLASS = 'Design.Allowable_Class'
 
 ###################
 # Value Keys
@@ -531,6 +679,9 @@ VALUES_PRIBM = connectdb("Beams")
 ############################
 # Display Keys (Input Dock, Output Dock, Design preference, Design report)
 ############################
+
+KEY_SECTION_DATA = 'Section Properties'
+VALUES_SEC_PROFILE3 = ['Beams', 'Columns']
 
 KEY_DISP_SHEAR_YLD = 'Shear Yielding Capacity (kN)'
 KEY_DISP_SHEAR_RUP = 'Shear Rupture Capacity (kN)'
@@ -2143,3 +2294,58 @@ DETAILING_DESCRIPTION = str("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" 
                "<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Calibri\'; font-size:8pt;\"><br /></p>\n"
                "<p align=\"justify\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:8pt;\">Specifying whether the members are exposed to corrosive influences, here, only affects the calculation of the maximum edge distance as per cl. 10.2.4.3</span></p>\n"
                "<p align=\"justify\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; font-size:8pt;\"><br /></p></body></html>")
+
+
+# IS 800:2007 Design Constants (add to your constants file)
+
+# Partial safety factors for materials (IS 800 Table 5)
+GAMMA_M0 = 1.10  # For yielding/buckling of steel
+GAMMA_M1 = 1.25  # For ultimate stress (tension/rupture)
+GAMMA_MF_SHOP = 1.25  # For shop bolts
+GAMMA_MF_FIELD = 1.25  # For field bolts
+GAMMA_MB_SHOP = 1.25  # For shop bolts (bearing)
+GAMMA_MB_FIELD = 1.25  # For field bolts (bearing)
+GAMMA_MR_SHOP = 1.25  # For shop rivets
+GAMMA_MR_FIELD = 1.25  # For field rivets
+GAMMA_MW_SHOP = 1.25  # For shop welds
+GAMMA_MW_FIELD = 1.50  # For field welds
+
+# Modulus of elasticity and Poisson's ratio (IS 800:2007, Cl. 2.2.4)
+E = 2.0e5  # Modulus of elasticity of steel in MPa
+G = 0.769e5  # Modulus of rigidity (shear modulus) in MPa
+NU = 0.3    # Poisson's ratio
+
+# Density of steel (IS 800:2007, Cl. 2.2.4)
+DENSITY_STEEL = 7850  # kg/m^3
+
+# Standard value for epsilon (used in section classification)
+def epsilon(f_y):
+    return (250.0 / f_y) ** 0.5
+
+# Standard minimum and maximum allowed values for custom material (from MaterialValidator)
+MIN_FY = 165
+MAX_FY = 1500
+MIN_FU = 165
+MAX_FU = 1500
+
+# Standard bolt hole diameter addition (IS 800:2007, Table 19)
+BOLT_HOLE_CLEARANCE = {
+    12: 1.0, 14: 1.0, 16: 1.0, 18: 1.0, 20: 2.0, 22: 2.0, 24: 2.0, 27: 3.0, 30: 3.0, 36: 4.0
+}
+
+# Standard partial safety factors for design
+PARTIAL_SAFETY_FACTORS = {
+    "gamma_m0": GAMMA_M0,
+    "gamma_m1": GAMMA_M1,
+    "gamma_mf_shop": GAMMA_MF_SHOP,
+    "gamma_mf_field": GAMMA_MF_FIELD,
+    "gamma_mb_shop": GAMMA_MB_SHOP,
+    "gamma_mb_field": GAMMA_MB_FIELD,
+    "gamma_mr_shop": GAMMA_MR_SHOP,
+    "gamma_mr_field": GAMMA_MR_FIELD,
+    "gamma_mw_shop": GAMMA_MW_SHOP,
+    "gamma_mw_field": GAMMA_MW_FIELD,
+}
+
+# Other useful constants
+PI = math.pi
