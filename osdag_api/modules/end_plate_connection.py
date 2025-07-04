@@ -1,4 +1,3 @@
-
 from osdag_api.validation_utils import validate_arr, validate_num, validate_string
 from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
@@ -341,7 +340,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value  # Changed from "value" to "val" to match frontend expectations
             }  # Set label, key and value in output
     return output, logs
 

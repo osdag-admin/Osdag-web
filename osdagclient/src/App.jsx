@@ -34,7 +34,6 @@ import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
 import BeamToColumnEndPlate from "./components/momentConnection/BeamToColumnEndPlate";
 import Homepage from "./homepage/pages/Homepage";
 import SelectModulePage from "./homepage/pages/SelectModulePage";
-import FinPlate from "./modules/shearConnection/endPlate/FinPlate";
 import CleatAngle from "./modules/shearConnection/cleatAngle/CleatAngle";
 import EndPlate from "./modules/shearConnection/endPlate/EndPlate";
 import SimplySupportedBeam from "./modules/flexuralMember/simplySupportedBeam";

@@ -17,7 +17,7 @@ Functions:
                 "Bolt.Pitch": 
                     "key": "Bolt.Pitch",
                     "label": "Pitch Distance (mm)"
-                    "value": 40
+                    "val": 40
                 }
             }
     create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
@@ -344,25 +344,33 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         "Bolt.Pitch": 
             "key": "Bolt.Pitch",
             "label": "Pitch Distance (mm)"
-            "value": 40
+            "val": 40
         }
     }
     """
+    print("in fin_plate_connection.py: generate_output called with input_values:", input_values)
     output = {}  # Dictionary for formatted values
     module = create_from_input(input_values)  # Create module from input.
-    print('module : ' , module)
-    print('type of module : ' , type(module))
+    print('in fin_plate_connection.py: module : ' , module)
+    print('in fin_plate_connection.py: type of module : ' , type(module))
 
     # Generate output values in unformatted form.
     raw_output_text = module.output_values(True)
+    print('in fin_plate_connection.py: raw_output_text:', raw_output_text)
     raw_output_spacing = module.spacing(True)  # Generate output val
+    print('in fin_plate_connection.py: raw_output_spacing:', raw_output_spacing)
     raw_output_capacities = module.capacities(True)
+    print('in fin_plate_connection.py: raw_output_capacities:', raw_output_capacities)
     raw_output_section_capacities = module.section_capacities(True)
+    print('in fin_plate_connection.py: raw_output_section_capacities:', raw_output_section_capacities)
     logs = module.logs
+    print('in fin_plate_connection.py: logs:', logs)
     raw_output = raw_output_text + raw_output_spacing + raw_output_capacities + raw_output_section_capacities
+    print('in fin_plate_connection.py: raw_output combined:', raw_output)
     # os.system("clear")
     # Loop over all the text values and add them to ouptut dict.
     for param in raw_output:
+        print("in fin_plate_connection.py: Processing param:", param)
         if param[2] == "TextBox":  # If the parameter is a text output,
             key = param[0]  # id/key
             label = param[1]  # label text.
@@ -370,8 +378,12 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value  # Changed from "value" to "val" to match frontend expectations
             }  # Set label, key and value in output
+            print(f"in fin_plate_connection.py: Added output[{key}] = {output[key]}")
+    print("in fin_plate_connection.py: Final output dict:", output)
+    print("in fin_plate_connection.py: Output keys:", list(output.keys()))
+    print("in fin_plate_connection.py: Returning logs:", logs)
     return output, logs
 
 

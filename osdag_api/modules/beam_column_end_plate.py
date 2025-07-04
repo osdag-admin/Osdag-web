@@ -474,7 +474,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value
             }
     return output, logs
 

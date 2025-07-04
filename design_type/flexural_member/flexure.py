@@ -540,7 +540,7 @@ class Flexure(Member):
         # Add design status information
         t1 = (None, "Design Status", TYPE_TITLE, None, True)
         out_list.append(t1)
-        
+
         if flag and hasattr(self, 'result_designation'):
             t1 = ("Status", "Status", TYPE_TEXTBOX, "Design Successful", True)
         else:

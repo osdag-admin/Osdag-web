@@ -736,7 +736,7 @@ class Tension_bolted(Member):
 
         t21 = (KEY_OUT_INTER_PLATE_LENGTH, KEY_OUT_DISP_INTER_PLATE_LENGTH, TYPE_TEXTBOX,int(round(self.inter_plate_length, 0)) if flag else '',False)
         out_list.append(t21)
-
+        print("out_list", out_list)
         return out_list
 
 
@@ -1050,8 +1050,6 @@ class Tension_bolted(Member):
         self.min_radius_gyration = min_rad
 
     def initial_member_capacity(self,design_dictionary,previous_size = None):
-        print("Performing initial member capacity check for Tension_bolted class.*****************")
-        "selection of member based on the yield capacity"
         min_yield = 0
         if self.count == 0:
             self.max_section(design_dictionary,self.sizelist)

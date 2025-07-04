@@ -447,7 +447,9 @@ export const useEngineeringModule = (moduleConfig) => {
     setIsLoadingModalVisible(true);
     setLoadingStage("Generating design calculations...");
 
-    createDesign(param, moduleConfig.designType);
+    const response = await createDesign(param, moduleConfig.designType);
+    console.log(" createDesign response:", response);
+
     setDisplayOutput(true);
     setModelKey((prev) => prev + 1);
   };

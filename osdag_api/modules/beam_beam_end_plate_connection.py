@@ -340,7 +340,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value  # Changed from "value" to "val" to match frontend expectations
             }  # Set label, key and value in output
     return output, logs
 

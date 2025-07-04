@@ -2,6 +2,7 @@ export const finPlateOutputConfig = {
   sections: {
     "Bolt": [
       { key: "Bolt.Diameter", label: "Diameter (mm)" },
+      { key: "Bolt.Grade", label: "Property Class" },
       { key: "Bolt.Shear", label: "Shear Capacity (kN)" },
       { key: "Bolt.Bearing", label: "Bearing Capacity (kN)" },
       { key: "Bolt.Capacity", label: "Capacity (kN)" },
