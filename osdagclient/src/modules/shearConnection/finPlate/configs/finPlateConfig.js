@@ -1,7 +1,10 @@
+import { UI_STRINGS } from '../../../../constants/UIStrings';
+import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../../../../constants/DesignKeys';
+
 export const finPlateConfig = {
-  sessionName: "Fin Plate Connection",
+  sessionName: MODULE_DISPLAY_FIN_PLATE,
   routePath: "/design/connections/shear/fin_plate",
-  designType: "Fin-Plate-Connection",
+  designType: MODULE_KEY_FIN_PLATE,
   cameraKey: "FinPlate",
   cadOptions: ["Model", "Beam", "Column", "Plate"],
   
@@ -12,7 +15,7 @@ export const finPlateConfig = {
     connector_material: "E 250 (Fe 410 W)A",
     load_shear: "70",
     load_axial: "30",
-    module: "Fin Plate Connection",
+    module: MODULE_KEY_FIN_PLATE,
     plate_thickness: [],
     beam_section: "MB 300",
     column_section: "HB 150",
@@ -51,11 +54,11 @@ export const finPlateConfig = {
       if (!inputs.beam_section || !inputs.column_section || 
           inputs.beam_section === "Select Section" || 
           inputs.column_section === "Select Section") {
-        return { isValid: false, message: "Please input all the fields" };
+        return { isValid: false, message: UI_STRINGS.PLEASE_INPUT_ALL_FIELDS };
       }
     } else if (connectivity === "Beam-Beam") {
       if (!inputs.primary_beam || !inputs.secondary_beam) {
-        return { isValid: false, message: "Please input all the fields" };
+        return { isValid: false, message: UI_STRINGS.PLEASE_INPUT_ALL_FIELDS };
       }
     }
     
@@ -92,7 +95,7 @@ export const finPlateConfig = {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "Fin-Plate-Connection",
+        "Module": MODULE_KEY_FIN_PLATE,
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? lists.thicknessList : inputs.plate_thickness,
@@ -118,7 +121,7 @@ export const finPlateConfig = {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "Fin-Plate-Connection",
+        "Module": MODULE_KEY_FIN_PLATE,
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness ? lists.thicknessList : inputs.plate_thickness,
@@ -128,16 +131,16 @@ export const finPlateConfig = {
 
   inputSections: [
     {
-      title: "Connecting Members",
+      title: UI_STRINGS.CONNECTING_MEMBERS,
       fields: [
         {
           key: "connectivity",
-          label: "Connectivity",
+          label: UI_STRINGS.CONNECTIVITY,
           type: "connectivitySelect"
         },
         {
           key: "column_section", 
-          label: "Column Section*",
+          label: UI_STRINGS.COLUMN_SECTION,
           type: "select",
           options: "columnList",
           conditionalDisplay: (extraState) => {
@@ -147,7 +150,7 @@ export const finPlateConfig = {
         },
         {
           key: "beam_section",
-          label: "Beam Section*", 
+          label: UI_STRINGS.BEAM_SECTION, 
           type: "select",
           options: "beamList",
           conditionalDisplay: (extraState) => {
@@ -157,7 +160,7 @@ export const finPlateConfig = {
         },
         {
           key: "primary_beam",
-          label: "Primary Beam*",
+          label: UI_STRINGS.PRIMARY_BEAM,
           type: "select", 
           options: "beamList",
           conditionalDisplay: (extraState) => {
@@ -167,7 +170,7 @@ export const finPlateConfig = {
         },
         {
           key: "secondary_beam",
-          label: "Secondary Beam*",
+          label: UI_STRINGS.SECONDARY_BEAM,
           type: "select",
           options: "beamList", 
           conditionalDisplay: (extraState) => {
@@ -177,7 +180,7 @@ export const finPlateConfig = {
         },
         {
           key: "connector_material",
-          label: "Material",
+          label: UI_STRINGS.MATERIAL,
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -191,18 +194,18 @@ export const finPlateConfig = {
       ]
     },
     {
-      title: "Factored Loads",
+      title: UI_STRINGS.FACTORED_LOADS,
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)", type: "number" },
-        { key: "load_axial", label: "Axial Force(kN)", type: "number" }
+        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE, type: "number" },
+        { key: "load_axial", label: UI_STRINGS.AXIAL_FORCE, type: "number" }
       ]
     },
     {
-      title: "Bolt",
+      title: UI_STRINGS.BOLT,
       fields: [
         {
           key: "bolt_diameter",
-          label: "Diameter(mm)",
+          label: UI_STRINGS.DIAMETER,
           type: "customizable",
           selectionKey: "boltDiameterSelect",
           modalKey: "boltDiameter",
@@ -210,16 +213,16 @@ export const finPlateConfig = {
         },
         {
           key: "bolt_type",
-          label: "Type",
+          label: UI_STRINGS.TYPE,
           type: "select",
           options: [
-            { value: "Bearing_Bolt", label: "Bearing Bolt" },
-            { value: "Friction_Grip_Bolt", label: "Friction Grip Bolt" }
+            { value: "Bearing_Bolt", label: UI_STRINGS.TYPE + " (Bearing Bolt)" },
+            { value: "Friction_Grip_Bolt", label: UI_STRINGS.TYPE + " (Friction Grip Bolt)" }
           ]
         },
         {
           key: "bolt_grade",
-          label: "Property Class",
+          label: UI_STRINGS.PROPERTY_CLASS,
           type: "customizable",
           selectionKey: "propertyClassSelect",
           modalKey: "propertyClass",
@@ -228,11 +231,11 @@ export const finPlateConfig = {
       ]
     },
     {
-      title: "Plate",
+      title: UI_STRINGS.PLATE,
       fields: [
         {
           key: "plate_thickness",
-          label: "Thickness(mm)",
+          label: UI_STRINGS.THICKNESS,
           type: "customizable",
           selectionKey: "thicknessSelect",
           modalKey: "plateThickness",

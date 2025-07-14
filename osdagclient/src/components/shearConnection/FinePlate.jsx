@@ -31,6 +31,8 @@ import CustomSectionModal from "../CustomSectionModal";
 // drop down
 import DropdownMenu from "../DropdownMenu";
 import ScreenShotCapture from "../ScreenShotCapture";
+import { UI_STRINGS } from "../../constants/UIStrings";
+import { MODULE_KEY_FIN_PLATE } from '../../constants/DesignKeys';
 
 const { Option } = Select;
 
@@ -180,7 +182,7 @@ function FinePlate() {
       connector_material: "E 250 (Fe 410 W)A",
       load_shear: "70",
       load_axial: "30",
-      module: "Fin Plate Connection",
+      module: MODULE_KEY_FIN_PLATE,
       plate_thickness: [],
       beam_section: "MB 300",
       column_section: "HB 150",
@@ -237,7 +239,7 @@ function FinePlate() {
     connector_material: "E 250 (Fe 410 W)A",
     load_shear: "70",
     load_axial: "30",
-    module: "Fin Plate Connection",
+    module: MODULE_KEY_FIN_PLATE,
     plate_thickness: [],
     beam_section: "MB 300",
     column_section: "HB 150",
@@ -298,7 +300,7 @@ function FinePlate() {
     // Small delay before new session
     setTimeout(() => {
       console.log("FINPLATE: Creating new session");
-      createSession("Fin Plate Connection");
+      createSession(MODULE_KEY_FIN_PLATE);
     }, 100);
   }, []);
 
@@ -353,7 +355,7 @@ function FinePlate() {
         // Only do cleanup if navigation is allowed or no unsaved work
         if (!hasUnsavedWork() || allowNavigation) {
           console.log("CLEANUP: Proceeding with session deletion");
-          deleteSession("Fin Plate Connection");
+          deleteSession(MODULE_KEY_FIN_PLATE);
           setTimeout(() => {
             resetToDefaultState();
           }, 50);
@@ -495,7 +497,7 @@ function FinePlate() {
         inputs.beam_section === "Select Section" ||
         inputs.column_section === "Select Section"
       ) {
-        alert("Please input all the fields");
+        alert(UI_STRINGS.PLEASE_INPUT_ALL_FIELDS);
         return;
       }
       param = {
@@ -522,7 +524,7 @@ function FinePlate() {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        Module: "Fin Plate Connection",
+        Module: MODULE_KEY_FIN_PLATE,
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness
@@ -531,7 +533,7 @@ function FinePlate() {
       };
     } else {
       if (!inputs.primary_beam || !inputs.secondary_beam) {
-        alert("Please input all the fields");
+        alert(UI_STRINGS.PLEASE_INPUT_ALL_FIELDS);
         return;
       }
       param = {
@@ -558,7 +560,7 @@ function FinePlate() {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        Module: "Fin Plate Connection",
+        Module: MODULE_KEY_FIN_PLATE,
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness
@@ -570,9 +572,9 @@ function FinePlate() {
 
     // Show loading modal
     setIsLoadingModalVisible(true);
-    setLoadingStage("Generating design calculations...");
+    setLoadingStage(UI_STRINGS.GENERATING_RESULTS);
 
-    createDesign(param, "Fin-Plate-Connection");
+    createDesign(param, MODULE_KEY_FIN_PLATE);
     setDisplayOutput(true);
     setModelKey((prev) => prev + 1); //Forces model to reload
   };
@@ -685,7 +687,7 @@ function FinePlate() {
   const handleOk = () => {
     // Handle OK button logic
     if (!output) {
-      alert("Please submit the design first.");
+      alert(UI_STRINGS.PLEASE_SUBMIT_DESIGN_FIRST);
       return;
     }
     console.log("designreportInputs : ", designReportInputs);
@@ -718,7 +720,7 @@ function FinePlate() {
       selectedOption === "Column Web-Beam-Web"
     ) {
       if (!inputs.beam_section || !inputs.column_section || !output) {
-        alert("Please submit the design first.");
+        alert(UI_STRINGS.PLEASE_SUBMIT_DESIGN_FIRST);
         return;
       }
       data = {
@@ -745,7 +747,7 @@ function FinePlate() {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        Module: "Fin Plate Connection",
+        Module: MODULE_KEY_FIN_PLATE,
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness
@@ -754,7 +756,7 @@ function FinePlate() {
       };
     } else {
       if (!inputs.primary_beam || !inputs.secondary_beam || !output) {
-        alert("Please submit the design first.");
+        alert(UI_STRINGS.PLEASE_SUBMIT_DESIGN_FIRST);
         return;
       }
       data = {
@@ -781,7 +783,7 @@ function FinePlate() {
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        Module: "Fin Plate Connection",
+        Module: MODULE_KEY_FIN_PLATE,
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
         "Connector.Plate.Thickness_List": allSelected.plate_thickness
@@ -853,7 +855,7 @@ function FinePlate() {
       // Small delay then navigate
       setTimeout(() => {
         // First cleanup the session and state
-        deleteSession("Fin Plate Connection");
+        deleteSession(MODULE_KEY_FIN_PLATE);
         resetToDefaultState();
 
         // Manual destinations
@@ -889,7 +891,7 @@ function FinePlate() {
         connector_material: "E 250 (Fe 410 W)A",
         load_shear: "70",
         load_axial: "30",
-        module: "Fin Plate Connection",
+        module: MODULE_KEY_FIN_PLATE,
         plate_thickness: [],
         beam_section: "MB 300",
         column_section: "HB 150",
@@ -1091,15 +1093,7 @@ function FinePlate() {
 
           <div className="element">
             <div className="home-btn" onClick={handleHomeClick}>
-              {/* <div
-              className="home-btn"
-              onClick={async () => {
-                // Clear session before navigating to home
-                        // Session clearing no longer needed
-                navigate("/home");
-              }}
-            > */}
-              Home
+              {UI_STRINGS.HOME}
             </div>
           </div>
         </div>
@@ -1109,13 +1103,13 @@ function FinePlate() {
         <div className="superMainBody">
           {/* Left */}
           <div className="InputDock">
-            <p>Input Dock</p>
+            <p>{UI_STRINGS.INPUT_DOCK}</p>
             <div className="subMainBody scroll-data">
               {/* Section 1 Start */}
-              <h3>Connecting Members</h3>
+              <h3>{UI_STRINGS.CONNECTING_MEMBERS}</h3>
               <div className="component-grid">
                 <div className="component-grid-align">
-                  <h4>Connectivity</h4>
+                  <h4>{UI_STRINGS.CONNECTIVITY}</h4>
                   <Select onSelect={handleSelectChange} value={selectedOption}>
                     {(connectivityList || []).map((item, index) => (
                       <Option key={index} value={item}>
@@ -1136,7 +1130,7 @@ function FinePlate() {
                 {selectedOption === "Beam-Beam" ? (
                   <>
                     <div className="component-grid-align">
-                      <h4>Primary Beam*</h4>
+                      <h4>{UI_STRINGS.PRIMARY_BEAM}</h4>
                       <Select
                         value={inputs.primary_beam || beamList[2]}
                         onSelect={(value) =>
@@ -1152,7 +1146,7 @@ function FinePlate() {
                     </div>
 
                     <div className="component-grid-align">
-                      <h4>Secondary Beam*</h4>
+                      <h4>{UI_STRINGS.SECONDARY_BEAM}</h4>
                       <Select
                         value={inputs.secondary_beam || beamList[0]}
                         onSelect={(value) =>
@@ -1170,7 +1164,7 @@ function FinePlate() {
                 ) : (
                   <>
                     <div className="component-grid-align">
-                      <h4>Column Section*</h4>
+                      <h4>{UI_STRINGS.COLUMN_SECTION}</h4>
                       <Select
                         value={inputs.column_section || columnList[0]}
                         onSelect={(value) =>
@@ -1186,7 +1180,7 @@ function FinePlate() {
                     </div>
 
                     <div className="component-grid-align">
-                      <h4>Beam Section*</h4>
+                      <h4>{UI_STRINGS.BEAM_SECTION}</h4>
                       <Select
                         value={inputs.beam_section || beamList[28]}
                         onSelect={(value) =>
@@ -1204,7 +1198,7 @@ function FinePlate() {
                 )}
 
                 <div className="component-grid-align">
-                  <h4>Material</h4>
+                  <h4>{UI_STRINGS.MATERIAL}</h4>
                   <Select
                     value={inputs.connector_material || materialList[0].Grade}
                     onSelect={(value) => {
@@ -1233,10 +1227,10 @@ function FinePlate() {
 
               {/* Section End */}
               {/* Section Start  */}
-              <h3>Factored Loads</h3>
+              <h3>{UI_STRINGS.FACTORED_LOADS}</h3>
               <div className="component-grid">
                 <div className="component-grid-align">
-                  <h4>Shear Force(kN)</h4>
+                  <h4>{UI_STRINGS.SHEAR_FORCE}</h4>
                   <Input
                     type="text"
                     name="ShearForce"
@@ -1255,7 +1249,7 @@ function FinePlate() {
                 </div>
 
                 <div className="component-grid-align">
-                  <h4>Axial Force(kN)</h4>
+                  <h4>{UI_STRINGS.AXIAL_FORCE}</h4>
                   <Input
                     type="text"
                     name="AxialForce"
@@ -1276,10 +1270,10 @@ function FinePlate() {
 
               {/* Section End */}
               {/* Section Start */}
-              <h3>Bolt</h3>
+              <h3>{UI_STRINGS.BOLT}</h3>
               <div className="component-grid">
                 <div className="component-grid-align">
-                  <h4>Diameter(mm)</h4>
+                  <h4>{UI_STRINGS.DIAMETER}</h4>
                   <Select
                     onSelect={handleSelectChangeBoltBeam}
                     value={boltDiameterSelect}
@@ -1317,7 +1311,7 @@ function FinePlate() {
                 </Modal>
 
                 <div className="component-grid-align">
-                  <h4>Type</h4>
+                  <h4>{UI_STRINGS.TYPE}</h4>
                   <Select
                     value={inputs.bolt_type}
                     onSelect={(value) =>
@@ -1332,7 +1326,7 @@ function FinePlate() {
                 </div>
 
                 <div className="component-grid-align">
-                  <h4>Property Class</h4>
+                  <h4>{UI_STRINGS.PROPERTY_CLASS}</h4>
                   <Select
                     onSelect={handleSelectChangePropertyClass}
                     value={propertyClassSelect}
@@ -1369,10 +1363,10 @@ function FinePlate() {
                 </Modal>
               </div>
               {/* Section End */}
-              <h3>Plate</h3>
+              <h3>{UI_STRINGS.PLATE}</h3>
               <div className="component-grid">
                 <div className="component-grid-align">
-                  <h4>Thickness(mm)</h4>
+                  <h4>{UI_STRINGS.THICKNESS}</h4>
                   <Select onSelect={handleAllSelectPT} value={thicknessSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
@@ -1409,12 +1403,12 @@ function FinePlate() {
             <div className="inputdock-btn">
               <Input
                 type="button"
-                value="Reset"
+                value={UI_STRINGS.RESET}
                 onClick={() => handleReset()}
               />
               <Input
                 type="button"
-                value="Design"
+                value={UI_STRINGS.DESIGN}
                 onClick={() => handleSubmit()}
               />
             </div>
@@ -1425,8 +1419,8 @@ function FinePlate() {
             title={
               <span>
                 {confirmationType === "reset"
-                  ? "Confirm Reset"
-                  : "Unsaved Progress"}
+                  ? UI_STRINGS.CONFIRM_RESET
+                  : UI_STRINGS.UNSAVED_PROGRESS}
               </span>
             }
             onCancel={() => {
@@ -1438,7 +1432,7 @@ function FinePlate() {
                 key="cancel"
                 onClick={() => setShowResetConfirmation(false)}
               >
-                Cancel
+                {UI_STRINGS.CANCEL}
               </Button>,
               <Button
                 key="confirm"
@@ -1447,8 +1441,8 @@ function FinePlate() {
                 onClick={performReset}
               >
                 {confirmationType === "reset"
-                  ? "Yes, Reset Everything"
-                  : "Yes, Leave Page"}
+                  ? UI_STRINGS.YES_RESET
+                  : UI_STRINGS.YES_LEAVE}
               </Button>,
             ]}
             width={500}
@@ -1456,12 +1450,12 @@ function FinePlate() {
             <div>
               <p>
                 {confirmationType === "reset"
-                  ? "Are you sure you want to reset all inputs and clear the current design?"
-                  : "You have unsaved design progress. Are you sure you want to leave?"}
+                  ? UI_STRINGS.CONFIRM_RESET_MSG
+                  : UI_STRINGS.UNSAVED_PROGRESS_MSG}
               </p>
               <br />
               <p>
-                <strong>This will lose all your current work.</strong>
+                <strong>{UI_STRINGS.LOSE_WORK_WARNING}</strong>
               </p>
             </div>
           </Modal>
@@ -1476,9 +1470,8 @@ function FinePlate() {
                   onClick={() => setSelectedView(option)}
                 >
                   <div
-                    className={`option-box ${
-                      selectedView === option ? "selected" : ""
-                    }`}
+                    className={`option-box ${selectedView === option ? "selected" : ""
+                      }`}
                   ></div>
                   <span className="option-label">{option}</span>
                 </div>
@@ -1486,7 +1479,7 @@ function FinePlate() {
             </div>
             {loading ? (
               <div className="modelLoading">
-                <p>Loading Model...</p>
+                <p>{UI_STRINGS.LOADING_MODEL}</p>
               </div>
             ) : renderBoolean ? (
               <div className="cadModel">
@@ -1537,10 +1530,10 @@ function FinePlate() {
             <div className="outputdock-btn">
               <Input
                 type="button"
-                value="Create Design Report"
+                value={UI_STRINGS.CREATE_DESIGN_REPORT}
                 onClick={handleCreateDesignReport}
               />
-              <Input type="button" value="Save Output" onClick={saveOutput} />
+              <Input type="button" value={UI_STRINGS.SAVE_OUTPUT} onClick={saveOutput} />
 
               <Modal
                 open={CreateDesignReportBool}
@@ -1548,7 +1541,7 @@ function FinePlate() {
                 footer={null}
                 className="designModal"
               >
-                <p>Design Report Summary</p>
+                <p>{UI_STRINGS.DESIGN_REPORT_SUMMARY}</p>
                 <div className="design-report-form">
                   <Row
                     gutter={[16, 16]}
@@ -1556,7 +1549,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Company Name:</label>
+                      <label>{UI_STRINGS.COMPANY_NAME}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1577,7 +1570,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Company Logo : </label>
+                      <label>{UI_STRINGS.COMPANY_LOGO}</label>
                     </Col>
                     <Col span={18}>
                       <input
@@ -1594,7 +1587,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Group/Team Name:</label>
+                      <label>{UI_STRINGS.GROUP_TEAM_NAME}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1615,7 +1608,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Designer:</label>
+                      <label>{UI_STRINGS.DESIGNER}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1642,7 +1635,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Project Title:</label>
+                      <label>{UI_STRINGS.PROJECT_TITLE}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1662,7 +1655,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Subtitle:</label>
+                      <label>{UI_STRINGS.SUBTITLE}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1682,7 +1675,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Job Number:</label>
+                      <label>{UI_STRINGS.JOB_NUMBER}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1702,7 +1695,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Client:</label>
+                      <label>{UI_STRINGS.CLIENT}</label>
                     </Col>
                     <Col span={18}>
                       <Input
@@ -1722,7 +1715,7 @@ function FinePlate() {
                     style={{ marginBottom: "5px" }}
                   >
                     <Col span={6}>
-                      <label>Additional Comments:</label>
+                      <label>{UI_STRINGS.ADDITIONAL_COMMENTS}</label>
                     </Col>
                     <Col span={18}>
                       <Input.TextArea

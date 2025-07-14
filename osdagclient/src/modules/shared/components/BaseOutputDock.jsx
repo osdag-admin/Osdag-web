@@ -239,7 +239,7 @@ export const BaseOutputDock = ({
       </div>
     );
   };
-
+  console.log("output", output);
   return (
     <>
       <p>{title}</p>

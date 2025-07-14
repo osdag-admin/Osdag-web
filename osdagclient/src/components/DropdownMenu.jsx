@@ -75,8 +75,6 @@ function DropdownMenu({
           const arr = item.split(":");
           arr[0] = arr[0].trim();
 
-          console.log(arr[0]);
-
           if (arr[0].includes("Bolt.Diameter")) {
             boltDiameterIndex = i;
             continue;
@@ -200,8 +198,6 @@ function DropdownMenu({
           );
         }
 
-        console.log(inputFromFileObj);
-        
         setInputs(inputFromFileObj);
         setAllSelected({
           plate_thickness: false,
@@ -279,8 +275,6 @@ function DropdownMenu({
       )}\n`;
     }
 
-    console.log(content);
-
     let element = document.createElement("a");
     element.setAttribute(
       "href",
@@ -328,7 +322,6 @@ function DropdownMenu({
   };
 
   const saveInput = () => {
-    console.log("inside save input");
     let content = "";
 
     content += `Bolt.Bolt_Hole_Type: ${inputs.bolt_hole_type}\n`;
@@ -394,7 +387,6 @@ function DropdownMenu({
     } else if (localStorage.getItem("userType") == "user") {
       // send the content to the Server
       SaveInputValueFile(content).then((response) => {
-        console.log("response in dropdown : ", response);
         setDisplaySaveInputPopup(response.saveInputStatus);
         setSaveInputFileName(response.saveInputFileName);
       });
@@ -426,7 +418,6 @@ function DropdownMenu({
         break;
 
       case `Save 3D Model`:
-        console.log(`Save 3D model val ${option.name}`);
         (async () => {
           try {
             const options = {
@@ -457,7 +448,6 @@ function DropdownMenu({
             
             const handle = await window.showSaveFilePicker(options);
             const fileExtension = handle.name.split(".").pop(); // Get selected format
-            console.log("Selected extension:", fileExtension);
 
             const blob = await downloadCADModel(fileExtension); // Call only to download
 
@@ -465,9 +455,6 @@ function DropdownMenu({
               const writable = await handle.createWritable();
               await writable.write(blob);
               await writable.close();
-              console.log(
-                `${fileExtension.toUpperCase()} CAD file saved successfully.`
-              );
             } else {
               console.error("Failed to download CAD model blob.");
             }
@@ -479,7 +466,6 @@ function DropdownMenu({
 
       case `Save Cad Image`:
         triggerScreenshotCapture();
-        console.log("Image saved successfully");
         break;
 
       // File End
@@ -490,66 +476,51 @@ function DropdownMenu({
       // Edit End
       // Graphics Start
       case `Zoom In`:
-        console.log(`Zoom In val ${option.name}`);
         break;
 
       case `Zoom Out`:
-        console.log(`Zoom Out val ${option.name}`);
         break;
 
       case `Pan`:
-        console.log(`Pan val ${option.name}`);
         break;
 
       case `Rotate 3D Model`:
-        console.log(`Rotate 3D Model val ${option.name}`);
         break;
 
       case `Model`:
-        console.log(`Model val ${option.name}`);
         break;
 
       case `Beam`:
-        console.log(`Beam val ${option.name}`);
         break;
 
       case `Column`:
-        console.log(`Column val ${option.name}`);
         break;
 
       case `FinePlate`:
-        console.log(`FinePlate val ${option.name}`);
         break;
       // Graphics End
 
       case `Downloads`:
-        console.log(`Downloads val ${option.name}`);
         break;
 
       case `Reset`:
-        console.log(`Reset val ${option.name}`);
         break;
       // Database End
       // Help Start
       case `Video Tutorials`:
-        console.log(`Video Tutorials val ${option.name}`);
         break;
 
       case `Design Examples`:
-        console.log(`Design Examples val ${option.name}`);
         break;
 
       case `Ask us a question`:
-        console.log(`Ask us a question val ${option.name}`);
         break;
 
       case `About Osdag`:
-        console.log(`About Osdag val ${option.name}`);
         break;
       // Help End
 
       default:
-        console.log(`Default Val: ${option.name}`);
         break;
     }
   };

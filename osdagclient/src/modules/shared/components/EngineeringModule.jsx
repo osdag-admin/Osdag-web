@@ -15,6 +15,7 @@ import Logs from "../../../components/Logs";
 import UnifiedDropdownMenu from "../utils/UnifiedDropdownMenu";
 import ScreenshotCapture from "../../../components/ScreenShotCapture";
 import DesignPrefSections from "../../../components/DesignPrefSections";
+import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../../../constants/DesignKeys';
 
 export const EngineeringModule = ({
   moduleConfig,
@@ -108,7 +109,7 @@ export const EngineeringModule = ({
   };
   // Get connectivity for modules that support it (FinPlate, etc.)
   const getConnectivity = () => {
-    if (moduleConfig.cameraKey === "FinPlate") {
+    if (moduleConfig.cameraKey === MODULE_KEY_FIN_PLATE) {
       return extraState?.selectedOption || inputs?.connectivity;
     }
     return null;
@@ -129,7 +130,7 @@ export const EngineeringModule = ({
 
     // Fallback based on module type for backward compatibility
     switch (moduleConfig.cameraKey) {
-      case "FinPlate":
+      case MODULE_KEY_FIN_PLATE:
         return ["Model", "Beam", "Column", "Plate"];
       case "TensionMember":
         return ["Model", "Member", "Plate", "Endplate"];
@@ -532,7 +533,7 @@ export const EngineeringModule = ({
       </Modal>
 
       {/* Enhanced CSS for better UI */}
-      <style jsx>{`
+      <style>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }

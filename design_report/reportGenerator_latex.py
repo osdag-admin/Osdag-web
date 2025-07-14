@@ -69,7 +69,7 @@ class CreateLatex(Document):
             with header.create(Tabularx('|l|p{4cm}|l|X|')) as table:
                 table.add_hline()
                 # MultiColumn(4)
-                table.add_row((MultiColumn(2, align='|c|', data=('' if companylogo is'' else StandAloneGraphic(image_options="height=0.95cm",
+                table.add_row((MultiColumn(2, align='|c|', data=('' if companylogo == '' else StandAloneGraphic(image_options="height=0.95cm",
                                                                                  filename=companylogo))),
                                                MultiColumn(2, align='|c|',
                                                            data=['Created with',StandAloneGraphic(image_options="width=4.0cm,height=1cm",

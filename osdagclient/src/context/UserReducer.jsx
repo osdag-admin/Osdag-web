@@ -7,10 +7,7 @@
 export default (state, action) => {
     switch(action.type){
         case 'SET_LOGGING_STATUS' : 
-        console.log('action.payload : ' , action.payload)
-        // console.log('isLoggedIn in UserReducer : ' , isLoggedIn)
         localStorage.setItem('isLoggedIn' , action.payload.isLoggedIn)
-        console.log('Pass the console of isLoggedIn in UserReducer : ')
             return {
                 ...state,
                 isLoggedIn : action.payload.isLoggedIn,
@@ -20,7 +17,6 @@ export default (state, action) => {
             }
             
         case 'SET_SIGNUP_STATUS' : 
-        console.log('action.payload : ' , action.payload)
             return {
                 ...state,
                 isLoggedIn : action.payload.isLoggedIn,

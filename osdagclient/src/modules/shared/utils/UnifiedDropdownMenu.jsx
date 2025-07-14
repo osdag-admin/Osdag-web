@@ -3,10 +3,11 @@ import React from "react";
 import { useContext, useRef, useState, useEffect } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import { UserContext } from "../../../context/UserState";
+import { MODULE_KEY_FIN_PLATE } from '../../../constants/DesignKeys';
 
 // Module-specific configurations
 const MODULE_CONFIGS = {
-  "Fin Plate Connection": {
+  [MODULE_KEY_FIN_PLATE]: {
     connectivityField: "Connectivity",
     connectivityMap: {
       "Column Flange-Beam-Web": "Column Flange-Beam Web",
@@ -26,7 +27,7 @@ const MODULE_CONFIGS = {
       topAngleList: "Connector.Top_Angle_List",
     },
     conditionalLogic: (selectedOption, inputs) => {
-      const connectivity = MODULE_CONFIGS["Fin Plate Connection"].connectivityMap[selectedOption];
+      const connectivity = MODULE_CONFIGS[MODULE_KEY_FIN_PLATE].connectivityMap[selectedOption];
       if (connectivity === "Column Flange-Beam Web" || connectivity === "Column Web-Beam Web") {
         return {
           memberSupported: inputs.beam_section,
@@ -187,7 +188,7 @@ function UnifiedDropdownMenu({
               inputFromFileObj.bolt_type = val;
               break;
             case "Connectivity":
-              const config = MODULE_CONFIGS["Fin Plate Connection"];
+              const config = MODULE_CONFIGS[MODULE_KEY_FIN_PLATE];
               if (config?.connectivityMapInverse) {
                 setSelectedOption(config.connectivityMapInverse[val]);
               }
@@ -250,7 +251,7 @@ function UnifiedDropdownMenu({
               inputFromFileObj.member_material = val;
               break;
             case "Member.Supported_Section.Designation":
-              if (moduleName === "Fin Plate Connection") {
+              if (moduleName === MODULE_KEY_FIN_PLATE) {
                 if (selectedOption === "Beam-Beam") {
                   inputFromFileObj.secondary_beam = val;
                 } else {
@@ -264,7 +265,7 @@ function UnifiedDropdownMenu({
               inputFromFileObj.supported_material = val;
               break;
             case "Member.Supporting_Section.Designation":
-              if (moduleName === "Fin Plate Connection") {
+              if (moduleName === MODULE_KEY_FIN_PLATE) {
                 if (selectedOption === "Beam-Beam") {
                   inputFromFileObj.primary_beam = val;
                 } else {
@@ -345,7 +346,7 @@ function UnifiedDropdownMenu({
     content += `Bolt.Type: ${inputs.bolt_type.replaceAll("_", " ")}\n`;
 
     // Module-specific connectivity handling
-    if (moduleName === "Fin Plate Connection") {
+    if (moduleName === MODULE_KEY_FIN_PLATE) {
       content += `Connectivity: ${moduleConfig.connectivityMap[selectedOption]}\n`;
     } else if (moduleName === "Beam-to-Beam End Plate Connection") {
       content += `Connectivity *: ${inputs.connectivity}\n`;
@@ -368,7 +369,7 @@ function UnifiedDropdownMenu({
     content += `Module: ${inputs.module}\n`;
 
     // Module-specific member designation handling
-    if (moduleName === "Fin Plate Connection") {
+    if (moduleName === MODULE_KEY_FIN_PLATE) {
       const memberData = moduleConfig.conditionalLogic(selectedOption, inputs);
       content += `Member.Supported_Section.Designation: ${memberData.memberSupported}\n`;
       content += `Member.Supported_Section.Material: ${inputs.supported_material}\n`;

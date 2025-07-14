@@ -1,8 +1,10 @@
-import { createContext, useReducer, useState } from "react";
+import { createContext, useReducer, useState, useEffect } from "react";
 import ModuleReducer from "./ModuleReducer";
 
 // crypto packages
 import { decode as base64_decode, encode as base64_encode } from "base-64";
+import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../constants/DesignKeys';
+import { createDesign as apiCreateDesign, createDesignReport as apiCreateDesignReport, populateModule } from '../modules/shared/api/moduleApi';
 
 /* 
     ######################################################### 
@@ -93,14 +95,12 @@ export const ModuleProvider = ({ children }) => {
         }
       );
       const jsonResponse = await response?.json();
-      console.log("connectivityList", jsonResponse);
       const data = jsonResponse.connectivityList;
       // dispatch the action to set the connectivityList
       dispatch({ type: "SET_CONNECTIVITY_LIST", payload: data });
       state.connectivityListObtained = true;
     } catch (error) {
       dispatch({ type: "SET_ERR_MSG_LEAF", payload: "" });
-      console.log("error", error);
     }
   };
 
@@ -111,61 +111,40 @@ export const ModuleProvider = ({ children }) => {
     update = false,
     type
   ) => {
-    console.log("getColumnBeamMaterialList called with:", {
-      moduleName,
-      connectivity,
-      cmat,
-      update,
-      type,
-    });
-
     try {
       
-      console.log("GETTING COLUMN BEAM MATERIALS", moduleName);
       const email = localStorage.getItem("email");
-      console.log("Using email:", email);
 
       const url = `${BASE_URL}populate?moduleName=${state.currentModuleName}&connectivity=${connectivity}&email=${email}`;
-      console.log("Making request to:", url);
       const response = await fetch(url, {
         method: "GET",
         mode: "cors",
         credentials: "include",
       });
-      console.log("Got response status:", response.status);
 
       const jsonResponse = await response?.json();
-      console.log("Response data:", jsonResponse);
       if (update) {
-        console.log("Updating with material:", cmat);
         const mList = jsonResponse.materialList;
         const mat = mList.filter((item) => item.Grade === cmat);
-        console.log("Filtered materials:", mat);
 
         if (type === "connector") {
-          console.log("Saving connector material details");
           dispatch({ type: "SAVE_CM_DETAILS", payload: mat });
         } else if (type === "supported") {
-          console.log("Saving supported material details");
           dispatch({ type: "SAVE_SDM_DETAILS", payload: mat });
         } else if (type === "supporting") {
-          console.log("Saving supporting material details");
           dispatch({ type: "SAVE_STM_DETAILS", payload: mat });
         }
       }
 
       if (connectivity !== "Beam-Beam") {
-        console.log("Dispatching column-beam material list");
         dispatch({
           type: "SET_COLUMN_BEAM_MATERIAL_LIST",
           payload: jsonResponse,
         });
       } else if (connectivity === "Beam-Beam") {
-        console.log("Dispatching beam material list");
         dispatch({ type: "SET_BEAM_MATERIAL_LIST", payload: jsonResponse });
       }
     } catch (error) {
-      console.log("Error in getColumnBeamMaterialList:", error);
       dispatch({ type: "SET_ERR_MSG_COLUMN_BEAM_MATERIAL", payload: "" });
     }
   };
@@ -177,14 +156,6 @@ export const ModuleProvider = ({ children }) => {
     update = false,
     type
   ) => {
-    console.log("getColumnBeamMaterialList called with:", {
-      moduleName,
-      connectivity,
-      cmat,
-      update,
-      type,
-    });
-
     try {
       console.log("GETTING COLUMN BEAM MATERIALS", moduleName);
       const email = localStorage.getItem("email");
@@ -209,7 +180,6 @@ export const ModuleProvider = ({ children }) => {
         payload: jsonResponse,
       });
     } catch (error) {
-      console.log("Error in getColumnBeamMaterialList:", error);
       dispatch({ type: "SET_ERR_MSG_COLUMN_BEAM_MATERIAL", payload: "" });
     }
   };
@@ -534,60 +504,8 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
-  const createDesign = async (param, module_id, onCADSuccess = null) => {
-    try {
-      console.log("CleatAngle - Creating design with params:", param);
-      console.log("CleatAngle - Module ID:", module_id);
-      console.log("CleatAngle - Material key in params:", param.Material);
-      console.log("CleatAngle - All param keys:", Object.keys(param));
-      
-      const response = await fetch(`${BASE_URL}calculate-output/${module_id}`, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(param),
-      });
-      
-      console.log("CleatAngle - Response status:", response.status);
-      const jsonResponse = await response?.json();
-      console.log("CleatAngle - modulestate jsonResponse:", jsonResponse);
-      console.log("CleatAngle - Response data keys:", Object.keys(jsonResponse?.data || {}));
-      console.log("CleatAngle - Response data:", jsonResponse?.data);
-      console.log("CleatAngle - Response logs:", jsonResponse?.logs);
-      
-      dispatch({ type: "SET_DESIGN_DATA_AND_LOGS", payload: jsonResponse });
-      
-      if (response.status == 201) {
-        // Only attempt CAD generation if we have valid output
-        if (jsonResponse?.data && Object.keys(jsonResponse.data).length > 0) {
-          console.log("CleatAngle - Valid output found, attempting CAD generation");
-          try {
-            // Pass the output and logs data directly to the CAD callback
-            const cadCallbackWithData = () => {
-              if (onCADSuccess && typeof onCADSuccess === 'function') {
-                // Pass the current output and logs data to the callback
-                onCADSuccess(jsonResponse.data, jsonResponse.logs);
-              }
-            };
-            createCADModel(param, module_id, cadCallbackWithData);
-          } catch (error) {
-            console.log("CleatAngle - Error in creating the CAD model from createDesign:", error);
-          }
-        } else {
-          console.log("CleatAngle - No valid output found, skipping CAD generation");
-        }
-      } else if (response.status == 400) {
-        console.log("CleatAngle - BAD input values", response);
-        // set the render CAD to false to display the default image only
-        dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
-      }
-    } catch (error) {
-      console.log("CleatAngle - Error in creating the design:", error);
-    }
+  const createDesign = (param, module_id, onCADSuccess = null) => {
+    return apiCreateDesign(param, module_id, onCADSuccess, dispatch);
   };
 
   const getDesingPrefData = async (param) => {
@@ -738,59 +656,8 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
-  const createDesignReport = async (params, moduleId = null, inputValues = null, designStatus = true, logs = []) => {
-    console.log("params  : ", params);
-    console.log("moduleId  : ", moduleId);
-    console.log("inputValues  : ", inputValues);
-    console.log("designStatus  : ", designStatus);
-    console.log("logs  : ", logs);
-
-    // store the companyLogo in the server fileSystem
-    const logoFullPath = params.companyLogo
-      ? await fetchCompanyLogo(params.companyLogo, params.companyLogoName)
-      : "";
-    console.log("fileName received : ", logoFullPath);
-
-    try {
-      const response = await fetch(`${BASE_URL}generate-report`, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          metadata: {
-            ProfileSummary: {
-              CompanyName: params.companyName,
-              CompanyLogo: logoFullPath ? logoFullPath : "",
-              "Group/TeamName": params.groupTeamName,
-              Designer: params.designer,
-            },
-            ProjectTitle: params.projectTitle,
-            Subtitle: params.subtitle,
-            JobNumber: params.jobNumber,
-            AdditionalComments: params.additionalComments,
-            Client: params.client,
-          },
-          module_id: moduleId,
-          input_values: inputValues,
-          design_status: designStatus,
-          logs: logs,
-        }),
-      });
-
-      const jsonResponse = await response?.json();
-      console.log("jsonresponse : ", jsonResponse);
-      if (response.status == 201) {
-        // obtain the report_id and fetch the pdf file
-        getPDF({ report_id: jsonResponse.report_id });
-      } else {
-        console.log("response.status!=201 in createDesignReport, erorr");
-      }
-    } catch (error) {
-      console.log("error : ", error);
-    }
+  const createDesignReport = (params, moduleId = null, inputValues = null, designStatus = true, logs = []) => {
+    return apiCreateDesignReport(params, moduleId, inputValues, designStatus, logs, fetchCompanyLogo, getPDF);
   };
 
   const saveCSV = async () => {
@@ -815,6 +682,11 @@ export const ModuleProvider = ({ children }) => {
       dispatch({ type: "UPDATE_SUPPORTED_ST_DATA", payload: materialValue });
     }
   };
+
+  useEffect(() => {
+    // Only for FinPlate for now
+    populateModule(MODULE_KEY_FIN_PLATE, dispatch);
+  }, []);
 
   return (
     <ModuleContext.Provider
@@ -883,6 +755,7 @@ export const ModuleProvider = ({ children }) => {
         getTensionMemberAngleList,
         getTensionMemberChannelList,
         createDesignReport,
+        dispatch,
       }}
     >
       {children}

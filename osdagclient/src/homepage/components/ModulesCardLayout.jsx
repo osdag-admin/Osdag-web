@@ -4,7 +4,8 @@ import coverPlateBolted from "../../assets/ShearConnection/sc_fin_plate.png";
 import coverPlateWelded from "../../assets/ShearConnection/sc_fin_plate.png";
 import endPlate from "../../assets/ShearConnection/sc_fin_plate.png";
 import ProjectNameModal from "../../components/ProjectNameModal";
-import { getCurrentUserEmail } from "../../utils/auth";
+import { getCurrentUserEmail, isGuestUser } from "../../utils/auth";
+import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../../constants/DesignKeys';
 
 // Submodules for each main module
 const MODULE_SUBMODULES = {
@@ -37,7 +38,7 @@ const CONNECTIONS_TAB_CONTENT = {
     {
       label: "Shear Connections",
       options: [
-        { key: "fp", label: "Fin Plate", img: coverPlateBolted },
+        { key: MODULE_KEY_FIN_PLATE, label: MODULE_DISPLAY_FIN_PLATE, img: coverPlateBolted },
         { key: "ca", label: "Cleat Angle", img: endPlate },
         { key: "ep", label: "End Plate", img: endPlate },
         { key: "sa", label: "Seated Angle", img: endPlate },
@@ -120,6 +121,7 @@ const GENERIC_SUBMODULE_CONTENT = {
 const MODULE_ROUTES = {
   // Shear Connections
   fp: "/design/connections/shear/fin_plate",
+  [MODULE_KEY_FIN_PLATE]: "/design/connections/shear/fin_plate",
   ca: "/design/connections/shear/cleat_angle", 
   ep: "/design/connections/shear/end_plate",
   sa: "/design/connections/shear/seated_angle",
@@ -208,7 +210,16 @@ const TabbedModulePage = () => {
     } else {
       route = MODULE_ROUTES[optionKey];
     }
-    
+
+    // Guest user: skip modal and backend, navigate directly
+    if (isGuestUser()) {
+      if (route) {
+        navigate(route);
+      }
+      return;
+    }
+
+    // Non-guest: show modal and create project
     if (route) {
       setSelectedModule({
         key: optionKey,
@@ -222,6 +233,8 @@ const TabbedModulePage = () => {
   const handleProjectModalConfirm = async (projectName) => {
     if (selectedModule) {
       try {
+        // Replace spaces with underscores for project name
+        const safeProjectName = (projectName || `${selectedModule.label} Project`).replace(/\s+/g, '_');
         // Create project in database
         const response = await fetch('http://localhost:8000/api/projects/', {
           method: 'POST',
@@ -229,7 +242,7 @@ const TabbedModulePage = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: projectName || `${selectedModule.label} Project`,
+            name: safeProjectName,
             module_id: selectedModule.key,
             module_name: selectedModule.label,
             user_email: getCurrentUserEmail(),
@@ -240,8 +253,7 @@ const TabbedModulePage = () => {
         
         if (data.success) {
           // Navigate to the module with project name in URL
-          const projectNameForUrl = encodeURIComponent(projectName || `${selectedModule.label} Project`);
-          navigate(`${selectedModule.route}/${projectNameForUrl}`);
+          navigate(`${selectedModule.route}/${safeProjectName}`);
         } else {
           // Still navigate even if project creation fails, but without project name
           navigate(selectedModule.route);

@@ -8,9 +8,10 @@ import WeldSectionModal from "./WeldSectionModal";
 import DetailingSectionModal from "./DetailingSectionModal";
 import DesignSectionModal from "./DesignSectionModal";
 import { Button, Modal } from "antd";
+import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../constants/DesignKeys';
 
 const DesignPrefSections = ({
-  module = "Fin Plate Connection", //default to fin plate
+  module = MODULE_KEY_FIN_PLATE, // default to fin plate
   inputs,
   setInputs,
   selectedOption = null, // Default to null
@@ -22,8 +23,6 @@ const DesignPrefSections = ({
     module === "Cover Plate Bolted Connection" || module === "Beam Beam End Plate Connection" ? 1 : 0
   );
   const { designPrefData, design_pref_defaults } = useContext(ModuleContext);
-  console.log("****", designPrefData);
-  console.log("**", design_pref_defaults);
 
   // Tabs configuration per module
   let tabs = [

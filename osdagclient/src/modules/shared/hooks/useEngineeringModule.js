@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
-import { getCurrentUserEmail } from "../../../utils/auth";
+import { isGuestUser, getCurrentUserEmail } from "../../../utils/auth";
+import { designAndGenerateCad } from '../api/moduleApi';
 
 export const useEngineeringModule = (moduleConfig) => {
   const navigate = useNavigate();
-  const { projectId } = useParams(); // Get project ID from URL parameter
+  const { projectId } = useParams(); // Get project name/id from URL parameter
 
   const {
     beamList,
@@ -41,17 +42,11 @@ export const useEngineeringModule = (moduleConfig) => {
 
   // Core state management
   const [inputs, setInputs] = useState(moduleConfig.defaultInputs || {});
-  const [output, setOutput] = useState(null);
   const [logs, setLogs] = useState(null);
   const [displayOutput, setDisplayOutput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [renderBoolean, setRenderBoolean] = useState(false);
   const [modelKey, setModelKey] = useState(0);
-
-  // Project management states
-  const [projectNameLoading, setProjectNameLoading] = useState(false);
-  const [projectDataLoading, setProjectDataLoading] = useState(true);
-  const [projectDataLoaded, setProjectDataLoaded] = useState(false);
 
   // Modal states
   const [modalStates, setModalStates] = useState(
@@ -151,160 +146,14 @@ export const useEngineeringModule = (moduleConfig) => {
   const [selectedView, setSelectedView] = useState("Model");
   const [screenshotTrigger, setScreenshotTrigger] = useState(false);
 
+  const { dispatch } = useContext(ModuleContext);
   // Helper function to check if there's unsaved work
   const hasUnsavedWork = () => {
-    return !!(output || renderBoolean);
+    return !!(designData || renderBoolean);
   };
 
   // Project management functions
   const BASE_URL = 'http://localhost:8000/api/';
-
-  const createProject = async (projectName) => {
-    try {
-      setProjectNameLoading(true);
-      console.log('Creating project with name:', projectName);
-      console.log('Module config design type:', moduleConfig.designType);
-      console.log('User email:', getCurrentUserEmail());
-      
-      const response = await fetch(`${BASE_URL}projects/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: projectName,
-          module_id: moduleConfig.designType,
-          module_name: moduleConfig.sessionName,
-          user_email: getCurrentUserEmail(),
-        }),
-      });
-
-      const data = await response.json();
-      console.log('Project creation response:', data);
-      
-      if (data.success) {
-        console.log('Project created successfully with ID:', data.project_id);
-        return data.project_id;
-      } else {
-        throw new Error(data.error || 'Failed to create project');
-      }
-    } catch (error) {
-      console.error('Error creating project:', error);
-      throw error;
-    } finally {
-      setProjectNameLoading(false);
-    }
-  };
-
-  const saveProjectData = async (projectId, inputData, outputData, logData) => {
-    try {
-      const userEmail = getCurrentUserEmail();
-      console.log('saveProjectData called with:');
-      console.log('projectId:', projectId);
-      console.log('userEmail:', userEmail);
-      console.log('inputData:', inputData);
-      console.log('outputData:', outputData);
-      console.log('logData:', logData);
-      
-      const requestBody = {
-        input_values: inputData,
-        output_values: outputData,
-        logs: logData,
-      };
-      console.log('Request body being sent:', requestBody);
-      
-      const response = await fetch(`${BASE_URL}projects/${projectId}/?user_email=${encodeURIComponent(userEmail)}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-      console.log('Response from server:', data);
-      
-      if (data.success) {
-        console.log('Project data saved successfully');
-      } else {
-        throw new Error(data.error || 'Failed to save project data');
-      }
-    } catch (error) {
-      console.error('Error saving project data:', error);
-      throw error;
-    }
-  };
-
-  // Function to save project when CAD generation is successful
-  const saveProjectOnCADSuccess = async (outputData = null, logData = null) => {
-    console.log('saveProjectOnCADSuccess called');
-    console.log('currentProjectId:', projectId);
-    console.log('current inputs:', inputs);
-    console.log('outputData parameter:', outputData);
-    console.log('logData parameter:', logData);
-    
-    if (!projectId) {
-      console.log('Cannot save project: missing project ID');
-      console.log('This might happen if the project ID was reset during initialization');
-      return;
-    }
-
-    try {
-      // Use provided data or current state
-      const finalOutputData = outputData || output;
-      const finalLogData = logData || logs;
-      
-      console.log('Final output data to save:', finalOutputData);
-      console.log('Final log data to save:', finalLogData);
-      
-      // First, try to find the project by name
-      const userEmail = getCurrentUserEmail();
-      const findResponse = await fetch(`http://localhost:8000/api/projects/by-name/${encodeURIComponent(projectId)}/?user_email=${encodeURIComponent(userEmail)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (findResponse.ok) {
-        // Project exists, update it
-        const project = await findResponse.json();
-        if (project.success && project.data) {
-          console.log('Updating existing project:', project.data.id);
-          await saveProjectData(project.data.id, inputs, finalOutputData, finalLogData);
-          console.log('Project updated successfully after CAD generation');
-        }
-      } else {
-        // Project doesn't exist, create it
-        console.log('Project not found, creating new project with name:', projectId);
-        const createResponse = await fetch('http://localhost:8000/api/projects/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: projectId,
-            module_id: moduleConfig.moduleId,
-            module_name: moduleConfig.moduleName,
-            user_email: getCurrentUserEmail(),
-            inputs: inputs,
-            output: finalOutputData,
-            logs: finalLogData,
-          }),
-        });
-
-        const createData = await createResponse.json();
-        if (createData.success) {
-          console.log('New project created successfully with ID:', createData.project_id);
-        } else {
-          console.error('Failed to create new project:', createData);
-        }
-      }
-    } catch (error) {
-      console.error('Error saving project after CAD generation:', error);
-    }
-  };
-
 
   // Navigation protection
   useEffect(() => {
@@ -323,7 +172,6 @@ export const useEngineeringModule = (moduleConfig) => {
         setConfirmationType("navigation");
         setNavigationSource("back");
         setShowResetConfirmation(true);
-        console.log("BACK BUTTON: Prevented navigation due to unsaved work");
       }
     };
 
@@ -334,30 +182,16 @@ export const useEngineeringModule = (moduleConfig) => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [output, renderBoolean, allowNavigation, moduleConfig.routePath]);
+  }, [designData, renderBoolean, allowNavigation, moduleConfig.routePath]);
 
   // Manage history state
   useEffect(() => {
     if (hasUnsavedWork()) {
       window.history.pushState(null, "", window.location.pathname);
     }
-  }, [output, renderBoolean]);
+  }, [designData, renderBoolean]);
 
-  // Cleanup on unmount (simplified - no session deletion needed)
-  useEffect(() => {
-    return () => {
-      if (window.location.pathname !== moduleConfig.routePath) {
-        if (!hasUnsavedWork() || allowNavigation) {
-          console.log("CLEANUP: Proceeding with module cleanup");
-          // Removed session deletion - no longer needed
-          setTimeout(() => {
-            resetToDefaultState();
-          }, 50);
-          setAllowNavigation(false);
-        }
-      }
-    };
-  }, [allowNavigation, moduleConfig.routePath]);
+
 
   // Handle design logs
   useEffect(() => {
@@ -365,7 +199,6 @@ export const useEngineeringModule = (moduleConfig) => {
       try {
         setLogs(designLogs);
       } catch (error) {
-        console.log("Error setting logs:", error);
         setLogs(null);
       }
     } else {
@@ -375,31 +208,25 @@ export const useEngineeringModule = (moduleConfig) => {
 
   // Handle design data - Both modules use same flat structure now
   useEffect(() => {
-    if (displayOutput) {
+    if (designData) {
       try {
-        console.log("CleatAngle - Processing design data:", designData);
-        console.log("CleatAngle - Design data keys:", Object.keys(designData || {}));
-        console.log("CleatAngle - Display output:", displayOutput);
-        
         const formatedOutput = {};
-
-        // Both FinPlate and BeamBeamEndPlate use flat structure: { "Bolt.Diameter": { label, val } }
         for (const [key, value] of Object.entries(designData)) {
           const newKey = key;
           const label = value.label;
           const val = value.value;
-          console.log(`CleatAngle - Processing key: ${key}, label: ${label}, val: ${val}`);
           if (val !== undefined && val !== null) {
             formatedOutput[newKey] = { label, val };
           }
         }
-        setOutput(formatedOutput);
+        // setOutput(formatedOutput); // REMOVE this line
       } catch (error) {
-        console.log("CleatAngle - Error processing design data:", error);
-        setOutput(null);
+        // setOutput(null); // REMOVE this line
       }
+    } else {
+      // setOutput(null); // REMOVE this line
     }
-  }, [designData, displayOutput]);
+  }, [designData]);
 
   // Handle CAD model rendering
   useEffect(() => {
@@ -504,15 +331,11 @@ export const useEngineeringModule = (moduleConfig) => {
   };
 
   const handleSubmit = async () => {
+    console.log('handleSubmit called');
     const validationResult = moduleConfig.validateInputs(inputs);
     if (!validationResult.isValid) {
+      console.log('Validation failed:', validationResult.message);
       alert(validationResult.message);
-      return;
-    }
-
-    // Wait for project data loading to complete
-    if (projectDataLoading) {
-      console.log('Waiting for project data to load...');
       return;
     }
 
@@ -531,22 +354,54 @@ export const useEngineeringModule = (moduleConfig) => {
       extraState
     );
 
-    // Show loading modal
+    console.log('Submitting design and CAD with params:', param);
     setIsLoadingModalVisible(true);
-    setLoadingStage("Generating design calculations...");
+    setLoadingStage("Generating design calculations and CAD...");
 
     try {
-      // Pass the saveProjectOnCADSuccess callback to createDesign
-      const response = await createDesign(param, moduleConfig.designType, saveProjectOnCADSuccess);
-      console.log(" createDesign response:", response);
+      const result = await designAndGenerateCad(moduleConfig.designType, param, dispatch || (() => { }));
+      console.log('API result:', result);
+      setIsLoadingModalVisible(false);
+      setLoadingStage("");
+      if (result.error) {
+        console.log('API error:', result.error);
+        alert(result.error);
+        setDisplayOutput(false);
+        return;
+      }
+      setDisplayOutput(true);
+      setModelKey((prev) => {
+        const newKey = prev + 1;
+        console.log('Model key incremented to:', newKey);
+        return newKey;
+      });
 
-    setDisplayOutput(true);
-    setModelKey((prev) => prev + 1);
-
-      // Project will be saved when CAD generation is successful
-      // (handled by the saveProjectOnCADSuccess callback)
+      // --- Project Update Logic ---
+      if (!isGuestUser() && projectId) {
+        try {
+          const userEmail = getCurrentUserEmail();
+          const updateUrl = `http://localhost:8000/api/projects/by-name/${encodeURIComponent(projectId)}/?user_email=${encodeURIComponent(userEmail)}`;
+          const updatePayload = {
+            input_values: param,
+            output_values: result.design?.data || result.design || {},
+            logs: result.design?.logs || [],
+          };
+          await fetch(updateUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatePayload),
+          });
+          console.log('Project updated in backend:', updatePayload);
+        } catch (err) {
+          console.error('Failed to update project in backend:', err);
+        }
+      }
+      // --- End Project Update Logic ---
     } catch (error) {
-      console.error("Error in handleSubmit:", error);
+      console.log('Unexpected error in handleSubmit:', error);
+      setIsLoadingModalVisible(false);
+      setLoadingStage("");
+      alert("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -569,21 +424,17 @@ export const useEngineeringModule = (moduleConfig) => {
 
   const performReset = () => {
     if (confirmationType === "navigation") {
-      console.log(`USER CONFIRMED NAVIGATION - source: ${navigationSource}`);
-
       setAllowNavigation(true);
       setShowResetConfirmation(false);
       setConfirmationType("reset");
 
       setTimeout(() => {
         // Removed session deletion - no longer needed for multi-module support
-        resetToDefaultState();
+        // resetToDefaultState();
 
         if (navigationSource === "home") {
-          console.log("Navigating to home");
           navigate("/home");
         } else if (navigationSource === "back") {
-          console.log("Navigating to connections page");
           navigate("/design-type/connections");
         }
 
@@ -591,11 +442,8 @@ export const useEngineeringModule = (moduleConfig) => {
         setNavigationSource(null);
       }, 100);
     } else {
-      console.log("USER CONFIRMED RESET - starting targeted reset");
-      resetToDefaultState();
       setShowResetConfirmation(false);
       setConfirmationType("reset");
-      console.log("RESET: User confirmed - targeted reset completed");
     }
   };
 
@@ -622,9 +470,9 @@ export const useEngineeringModule = (moduleConfig) => {
     );
 
     // Add output data to the submission data
-    for (const key in output) {
-      if (output.hasOwnProperty(key)) {
-        const { label, val } = output[key];
+    for (const key in designData) { // Use designData directly
+      if (designData.hasOwnProperty(key)) {
+        const { label, val } = designData[key];
         if (label && val !== undefined && val !== null) {
           const safeLabel = label.replace(/\s+/g, "_");
           data[`${key}.${safeLabel}`] = val;
@@ -660,7 +508,7 @@ export const useEngineeringModule = (moduleConfig) => {
   };
 
   const handleOkDesignReport = () => {
-    if (!output) {
+    if (!designData) { // Use designData directly
       alert("Please submit the design first.");
       return;
     }
@@ -681,7 +529,7 @@ export const useEngineeringModule = (moduleConfig) => {
 
     // Determine the module ID based on the module config
     const moduleId = moduleConfig.designType;
-    
+
     // Pass all required parameters to createDesignReport
     createDesignReport(
       designReportInputs,  // form data
@@ -690,7 +538,7 @@ export const useEngineeringModule = (moduleConfig) => {
       true,                // design was successful (since we have output)
       logs || []           // design logs
     );
-    
+
     handleCancelDesignReport();
   };
 
@@ -730,7 +578,7 @@ export const useEngineeringModule = (moduleConfig) => {
     // State
     inputs,
     setInputs,
-    output,
+    // output, // REMOVE this line
     logs,
     loading,
     renderBoolean,
@@ -758,12 +606,6 @@ export const useEngineeringModule = (moduleConfig) => {
     extraState,
     setExtraState,
 
-    // Project management states
-    // currentProjectId, // This line is removed
-    projectNameLoading,
-    projectDataLoading,
-    projectDataLoaded,
-
     // Navigation and Reset states
     showResetConfirmation,
     setShowResetConfirmation,
@@ -787,13 +629,7 @@ export const useEngineeringModule = (moduleConfig) => {
     handleCreateDesignReport,
     handleOkDesignReport,
     handleCancelDesignReport,
-
-    // Project management actions
-    createProject,
-    saveProjectData,
-    // loadProjectData, // This line is removed
-
-    // New actions
-    saveProjectOnCADSuccess,
+    // Add designData as output for OutputDockComponent
+    output: designData,
   };
 };

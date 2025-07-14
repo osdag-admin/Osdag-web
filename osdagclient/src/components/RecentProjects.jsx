@@ -3,6 +3,7 @@ import { Button, Popconfirm, message, Spin, Empty } from 'antd';
 import { EyeOutlined, DeleteOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { isGuestUser, getCurrentUserEmail } from '../utils/auth';
+import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../constants/DesignKeys';
 
 const RecentProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -118,7 +119,7 @@ const RecentProjects = () => {
           'boltedtoendplate': '/design/tension-member/bolted_to_end_gusset',
           'ssb': '/design/FlexureMember/simply_supported_beam',
           // Legacy full names (keep for backward compatibility)
-          'Fin-Plate-Connection': '/design/connections/shear/fin_plate',
+          [MODULE_KEY_FIN_PLATE]: '/design/connections/shear/fin_plate',
           'End-Plate-Connection': '/design/connections/shear/end_plate',
           'Cleat-Angle-Connection': '/design/connections/shear/cleat_angle',
           'Seated-Angle-Connection': '/design/connections/shear/seated_angle',
@@ -173,7 +174,7 @@ const RecentProjects = () => {
       'boltedtoendplate': 'Tension Member Bolted',
       'ssb': 'Simply Supported Beam',
       // Legacy full names (keep for backward compatibility)
-      'Fin-Plate-Connection': 'Fin Plate Connection',
+      [MODULE_KEY_FIN_PLATE]: MODULE_DISPLAY_FIN_PLATE,
       'End-Plate-Connection': 'End Plate Connection',
       'Cleat-Angle-Connection': 'Cleat Angle Connection',
       'Seated-Angle-Connection': 'Seated Angle Connection',

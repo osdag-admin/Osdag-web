@@ -4,6 +4,7 @@ import { EngineeringModule } from "../../shared/components/EngineeringModule";
 import FinPlateOutputDock from "./components/FinPlateOutputDock";
 import { menuItems } from "../../shared/utils/moduleUtils";
 import { finPlateConfig } from "./configs/finPlateConfig";
+import { UI_STRINGS } from '../../../constants/UIStrings';
 
 function FinPlate() {
   return (
@@ -11,7 +12,7 @@ function FinPlate() {
       moduleConfig={finPlateConfig}
       OutputDockComponent={FinPlateOutputDock}
       menuItems={menuItems}
-      title="Fin Plate Connection"
+      title={UI_STRINGS.CONNECTING_MEMBERS}
     />
   );
 }

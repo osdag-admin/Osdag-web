@@ -1,10 +1,22 @@
+// Utility functions for module operations
+
+export const convertToCSV = (data) => {
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+  const csvData = keys.map((key, index) => {
+    const escapedValue = values[index].toString().replace(/"/g, '\"');
+    return `"${key}","${escapedValue}"`;
+  });
+  return csvData.join("\n");
+};
+
 export const menuItems = [
   {
     label: "File",
     dropdown: [
       { name: "Load Input", shortcut: "Ctrl+L" },
-      { name: "Download Input", shortcut: "Ctrl+D" },
       { name: "Save Input", shortcut: "Alt+N" },
+      { name: "Download Input", shortcut: "Alt+D" },
       { name: "Save Log Messages", shortcut: "Alt+M" },
       { name: "Create Design Report", shortcut: "Alt+C" },
       { name: "Save 3D Model", shortcut: "Alt+3" },
@@ -25,7 +37,6 @@ export const menuItems = [
       { name: "Model" },
       { name: "Beam" },
       { name: "Column" },
-      { name: "FinePlate" },
       { name: "Change Background" },
     ],
   },
@@ -46,3 +57,5 @@ export const menuItems = [
     ],
   },
 ];
+
+// ...other utility functions as needed

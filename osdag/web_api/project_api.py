@@ -246,7 +246,7 @@ class ProjectDetailAPI(APIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProjectByNameAPI(APIView):
-    """API for finding projects by name"""
+    """API for finding and updating projects by name"""
     
     def get(self, request, project_name):
         """Get a specific project by name"""
@@ -293,6 +293,43 @@ class ProjectByNameAPI(APIView):
             }, safe=False, status=404)
         except Exception as e:
             print(f"Error getting project '{project_name}': {e}")
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, safe=False, status=400) 
+
+    def put(self, request, project_name):
+        """Update project data (inputs, outputs, logs) by name"""
+        try:
+            user_email = request.GET.get('user_email')
+            if not user_email:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'User email is required'
+                }, safe=False, status=400)
+
+            # Get project and verify ownership by name
+            project = Project.objects.get(name=project_name, user_email=user_email)
+            data = request.data
+
+            # Update fields if provided
+            if 'input_values' in data:
+                project.input_values = data['input_values']
+            if 'output_values' in data:
+                project.output_values = data['output_values']
+            if 'logs' in data:
+                project.logs = data['logs']
+            project.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Project updated successfully'
+            }, safe=False)
+        except Project.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Project not found or access denied'
+            }, safe=False, status=404)
+        except Exception as e:
             return JsonResponse({
                 'success': False,
                 'error': str(e)

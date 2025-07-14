@@ -32,10 +32,7 @@ export default (state, action) => {
               error_msg : 'Error in fetching Column, Beam and Material List'
           }
       case 'SET_BEAM_MATERIAL_LIST':
-          console.log("abhi reducer", action.payload);
           const prevCustomMaterials = JSON.parse(localStorage.getItem("osdag-custom-materials")) || [];
-          // Remove direct state mutation!
-          // state.materialList = action.payload.materialList;
           return {
               ...state,
               sectionProfileList: action.payload.sectionProfileList || [],
@@ -56,7 +53,6 @@ export default (state, action) => {
           }
       
       case 'SET_BOLT_DIAMETER_LIST' : 
-          console.log("boltList", action.payload)
           return{
               ...state,
               boltDiameterList : action.payload.boltList || [],
@@ -74,21 +70,18 @@ export default (state, action) => {
               propertyClassList : action.payload.propertyClassList
           }
       case 'SET_CLEAT_ANGLE_LIST' : 
-          console.log("angleList", action.payload)
           return{
               ...state,
               angleList : action.payload.angleList || [],
           }
 
       case 'SET_CHANNEL_LIST' : 
-          console.log("channelList", action.payload)
           return{
               ...state,
               channelList : action.payload.channelList || [],
           }
 
       case 'SET_TOP_ANGLE' :
-          console.log("topAngleList", action.payload)
           return{
               ...state,
               topAngleList : action.payload.topAngleList || [],
@@ -195,10 +188,6 @@ export default (state, action) => {
           }
       case 'SET_ALL_MODULE_DATA':
           // Single action to set all module data at once
-          console.log("CleatAngle - ModuleReducer SET_ALL_MODULE_DATA action received");
-          console.log("CleatAngle - Action payload:", action.payload);
-          console.log("CleatAngle - ConnectivityList in payload:", action.payload.connectivityList);
-          
           const newState = {
               ...state,
               // Common fields for all modules
@@ -228,9 +217,7 @@ export default (state, action) => {
               endPlateTypeList: action.payload.endPlateTypeList || [],
           };
           
-          console.log("CleatAngle - New state after SET_ALL_MODULE_DATA:", newState);
-          console.log("CleatAngle - New connectivity list:", newState.connectivityList);
-          
+
           return newState;
       case 'RESET_MODULE_STATE':
           return {
