@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button, Popconfirm, message, Spin, Empty } from 'antd';
 import { EyeOutlined, DeleteOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { isGuestUser, getCurrentUserEmail } from '../utils/auth';
 import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../constants/DesignKeys';
 
-const RecentProjects = () => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [deletingProject, setDeletingProject] = useState(null);
+const RecentProjects = ({ projects = [], loading = false }) => {
+  // Remove internal state and fetching logic
+  // const [projects, setProjects] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  const [deletingProject, setDeletingProject] = React.useState(null);
   const navigate = useNavigate();
 
   const BASE_URL = 'http://localhost:8000/api/';
@@ -16,51 +17,8 @@ const RecentProjects = () => {
   // Check if user is a guest
   const isGuest = isGuestUser();
   const userEmail = getCurrentUserEmail();
-  
-  useEffect(() => {
-    // Don't fetch projects for guest users
-    if (isGuest) {
-      setLoading(false);
-      return;
-    }
-    
-    fetchRecentProjects();
-  }, [isGuest]);
 
-  const fetchRecentProjects = async () => {
-    try {
-      setLoading(true);
-      console.log('Fetching projects for user email:', userEmail);
-      console.log('Is guest user:', isGuest);
-      
-      const url = `${BASE_URL}projects/?user_email=${encodeURIComponent(userEmail)}`;
-      console.log('API URL:', url);
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('Response status:', response.status);
-      const data = await response.json();
-      console.log('Response data:', data);
-      
-      if (data.success) {
-        setProjects(data.projects);
-        console.log('Projects loaded successfully:', data.projects);
-      } else {
-        console.error('API returned error:', data.error);
-        message.error('Failed to load recent projects');
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      message.error('Failed to load recent projects');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Remove useEffect and fetchRecentProjects
 
   const handleDeleteProject = async (projectId) => {
     try {
@@ -76,7 +34,7 @@ const RecentProjects = () => {
       
       if (data.success) {
         message.success('Project deleted successfully');
-        fetchRecentProjects(); // Refresh the list
+        // Optionally: trigger a refresh in parent
       } else {
         message.error(data.error || 'Failed to delete project');
       }
