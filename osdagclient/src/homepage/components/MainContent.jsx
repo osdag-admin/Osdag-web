@@ -35,6 +35,20 @@ const MainContent = () => {
     setLoading(false);
   };
 
+  // Add a handler to delete a project and refresh the list
+  const handleDeleteProject = async (projectId) => {
+    try {
+      await fetch(`http://localhost:8000/api/projects/${projectId}/?user_email=${encodeURIComponent(userEmail)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      // Refresh the list after deletion
+      fetchRecentProjects();
+    } catch (e) {
+      // handle error
+    }
+  };
+
   // Filter to most recent project per unique module_id
   const uniqueModulesMap = {};
   projects.forEach((project) => {
@@ -83,7 +97,7 @@ const MainContent = () => {
         <div className={`grid grid-cols-1 ${isGuest ? 'xl:grid-cols-1' : 'xl:grid-cols-2'} gap-8 h-full`}>
           {/* Recent Projects Card */}
           <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-osdag-border dark:border-gray-700 p-6">
-            <RecentProjects projects={projects} loading={loading} />
+            <RecentProjects projects={projects} loading={loading} onDeleteProject={handleDeleteProject} />
           </div>
           
           {/* Recently used Modules Card - Hidden for guests */}

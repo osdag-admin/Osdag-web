@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { isGuestUser, getCurrentUserEmail } from '../utils/auth';
 import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../constants/DesignKeys';
 
-const RecentProjects = ({ projects = [], loading = false }) => {
+const RecentProjects = ({ projects = [], loading = false, onDeleteProject }) => {
   // Remove internal state and fetching logic
   // const [projects, setProjects] = useState([]);
   // const [loading, setLoading] = useState(true);
@@ -21,28 +21,11 @@ const RecentProjects = ({ projects = [], loading = false }) => {
   // Remove useEffect and fetchRecentProjects
 
   const handleDeleteProject = async (projectId) => {
-    try {
-      setDeletingProject(projectId);
-      const response = await fetch(`${BASE_URL}projects/${projectId}/?user_email=${encodeURIComponent(userEmail)}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        message.success('Project deleted successfully');
-        // Optionally: trigger a refresh in parent
-      } else {
-        message.error(data.error || 'Failed to delete project');
-      }
-    } catch (error) {
-      message.error('Failed to delete project');
-    } finally {
-      setDeletingProject(null);
+    setDeletingProject(projectId);
+    if (onDeleteProject) {
+      await onDeleteProject(projectId);
     }
+    setDeletingProject(null);
   };
 
   const handleOpenProject = (project) => {
@@ -240,21 +223,19 @@ const RecentProjects = ({ projects = [], loading = false }) => {
                         Open Project
                       </button>
                       <Popconfirm
-                        title="Delete this project?"
-                        description="This action cannot be undone."
+                        title="Are you sure you want to delete this project?"
                         onConfirm={() => handleDeleteProject(project.id)}
                         okText="Yes"
                         cancelText="No"
                       >
-                        <button 
-                          className="px-3 py-1.5 text-xs font-medium bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
+                        <Button
+                          type="text"
+                          icon={<DeleteOutlined />}
+                          loading={deletingProject === project.id}
+                          danger
                         >
-                          {deletingProject === project.id ? 'Deleting...' : 'Delete'}
-                        </button>
+                          Delete
+                        </Button>
                       </Popconfirm>
                     </div>
                   </div>
