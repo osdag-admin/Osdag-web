@@ -1,9 +1,10 @@
-
 from osdag_api.validation_utils import validate_arr, validate_num, validate_string
 from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 import osdag_api.modules.shear_connection_common as scc
 from OCC.Core import BRepTools
+from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
+from OCC.Core.IGESControl import IGESControl_Writer
 from cad.common_logic import CommonDesignLogic
 # Will log a lot of unnessecary data.
 from design_type.connection.fin_plate_connection import FinPlateConnection
@@ -53,7 +54,7 @@ def validate_input(input_values: Dict[str, Any]) -> None:
     # Check if input_values contains all required keys.
     missing_keys = contains_keys(input_values, required_keys)
     if missing_keys != None:  # If keys are missing.
-        # Raise error for the first missing key.
+        # Raise error for the first missing key.a
         raise MissingKeyError(missing_keys[0])
 
     # Validate key types one by one:
@@ -259,7 +260,7 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
             print('string key passed  : ' , key )
 
     # Validate for keys that are numbers
-    num_keys = [("Bolt.Slip_Factor", True)  # List of all parameters that are numbers (key, is_float)
+    num_keys = [("Bolt.Slip_Factor", True),  # List of all parameters that are numbers (key, is_float)
                 ("Detailing.Gap", False),
                 ("Load.Axial", False),
                 ("Load.Shear", False),
@@ -281,7 +282,7 @@ def validate_input_new(input_values: Dict[str, Any]) -> None:
 
 def create_module() -> EndPlateConnection:
     """Create an instance of the End plate connection module design class and set it up for use"""
-    module = EndPlateConnection()  # Create an instance of the FinPlateConnection
+    module = EndPlateConnection()  # Create an instance of the EndPlateConnection
     module.set_osdaglogger(None)
     return module
 
@@ -327,7 +328,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     raw_output_capacities = module.capacities(True)
     raw_output_bolt_capacity = module.bolt_capacity_details(True)
     logs = module.logs
-    print("LOGSS AREE ",module.logs)
+    # print("LOGSS AREE ",module.logs)
     raw_output = raw_output_capacities + raw_output_spacing + raw_output_text + raw_output_bolt_capacity
     # os.system("clear")
     # Loop over all the text values and add them to ouptut dict.
@@ -339,7 +340,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value  # Changed from "value" to "val" to match frontend expectations
             }  # Set label, key and value in output
     return output, logs
 
@@ -351,6 +352,9 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
             "section", "'Model', 'Beam', 'Column' or 'Plate'")
     module = create_from_input(input_values)  # Create module from input.
     print('module from input values : ' , module)
+    print("Connectivity", module.connectivity)
+    print("module", module.module)
+    print("Mainmodule", module.mainmodule)
     # Object that will create the CAD model.
     try : 
         cld = CommonDesignLogic(None, '', module.module , module.mainmodule)
@@ -386,9 +390,30 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
 
     try : 
         BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+        
+        if section == "Model":
+            # Save STEP
+            step_writer = STEPControl_Writer()
+            step_writer.Transfer(model, STEPControl_AsIs)
+            step_file_path = file_path.replace(".brep", ".step")
+            full_step_file_path = os.path.join(os.getcwd(), step_file_path)
+            if step_writer.Write(full_step_file_path) == 1:
+                print(f"STEP file saved at {full_step_file_path}")
+            else:
+                print("Warning: Failed to save STEP file!")
+
+            # Save IGES
+            iges_writer = IGESControl_Writer()
+            iges_writer.AddShape(model)
+            iges_file_path = file_path.replace(".brep", ".iges")
+            full_iges_file_path = os.path.join(os.getcwd(), iges_file_path)
+            if iges_writer.Write(full_iges_file_path) == 1:
+                print(f"IGES file saved at {full_iges_file_path}")
+            else:
+                print("Warning: Failed to save IGES file!")
+                
     except Exception as e : 
         print('Writing to BREP file failed e : ' , e)
     
     return file_path
-
 

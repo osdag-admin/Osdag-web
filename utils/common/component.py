@@ -1909,7 +1909,6 @@ class Angle(Material):
         self.block_shear_capacity_axial = 0.0
 
         # self.length = 0.0
-
     def connect_to_database_update_other_attributes(self, designation, material_grade=""):
         conn = sqlite3.connect(PATH_TO_DATABASE)
         # db_query = "SELECT AXB, t FROM Angles WHERE Designation = ?"
@@ -1917,7 +1916,6 @@ class Angle(Material):
         cur = conn.cursor()
         cur.execute(db_query, (designation,))
         row = cur.fetchone()
-
         self.mass = row[2]
         self.area = row[3] * 100
         self.a = row[4]
@@ -1953,7 +1951,6 @@ class Angle(Material):
         self.It = row[24] * 10 ** 4
         self.source = row[25]
         self.type = 'Rolled' if row[26] is None else row[26]
-
         conn.close()
 
     def angle_weld_length(self, weld_strength, depth_weld, force, C, depth):
@@ -1962,7 +1959,6 @@ class Angle(Material):
         f2 = weld_strength * depth_weld
         f3 = force * (1 - C / depth) - f2 / 2
         l3 = f3 / weld_strength
-
         return l3
 
     def get_available_seated_list(self, input_angle_list, max_leg_length=math.inf, min_leg_length=0.0, position="outer",

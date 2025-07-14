@@ -1,69 +1,68 @@
-
-import '../../App.css'
-import { useContext, useEffect, useState,useLayoutEffect } from 'react';
-import 'react-toastify/dist/ReactToastify.css';
-import { Select, Input, Modal, Button, Row, Col } from 'antd';
-import { useNavigate } from 'react-router-dom'
-import CFBW from '../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png'
-import CWBW from '../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png'
-import BB from '../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png'
-import ErrorImg from '../../assets/notSelected.png'
-import EndPlateOutputDock from '../EndPlateOutputDock';
-import Logs from '../Logs';
-import Model from './threerender'
-import { Canvas } from '@react-three/fiber'
-import { ModuleContext } from '../../context/ModuleState';
-import { Viewer } from '@react-pdf-viewer/core';
-import { Transfer } from 'antd';
+/* eslint-disable no-unused-vars */
+import "../../App.css";
+import {
+  useContext,
+  useEffect,
+  useState,
+  useLayoutEffect,
+  Suspense,
+} from "react";
+import "react-toastify/dist/ReactToastify.css";
+import { Select, Input, Modal, Button, Row, Col } from "antd";
+import { useNavigate } from "react-router-dom";
+import CFBW from "../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png";
+import CWBW from "../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png";
+import BB from "../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png";
+import ErrorImg from "../../assets/notSelected.png";
+import EndPlateOutputDock from "../EndPlateOutputDock";
+import Logs from "../Logs";
+import Model from "./threerender";
+import { Canvas } from "@react-three/fiber";
+import { ModuleContext } from "../../context/ModuleState";
+import { Viewer } from "@react-pdf-viewer/core";
+import { Transfer } from "antd";
 // Import the styles
-import '@react-pdf-viewer/core/lib/styles/index.css';
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
-// import assets 
-import cad_background from '../../assets/cad_empty_image.png'
-import { Tube } from '@react-three/drei';
-import DesignPrefSections from '../DesignPrefSections';
-import CustomSectionModal from '../CustomSectionModal';
+// import assets
+import cad_background from "../../assets/cad_empty_image.png";
+import { Html, Tube } from "@react-three/drei";
+import DesignPrefSections from "../DesignPrefSections";
+import CustomSectionModal from "../CustomSectionModal";
 
-// drop down 
-import DropdownMenu from '../DropdownMenu';
+// drop down
+import DropdownMenu from "../DropdownMenu";
 
 // crypto packages
-import { decode as base64_decode, encode as base64_encode } from 'base-64';
-import { UserContext } from '../../context/UserState';
-import { useLocation } from 'react-router-dom';
+import { decode as base64_decode, encode as base64_encode } from "base-64";
+import { UserContext } from "../../context/UserState";
+import { useLocation } from "react-router-dom";
+import ScreenshotCapture from "../ScreenShotCapture";
 
 const { Option } = Select;
 
 const conn_map = {
   "Column Flange-Beam-Web": "Column Flange-Beam Web",
   "Column Web-Beam-Web": "Column Web-Beam Web",
-  "Beam-Beam": "Beam-Beam"
-}
-
-
+  "Beam-Beam": "Beam-Beam",
+};
 
 const MenuItems = [
   {
     label: "File",
     dropdown: [
       { name: "Load Input", shortcut: "Ctrl+L" },
-      { name: "Download Input", shortcut: "Ctrl+D" },
       { name: "Save Input", shortcut: "Alt+N" },
+      { name: "Download Input", shortcut: "Alt+D" },
       { name: "Save Log Messages", shortcut: "Alt+M" },
       { name: "Create Design Report", shortcut: "Alt+C" },
       { name: "Save 3D Model", shortcut: "Alt+3" },
       { name: "Save Cad Image", shortcut: "Alt+1" },
-      { name: "Save Front View", shortcut: "Alt+Shift+F" },
-      { name: "Save Top View", shortcut: "Alt+Shift+T" },
-      { name: "Save Side View", shortcut: "Alt+Shift+S" },
-      { name: "Quit", shortcut: "Shift+Q" }
-    ]
+    ],
   },
   {
     label: "Edit",
-    dropdown: [
-      { name: "Design Preferences", shortcut: "Alt+P" }
-    ]
+    dropdown: [{ name: "Design Preferences", shortcut: "Alt+P" }],
   },
   {
     label: "Graphics",
@@ -75,16 +74,16 @@ const MenuItems = [
       { name: "Model" },
       { name: "Beam" },
       { name: "Column" },
-      { name: "FinePlate" },
-      { name: "Change Background" }
-    ]
+      { name: "EndPlate" },
+      { name: "Change Background" },
+    ],
   },
   {
     label: "Database",
     dropdown: [
       { name: "Downloads", options: ["Column", "Beam", "Angle", "Channel"] },
-      { name: "Reset" }
-    ]
+      { name: "Reset" },
+    ],
   },
   {
     label: "Help",
@@ -92,33 +91,50 @@ const MenuItems = [
       { name: "Video Tutorials" },
       { name: "Design Examples" },
       { name: "Ask us a question" },
-      { name: "About Osdag" }
-    ]
-  }
+      { name: "About Osdag" },
+    ],
+  },
 ];
 
-
 function EndPlate() {
-
-  const [selectedOption, setSelectedOption] = useState("Column Flange-Beam-Web");
-  const [imageSource, setImageSource] = useState("")
+  const [selectedOption, setSelectedOption] = useState(
+    "Column Flange-Beam-Web"
+  );
+  const [imageSource, setImageSource] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
-  const [output, setOutput] = useState(null)
-  const [logs, setLogs] = useState(null)
-  const [displayOutput, setDisplayOutput] = useState()
-  const [boltDiameterSelect, setBoltDiameterSelect] = useState("All")
-  const [thicknessSelect, setThicknessSelect] = useState("All")
-  const [propertyClassSelect, setPropertyClassSelect] = useState("All")
-  const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [confirmationModal, setConfirmationModal] = useState(false)
-  const [displaySaveInputPopup, setDisplaySaveInputPopup] = useState(false)
-  const [saveInputFileName, setSaveInputFileName] = useState("")
-  const { connectivityList, beamList, columnList, materialList, boltDiameterList, thicknessList, propertyClassList, designLogs, designData, displayPDF, renderCadModel, createSession, createDesign, createDesignReport, getDesingPrefData, deleteSession } = useContext(ModuleContext)
+  const [output, setOutput] = useState(null);
+  const [logs, setLogs] = useState(null);
+  const [displayOutput, setDisplayOutput] = useState();
+  const [boltDiameterSelect, setBoltDiameterSelect] = useState("All");
+  const [thicknessSelect, setThicknessSelect] = useState("All");
+  const [propertyClassSelect, setPropertyClassSelect] = useState("All");
+  const [designPrefModalStatus, setDesignPrefModalStatus] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(false);
+  const [displaySaveInputPopup, setDisplaySaveInputPopup] = useState(false);
+  const [saveInputFileName, setSaveInputFileName] = useState("");
+  const {
+    connectivityList,
+    beamList,
+    columnList,
+    materialList,
+    boltDiameterList,
+    thicknessList,
+    propertyClassList,
+    designLogs,
+    designData,
+    displayPDF,
+    renderCadModel,
+    cadModelPaths,
+    createSession,
+    createDesign,
+    createDesignReport,
+    getDesingPrefData,
+    deleteSession,
+  } = useContext(ModuleContext);
 
-  if (displaySaveInputPopup) [
-    setTimeout(() => setDisplaySaveInputPopup(false), 4000)
-  ]
+  if (displaySaveInputPopup)
+    [setTimeout(() => setDisplaySaveInputPopup(false), 4000)];
 
   const [inputs, setInputs] = useState({
     bolt_diameter: [],
@@ -143,240 +159,258 @@ function EndPlate() {
     detailing_gap: "10",
     detailing_corr_status: "No",
     design_method: "Limit State Design",
-    bolt_tension_type: "Pre-tensioned"
-  })
+    bolt_tension_type: "Pre-tensioned",
+  });
 
-  const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] = useState(false);
-  const [plateThicknessModal, setPlateThicknessModal] = useState(false)
+  const [isModalpropertyClassListOpen, setModalpropertyClassListOpen] =
+    useState(false);
+  const [plateThicknessModal, setPlateThicknessModal] = useState(false);
   const [allSelected, setAllSelected] = useState({
     plate_thickness: true,
     bolt_diameter: true,
     bolt_grade: true,
-  })
+  });
 
-  const [renderBoolean, setRenderBoolean] = useState(false)
-
+  const [renderBoolean, setRenderBoolean] = useState(false);
+  const [modelKey, setModelKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedView, setSelectedView] = useState("Model");
+  const options = ["Model", "Beam", "Column", "Plate"];
+  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
+  const triggerScreenshotCapture = () => {
+    setScreenshotTrigger(true);
+  };
 
   useEffect(() => {
-    createSession('End Plate Connection')
-  }, [])
+    createSession("End Plate Connection");
+  }, []);
 
   useEffect(() => {
     return () => {
-     if(location.pathname!="/design/connections/end_plate"){
-              deleteSession('End Plate Connection');
-    }
+      if (location.pathname != "/design/connections/end_plate") {
+        deleteSession("End Plate Connection");
+      }
     };
-
   }, []);
   const handleSelectChangePropertyClass = (value) => {
-    if (value === 'Customized') {
-      // check, if the bolt_grade already has a value, then set it to that value 
-      // else, set it to an empty list 
+    if (value === "Customized") {
+      // check, if the bolt_grade already has a value, then set it to that value
+      // else, set it to an empty list
       if (inputs.bolt_grade.length != 0) {
-        setInputs({ ...inputs, bolt_grade: inputs.bolt_grade })
+        setInputs({ ...inputs, bolt_grade: inputs.bolt_grade });
       } else {
-        // if the length is 0 , then set it to an empty array 
-        setInputs({ ...inputs, bolt_grade: [] })
+        // if the length is 0 , then set it to an empty array
+        setInputs({ ...inputs, bolt_grade: [] });
       }
-      setPropertyClassSelect("Customized")
-      setAllSelected({ ...allSelected, bolt_grade: false })
+      setPropertyClassSelect("Customized");
+      setAllSelected({ ...allSelected, bolt_grade: false });
       setModalpropertyClassListOpen(true);
     } else {
-      setPropertyClassSelect("All")
-      setAllSelected({ ...allSelected, bolt_grade: true })
+      setPropertyClassSelect("All");
+      setAllSelected({ ...allSelected, bolt_grade: true });
       setModalpropertyClassListOpen(false);
     }
   };
 
   const handleSelectChangeBoltBeam = (value) => {
-    if (value === 'Customized') {
-      // check, if the bolt_diameter already has a value, then set it to that value 
-      // else, set it to an empty list 
+    if (value === "Customized") {
+      // check, if the bolt_diameter already has a value, then set it to that value
+      // else, set it to an empty list
       if (inputs.bolt_diameter.length != 0) {
-        setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter })
+        setInputs({ ...inputs, bolt_diameter: inputs.bolt_diameter });
       } else {
-        // if the length is 0 , then set it to an empty array 
-        setInputs({ ...inputs, bolt_diameter: [] })
+        // if the length is 0 , then set it to an empty array
+        setInputs({ ...inputs, bolt_diameter: [] });
       }
-      setBoltDiameterSelect("Customized")
+      setBoltDiameterSelect("Customized");
       setAllSelected({ ...allSelected, bolt_diameter: false });
       setModalOpen(true);
     } else {
-      setBoltDiameterSelect("All")
+      setBoltDiameterSelect("All");
       setAllSelected({ ...allSelected, bolt_diameter: true });
       setModalOpen(false);
     }
   };
   const handleAllSelectPT = (value) => {
-    if (value === 'Customized') {
-      // check, if the plate_thickness already has a value, then set it to that value 
-      // else, set it to an empty list 
+    if (value === "Customized") {
+      // check, if the plate_thickness already has a value, then set it to that value
+      // else, set it to an empty list
       if (inputs.plate_thickness.length != 0) {
-        setInputs({ ...inputs, plate_thickness: inputs.plate_thickness })
+        setInputs({ ...inputs, plate_thickness: inputs.plate_thickness });
       } else {
-        // if the length is 0 , then set it to an empty array 
-        setInputs({ ...inputs, plate_thickness: [] })
+        // if the length is 0 , then set it to an empty array
+        setInputs({ ...inputs, plate_thickness: [] });
       }
-      setThicknessSelect("Customized")
+      setThicknessSelect("Customized");
       setAllSelected({ ...allSelected, plate_thickness: false });
       setPlateThicknessModal(true);
     } else {
-      setThicknessSelect("All")
+      setThicknessSelect("All");
       setAllSelected({ ...allSelected, plate_thickness: true });
       setPlateThicknessModal(false);
     }
   };
 
- 
-
   useEffect(() => {
-
     if (!selectedOption) return;
 
-    if (selectedOption === 'Column Flange-Beam-Web') {
-      setImageSource(CFBW)
-    } else if (selectedOption === 'Column Web-Beam-Web') {
+    if (selectedOption === "Column Flange-Beam-Web") {
+      setImageSource(CFBW);
+    } else if (selectedOption === "Column Web-Beam-Web") {
       setImageSource(CWBW);
-    } else if (selectedOption === 'Beam-Beam') {
+    } else if (selectedOption === "Beam-Beam") {
       setImageSource(BB);
-    } else if (selectedOption === '') {
+    } else if (selectedOption === "") {
       setImageSource(ErrorImg);
     }
-
   }, [selectedOption]);
 
   const handleSelectChange = (value) => {
-    setOutput(null)
+    setOutput(null);
     setSelectedOption(value);
   };
 
-
-  ;
-  
   useEffect(() => {
     if (displayOutput) {
       try {
-        setLogs(designLogs)
+        setLogs(designLogs);
       } catch (error) {
-        console.log(error)
-        setOutput(null)
+        console.log(error);
+        setOutput(null);
       }
     }
-  }, [designLogs])
+  }, [designLogs]);
 
   useEffect(() => {
     if (displayOutput) {
       try {
-        const formatedOutput = {}
+        const formatedOutput = {};
 
         for (const [key, value] of Object.entries(designData)) {
-
-          const newKey = key.split('.')[0]
-          const label = value.label
-          const val = value.value
+          const newKey = key.split(".")[0];
+          const label = value.label;
+          const val = value.value;
 
           if (val) {
             if (!formatedOutput[newKey])
-              formatedOutput[newKey] = [{ label, val }]
-            else
-              formatedOutput[newKey].push({ label, val })
+              formatedOutput[newKey] = [{ label, val }];
+            else formatedOutput[newKey].push({ label, val });
           }
         }
 
-        setOutput(formatedOutput)
+        setOutput(formatedOutput);
       } catch (error) {
-        console.log(error)
-        setOutput(null)
+        console.log(error);
+        setOutput(null);
       }
     }
-  }, [designData])
-
+  }, [designData]);
 
   const handleSubmit = async () => {
-    let param = {}
-    console.log(allSelected, boltDiameterList)
-    if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
-      if (!inputs.beam_section || !inputs.column_section || (inputs.beam_section === 'Select Section') || (inputs.column_section === 'Select Section')) {
+    let param = {};
+    console.log(allSelected, boltDiameterList);
+    if (
+      selectedOption === "Column Flange-Beam-Web" ||
+      selectedOption === "Column Web-Beam-Web"
+    ) {
+      if (
+        !inputs.beam_section ||
+        !inputs.column_section ||
+        inputs.beam_section === "Select Section" ||
+        inputs.column_section === "Select Section"
+      ) {
         alert("Please input all the fields");
         return;
       }
       param = {
         "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
-        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
-        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
+        "Bolt.Diameter": allSelected.bolt_diameter
+          ? boltDiameterList
+          : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade
+          ? propertyClassList
+          : inputs.bolt_grade,
         "Bolt.Slip_Factor": inputs.bolt_slip_factor,
         "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
-        "Connectivity": conn_map[selectedOption],
+        Connectivity: conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
         "Design.Design_Method": inputs.design_method,
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
         "Detailing.Edge_type": inputs.detailing_edge_type,
         "Detailing.Gap": inputs.detailing_gap,
-        "Load.Axial": inputs.load_axial || '',
-        "Load.Shear": inputs.load_shear || '',
-        "Material": inputs.connector_material,
+        "Load.Axial": inputs.load_axial || "",
+        "Load.Shear": inputs.load_shear || "",
+        Material: inputs.connector_material,
         "Member.Supported_Section.Designation": inputs.beam_section,
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "End Plate Connection",
+        Module: "End Plate Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
-      }
-    }
-    else {
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness
+          ? thicknessList
+          : inputs.plate_thickness,
+      };
+    } else {
       if (!inputs.primary_beam || !inputs.secondary_beam) {
         alert("Please input all the fields");
         return;
       }
       param = {
         "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
-        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
-        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
+        "Bolt.Diameter": allSelected.bolt_diameter
+          ? boltDiameterList
+          : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade
+          ? propertyClassList
+          : inputs.bolt_grade,
         "Bolt.Slip_Factor": inputs.bolt_slip_factor,
         "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
-        "Connectivity": conn_map[selectedOption],
+        Connectivity: conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
         "Design.Design_Method": inputs.design_method,
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
         "Detailing.Edge_type": inputs.detailing_edge_type,
         "Detailing.Gap": inputs.detailing_gap,
-        "Load.Axial": inputs.load_axial || '',
-        "Load.Shear": inputs.load_shear || '',
-        "Material": "E 300 (Fe 440)",
+        "Load.Axial": inputs.load_axial || "",
+        "Load.Shear": inputs.load_shear || "",
+        Material: "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.secondary_beam,
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "End Plate Connection",
+        Module: "End Plate Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
-      }
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness
+          ? thicknessList
+          : inputs.plate_thickness,
+      };
     }
-    createDesign(param,"End-Plate-Connection")
-    setDisplayOutput(true)
-  }
+
+    createDesign(param, "End-Plate-Connection");
+    setDisplayOutput(true);
+
+    setLoading(true);
+    setModelKey((prev) => prev + 1); //Forces model to reload
+  };
   // Create design report ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   const [CreateDesignReportBool, setCreateDesignReportBool] = useState(false);
   const [designReportInputs, setDesignReportInputs] = useState({
-    companyName: 'Your company',
-    groupTeamName: 'Your team',
-    designer: 'You',
-    projectTitle: '',
-    subtitle: '',
-    jobNumber: '1',
-    client: 'Someone else',
-    additionalComments: 'No comments',
+    companyName: "Your company",
+    groupTeamName: "Your team",
+    designer: "You",
+    projectTitle: "",
+    subtitle: "",
+    jobNumber: "1",
+    client: "Someone else",
+    additionalComments: "No comments",
     companyLogo: null,
-    companyLogoName: ""
-  })
-
-
+    companyLogoName: "",
+  });
 
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -389,18 +423,18 @@ function EndPlate() {
       const reader = new FileReader();
       reader.onload = (event) => {
         const contents = event.target.result;
-        const lines = contents.split('\n');
+        const lines = contents.split("\n");
 
         lines.forEach((line) => {
-          const [field, value] = line.split(':');
+          const [field, value] = line.split(":");
           const trimmedField = field.trim();
           const trimmedValue = value.trim();
 
-          if (trimmedField === 'CompanyName') {
+          if (trimmedField === "CompanyName") {
             setCompanyName(trimmedValue);
-          } else if (trimmedField === 'Designer') {
+          } else if (trimmedField === "Designer") {
             setDesigner(trimmedValue);
-          } else if (trimmedField === 'Group/TeamName') {
+          } else if (trimmedField === "Group/TeamName") {
             setGroupTeamName(trimmedValue);
           }
         });
@@ -415,7 +449,9 @@ function EndPlate() {
   Designer: ${designer}
   Group/TeamName: ${groupTeamName}`;
 
-    const blob = new Blob([profileSummary], { type: "text/plain;charset=utf-8" });
+    const blob = new Blob([profileSummary], {
+      type: "text/plain;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
@@ -434,13 +470,17 @@ function EndPlate() {
   const handleCreateDesignReport = () => {
     setCreateDesignReportBool(true);
   };
+
   useEffect(() => {
-    if (renderCadModel) {
-      setRenderBoolean(true)
-    } else if (!renderCadModel) {
-      setRenderBoolean(false)
+    if (renderCadModel && cadModelPaths) {
+      console.log("Received raw .obj data:", cadModelPaths);
+      setRenderBoolean(true);
+      setLoading(false);
+    } else {
+      setRenderBoolean(false);
     }
-  }, [renderCadModel])
+  }, [renderCadModel, cadModelPaths]);
+
   const handleCancel = () => {
     setCreateDesignReportBool(false);
   };
@@ -453,128 +493,141 @@ function EndPlate() {
       return `"${key}","${escapedValue}"`;
     });
 
-    return csvData.join('\n');
+    return csvData.join("\n");
   };
 
   const handleOk = () => {
     // Handle OK button logic
     if (!output) {
-      alert('Please submit the design first.')
+      alert("Please submit the design first.");
       return;
     }
-    console.log('designreportInputs : ', designReportInputs)
-    createDesignReport(designReportInputs)
-    handleCancelProfile()
+    console.log("designreportInputs : ", designReportInputs);
+    createDesignReport(designReportInputs);
+    handleCancelProfile();
   };
 
   const handleCancelProfile = () => {
     // Handle Cancel button logic
     setDesignReportInputs({
-      companyName: 'Your company',
-      groupTeamName: 'Your team',
-      designer: 'You',
-      projectTitle: '',
-      subtitle: '',
-      jobNumber: '1',
-      client: 'Someone else',
-      additionalComments: 'No comments',
+      companyName: "Your company",
+      groupTeamName: "Your team",
+      designer: "You",
+      projectTitle: "",
+      subtitle: "",
+      jobNumber: "1",
+      client: "Someone else",
+      additionalComments: "No comments",
       companyLogo: null,
-      companyLogoName: ""
-    })
+      companyLogoName: "",
+    });
     setCreateDesignReportBool(false);
   };
 
-
   const saveOutput = () => {
-    let data = {}
+    let data = {};
 
-    if (selectedOption === 'Column Flange-Beam-Web' || selectedOption === 'Column Web-Beam-Web') {
+    if (
+      selectedOption === "Column Flange-Beam-Web" ||
+      selectedOption === "Column Web-Beam-Web"
+    ) {
       if (!inputs.beam_section || !inputs.column_section || !output) {
-        alert('Please submit the design first.')
+        alert("Please submit the design first.");
         return;
       }
       data = {
         "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
-        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
-        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
+        "Bolt.Diameter": allSelected.bolt_diameter
+          ? boltDiameterList
+          : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade
+          ? propertyClassList
+          : inputs.bolt_grade,
         "Bolt.Slip_Factor": inputs.bolt_slip_factor,
         "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
-        "Connectivity": conn_map[selectedOption],
+        Connectivity: conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
         "Design.Design_Method": inputs.design_method,
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
         "Detailing.Edge_type": inputs.detailing_edge_type,
         "Detailing.Gap": inputs.detailing_gap,
-        "Load.Axial": inputs.load_axial || '',
-        "Load.Shear": inputs.load_shear || '',
-        "Material": "E 250 (Fe 410 W)A",
+        "Load.Axial": inputs.load_axial || "",
+        "Load.Shear": inputs.load_shear || "",
+        Material: "E 250 (Fe 410 W)A",
         "Member.Supported_Section.Designation": inputs.beam_section,
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.column_section,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "Fin Plate Connection",
+        Module: "End Plate Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
-      }
-    }
-    else {
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness
+          ? thicknessList
+          : inputs.plate_thickness,
+      };
+    } else {
       if (!inputs.primary_beam || !inputs.secondary_beam || !output) {
-        alert('Please submit the design first.')
+        alert("Please submit the design first.");
         return;
       }
       data = {
         "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
-        "Bolt.Diameter": allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter,
-        "Bolt.Grade": allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade,
+        "Bolt.Diameter": allSelected.bolt_diameter
+          ? boltDiameterList
+          : inputs.bolt_diameter,
+        "Bolt.Grade": allSelected.bolt_grade
+          ? propertyClassList
+          : inputs.bolt_grade,
         "Bolt.Slip_Factor": inputs.bolt_slip_factor,
         "Bolt.TensionType": inputs.bolt_tension_type,
         "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
-        "Connectivity": conn_map[selectedOption],
+        Connectivity: conn_map[selectedOption],
         "Connector.Material": inputs.connector_material,
         "Design.Design_Method": inputs.design_method,
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
         "Detailing.Edge_type": inputs.detailing_edge_type,
         "Detailing.Gap": inputs.detailing_gap,
-        "Load.Axial": inputs.load_axial || '',
-        "Load.Shear": inputs.load_shear || '',
-        "Material": "E 300 (Fe 440)",
+        "Load.Axial": inputs.load_axial || "",
+        "Load.Shear": inputs.load_shear || "",
+        Material: "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.secondary_beam,
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,
         "Member.Supporting_Section.Material": inputs.supporting_material,
-        "Module": "Fin Plate Connection",
+        Module: "End Plate Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Plate.Thickness_List": allSelected.plate_thickness ? thicknessList : inputs.plate_thickness,
-      }
+        "Connector.Plate.Thickness_List": allSelected.plate_thickness
+          ? thicknessList
+          : inputs.plate_thickness,
+      };
     }
 
     Object.keys(output).map((key, index) => {
       Object.values(output[key]).map((elm, index1) => {
-        data[key + '.' + elm.label.split(' ').join('_')] = elm.val
-      })
-    })
+        data[key + "." + elm.label.split(" ").join("_")] = elm.val;
+      });
+    });
 
-    data = convertToCSV(data)
-    const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
-    const link = document.createElement('a');
-    link.setAttribute('href', csvContent);
-    link.setAttribute('download', 'output.csv');
+    data = convertToCSV(data);
+    const csvContent =
+      "data:text/csv;charset=utf-8," + encodeURIComponent(data);
+    const link = document.createElement("a");
+    link.setAttribute("href", csvContent);
+    link.setAttribute("download", "output.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
+  };
 
   // Spacing model
   const [spacingModel, setSpacingModel] = useState(true);
 
   const handleDialogSpacing = (value) => {
+    alert("ji");
 
-    alert("ji")
-
-    if (value === 'Spacing') {
+    if (value === "Spacing") {
       setSpacingModel(true);
     } else {
       setSpacingModel(false);
@@ -582,7 +635,10 @@ function EndPlate() {
   };
 
   const handleReset = () => {
-    if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
+    if (
+      conn_map[selectedOption] == "Column Flange-Beam Web" ||
+      conn_map[selectedOption] == "Column Web-Beam Web"
+    ) {
       // resetting the inputs
       setInputs({
         bolt_diameter: inputs.bolt_diameter,
@@ -591,13 +647,12 @@ function EndPlate() {
         connector_material: inputs.connector_material,
         load_shear: "",
         load_axial: "",
-        module: "Fin Plate Connection",
+        module: "End Plate Connection",
         plate_thickness: inputs.plate_thickness,
         beam_section: "Select Section",
         column_section: "Select Section",
-      })
-
-    } else if (conn_map[selectedOption] == 'Beam-Beam') {
+      });
+    } else if (conn_map[selectedOption] == "Beam-Beam") {
       setInputs({
         bolt_diameter: inputs.bolt_diameter,
         bolt_grade: inputs.bolt_grade,
@@ -605,11 +660,11 @@ function EndPlate() {
         connector_material: inputs.connector_material,
         load_shear: "",
         load_axial: "",
-        module: "Fin Plate Connection",
+        module: "End Plate Connection",
         plate_thickness: inputs.plate_thickness,
         primary_beam: "JB 200",
         secondary_beam: "JB 150",
-      })
+      });
     }
 
     // reset setAllSelected
@@ -617,132 +672,139 @@ function EndPlate() {
       plate_thickness: true,
       bolt_diameter: true,
       bolt_grade: true,
-    })
+    });
 
-    setBoltDiameterSelect("All")
-    setPropertyClassSelect("All")
-    setThicknessSelect("All")
-    handleAllSelectPT("All") // for thickness
-    handleSelectChangePropertyClass("All")  // for property Class
-    handleSelectChangeBoltBeam("All") // for bolt diameter
+    setBoltDiameterSelect("All");
+    setPropertyClassSelect("All");
+    setThicknessSelect("All");
+    handleAllSelectPT("All"); // for thickness
+    handleSelectChangePropertyClass("All"); // for property Class
+    handleSelectChangeBoltBeam("All"); // for bolt diameter
 
-    // reset CAD model 
-    setRenderBoolean(false)
+    // reset CAD model
+    setRenderBoolean(false);
 
     // reset Output values dock
-    setOutput(null)
+    setOutput(null);
+  };
 
-  }
-
-
-  // Diameter mm 
+  // Diameter mm
   //  const [selectedItems, setSelectedItems] = useState([]);
   const [selectedDiameterNewItems, setSelectedDiameterNewItems] = useState([]);
 
   const handleTransferChange = (nextTargetKeys) => {
     setSelectedDiameterNewItems(nextTargetKeys);
-    setInputs({ ...inputs, bolt_diameter: nextTargetKeys })
+    setInputs({ ...inputs, bolt_diameter: nextTargetKeys });
   };
-  // 
+  //
   // propertyClassList
-  const [selectedpropertyClassListItems, setSelectedpropertyClassListItems] = useState([]);
+  const [selectedpropertyClassListItems, setSelectedpropertyClassListItems] =
+    useState([]);
 
   const handleTransferChangeInPropertyClassList = (nextTargetKeys) => {
     setSelectedpropertyClassListItems(nextTargetKeys);
-    setInputs({ ...inputs, bolt_grade: nextTargetKeys })
+    setInputs({ ...inputs, bolt_grade: nextTargetKeys });
   };
-  // 
+  //
   // plate_thickness
-  const [selectedPlateThicknessItems, setSelectedPlateThicknessItems] = useState([]);
+  const [selectedPlateThicknessItems, setSelectedPlateThicknessItems] =
+    useState([]);
 
   const handleTransferChangeInPlateThickness = (nextTargetKeys) => {
     setSelectedPlateThicknessItems(nextTargetKeys);
-    setInputs({ ...inputs, plate_thickness: nextTargetKeys })
+    setInputs({ ...inputs, plate_thickness: nextTargetKeys });
   };
 
   const handleImageFileChange = (event) => {
+    const imageFile = event.target.files[0];
+    let imageFileName = event.target.files[0].name;
 
+    setDesignReportInputs({
+      ...designReportInputs,
+      companyLogo: imageFile,
+      companyLogoName: imageFileName,
+    });
+  };
 
-    const imageFile = event.target.files[0]
-    let imageFileName = event.target.files[0].name
-
-
-
-    setDesignReportInputs({ ...designReportInputs, companyLogo: imageFile, companyLogoName: imageFileName })
-  }
-
-  // menu actions 
+  // menu actions
   useEffect(() => {
-
     const designPrefHandler = (e) => {
-      if (e.altKey && e.key == 'p') {
-        setDesignPrefModalStatus(true)
+      if (e.altKey && e.key == "p") {
+        setDesignPrefModalStatus(true);
       }
-    }
+    };
 
-    window.addEventListener('keydown', designPrefHandler)
+    window.addEventListener("keydown", designPrefHandler);
     return () => {
-      setDesignPrefModalStatus(false)
-      window.removeEventListener('keydown', designPrefHandler)
-    }
-  }, [])
+      setDesignPrefModalStatus(false);
+      window.removeEventListener("keydown", designPrefHandler);
+    };
+  }, []);
 
-  const [isDesignPreferencesModelOpen, setDesignPreferencesModel] = useState(false);
+  const [isDesignPreferencesModelOpen, setDesignPreferencesModel] =
+    useState(false);
 
   const closeDesignPreferencesModel = () => {
     setDesignPreferencesModel(false);
   };
 
   useEffect(() => {
-
-    if (conn_map[selectedOption] == 'Column Flange-Beam Web' || conn_map[selectedOption] == 'Column Web-Beam Web') {
+    if (
+      conn_map[selectedOption] == "Column Flange-Beam Web" ||
+      conn_map[selectedOption] == "Column Web-Beam Web"
+    ) {
       if (inputs.column_section != "" && inputs.beam_section != "") {
         getDesingPrefData({
           supported_section: inputs.beam_section,
           supporting_section: inputs.column_section,
-          connectivity: conn_map[selectedOption].split(' ').join('-')
-        })
+          connectivity: conn_map[selectedOption].split(" ").join("-"),
+        });
       }
-    }
-    else if (conn_map[selectedOption] == 'Beam-Beam') {
+    } else if (conn_map[selectedOption] == "Beam-Beam") {
       getDesingPrefData({
         supported_section: inputs.secondary_beam,
         supporting_section: inputs.primary_beam,
-        connectivity: conn_map[selectedOption]
-      })
+        connectivity: conn_map[selectedOption],
+      });
     }
-
-
-  }, [inputs.column_section, inputs.beam_section, inputs.primary_beam, inputs.secondary_beam, selectedOption])
-
+  }, [
+    inputs.column_section,
+    inputs.beam_section,
+    inputs.primary_beam,
+    inputs.secondary_beam,
+    selectedOption,
+  ]);
 
   const obtainStoredCompanyLogoImages = () => {
-    console.log('obtain stored company logo images')
+    console.log("obtain stored company logo images");
 
     // obtaining the companyLogo
-    if (localStorage.getItem('companyLogo') && localStorage.getItem('companyLogoName')) {
-      let storedCompanyLogo = localStorage.getItem('companyLogo')
-      storedCompanyLogo = JSON.parse(storedCompanyLogo)
+    if (
+      localStorage.getItem("companyLogo") &&
+      localStorage.getItem("companyLogoName")
+    ) {
+      let storedCompanyLogo = localStorage.getItem("companyLogo");
+      storedCompanyLogo = JSON.parse(storedCompanyLogo);
       // stored CompanyLogo is an array, it comtains the actual file
       // the file is encoded. decode it as given below
       // let companyLogo = base64_decode(storedCompanyLogo[0])
 
-      let storedCompanyLogoName = localStorage.getItem('companyLogoName')
-      storedCompanyLogoName = JSON.parse(storedCompanyLogoName)
-      // stored companylogoName is an array, it contains the name of the files 
+      let storedCompanyLogoName = localStorage.getItem("companyLogoName");
+      storedCompanyLogoName = JSON.parse(storedCompanyLogoName);
+      // stored companylogoName is an array, it contains the name of the files
       // the fileNaeme is encoded. decode it as given belows
       // let companyLogoName = base64_decode(storedCompanyLogoName[0])
 
-      // an image consists of 2 parts, the companyLogo and the companyLogoName 
+      // an image consists of 2 parts, the companyLogo and the companyLogoName
       // so the 0th index image will be formed by ( storedCompanyLogo[0] and storedCompanyLogoName[0] )
       // the 1st index image will be formed by ( storedCompanyLogo[1] and storedCompanyLogoName[1] )
     }
-  }
+  };
 
   const navigate = useNavigate();
   return (
     <>
-      <div style={{ width: '100%' }}>
+      <div className="module_base">
         <div className="module_nav">
           {MenuItems.map((item, index) => (
             <DropdownMenu
@@ -760,65 +822,71 @@ function EndPlate() {
               setCreateDesignReportBool={setCreateDesignReportBool}
               setDisplaySaveInputPopup={setDisplaySaveInputPopup}
               setSaveInputFileName={setSaveInputFileName}
+              triggerScreenshotCapture={triggerScreenshotCapture}
             />
           ))}
 
-          {displaySaveInputPopup && <span id="save-input-style" style={{ 'marginTop': '18px' }}>
-            <strong>Saved input file as &quot; {saveInputFileName} &quot;</strong>
-          </span>}
+          {displaySaveInputPopup && (
+            <span id="save-input-style" style={{ marginTop: "18px" }}>
+              <strong>
+                Saved input file as &quot; {saveInputFileName} &quot;
+              </strong>
+            </span>
+          )}
 
-          <h1 className="element">
-            <Button
+          <div className="element">
+            <div
+              className="home-btn"
               onClick={() => {
-                navigate('/home');
+                navigate("/home");
               }}
-              style={{ backgroundColor: 'black', color: 'white' }}
             >
               Home
-            </Button>
-          </h1>
-
+            </div>
+          </div>
         </div>
         {/* <KeyPressListener /> */}
 
         {/* Main Body of code  */}
-        <div className='superMainBody'>
+        <div className="superMainBody">
           {/* Left */}
-          <div>
-            <div className='component-grid'>
-
-            </div>
-            <h5>Input Dock</h5>
-            <div className='subMainBody scroll-data'>
+          <div className="InputDock">
+            <p>Input Dock</p>
+            <div className="subMainBody scroll-data">
               {/* Section 1 Start */}
               <h3>Connecting Members</h3>
-              <div className='component-grid'>
-                <div><h4>Connectivity</h4></div>
-                <div><Select style={{ width: '100%' }}
-                  onSelect={handleSelectChange}
-                  value={selectedOption}
-                >
-                  {connectivityList.map((item, index) => (
-                    <Option key={index} value={item}>{item}</Option>
-                  ))}
-                </Select>
+              <div className="component-grid">
+                <div className="component-grid-align">
+                  <h4>Connectivity</h4>
+                  <Select onSelect={handleSelectChange} value={selectedOption}>
+                    {(connectivityList || []).map((item, index) => (
+                      <Option key={index} value={item}>
+                        {item}
+                      </Option>
+                    ))}
+                  </Select>
                 </div>
 
-                <div>{/*Blank*/}</div>
-
-                <div>
-                  <img src={imageSource} alt="Component" height='100px' width='100px' />
+                <div className="connectionimg">
+                  <img
+                    src={imageSource}
+                    alt="Component"
+                    height="100px"
+                    width="100px"
+                  />
                 </div>
 
-                {selectedOption === 'Beam-Beam' ? (
+                {selectedOption === "Beam-Beam" ? (
                   <>
-                    <div>
+                    <div className="component-grid-align">
                       <h4>Primary Beam*</h4>
                     </div>
                     <div>
-                      <Select style={{ width: '100%' }}
+                      <Select
                         value={inputs.primary_beam || beamList[2]}
-                        onSelect={(value) => setInputs({ ...inputs, primary_beam: value })}
+                        onSelect={(value) =>
+                          setInputs({ ...inputs, primary_beam: value })
+                        }
                       >
                         {beamList.map((item, index) => (
                           <Option key={index} value={item}>
@@ -828,78 +896,80 @@ function EndPlate() {
                       </Select>
                     </div>
 
-                    <div>
+                    <div className="component-grid-align">
                       <h4>Secondary Beam*</h4>
-                    </div>
-                    <div>
-                      <Select style={{ width: '100%' }}
+                      <Select
                         value={inputs.secondary_beam || beamList[0]}
-                        onSelect={(value) => setInputs({ ...inputs, secondary_beam: value })}
-                      >
-                        {
-                          beamList.map((item, index) => (
-                            <Option key={index} value={item}>
-                              {item}
-                            </Option>
-                          ))
+                        onSelect={(value) =>
+                          setInputs({ ...inputs, secondary_beam: value })
                         }
-                      </Select>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <h4>Column Section*</h4>
-                    </div>
-                    <div>
-                      <Select style={{ width: '100%' }}
-                        value={inputs.column_section || columnList[0]}
-                        onSelect={(value) => setInputs({ ...inputs, column_section: value })}
-                      >
-                        {
-                          columnList.map((item, index) => (
-                            <Option key={index} value={item}>
-                              {item}
-                            </Option>
-                          ))
-                        }
-                      </Select>
-                    </div>
-
-                    <div>
-                      <h4>Beam Section*</h4>
-                    </div>
-                    <div>
-                      <Select style={{ width: '100%' }}
-                        value={inputs.beam_section || beamList[28]}
-                        onSelect={(value) => setInputs({ ...inputs, beam_section: value })}
                       >
                         {beamList.map((item, index) => (
                           <Option key={index} value={item}>
                             {item}
                           </Option>
-                        ))
+                        ))}
+                      </Select>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="component-grid-align">
+                      <h4>Column Section*</h4>
+                      <Select
+                        value={inputs.column_section || columnList[0]}
+                        onSelect={(value) =>
+                          setInputs({ ...inputs, column_section: value })
                         }
+                      >
+                        {columnList.map((item, index) => (
+                          <Option key={index} value={item}>
+                            {item}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+
+                    <div className="component-grid-align">
+                      <h4>Beam Section*</h4>
+                      <Select
+                        value={inputs.beam_section || beamList[28]}
+                        onSelect={(value) =>
+                          setInputs({ ...inputs, beam_section: value })
+                        }
+                      >
+                        {beamList.map((item, index) => (
+                          <Option key={index} value={item}>
+                            {item}
+                          </Option>
+                        ))}
                       </Select>
                     </div>
                   </>
                 )}
-                <div><h4>Material</h4></div>
-                <div>
-                  <Select style={{ width: '100%' }}
+                <div className="component-grid-align">
+                  <h4>Material</h4>
+                  <Select
                     value={inputs.connector_material || materialList[0].Grade}
                     onSelect={(value) => {
                       if (value == -1) {
                         setShowModal(true);
                         return;
                       }
-                      const material = materialList.find(item => item.id === value)
-                      console.log(material)
-                      setInputs({ ...inputs, connector_material: material.Grade })
+                      const material = materialList.find(
+                        (item) => item.id === value
+                      );
+                      console.log(material);
+                      setInputs({
+                        ...inputs,
+                        connector_material: material.Grade,
+                      });
                     }}
                   >
                     {materialList.map((item, index) => (
-                      <Option key={index} value={item.id}>{item.Grade}</Option>
+                      <Option key={index} value={item.id}>
+                        {item.Grade}
+                      </Option>
                     ))}
                   </Select>
                 </div>
@@ -907,38 +977,51 @@ function EndPlate() {
               {/* Section End */}
               {/* Section Start  */}
               <h3>Factored Loads</h3>
-              <div className='component-grid    '>
-                <div><h4>Shear Force(kN)</h4></div>
-                <div>
+              <div className="component-grid">
+                <div className="component-grid-align">
+                  <h4>Shear Force(kN)</h4>
                   <Input
                     type="text"
                     name="ShearForce"
-                    onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
+                    onInput={(event) => {
+                      event.target.value = event.target.value.replace(
+                        /[^0-9.]/g,
+                        ""
+                      );
+                    }}
+                    pattern="\d*"
                     value={inputs.load_shear}
-                    onChange={(event) => setInputs({ ...inputs, load_shear: event.target.value })}
+                    onChange={(event) =>
+                      setInputs({ ...inputs, load_shear: event.target.value })
+                    }
                   />
                 </div>
-                <div><h4>Axial Force(kN)</h4></div>
-                <div>
+                <div className="component-grid-align">
+                  <h4>Axial Force(kN)</h4>
                   <Input
                     type="text"
                     name="AxialForce"
-                    onInput={(event) => { event.target.value = event.target.value.replace(/[^0-9.]/g, '') }} pattern="\d*"
+                    onInput={(event) => {
+                      event.target.value = event.target.value.replace(
+                        /[^0-9.]/g,
+                        ""
+                      );
+                    }}
+                    pattern="\d*"
                     value={inputs.load_axial}
-                    onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
+                    onChange={(event) =>
+                      setInputs({ ...inputs, load_axial: event.target.value })
+                    }
                   />
                 </div>
               </div>
               {/* Section End */}
               {/* Section Start */}
               <h3>Bolt</h3>
-              <div className='component-grid    '>
-                <div>
+              <div className="component-grid">
+                <div className="component-grid-align">
                   <h4>Diameter(mm)</h4>
-                </div>
-                <div>
                   <Select
-                    style={{ width: '100%' }}
                     onSelect={handleSelectChangeBoltBeam}
                     value={boltDiameterSelect}
                   >
@@ -951,87 +1034,85 @@ function EndPlate() {
                   open={isModalOpen}
                   onCancel={() => setModalOpen(false)}
                   footer={null}
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 >
-                  <div>
-                    <div style={{ display: 'flex' }}>
-                      <div style={{ marginRight: '20px' }}>
-                        <h3>Customized</h3>
-                        <Transfer
-                          dataSource={boltDiameterList
-                            .sort((a, b) => Number(a) - Number(b))
-                            .map((label) => ({
-                              key: label,
-                              label: <h5>{label}</h5>,
-                            }))
-                          }
-                          targetKeys={selectedDiameterNewItems}
-                          onChange={handleTransferChange}
-                          render={(item) => item.label}
-                          titles={['Available', 'Selected']}
-                          showSearch
-                          listStyle={{ height: 600, width: 300 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={boltDiameterList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))}
+                      targetKeys={selectedDiameterNewItems}
+                      onChange={handleTransferChange}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
                   </div>
                 </Modal>
-                <div><h4>Type</h4></div>
-                <div>
-                  <Select style={{ width: '100%' }}
+                <div className="component-grid-align">
+                  <h4>Type</h4>
+                  <Select
                     value={inputs.bolt_type}
-                    onSelect={(value) => setInputs({ ...inputs, bolt_type: value })}
-
+                    onSelect={(value) =>
+                      setInputs({ ...inputs, bolt_type: value })
+                    }
                   >
                     <Option value="Bearing_Bolt">Bearing Bolt</Option>
-                    <Option value="Friction_Grip_Bolt">Friction Grip Bolt</Option>
+                    <Option value="Friction_Grip_Bolt">
+                      Friction Grip Bolt
+                    </Option>
                   </Select>
                 </div>
-                <div><h4>Property Class</h4></div>
-                <div>
-                  <Select style={{ width: '100%' }} onSelect={handleSelectChangePropertyClass} value={propertyClassSelect}>
+
+                <div className="component-grid-align">
+                  <h4>Property Class</h4>
+                  <Select
+                    onSelect={handleSelectChangePropertyClass}
+                    value={propertyClassSelect}
+                  >
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
                 </div>
+
                 <Modal
                   open={isModalpropertyClassListOpen}
                   onCancel={() => setModalpropertyClassListOpen(false)}
                   footer={null}
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 >
-                  <div>
-                    <div style={{ display: 'flex' }}>
-                      <div style={{ marginRight: '20px' }}>
-                        <h3>Customized</h3>
-                        <Transfer
-                          dataSource={propertyClassList
-                            .sort((a, b) => Number(a) - Number(b))
-                            .map((label) => ({
-                              key: label,
-                              label: <h5>{label}</h5>,
-                            }))
-                          }
-                          targetKeys={selectedpropertyClassListItems}
-                          onChange={handleTransferChangeInPropertyClassList}
-                          render={(item) => item.label}
-                          titles={['Available', 'Selected']}
-                          showSearch
-                          listStyle={{ height: 600, width: 300 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={propertyClassList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))}
+                      targetKeys={selectedpropertyClassListItems}
+                      onChange={handleTransferChangeInPropertyClassList}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
                   </div>
                 </Modal>
               </div>
               {/* Section End */}
               <h3>Plate</h3>
-              <div className='component-grid    '>
-                <div><h4>Thickness(mm)</h4></div>
-                <div>
-                  <Select style={{ width: '100%' }} onSelect={handleAllSelectPT} value={thicknessSelect}>
+              <div className="component-grid">
+                <div className="component-grid-align">
+                  <h4>Thickness(mm)</h4>
+                  <Select onSelect={handleAllSelectPT} value={thicknessSelect}>
                     <Option value="Customized">Customized</Option>
                     <Option value="All">All</Option>
                   </Select>
@@ -1040,104 +1121,200 @@ function EndPlate() {
                   open={plateThicknessModal}
                   onCancel={() => setPlateThicknessModal(false)}
                   footer={null}
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 >
-                  <div>
-                    <div style={{ display: 'flex' }}>
-                      <div style={{ marginRight: '20px' }}>
-                        <h3>Customized</h3>
-                        <Transfer
-                          dataSource={propertyClassList
-                            .sort((a, b) => Number(a) - Number(b))
-                            .map((label) => ({
-                              key: label,
-                              label: <h5>{label}</h5>,
-                            }))
-                          }
-                          targetKeys={selectedPlateThicknessItems}
-                          onChange={handleTransferChangeInPlateThickness}
-                          render={(item) => item.label}
-                          titles={['Available', 'Selected']}
-                          showSearch
-                          listStyle={{ height: 600, width: 300 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={propertyClassList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))}
+                      targetKeys={selectedPlateThicknessItems}
+                      onChange={handleTransferChangeInPlateThickness}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
                   </div>
                 </Modal>
               </div>
             </div>
-            <div className='inputdock-btn'>
-              <Input type="button" value="Reset" onClick={() => handleReset()} />
-              <Input type="button" value="Design" onClick={() => handleSubmit()} />
+            <div className="inputdock-btn">
+              <Input
+                type="button"
+                value="Reset"
+                onClick={() => handleReset()}
+              />
+              <Input
+                type="button"
+                value="Design"
+                onClick={() => handleSubmit()}
+              />
             </div>
           </div>
-          {/* Middle */}
-          <div className='superMainBody_mid'>
-            {renderBoolean ?
-              <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black', backgroundImage: `url(${cad_background})` }}>
-                <Canvas gl={{ antialias: true }} camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }} >
-                  <Model />
-                </Canvas>
-              </div> :
-              <>
-                <div style={{ maxwidth: '740px', height: '600px', border: '1px solid black' }}>
-                  {<img src={cad_background} alt="Demo" height='100%' width='100%' />}
-                </div>
-              </>
-            }
-            <br />
-            <div>
-              <Logs logs={logs} />
-            </div>
 
+          {/* Middle */}
+          <div className="superMainBody_mid">
+            <div className="options-container">
+              {options.map((option) => (
+                <div
+                  key={option}
+                  className="option-wrapper"
+                  onClick={() => setSelectedView(option)}
+                >
+                  <div
+                    className={`option-box ${
+                      selectedView === option ? "selected" : ""
+                    }`}
+                  ></div>
+                  <span className="option-label">{option}</span>
+                </div>
+              ))}
+            </div>
+            {loading ? (
+              <div className="modelLoading">
+                <p>Loading Model...</p>
+              </div>
+            ) : renderBoolean ? (
+              <div className="cadModel">
+                <Canvas
+                  gl={{ antialias: true }}
+                  style={{ background: "#ADD8E6" }}
+                  camera={{
+                    position: [10, 0, 10],
+                    fov: 50,
+                    near: 0.1,
+                    far: 1000,
+                  }}
+                >
+                  <Suspense
+                    fallback={
+                      <Html>
+                        <p>Loading 3D Model...</p>
+                      </Html>
+                    }
+                  >
+                    <Model
+                      modelPaths={cadModelPaths}
+                      selectedView={selectedView}
+                      key={modelKey}
+                    />
+                    <ScreenshotCapture
+                      screenshotTrigger={screenshotTrigger}
+                      setScreenshotTrigger={setScreenshotTrigger}
+                      selectedView={selectedView}
+                    />
+                  </Suspense>
+                </Canvas>
+              </div>
+            ) : (
+              <div className="modelback"></div>
+            )}
+            <Logs logs={logs} />
           </div>
+
           {/* Right */}
-          <div>
+          <div className="superMain_right">
             {<EndPlateOutputDock output={output} />}
-            <div className='outputdock-btn'>
-              <Input type="button" value="Create Design Report" onClick={handleCreateDesignReport} />
+            <div className="outputdock-btn">
+              <Input
+                type="button"
+                value="Create Design Report"
+                onClick={handleCreateDesignReport}
+              />
               <Input type="button" value="Save Output" onClick={saveOutput} />
 
               <Modal
                 open={CreateDesignReportBool}
                 onCancel={handleCancel}
                 footer={null}
-                style={{ border: '1px solid #ccc' }}
-                bodyStyle={{ padding: '20px' }}
+                className="designModal"
               >
-                <div>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                <p>Design Report Summary</p>
+                <div className="design-report-form">
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Company Name:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input id="companyName" value={designReportInputs.companyName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, companyName: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        id="companyName"
+                        value={designReportInputs.companyName}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            companyName: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Company Logo : </label>
                     </Col>
-                    <Col span={15}>
-                      <input type="file" accept="image/png , image/jpeg , image/jpg" value={setDesignReportInputs.companyLogoName} onChange={handleImageFileChange} />
+                    <Col span={18}>
+                      <input
+                        type="file"
+                        accept="image/png , image/jpeg , image/jpg"
+                        value={setDesignReportInputs.companyLogoName}
+                        onChange={handleImageFileChange}
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Group/Team Name:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input id="groupTeamName" value={designReportInputs.groupTeamName} onChange={(e) => setDesignReportInputs({ ...designReportInputs, groupTeamName: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        id="groupTeamName"
+                        value={designReportInputs.groupTeamName}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            groupTeamName: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Designer:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input id="designer" value={designReportInputs.designer} onChange={(e) => setDesignReportInputs({ ...designReportInputs, designer: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        id="designer"
+                        value={designReportInputs.designer}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            designer: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
                   {/* <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-start', gap: '10px' }}>
@@ -1146,49 +1323,124 @@ function EndPlate() {
                     </Upload>
                     <Button type="button" onClick={handleSaveProfile}>Save Profile</Button>
                   </div> */}
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Project Title:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input value={designReportInputs.projectTitle} onChange={(e) => setDesignReportInputs({ ...designReportInputs, projectTitle: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        value={designReportInputs.projectTitle}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            projectTitle: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Subtitle:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input value={designReportInputs.subtitle} onChange={(e) => setDesignReportInputs({ ...designReportInputs, subtitle: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        value={designReportInputs.subtitle}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            subtitle: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Job Number:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input value={designReportInputs.jobNumber} onChange={e => setDesignReportInputs({ ...designReportInputs, jobNumber: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        value={designReportInputs.jobNumber}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            jobNumber: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Client:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input value={designReportInputs.client} onChange={e => setDesignReportInputs({ ...designReportInputs, client: e.target.value })} />
+                    <Col span={18}>
+                      <Input
+                        value={designReportInputs.client}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            client: e.target.value,
+                          })
+                        }
+                      />
                     </Col>
                   </Row>
-                  <Row gutter={[16, 16]} align="middle" style={{ marginBottom: '25px' }}>
-                    <Col span={9}>
+                  <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    style={{ marginBottom: "5px" }}
+                  >
+                    <Col span={6}>
                       <label>Additional Comments:</label>
                     </Col>
-                    <Col span={15}>
-                      <Input.TextArea value={designReportInputs.additionalComments} onChange={e => setDesignReportInputs({ ...designReportInputs, additionalComments: e.target.value })} />
+                    <Col span={18}>
+                      <Input.TextArea
+                        value={designReportInputs.additionalComments}
+                        onChange={(e) =>
+                          setDesignReportInputs({
+                            ...designReportInputs,
+                            additionalComments: e.target.value,
+                          })
+                        }
+                        rows={10}
+                      />
                     </Col>
                   </Row>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                    <Button type="button" onClick={handleOk}>OK</Button>
-                    <Button type="button" onClick={handleCancelProfile}>Cancel</Button>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: "10px",
+                    }}
+                  >
+                    <Button type="button" onClick={handleOk} className="btn">
+                      OK
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleCancelProfile}
+                      className="btn"
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 </div>
               </Modal>
@@ -1216,7 +1468,6 @@ function EndPlate() {
               )}
 
               {/* Nav Bar Model List End */}
-
             </div>
           </div>
         </div>
@@ -1230,17 +1481,23 @@ function EndPlate() {
         type="connector"
       />
 
-      {displayPDF ?
-        <div style={{
-          border: '1px solid rgba(0, 0, 0, 0.3)',
-          height: '750px',
-          position: 'absolute'
-        }}>
-          <Viewer fileUrl={`http://localhost:5173/00335c94-1b3f-47f1-959e-6b96475dfd38`} />
+      {displayPDF ? (
+        <div
+          style={{
+            border: "1px solid rgba(0, 0, 0, 0.3)",
+            height: "750px",
+            position: "absolute",
+          }}
+        >
+          <Viewer
+            fileUrl={`http://localhost:5173/00335c94-1b3f-47f1-959e-6b96475dfd38`}
+          />
         </div>
-        : <br />}
+      ) : (
+        <br />
+      )}
     </>
-  )
+  );
 }
 
-export default EndPlate
+export default EndPlate;

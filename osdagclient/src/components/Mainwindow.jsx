@@ -1,15 +1,39 @@
-import '../App.css'
-import Osdag from "../assets/osdag-title.png"
-import IIT from "../assets/iit.png"
-import Fossee from "../assets/fossee.png"
+import "../App.css";
+import Osdag from "../assets/osdag-title.png";
+import IIT from "../assets/iit.png";
+import Fossee from "../assets/fossee.png";
 function Mainwindow() {
   return (
-    <div className='home-cont'>
-      <img className='osdag-logo' alt='osdag-logo' height="200px" width="800px" src={Osdag} />
-      <img className='iit-logo' alt='iitb logo' height="100px" width="250px" src={IIT} />
-      <img className='fossee-logo' alt='fossee-logo' height="150px" width="400px" src={Fossee} />
-    </div>
-  )
+    <>
+      <div className="home-cont">
+        <div className="logo1">
+          <img
+            className="osdag-logo"
+            alt="osdag-logo"
+            height="200px"
+            width="800px"
+            src={Osdag}
+          />
+        </div>
+        <div className="logo2">
+          <img
+            className="iit-logo"
+            alt="iitb logo"
+            height="100px"
+            width="250px"
+            src={IIT}
+          />
+          <img
+            className="fossee-logo"
+            alt="fossee-logo"
+            height="150px"
+            width="400px"
+            src={Fossee}
+          />
+        </div>
+      </div>
+    </>
+  );
 }
 
-export default Mainwindow
+export default Mainwindow;

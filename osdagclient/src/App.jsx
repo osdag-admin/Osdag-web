@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -7,90 +7,100 @@ import {
   RouterProvider,
   Navigate,
   useNavigate,
-} from 'react-router-dom';
-import { Worker } from '@react-pdf-viewer/core';
+} from "react-router-dom";
+import { Worker } from "@react-pdf-viewer/core";
 
-import Sidebar from './components/Sidebar';
-import Mainwindow from './components/Mainwindow';
-import Window from './components/Window';
-import FinePlate from './components/shearConnection/FinePlate';
-import { GlobalProvider } from './context/GlobalState';
-import { ModuleProvider } from './context/ModuleState';
-import { UserContext, UserProvider } from './context/UserState';
-import UserAccount from './components/userAccount/UserAccount';
-import { useSelector } from 'react-redux';
+import Sidebar from "./components/Sidebar";
+import Mainwindow from "./components/Mainwindow";
+import Window from "./components/Window";
+import { GlobalProvider } from "./context/GlobalState";
+import { ModuleProvider } from "./context/ModuleState";
+import { UserContext, UserProvider } from "./context/UserState";
+import UserAccount from "./components/userAccount/UserAccount";
 // New component for the login page
-import LoginPage from './components/userAuth/LoginPage';
+import LoginPage from "./components/userAuth/LoginPage";
 
-// jwt imports 
-import jwt_decode from 'jwt-decode';
-import EndPlate from './components/shearConnection/EndPlate';
-import CleatAngle from './components/shearConnection/CleatAngle';
-import SeatedAngle from './components/shearConnection/SeatedAngle';
+// jwt imports
+import jwt_decode from "jwt-decode";
+import FinPlate from "./modules/shearConnection/finPlate/FinPlate";
+import CoverPlateWelded from "./modules/coverPlateWelded/CoverPlateWelded";
 
-let renderedOnce = false
+import Homepage from "./homepage/pages/Homepage";
+import SelectModulePage from "./homepage/pages/SelectModulePage";
+import CleatAngle from "./modules/shearConnection/cleatAngle/CleatAngle";
+import EndPlate from "./modules/shearConnection/endPlate/EndPlate";
+import SimplySupportedBeam from "./modules/flexuralMember/simplySupportedBeam";
+import BoltedToEnd from "./modules/TensionMembers/BoltedToEnd/BoltedToEnd";
+import CoverPlateBolted from "./modules/coverPlateBolted/CoverPlateBolted";
+import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
+
+
+let renderedOnce = false;
 
 function App() {
   // State to track user authentication status
   // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // using redux variables 
-  const {isLoggedIn , userLogin} = useContext(UserContext)
-  let loggedIn = false
-  
-  console.log('isLoggedIn : ' , isLoggedIn)
-
-  useEffect(() => {
-    console.log('isLogged in useEffect : ' , isLoggedIn)
-  } , [isLoggedIn])
-
-
+  // using redux variables
+  const { isLoggedIn, userLogin } = useContext(UserContext);
+  let loggedIn = false;
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root loggedIn={loggedIn} />}>
-        <Route path="/home" element={<Mainwindow />} />
+        {/* <Route path="/home" element={<Mainwindow />} /> */}
+        <Route path="/home" element={<Homepage />} />
         <Route path="/" element={<LoginPage />} />
-        <Route path='/design-type/:designType' element={<Window />} />
-        {/* Wrap FinePlate with a route that checks authentication */}
+        <Route path="/:moduleName" element={<SelectModulePage />} />
+        <Route path="/design-type/:designType" element={<Window />} />
+        {/* Shear Connection Routes */}
+        <Route path="/design/connections/shear/fin_plate/:projectId?" element={<FinPlate />} />
+        <Route path="/design/connections/shear/end_plate/:projectId?" element={<EndPlate />} />
+        <Route path="/design/connections/shear/cleat_angle/:projectId?" element={<CleatAngle />} />
+        {/* Legacy Routes - Keep for backward compatibility */}
+        <Route path="/design/:designType/fin_plate/:projectId?" element={<FinPlate />} />
+        <Route path="/design/:designType/end_plate/:projectId?" element={<EndPlate />} />
         <Route
-          path='/design/:designType/fin_plate'
-          element={
-             <FinePlate /> 
-          }
+          path="/design/:designType/cleat_angle/:projectId?"
+          element={<CleatAngle />}
         />
         <Route
-          path='/design/:designType/end_plate'
-          element={
-             <EndPlate /> 
-          }
+          path="/design/:designType/beam-to-beam-splice/cover_plate_bolted/:projectId?"
+          element={<CoverPlateBolted />}
         />
         <Route
-          path='/design/:designType/cleat_angle'
-          element={
-            <CleatAngle/>
-          }
+          path="/design/:designType/beam-to-beam-splice/end_plate/:projectId?"
+          element={<BeamBeamEndPlate />}
+        />
+        {/* Tension Member Routes */}
+        <Route path="/design/tension-member/bolted_to_end_gusset/:projectId?" element={<BoltedToEnd />} />
+        
+        {/* Legacy Tension Routes */}
+        <Route
+          path='/design/:designType/bolted_to_end_gusset'
+          element={<BoltedToEnd />}
         />
         <Route
-          path='/design/:designType/seated_angle'
-          element={
-            <SeatedAngle/>
-          }
+          path="/design/:designType/beam-to-beam-splice/cover_plate_welded/:projectId?"
+          element={<CoverPlateWelded />}
         />
-      <Route path='/user' element={<UserAccount />} />
+        {/* Remove BeamToColumnEndPlate routes */}
+        <Route
+          path="/design/:designType/simply_supported_beam/:projectId?"
+          element={<SimplySupportedBeam />}
+        />
+        <Route path="/user" element={<UserAccount />} />
       </Route>
-      
     )
   );
 
   return (
-    <Worker workerUrl='https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js'>
+    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
       <UserProvider>
         <GlobalProvider>
           <ModuleProvider>
             <div className="app">
               {/* Show the login page when not authenticated */}
               {/* {!isLoggedIn && <LoginPage />} */}
-              
               {/* Render the router when authenticated */}
               <RouterProvider router={router} />
             </div>
@@ -101,57 +111,66 @@ function App() {
   );
 }
 
-const Root = ( loggedIn ) => {
-  const {userLogin} = useContext(UserContext)
-  if(!renderedOnce){
-      
-    // obtain the access token from the localStorage, when the user is on the main application page 
-    // and the user nagivates to login page, the user should not have to login again
-    // then, implemented access_token checking and decoding
-    if(localStorage.getItem('access')){
-      const decodedAccessToken = jwt_decode(localStorage.getItem('access'))
-      console.log('decodedAccessToken : ' , decodedAccessToken)
-      console.log('Date.now() / 1000 : ' , Date.now()/1000)
-      // check expiration
-      if(decodedAccessToken.exp > Date.now() / 1000 && decodedAccessToken.username && decodedAccessToken.password && decodedAccessToken.email ){
-        // the user should automatically be logged in 
-        loggedIn = true
-        console.log('loggedIn : ' , loggedIn)
-        userLogin(decodedAccessToken.username , decodedAccessToken.password , false , true)
-      }else{
-        // login again
-        loggedIn = false
-        console.log('loggedIn : ' , loggedIn)
-      }
-
-      console.log('isLoggedIn in root : ' , loggedIn)
-    }else{
-      // login again
-      loggedIn = false
-      console.log('loggedIn : ' , loggedIn)
-    }
-    
-    renderedOnce = true
-  }
-  
+const Root = (loggedIn) => {
+  const { userLogin } = useContext(UserContext);
   const navigate = useNavigate();
 
+  // Clear sessions when route changes
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+
+    // Clear sessions when navigating to non-design pages
+    if (currentPath === '/' || currentPath === '/home' || currentPath.startsWith('/user')) {
+      
+    }
+  }, []);
+
+  if (!renderedOnce) {
+    // obtain the access token from the localStorage, when the user is on the main application page
+    // and the user nagivates to login page, the user should not have to login again
+    // then, implemented access_token checking and decoding
+    if (localStorage.getItem("access")) {
+      const decodedAccessToken = jwt_decode(localStorage.getItem("access"));
+     
+      // check expiration
+      if (
+        decodedAccessToken.exp > Date.now() / 1000 &&
+        decodedAccessToken.username &&
+        decodedAccessToken.email
+      ) {
+        // the user should automatically be logged in
+        loggedIn = true;
+        
+        userLogin(
+          decodedAccessToken.username,
+          "", // Don't pass password for security
+          false,
+          true
+        );
+      } else {
+        // login again
+        loggedIn = false;
+      }
+
+    } else {
+      // login again
+      loggedIn = false;
+    }
+
+    renderedOnce = true;
+  }
+
   // Check if the current pathname matches the specified path
-  const isDesignPage = window.location.pathname.startsWith('/design/');
-  const isUserProfilePage = window.location.pathname.startsWith('/useraccount/');
-  const isLoginPage = window.location.pathname === '/';
+  const isDesignPage = window.location.pathname.startsWith("/design/");
+  const isUserProfilePage =
+    window.location.pathname.startsWith("/user");
+  const isLoginPage = window.location.pathname === "/";
 
   return (
     <>
       {/* Show Sidebar when authenticated and not on a design page */}
-      {!isLoginPage && !isDesignPage && !isUserProfilePage &&(
-        <div>
-          <Sidebar />
-        </div>
-      )}
-      <div>
-        <Outlet />
-      </div>
+      {/* {!isLoginPage && !isDesignPage && !isUserProfilePage && <Sidebar />} */}
+      <Outlet />
     </>
   );
 };

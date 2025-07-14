@@ -50,6 +50,8 @@ import numpy as np
 class BeamColumnEndPlate(MomentConnection):
     def __init__(self):
         super(BeamColumnEndPlate, self).__init__()
+        
+        self.logs = []
 
         self.module = KEY_DISP_BCENDPLATE
 
@@ -239,7 +241,7 @@ class BeamColumnEndPlate(MomentConnection):
         self.diag_stiffener_groove_weld_status = False
 
     # Set logger
-    def set_osdaglogger(key):
+    def set_osdaglogger(self, key):
         """ Function to set Logger for the module """
         global logger
         logger = logging.getLogger('Osdag')
@@ -877,7 +879,7 @@ class BeamColumnEndPlate(MomentConnection):
     # get the input values from UI and other functions
     def set_input_values(self, design_dictionary):
         """ get the input values from UI (input dock and DP) for performing the design etc. """
-        super(BeamColumnEndPlate, self).set_input_values(self, design_dictionary)
+        super(BeamColumnEndPlate, self).set_input_values(design_dictionary)
 
         self.module = KEY_DISP_BCENDPLATE
         self.mainmodule = "Moment Connection"
@@ -929,7 +931,7 @@ class BeamColumnEndPlate(MomentConnection):
         self.continuity_plate_weld = Weld(material_g_o=design_dictionary[KEY_DP_WELD_MATERIAL_G_O],
                                    type=design_dictionary[KEY_DP_WELD_TYPE], fabrication=design_dictionary[KEY_DP_WELD_FAB])
 
-        self.warn_text(self)
+        self.warn_text()
 
         # properties from design preferences
 
@@ -985,13 +987,13 @@ class BeamColumnEndPlate(MomentConnection):
         self.projection = 12.5
 
         # call functions for design
-        self.check_compatibility(self)
-        self.check_minimum_design_action(self)
-        self.set_parameters(self)
-        self.design_connection(self)
-        self.design_continuity_plate(self)
-        self.design_stiffener(self)
-        self.design_weld(self)
+        self.check_compatibility()
+        self.check_minimum_design_action()
+        self.set_parameters()
+        self.design_connection()
+        self.design_continuity_plate()
+        self.design_stiffener()
+        self.design_weld()
 
     # warn if a beam of older version of IS 808 is selected
     def warn_text(self):

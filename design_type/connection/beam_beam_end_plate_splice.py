@@ -47,7 +47,7 @@ class BeamBeamEndPlateSplice(MomentConnection):
 
     def __init__(self):
         super(BeamBeamEndPlateSplice, self).__init__()
-
+        self.logs = []
         self.module = KEY_DISP_BB_EP_SPLICE
 
         self.load_moment = 0.0
@@ -177,7 +177,7 @@ class BeamBeamEndPlateSplice(MomentConnection):
         # self.func_for_validation(self, design_dictionary)
 
     # Set logger
-    def set_osdaglogger(key):
+    def set_osdaglogger(self, key):
         """ Function to set Logger for the module """
         global logger
         logger = logging.getLogger('Osdag')
@@ -218,7 +218,7 @@ class BeamBeamEndPlateSplice(MomentConnection):
         t1 = (None, DISP_TITLE_CM, TYPE_TITLE, None, True, 'No Validator')
         options_list.append(t1)
 
-        t2 = (KEY_CONN, KEY_CONN, TYPE_COMBOBOX, VALUES_CONN_SPLICE, True, 'No Validator', [1, 2])
+        t2 = (KEY_CONN1, KEY_CONN1, TYPE_COMBOBOX, VALUES_CONN_SPLICE, True, 'No Validator', [1, 2])
         options_list.append(t2)
 
         t2 = (KEY_ENDPLATE_TYPE, KEY_DISP_ENDPLATE_TYPE, TYPE_COMBOBOX, VALUES_ENDPLATE_TYPE, True, 'No Validator')
@@ -403,10 +403,8 @@ class BeamBeamEndPlateSplice(MomentConnection):
         # End Plate
         t18 = (None, DISP_TITLE_ENDPLATE, TYPE_TITLE, None, True)
         out_list.append(t18)
-
-        t19 = (KEY_OUT_PLATETHK, KEY_OUT_DISP_PLATETHK, TYPE_TEXTBOX, int(self.plate_thickness) if flag else '', True)
+        t19 = (KEY_OUT_PLATETHK, KEY_OUT_DISP_PLATETHK, TYPE_TEXTBOX, int(self.plate_thickness) if flag and self.plate_thickness else '', True)
         out_list.append(t19)
-
         t20 = (KEY_OUT_PLATE_HEIGHT, KEY_OUT_DISP_PLATE_HEIGHT, TYPE_TEXTBOX, self.ep_height_provided if flag else '', True)
         out_list.append(t20)
 
@@ -691,11 +689,11 @@ class BeamBeamEndPlateSplice(MomentConnection):
     # get the input values from UI and other functions
     def set_input_values(self, design_dictionary):
         """ get the input values from UI (input dock and DP) for performing the design etc. """
-        super(BeamBeamEndPlateSplice, self).set_input_values(self, design_dictionary)
+        super(BeamBeamEndPlateSplice, self).set_input_values(design_dictionary)
 
         self.mainmodule = "Moment Connection"
         self.module = KEY_DISP_BB_EP_SPLICE
-        self.connectivity = design_dictionary[KEY_CONN]
+        self.connectivity = design_dictionary[KEY_CONN1]
         self.endplate_type = design_dictionary[KEY_ENDPLATE_TYPE]
         self.material = Material(material_grade=design_dictionary[KEY_MATERIAL])
 
@@ -730,7 +728,7 @@ class BeamBeamEndPlateSplice(MomentConnection):
         self.stiffener_weld = Weld(material_g_o=design_dictionary[KEY_DP_WELD_MATERIAL_G_O],
                              type=design_dictionary[KEY_DP_WELD_TYPE], fabrication=design_dictionary[KEY_DP_WELD_FAB])
 
-        self.warn_text(self)
+        self.warn_text()
 
         # properties from design preferences
 
@@ -777,10 +775,10 @@ class BeamBeamEndPlateSplice(MomentConnection):
                                                 helper_file_design_status=False)
         self.projection = 12.5
 
-        self.set_parameters(self)
-        self.design_connection(self)
-        self.design_stiffener(self)
-        self.design_weld(self)
+        self.set_parameters()
+        self.design_connection()
+        self.design_stiffener()
+        self.design_weld()
 
     # warn if a beam of older version of IS 808 is selected
     def warn_text(self):
@@ -790,8 +788,10 @@ class BeamBeamEndPlateSplice(MomentConnection):
         if self.supported_section.designation in red_list:
             logger.warning(
                 " : You are using a section (in red color) that is not available in latest version of IS 808")
+            self.logs.append({"msg": " : You are using a section (in red color) that is not available in latest version of IS 808", "type": "warning"})
             logger.info(
                 " : You are using a section (in red color) that is not available in latest version of IS 808")
+            self.logs.append({"msg": " : You are using a section (in red color) that is not available in latest version of IS 808", "type": "info"})
 
     # start of design simulation
 
@@ -878,12 +878,17 @@ class BeamBeamEndPlateSplice(MomentConnection):
                 self.load_axial = round(0.3 * self.supported_section_axial_capa, 2)
 
                 logger.warning("The Load(s) defined is/are less than the minimum recommended value [Ref. IS 800:2007, Cl.10.7].")
+                self.logs.append({"msg": "The Load(s) defined is/are less than the minimum recommended value [Ref. IS 800:2007, Cl.10.7].", "type": "warning"})
                 logger.warning("[Minimum Factored Load] The external factored bending moment ({} kNm) is less than 0.5 times the plastic moment "
                                "capacity of the beam ({} kNm)".format(self.load.moment, self.supported_section_mom_capa_m_zz))
+                self.logs.append({"msg": f"[Minimum Factored Load] The external factored bending moment ({self.load.moment} kNm) is less than 0.5 times the plastic moment capacity of the beam ({self.supported_section_mom_capa_m_zz} kNm)", "type": "warning"})
                 logger.info("The minimum factored bending moment should be at least 0.5 times the plastic moment capacity of the beam to qualify the "
                             "connection as rigid connection (Annex. F-4.3.1, IS 800:2007)")
+                self.logs.append({"msg": "The minimum factored bending moment should be at least 0.5 times the plastic moment capacity of the beam to qualify the connection as rigid connection (Annex. F-4.3.1, IS 800:2007)", "type": "info"})
                 logger.info("The value of load(s) is/are set at minimum recommended value as per Cl.10.7 and Annex. F, IS 800:2007")
+                self.logs.append({"msg": "The value of load(s) is/are set at minimum recommended value as per Cl.10.7 and Annex. F, IS 800:2007", "type": "info"})
                 logger.info("Designing the connection for a factored moment of {} kNm".format(self.load_moment))
+                self.logs.append({"msg": f"Designing the connection for a factored moment of {self.load_moment} kNm", "type": "info"})
 
             elif self.sum_IR <= 1.0 and self.IR_moment < 0.5:
 
@@ -894,12 +899,17 @@ class BeamBeamEndPlateSplice(MomentConnection):
                 self.load_axial = self.load.axial_force
 
                 logger.warning("The Load(s) defined is/are less than the minimum recommended value [Ref. IS 800:2007, Cl.10.7].")
+                self.logs.append({"msg": "The Load(s) defined is/are less than the minimum recommended value [Ref. IS 800:2007, Cl.10.7]", "type": "warning"})
                 logger.warning("[Minimum Factored Load] The external factored bending moment ({} kNm) is less than 0.5 times the plastic moment "
                                "capacity of the beam ({} kNm)".format(self.load.moment, self.supported_section_mom_capa_m_zz))
+                self.logs.append({"msg": f"[Minimum Factored Load] The external factored bending moment ({self.load.moment} kNm) is less than 0.5 times the plastic moment capacity of the beam ({self.supported_section_mom_capa_m_zz} kNm)", "type": "warning"})
                 logger.info("The minimum factored bending moment should be at least 0.5 times the plastic moment capacity of the beam to qualify the "
                             "connection as rigid connection (Annex. F-4.3.1, IS 800:2007)")
+                self.logs.append({"msg": "The minimum factored bending moment should be at least 0.5 times the plastic moment capacity of the beam to qualify the connection as rigid connection (Annex. F-4.3.1, IS 800:2007)", "type": "info"})
                 logger.info("The value of load(s) is/are set at minimum recommended value as per Cl.10.7 and Annex. F, IS 800:2007")
+                self.logs.append({"msg": "The value of load(s) is/are set at minimum recommended value as per Cl.10.7 and Annex. F, IS 800:2007", "type": "info"})
                 logger.info("Designing the connection for a factored moment of {} kNm".format(self.load_moment))
+                self.logs.append({"msg": f"Designing the connection for a factored moment of {self.load_moment} kNm", "type": "info"})
 
             elif self.sum_IR <= 1.0 and self.IR_axial < 0.3:
 
@@ -911,9 +921,12 @@ class BeamBeamEndPlateSplice(MomentConnection):
                 self.load_moment = round(self.supported_section_mom_capa_m_zz, 2)
 
                 logger.warning("The Load(s) defined is/are less than the minimum recommended value [Ref. IS 800:2007, Cl.10.7]")
+                self.logs.append({"msg": "The Load(s) defined is/are less than the minimum recommended value [Ref. IS 800:2007, Cl.10.7]", "type": "warning"})
                 logger.info("The value of factored axial force ({} kN) is less than the minimum recommended value [Ref. Cl.10.7, IS 800:2007]".
                             format(self.input_axial_force))
+                self.logs.append({"msg": f"The value of factored axial force ({self.input_axial_force} kN) is less than the minimum recommended value [Ref. Cl.10.7, IS 800:2007]", "type": "info"})
                 logger.info("The value of axial force is set at {} kN, as per the minimum recommended value by Cl.10.7".format(self.load_axial))
+                self.logs.append({"msg": f"The value of axial force is set at {self.load_axial} kN, as per the minimum recommended value by Cl.10.7", "type": "info"})
             else:
                 self.load_axial = self.input_axial_force
                 self.load_moment = self.input_moment
@@ -928,9 +941,12 @@ class BeamBeamEndPlateSplice(MomentConnection):
                 self.design_status_list.append(self.design_status)
                 logger.error("[Maximum Factored Load] The external factored bending moment ({} kNm) is greater than the plastic moment capacity of "
                              "the beam ({} kNm)".format(self.load.moment, self.supported_section_mom_capa_m_zz))
+                self.logs.append({"msg": f"[Maximum Factored Load] The external factored bending moment ({self.load.moment} kNm) is greater than the plastic moment capacity of the beam ({self.supported_section_mom_capa_m_zz} kNm)", "type": "error"})
                 logger.warning("The maximum moment carrying capacity of the beam is {} kNm".format(self.supported_section_mom_capa_m_zz))
+                self.logs.append({"msg": f"The maximum moment carrying capacity of the beam is {self.supported_section_mom_capa_m_zz} kNm", "type": "warning"})
                 logger.info("Define the value of factored bending moment as {} kNm or less and re-design".
                             format(self.supported_section_mom_capa_m_zz))
+                self.logs.append({"msg": f"Define the value of factored bending moment as {self.supported_section_mom_capa_m_zz} kNm or less and re-design", "type": "info"})
 
             # Maximum axial force check
             if self.load.axial_force > self.supported_section_axial_capa:
@@ -939,8 +955,11 @@ class BeamBeamEndPlateSplice(MomentConnection):
                 self.design_status_list.append(self.design_status)
                 logger.error("[Maximum Factored Load] The external factored axial force ({} kN) is greater than the axial capacity of "
                              "the beam ({} kN)".format(self.load.axial_force, self.supported_section_axial_capa))
+                self.logs.append({"msg": f"[Maximum Factored Load] The external factored axial force ({self.load.axial_force} kN) is greater than the axial capacity of the beam ({self.supported_section_axial_capa} kN)", "type": "error"})
                 logger.warning("The maximum axial capacity of the beam is {} kN".format(self.supported_section_axial_capa))
+                self.logs.append({"msg": f"The maximum axial capacity of the beam is {self.supported_section_axial_capa} kN", "type": "warning"})
                 logger.info("Define the value of axial force as {} kN or less and re-design".format(self.supported_section_axial_capa))
+                self.logs.append({"msg": f"Define the value of axial force as {self.supported_section_axial_capa} kN or less and re-design", "type": "info"})
             else:
                 self.load_axial = self.load.axial_force
 
@@ -950,9 +969,12 @@ class BeamBeamEndPlateSplice(MomentConnection):
             self.load_shear = min((0.15 * self.supported_section_shear_capa), 40)
             logger.warning("[Minimum Factored Load] The external factored shear force ({} kN) is less than the minimum recommended design action on "
                            "the member".format(self.load_shear))
+            self.logs.append({"msg": f"[Minimum Factored Load] The external factored shear force ({self.load_shear} kN) is less than the minimum recommended design action on the member", "type": "warning"})
             logger.info("The minimum factored shear force should be at least {} (0.15 times the shear capacity of the beam in low shear) or 40 kN "
                         "whichever is less [Ref. Cl. 10.7, IS 800:2007]".format(0.15 * self.supported_section_shear_capa))
+            self.logs.append({"msg": f"The minimum factored shear force should be at least {0.15 * self.supported_section_shear_capa} (0.15 times the shear capacity of the beam in low shear) or 40 kN whichever is less [Ref. Cl. 10.7, IS 800:2007]", "type": "info"})
             logger.info("Designing the connection for a factored shear load of {} kNm".format(self.load_shear))
+            self.logs.append({"msg": f"Designing the connection for a factored shear load of {self.load_shear} kNm", "type": "info"})
         elif self.load.shear_force > self.supported_section_shear_capa:
             self.load_shear = self.supported_section_shear_capa  # kN
             self.minimum_load_status_moment = True
@@ -960,8 +982,11 @@ class BeamBeamEndPlateSplice(MomentConnection):
             self.design_status_list.append(self.design_status)
             logger.error("[Maximum Factored Load] The external factored shear force ({} kN) is greater than the shear capacity of the "
                          "beam ({} kN)".format(self.load_shear, self.supported_section_shear_capa))
+            self.logs.append({"msg": f"[Maximum Factored Load] The external factored shear force ({self.load_shear} kN) is greater than the shear capacity of the beam ({self.supported_section_shear_capa} kN)", "type": "error"})
             logger.warning("The maximum shear capacity of the beam is {} kN".format(self.supported_section_shear_capa))
+            self.logs.append({"msg": f"The maximum shear capacity of the beam is {self.supported_section_shear_capa} kN", "type": "warning"})
             logger.info("Define the value of factored shear force as {} kN or less".format(self.supported_section_shear_capa))
+            self.logs.append({"msg": f"Define the value of factored shear force as {self.supported_section_shear_capa} kN or less", "type": "info"})
         else:
             self.minimum_load_status_shear = False
             self.load_shear = self.load.shear_force
@@ -977,13 +1002,23 @@ class BeamBeamEndPlateSplice(MomentConnection):
         # set plate thickness list [minimum to maximum]
         # Note: minimum plate thk is at-least equal to the thk of thicker connecting element (flange thk or web thk)
         self.plate_thickness = []
-        for i in self.plate.thickness:
+        print("*********", self.plate.thickness)
+        
+        # Ensure self.plate.thickness is a list
+        if isinstance(self.plate.thickness, (float, int)):
+            plate_thickness_list = [self.plate.thickness]
+        else:
+            plate_thickness_list = self.plate.thickness
+        
+        for i in plate_thickness_list:
             if i > max(self.beam_tf, self.beam_tw):
                 self.plate_thickness.append(i)
             else:
                 logger.warning("[End Plate] The end plate of {} mm is thinner than the thickest part of the elements being connected".
                                format(round(i, 2)))
+                self.logs.append({"msg": f"[End Plate] The end plate of {round(i, 2)} mm is thinner than the thickest part of the elements being connected", "type": "warning"})
                 logger.info("Selecting a plate of higher thickness which is at least {} mm thick".format(max(self.beam_tf, self.beam_tw)))
+                self.logs.append({"msg": f"Selecting a plate of higher thickness which is at least {max(self.beam_tf, self.beam_tw)} mm thick", "type": "info"})
 
         # final sorted list as per compatibility check
         self.plate_thickness = self.plate_thickness  # final list of plate thicknesses considered for simulation
@@ -994,8 +1029,11 @@ class BeamBeamEndPlateSplice(MomentConnection):
             self.design_status = False
             self.design_status_list.append(self.design_status)
             logger.error("[End Plate] The list of plate thicknesses passed into the solver is insufficient to perform end plate design")
+            self.logs.append({"msg": "[End Plate] The list of plate thicknesses passed into the solver is insufficient to perform end plate design", "type": "error"})
             logger.warning("The end plate should at least be thicker than the maximum thickness of the connecting elements")
+            self.logs.append({"msg": "The end plate should at least be thicker than the maximum thickness of the connecting elements", "type": "warning"})
             logger.info("Provide a plate/list of plates with a minimum thickness of {} mm".format(round_up(max(self.beam_tf, self.beam_tw), 2)))
+            self.logs.append({"msg": f"Provide a plate/list of plates with a minimum thickness of {round_up(max(self.beam_tf, self.beam_tw), 2)} mm", "type": "info"})
 
         # set bolt diameter, grade combination
         self.bolt_list = []  # this list will be used to run the iteration
@@ -1008,8 +1046,10 @@ class BeamBeamEndPlateSplice(MomentConnection):
 
         self.bolt_list = self.bolt_list
         logger.info("[Bolt Design] Bolt diameter and grade combination ready to perform bolt design")
+        self.logs.append({"msg": "[Bolt Design] Bolt diameter and grade combination ready to perform bolt design", "type": "info"})
         logger.info("The solver has selected {} combinations of bolt diameter and grade to perform optimum bolt design in an iterative manner "
                     .format(int(len(self.bolt_list) / 2)))
+        self.logs.append({"msg": f"The solver has selected {int(len(self.bolt_list) / 2)} combinations of bolt diameter and grade to perform optimum bolt design in an iterative manner", "type": "info"})
 
         # create a list of tuple with a combination of each bolt diameter with each grade for iteration
         # list is created using the approach --- minimum diameter, small grade to maximum diameter, high grade
@@ -1030,7 +1070,9 @@ class BeamBeamEndPlateSplice(MomentConnection):
         logger.info("[Optimisation] Performing the design by optimising the plate thickness, using the most optimum plate and a suitable bolt "
                     "diameter "
                     "approach")
+        self.logs.append({"msg": "[Optimisation] Performing the design by optimising the plate thickness, using the most optimum plate and a suitable bolt diameter approach", "type": "info"})
         logger.info("If you wish to optimise the bolt diameter-grade combination, pass a higher value of plate thickness using the Input Dock")
+        self.logs.append({"msg": "If you wish to optimise the bolt diameter-grade combination, pass a higher value of plate thickness using the Input Dock", "type": "info"})
 
         # loop starts
         self.helper_file_design_status = False  # initialise status to False to activate the loop for first (and subsequent, if required) iteration(s)
@@ -1108,7 +1150,9 @@ class BeamBeamEndPlateSplice(MomentConnection):
                             if self.space_available_inside_D < self.space_min_req_inside_D:
                                 logger.error("[Compatibility Error]: The given beam cannot accommodate at least a single row of bolt (inside top and "
                                              "bottom flange) with a trial diameter of {} mm ".format(self.bolt_diameter_provided))
+                                self.logs.append({"msg": f"[Compatibility Error]: The given beam cannot accommodate at least a single row of bolt (inside top and bottom flange) with a trial diameter of {self.bolt_diameter_provided} mm", "type": "error"})
                                 logger.info("Re-design the connection by defining a bolt of smaller diameter or beam of a suitable depth ")
+                                self.logs.append({"msg": "Re-design the connection by defining a bolt of smaller diameter or beam of a suitable depth", "type": "info"})
                                 self.rows_inside_D_max = 0
                                 self.bolt_row = 0
                                 self.bolt_row_web = 0
@@ -1164,10 +1208,13 @@ class BeamBeamEndPlateSplice(MomentConnection):
                                     self.design_status_list.append(self.design_status)
 
                                 logger.error("[Detailing] The beam is not wide enough to accommodate at-least a single column of bolt on either side")
+                                self.logs.append({"msg": "[Detailing] The beam is not wide enough to accommodate at-least a single column of bolt on either side", "type": "error"})
                                 logger.error("The defined beam is not suitable for performing connection design for the given set of inputs")
+                                self.logs.append({"msg": "The defined beam is not suitable for performing connection design for the given set of inputs", "type": "error"})
                                 logger.info("Please define another beam which has sufficient width (minimum, {} mm) and/or smaller diameter bolt "
                                             "and re-design".
                                             format(space_req_2col))
+                                self.logs.append({"msg": f"Please define another beam which has sufficient width (minimum, {space_req_2col} mm) and/or smaller diameter bolt and re-design", "type": "info"})
 
                             # Check 6: bolt design
 
@@ -1370,57 +1417,77 @@ class BeamBeamEndPlateSplice(MomentConnection):
                     "[Flange Strength] The reaction at the compression flange of the beam {} kN exceeds the flange capacity {} "
                     "kN".
                         format(round(self.call_helper.r_c, 2), self.call_helper.flange_capacity))
+                self.logs.append({"msg": f"[Flange Strength] The reaction at the compression flange of the beam {round(self.call_helper.r_c, 2)} kN exceeds the flange capacity {self.call_helper.flange_capacity} kN", "type": "error"})
                 logger.error("Reaction on the flange exceeds the flange capacity by {} kN".
                              format(round(self.call_helper.r_c - self.call_helper.flange_capacity, 2)))
+                self.logs.append({"msg": f"Reaction on the flange exceeds the flange capacity by {round(self.call_helper.r_c - self.call_helper.flange_capacity, 2)} kN", "type": "error"})
                 logger.warning("The beam flange can have local buckling")
+                self.logs.append({"msg": "The beam flange can have local buckling", "type": "warning"})
                 logger.info(
                     "Select a different beam with more flange area or provide stiffening at the flange to increase the beam "
-
                     "flange thickness. Re-design connection using the effective flange thickness after stiffening")
+                self.logs.append({"msg": "Select a different beam with more flange area or provide stiffening at the flange to increase the beam flange thickness. Re-design connection using the effective flange thickness after stiffening", "type": "info"})
                 logger.info("Custom beams can be defined through the Osdag Design Preferences tab")
+                self.logs.append({"msg": "Custom beams can be defined through the Osdag Design Preferences tab", "type": "info"})
+
             else:
                 logger.info(
                     "[Flange Strength] The reaction at the compression flange of the beam {} kN is less than the flange capacity"
                     " {} kN. The flange strength requirement is satisfied.".
                         format(round(self.call_helper.r_c, 2), self.call_helper.flange_capacity))
+                self.logs.append({"msg": f"[Flange Strength] The reaction at the compression flange of the beam {round(self.call_helper.r_c, 2)} kN is less than the flange capacity {self.call_helper.flange_capacity} kN. The flange strength requirement is satisfied.", "type": "info"})
 
             if not self.call_helper.plate_design_status:
                 logger.error(
                     "[End Plate] The selected trial end plate of {} mm is insufficient and fails in the moment capacity check".
                         format(self.plate_thickness))
+                self.logs.append({"msg": f"[End Plate] The selected trial end plate of {self.plate_thickness} mm is insufficient and fails in the moment capacity check", "type": "error"})
                 logger.info(
                     "The minimum required thickness of end plate is {} mm".format(round(self.call_helper.plate_thickness_req, 2)))
+                self.logs.append({"msg": f"The minimum required thickness of end plate is {round(self.call_helper.plate_thickness_req, 2)} mm", "type": "info"})
                 logger.info("Re-designing the connection with a plate of available higher thickness")
+                self.logs.append({"msg": "Re-designing the connection with a plate of available higher thickness", "type": "info"})
             else:
                 logger.info(
                     "[End Plate] The end plate of {} mm passes the moment capacity check. The end plate is checked for yielding "
                     "due tension caused by bending moment and prying force".format(self.plate_thickness))
+                self.logs.append({"msg": f"[End Plate] The end plate of {self.plate_thickness} mm passes the moment capacity check. The end plate is checked for yielding due tension caused by bending moment and prying force", "type": "info"})
 
             if not self.call_helper.bolt_tension_design_status:
                 logger.error("[Bolt Design] The bolt of {} mm diameter and {} grade fails the tension check".
                              format(self.bolt_diameter_provided, self.bolt_grade_provided))
+                self.logs.append({"msg": f"[Bolt Design] The bolt of {self.bolt_diameter_provided} mm diameter and {self.bolt_grade_provided} grade fails the tension check", "type": "error"})
                 logger.error(
                     "Total tension demand on bolt (due to direct tension + prying action) is {} kN and exceeds the bolt tension "
                     "capacity ({} kN)".format(round(self.call_helper.bolt_tension_demand, 2), self.call_helper.bolt_tension_capacity))
+                self.logs.append({"msg": f"Total tension demand on bolt (due to direct tension + prying action) is {round(self.call_helper.bolt_tension_demand, 2)} kN and exceeds the bolt tension capacity ({self.call_helper.bolt_tension_capacity} kN)", "type": "error"})
                 logger.info("Re-designing the connection with a bolt of higher grade and/or diameter")
+                self.logs.append({"msg": "Re-designing the connection with a bolt of higher grade and/or diameter", "type": "info"})
             else:
                 logger.info("[Bolt Design] The bolt of {} mm diameter and {} grade passes the tension check".
                             format(self.bolt_diameter_provided, self.bolt_grade_provided))
+                self.logs.append({"msg": f"[Bolt Design] The bolt of {self.bolt_diameter_provided} mm diameter and {self.bolt_grade_provided} grade passes the tension check", "type": "info"})
                 logger.info("Total tension demand on bolt (due to direct tension + prying action) is {} kN and the bolt tension "
                             "capacity is ({} kN)".format(round(self.call_helper.bolt_tension_demand, 2),
                                                          self.call_helper.bolt_tension_capacity))
+                self.logs.append({"msg": f"Total tension demand on bolt (due to direct tension + prying action) is {round(self.call_helper.bolt_tension_demand, 2)} kN and the bolt tension capacity is ({self.call_helper.bolt_tension_capacity} kN)", "type": "info"})
 
             if not self.call_helper.bolt_design_combined_check_status:
                 logger.error("[Bolt Design] The bolt of {} mm diameter and {} grade fails the combined shear + tension check".
                              format(self.bolt_diameter_provided, self.bolt_grade_provided))
+                self.logs.append({"msg": f"[Bolt Design] The bolt of {self.bolt_diameter_provided} mm diameter and {self.bolt_grade_provided} grade fails the combined shear + tension check", "type": "error"})
                 logger.error(
                     "The Interaction Ratio (IR) of the critical bolt is {} ".format(self.call_helper.bolt_combined_check_UR))
+                self.logs.append({"msg": f"The Interaction Ratio (IR) of the critical bolt is {self.call_helper.bolt_combined_check_UR}", "type": "error"})
                 logger.info("Re-designing the connection with a bolt of higher grade and/or diameter")
+                self.logs.append({"msg": "Re-designing the connection with a bolt of higher grade and/or diameter", "type": "info"})
             else:
                 logger.info("[Bolt Design] The bolt of {} mm diameter and {} grade passes the combined shear + tension check".
                             format(self.bolt_diameter_provided, self.bolt_grade_provided))
+                self.logs.append({"msg": f"[Bolt Design] The bolt of {self.bolt_diameter_provided} mm diameter and {self.bolt_grade_provided} grade passes the combined shear + tension check", "type": "info"})
                 logger.info(
                     "The Interaction Ratio (IR) of the critical bolt is {} ".format(self.call_helper.bolt_combined_check_UR))
+                self.logs.append({"msg": f"The Interaction Ratio (IR) of the critical bolt is {self.call_helper.bolt_combined_check_UR}", "type": "info"})
 
             # shear design
             self.bolt_shear_demand = self.call_helper.bolt_shear_demand
@@ -1487,7 +1554,6 @@ class BeamBeamEndPlateSplice(MomentConnection):
 
     def design_stiffener(self):
         """ design stiffener for the connection """
-
         if (len(self.plate_thickness_list) != 0) and (self.bolt_row != 0) and (self.bolt_column != 0):
 
             if self.endplate_type == 'Flushed - Reversible Moment':
@@ -1505,6 +1571,7 @@ class BeamBeamEndPlateSplice(MomentConnection):
 
     def design_weld(self):
         """ design fillet weld at web for the connection """
+        
         if (len(self.plate_thickness_list) != 0) and (self.bolt_row != 0) and (self.bolt_column != 0):
 
             # weld strength
@@ -1530,7 +1597,9 @@ class BeamBeamEndPlateSplice(MomentConnection):
             # allowable stress check
             if self.f_e > self.allowable_stress:
                 logger.error("[Weld Design] The weld at web fails in the combined axial and shear design check")
+                self.logs.append({"msg": "[Weld Design] The weld at web fails in the combined axial and shear design check", "type": "error"})
                 logger.info("Provide groove weld at the web")
+                self.logs.append({"msg": "Provide groove weld at the web", "type": "info"})
 
             # 2: Weld design for stiffeners
             if self.endplate_type == 'Flushed - Reversible Moment':
@@ -1555,18 +1624,24 @@ class BeamBeamEndPlateSplice(MomentConnection):
 
         if self.design_status:
             logger.info(": ========== Design Status ============")
+            self.logs.append({"msg": ": ========== Design Status ============", "type": "info"})
             logger.info(": Overall beam to beam end plate splice connection design is SAFE")
+            self.logs.append({"msg": ": Overall beam to beam end plate splice connection design is SAFE", "type": "info"})
             logger.info(": ========== End Of Design ============")
+            self.logs.append({"msg": ": ========== End Of Design ============", "type": "info"})
         else:
             logger.info(": ========== Design Status ============")
+            self.logs.append({"msg": ": ========== Design Status ============", "type": "info"})
             logger.info(": Overall beam to beam end plate splice connection design is UNSAFE")
+            self.logs.append({"msg": ": Overall beam to beam end plate splice connection design is UNSAFE", "type": "info"})
             logger.info(": ========== End Of Design ============")
+            self.logs.append({"msg": ": ========== End Of Design ============", "type": "info"})
 
         # create design report
 
     def save_design(self, popup_summary):
         # bolt_list = str(*self.bolt.bolt_diameter, sep=", ")
-
+        print("**** inside Savedesign *****")
         if self.supported_section.flange_slope == 90:
             image = "Parallel_Beam"
         else:
@@ -1597,7 +1672,7 @@ class BeamBeamEndPlateSplice(MomentConnection):
         self.report_input = \
             {KEY_MAIN_MODULE: self.mainmodule,
              KEY_MODULE: KEY_DISP_BB_EP_SPLICE,
-             KEY_CONN: self.connectivity,
+             KEY_CONN1: self.connectivity,
              KEY_DISP_ENDPLATE_TYPE: self.endplate_type,
              KEY_DISP_MOMENT: self.input_moment,
              KEY_DISP_SHEAR: self.input_shear_force,
@@ -2078,5 +2153,5 @@ class BeamBeamEndPlateSplice(MomentConnection):
 
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext, rel_path, Disp_2d_image,
                                Disp_3d_image, module=self.module)
-
+        return True
         # End of design report

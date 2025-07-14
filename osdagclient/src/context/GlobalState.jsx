@@ -56,7 +56,6 @@ export const GlobalProvider = ({ children }) => {
         try {
             const response = await axios.get(`${BASE_URL}osdag-web/${designType}/${name.toLowerCase().replaceAll("_", '-')}`);
             const data = response.data.result;
-            // console.log(data)
             dispatch({ type: 'GET_SUB_DESIGNTYPES', payload: data });
         } catch (error) {
             dispatch({ type: 'SET_ERR_MSG_SUB', payload: '' });
@@ -68,7 +67,6 @@ export const GlobalProvider = ({ children }) => {
         try {
             const response = await axios.get(`${BASE_URL}osdag-web/${designType}/${prev.toLowerCase().replaceAll("_", '-')}/${name.toLowerCase().replaceAll("_", '-')}`);
             const data = response.data.result;
-            // console.log(data)
             dispatch({ type: 'GET_LEAF_DESIGNTYPES', payload: data });
         } catch (error) {
             dispatch({ type: 'SET_ERR_MSG_LEAF', payload: '' });

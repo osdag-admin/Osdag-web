@@ -390,7 +390,7 @@ class TensionAngleWeldCAD(object):
         return welds
 
     def get_models(self):
-        mem = self.get_welded_models()
+        mem = self.get_members_models()
         plts = self.get_plates_models()
         wlds = self.get_welded_models()
 

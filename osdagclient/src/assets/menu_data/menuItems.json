@@ -4,16 +4,12 @@
         "label": "File",
         "dropdown": [
           { "name": "Load Input", "shortcut": "Ctrl+L" },
-          { "name": "Download Input", "shortcut": "Ctrl+D" },
           { "name": "Save Input", "shortcut": "Alt+N" },
+          { "name": "Download Input", "shortcut": "Alt+D"},
           { "name": "Save Log Messages", "shortcut": "Alt+M" },
           { "name": "Create Design Report", "shortcut": "Alt+C" },
           { "name": "Save 3D Model", "shortcut": "Alt+3" },
-          { "name": "Save Cad Image", "shortcut": "Alt+1" },
-          { "name": "Save Front View", "shortcut": "Alt+Shift+F" },
-          { "name": "Save Top View", "shortcut": "Alt+Shift+T" },
-          { "name": "Save Side View", "shortcut": "Alt+Shift+S" },
-          { "name": "Quit", "shortcut": "Shift+Q" }
+          { "name": "Save Cad Image", "shortcut": "Alt+1" }
         ]
       },
       {

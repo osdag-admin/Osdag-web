@@ -33,21 +33,22 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
-class UserAccount_Serializer(serializers.ModelSerializer) : 
-    class Meta : 
+class UserAccount_Serializer(serializers.ModelSerializer):
+    class Meta:
         model = UserAccount
-        fields = '__all__'
+        fields = ['username', 'email', 'allInputValueFiles']  # No password!
 
-    def create(self, validated_data) : 
+    def create(self, validated_data):
         return UserAccount.objects.create(**validated_data)
 
-    def update(self , instance , validated_data) : 
-        # update the instance 
-        instance.password = validated_data.get('password' , instance.password)
-
-        # save the instance 
+    def update(self, instance, validated_data):
+        # Only update allowed fields
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.allInputValueFiles = validated_data.get('allInputValueFiles', instance.allInputValueFiles)
         instance.save()
         return instance
+
 
 class Design_Serializer(serializers.ModelSerializer) : 
 

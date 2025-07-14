@@ -108,6 +108,7 @@ class StiffenerPlate(object):
         aFace = makeFaceFromWire(wire)
         extrudeDir = self.T * self.wDir  # extrudeDir is a numpy array
         if rotate_angle == None:
+            print("****", self.T)
             prism1 = makePrismFromFace(aFace, extrudeDir)
         else:
             prism = makePrismFromFace(aFace, extrudeDir)

@@ -95,6 +95,16 @@ def makeEdgesFromPoints(points):
 
 
 def makePrismFromFace(aFace, eDir):
+    # Debugging safety checks:
+    if aFace is None:
+        raise ValueError("aFace is None, cannot create prism.")
+    if eDir is None or len(eDir) != 3:
+        raise ValueError(f"eDir is invalid: {eDir}")
+    if all(abs(val) < 1e-6 for val in eDir):
+        raise ValueError(f"eDir vector is nearly zero: {eDir}")
+    
+    # Correct usage of gp_Vec
+    direction_vector = gp_Vec(eDir[0], eDir[1], eDir[2])
 
-    return BRepPrimAPI_MakePrism(aFace, gp_Vec(gp_Pnt(0., 0., 0.), gp_Pnt(eDir[0], eDir[1], eDir[2]))).Shape()
+    return BRepPrimAPI_MakePrism(aFace, direction_vector).Shape()
 

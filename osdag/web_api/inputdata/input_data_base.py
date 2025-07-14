@@ -3,4 +3,4 @@ from rest_framework import status
 
 class InputDataBase:
     def process(self, **kwargs):
-        return Response({"error": "Bad Query Parameter"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Bad Query Parameter (input_data_base.py)"}, status=status.HTTP_400_BAD_REQUEST)

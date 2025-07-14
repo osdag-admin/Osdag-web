@@ -22,8 +22,6 @@ class Load(object):
         else:
             self.moment = 0.0
             self.moment_minor = 0.0
-        print("setting factored input loads as, axial force = {0} N, shear force = {1} N, moment = {2} Nmm".format(
-            self.axial_force, self.shear_force, self.moment))
 
     def __repr__(self):
         repr = "Load\n"

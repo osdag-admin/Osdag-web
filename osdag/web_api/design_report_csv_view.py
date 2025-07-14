@@ -6,6 +6,13 @@ from django.http import FileResponse
 
 from osdag_api.modules.fin_plate_connection import create_from_input as fin_plate_create_from_input
 from osdag_api.modules.end_plate_connection import create_from_input as end_plate_create_from_input
+from osdag_api.modules.cleat_angle_connection import create_from_input as cleat_angle_create_from_input
+from osdag_api.modules.seated_angle_connection import create_from_input as seated_angle_create_from_input
+from osdag_api.modules.cover_plate_bolted_connection import create_from_input as cover_plate_bolted_create_from_input
+from osdag_api.modules.beam_beam_end_plate_connection import create_from_input as beam_beam_end_plate_create_from_input
+from osdag_api.modules.cover_plate_welded_connection import create_from_input as cover_plate_welded_create_from_input
+from osdag_api.modules.beam_column_end_plate import create_from_input as beam_to_column_end_plate_create_from_input
+from osdag_api.modules.bolted_tension_member import create_from_input as tension_member_bolted_create_from_input
 # importing models
 from osdag.models import Design
 
@@ -28,14 +35,37 @@ import uuid
 class CreateDesignReport(APIView):
 
     def post(self, request):
-        # print('request.metadata : ' , request.data)
-        # metadata = request.data
-        # obtain teh cookies
+        # Get metadata and design data from request
         metadata = request.data.get('metadata')
-        print('metadata : ' , metadata)
-        cookie_id = request.COOKIES.get('fin_plate_connection_session') or request.COOKIES.get('end_plate_connection_session')
-        print('cookie_id : ', cookie_id)
-       
+        module_id = request.data.get('module_id')
+        input_values = request.data.get('input_values') 
+        design_status = request.data.get('design_status', True)
+        logs = request.data.get('logs', [])
+        
+        print('metadata:', metadata)
+        print('module_id:', module_id)
+        print('input_values:', input_values)
+        
+        # Map module IDs to their respective create_from_input functions
+        module_function_map = {
+            'Fin-Plate-Connection': fin_plate_create_from_input,
+            'End-Plate-Connection': end_plate_create_from_input,
+            'Cleat-Angle-Connection': cleat_angle_create_from_input,
+            'Seated-Angle-Connection': seated_angle_create_from_input,
+            'Cover-Plate-Bolted-Connection': cover_plate_bolted_create_from_input,
+            'Beam-Beam-End-Plate-Connection': beam_beam_end_plate_create_from_input,
+            'Cover-Plate-Welded-Connection': cover_plate_welded_create_from_input,
+            'Beam-to-Column-End-Plate-Connection': beam_to_column_end_plate_create_from_input,
+            'Tension-Member-Bolted-Design': tension_member_bolted_create_from_input
+        }
+        
+        if not module_id or module_id not in module_function_map:
+            return Response({"error": "Invalid or missing module_id"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not input_values:
+            return Response({"error": "Missing input_values"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        create_module_func = module_function_map[module_id]
 
         # obtain the currenct working directory as it gets changed in the osdag desktop code, then 
         # we will use the same value to bring it back to the current directory 
@@ -43,18 +73,11 @@ class CreateDesignReport(APIView):
         print('current_directory : '  , current_directory)
 
 
-        # obtain the input_values, logs, design_status from using the cookie_id
-        designObject = Design.objects.get(cookie_id=cookie_id)
-        input_values = designObject.input_values
-        design_status = designObject.design_status
-        logs = designObject.logs
-        print('input_values : ', input_values)
-        print('type of input_values : ', type(input_values))
-        print('logs : ', logs)
-        print('logs type ; ', type(logs))
-        print('design_status : ' , design_status )
+        print('input_values type:', type(input_values))
+        print('logs type:', type(logs))
+        print('design_status:', design_status)
 
-        if (metadata is None or metadata is ''):
+        if (metadata is None or metadata == ''):
             print('The metadata is None ')
             print('Setting the default metadata values')
             metadata_profile = {
@@ -65,7 +88,7 @@ class CreateDesignReport(APIView):
             }
 
             metadata_other = {
-                "ProjectTitle": "Fin Plate Connection",
+                "ProjectTitle": "Osdag",
                 "Subtitle": "",
                 "JobNumber": "1",
                 "AdditionalComments": "No Comments",
@@ -100,34 +123,38 @@ class CreateDesignReport(APIView):
         # if not, create one 
         cwd = os.path.join(os.getcwd() , "file_storage/design_report/")
         print('cwd_path : ' , cwd)
+        print("****")
         if(not os.path.exists) :
             print('path does not exists, creating one : ', cwd)
             os.mkdir(cwd) 
 
         try:
-            print('creating module from input')
-            if(request.COOKIES.get('end_plate_connection_session')):
-               module=end_plate_create_from_input(input_values)
-            else:
-              module=fin_plate_create_from_input(input_values)
+            print('Creating module from input')
+            print("*******")
+            module = create_module_func(input_values)
+            print("*$$$*", input_values)
+            print("*$$$$$$$*", module)
+            print("*******************")
         except Exception as e:
-            print('e : ', e)
+            print('Error while creating module:', e)
 
         try:
             print('generating the report .save_design')
             resultBoolean = module.save_design(metadata_final)
+            print(resultBoolean)
         except Exception as e:
             print('e : ', e)
+            resultBoolean = False  # Set default value if save_design fails
         
         if(resultBoolean):
             print('The LaTEX file has been created successfully')
-
-
         
         os.chdir(current_directory)
         print('cwd after chdir : ' , os.getcwd())
 
+        print("***")
         if (resultBoolean):
+            print("**")
             print('inside sleep')
             # time.sleep(10)
             isExists = os.path.exists(f'{os.getcwd()}/file_storage/design_report/{report_id}.tex')
@@ -147,13 +174,6 @@ class GetPDF(APIView):
 
     def get(self, request):
         print('Inside get PDF')
-
-        # check cookie
-        try:
-            cookie_id = request.COOKIES.get('fin_plate_connection_session')
-            print('cookie id in getPDF:', cookie_id)
-        except Exception as e:
-            print('e:', e)
 
         # obtain the param from the Query
         report_id = request.GET.get('report_id')

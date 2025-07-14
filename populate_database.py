@@ -6,8 +6,8 @@ from psycopg2 import sql
 #########################################################
 
 
-conn = psycopg2.connect(database='mydb', host='db',
-                        user='myuser', password='mypassword', port='5432')
+conn = psycopg2.connect(database='postgres_Intg_osdag', host='localhost',
+                        user='osdagdeveloper', password='password', port='5432')
 cursor = conn.cursor()
 file = open("ResourceFiles/Database/postgres_Intg_osdag.sql", "r+")
 
@@ -15,3 +15,8 @@ data = file.read()
 
 cursor.execute(data)
 print('SUCCESS : Database Populated')
+
+
+
+
+

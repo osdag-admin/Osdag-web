@@ -31,6 +31,7 @@ class BeamCoverPlateWeld(MomentConnection):
     def __init__(self):
         super(BeamCoverPlateWeld, self).__init__()
         self.design_status = False
+        self.logs = []
 
     ###############################################
     # Design Preference Functions Start
@@ -227,7 +228,7 @@ class BeamCoverPlateWeld(MomentConnection):
     ####################################
     # Design Preference Functions End
     ####################################
-    def set_osdaglogger(key):
+    def set_osdaglogger(self, key):
 
         """
         Function to set Logger for Tension Module
@@ -597,7 +598,7 @@ class BeamCoverPlateWeld(MomentConnection):
         return KEY_DISP_BEAMCOVERPLATEWELD
 
     def set_input_values(self, design_dictionary):
-        super(BeamCoverPlateWeld, self).set_input_values(self, design_dictionary)
+        super(BeamCoverPlateWeld, self).set_input_values(design_dictionary)
         self.module = design_dictionary[KEY_MODULE]
         self.preference = design_dictionary[KEY_FLANGEPLATE_PREFERENCES]
 
@@ -627,8 +628,8 @@ class BeamCoverPlateWeld(MomentConnection):
         self.web_plate_capacity_axial_status= False
         self.web_plate_capacity_shear_status= False
         self.cap_blockcheck_web_axial_status = False
-        self.warn_text(self)
-        self.member_capacity(self)
+        self.warn_text()
+        self.member_capacity()
         # self.hard_values(self)
     #
 
@@ -898,7 +899,7 @@ class BeamCoverPlateWeld(MomentConnection):
                     self.initial_pt_thk_status =False
                     self.design_status = False
                 else:
-                    self.flange_plate.thickness_provided = self.min_thick_based_on_area(self,
+                    self.flange_plate.thickness_provided = self.min_thick_based_on_area(
                                                                                         tk=self.section.flange_thickness,
                                                                                         width=self.section.flange_width,
                                                                                         list_of_pt_tk=self.flange_plate_thickness_possible,
@@ -906,6 +907,7 @@ class BeamCoverPlateWeld(MomentConnection):
                                                                                         r_1=self.section.root_radius,
                                                                                         D=self.section.depth,
                                                                                         preference=self.preference)
+                    print('TK ERROR',self.section.flange_thickness, self.section.flange_width)
                     self.flange_plate.connect_to_database_to_get_fy_fu(self.flange_plate.material,
                                                                        self.flange_plate.thickness_provided)
                     if self.flange_plate.thickness_provided != 0:
@@ -958,7 +960,7 @@ class BeamCoverPlateWeld(MomentConnection):
                     self.design_status = False
                 else:
 
-                    self.web_plate.thickness_provided = self.min_thick_based_on_area(self,
+                    self.web_plate.thickness_provided = self.min_thick_based_on_area(
                                                                                      tk=self.section.flange_thickness,
                                                                                      width=self.section.flange_width,
                                                                                      list_of_pt_tk=self.web_plate_thickness_possible,
@@ -1032,7 +1034,7 @@ class BeamCoverPlateWeld(MomentConnection):
 
                 if self.initial_pt_thk_status == True and self.initial_pt_thk_status_web == True and self.webheight_status == True:
                     self.design_status = True
-                    self.web_plate_weld(self)
+                    self.web_plate_weld()
                 else:
                     self.initial_pt_thk_status = False and self.initial_pt_thk_status_web == False and self.webheight_status == False
                     self.design_status = False
@@ -1094,7 +1096,7 @@ class BeamCoverPlateWeld(MomentConnection):
         # self.available_long_web_length = round_up((self.web_plate.height/2) - (2*self.web_weld.size)- (self.flange_plate.gap/2) , 5)
         self.web_plate_weld_status = False
         while self.web_plate_weld_status == False:
-            self.weld_stress(self, d=self.available_long_web_length,
+            self.weld_stress(d=self.available_long_web_length,
                              b=(self.web_plate.height - (2 * self.web_weld.size)),
                              shear_force=self.fact_shear_load, moment_web=self.moment_web,
                              plate_height=(self.web_plate.height - (2 * self.web_weld.size)),
@@ -1131,7 +1133,7 @@ class BeamCoverPlateWeld(MomentConnection):
             self.l_req_weblength = round_up(self.l_req_weblength, 5)
             self.web_weld.strength= round(self.web_weld.strength, 2)
             self.web_weld.strength_red = round(self.web_weld.strength_red, 2)
-            self.flange_plate_weld(self)
+            self.flange_plate_weld()
 
         else:
             logger.warning(" : The weld strength of the web plate is less than the weld stress of the web plate.")
@@ -1217,7 +1219,7 @@ class BeamCoverPlateWeld(MomentConnection):
                 self.flange_weld.strength = round(self.flange_weld.strength,2)
                 self.flange_weld.stress = round(self.flange_weld.stress,2)
                 self.flange_weld.strength_red= round(self.flange_weld.strength_red,2 )
-                self.flange_plate_capacity_axial(self)
+                self.flange_plate_capacity_axial()
             else:
                 self.flange_plate_weld_status = False
                 self.design_status =False
@@ -1344,7 +1346,7 @@ class BeamCoverPlateWeld(MomentConnection):
                     logger.info(" :=========End Of design===========")
             else:
                 self.flange_plate_capacity_axial_status = True
-                self.recheck_flange_capacity_axial(self)
+                self.recheck_flange_capacity_axial()
         else:
             #  yielding,rupture  for  Oustide + Inside flange plate
 
@@ -1396,7 +1398,7 @@ class BeamCoverPlateWeld(MomentConnection):
             logger.info(" :=========End Of design===========")
         else:
             self.recheck_flange_capacity_axial_status = True
-            self.web_plate_capacity_axial(self)
+            self.web_plate_capacity_axial()
 
 
     def web_plate_capacity_axial(self):
@@ -1423,7 +1425,7 @@ class BeamCoverPlateWeld(MomentConnection):
 
         else:
             self.web_plate_capacity_axial_status = True
-            self.web_plate_capacity_shear(self)
+            self.web_plate_capacity_shear()
 
     def web_plate_capacity_shear(self):
         self.web_plate_capacity_shear_status = False
@@ -1466,7 +1468,7 @@ class BeamCoverPlateWeld(MomentConnection):
                     logger.info(" :=========End Of design===========")
             else:
                 self.web_plate_capacity_shear_status = True
-                self.cap_blockcheck_web_axial(self)
+                self.cap_blockcheck_web_axial()
 
     def cap_blockcheck_web_axial(self):
 

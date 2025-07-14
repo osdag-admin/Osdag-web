@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import "../../App.css";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useRef, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { Select, Input, Modal, Button, Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -22,12 +23,14 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 
 // import assets
 import cad_background from "../../assets/cad_empty_image.png";
-import { Tube } from "@react-three/drei";
+import { Html, PerspectiveCamera, Tube } from "@react-three/drei";
 import DesignPrefSections from "../DesignPrefSections";
 import CustomSectionModal from "../CustomSectionModal";
 
 // drop down
 import DropdownMenu from "../DropdownMenu";
+import useViewCamera from "./useViewCamera";
+import ScreenshotCapture from "../ScreenShotCapture";
 
 const { Option } = Select;
 
@@ -38,7 +41,6 @@ const conn_map = {
 };
 
 function CleatAngle() {
-  console.log('Cleat Angle component is opening');
   const { MenuItems } = menuData;
 
   const [selectedOption, setSelectedOption] = useState(
@@ -69,11 +71,12 @@ function CleatAngle() {
     designData,
     displayPDF,
     renderCadModel,
+    cadModelPaths,
     createSession,
     createDesign,
     createDesignReport,
     getDesingPrefData,
-    deleteSession
+    deleteSession,
   } = useContext(ModuleContext);
   const [angleModal, setAngleModal] = useState(false);
 
@@ -110,10 +113,21 @@ function CleatAngle() {
     useState(false);
   const [allSelected, setAllSelected] = useState({
     bolt_diameter: true,
-    bolt_grade: true
+    bolt_grade: true,
+    angle_list: true,
   });
 
   const [renderBoolean, setRenderBoolean] = useState(false);
+  const [modelKey, setModelKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedView, setSelectedView] = useState("Model");
+  const options = ["Model", "Beam", "Column", "cleatAngle"];
+  const { position: cameraPos, fov } = useViewCamera(selectedView);
+  const cameraRef = useRef();
+  const [screenshotTrigger, setScreenshotTrigger] = useState(false);
+  const triggerScreenshotCapture = () => {
+    setScreenshotTrigger(true);
+  };
 
   useEffect(() => {
     createSession("Cleat Angle Connection");
@@ -121,11 +135,10 @@ function CleatAngle() {
 
   useEffect(() => {
     return () => {
-     if(location.pathname!="/design/connections/cleat_angle"){
-              deleteSession('Cleat Angle Connection');
-    }
+      if (location.pathname != "/design/connections/cleat_angle") {
+        deleteSession("Cleat Angle Connection");
+      }
     };
-
   }, []);
 
   const handleSelectChangePropertyClass = (value) => {
@@ -219,21 +232,20 @@ function CleatAngle() {
   useEffect(() => {
     if (displayOutput) {
       try {
+        console.log("Actual Output", designData);
         const formatedOutput = {};
-
         for (const [key, value] of Object.entries(designData)) {
-          const newKey = key.split(".")[0];
+          const newKey = key;
           const label = value.label;
           const val = value.value;
 
-          if (val) {
-            if (!formatedOutput[newKey])
-              formatedOutput[newKey] = [{ label, val }];
-            else formatedOutput[newKey].push({ label, val });
+          if (val !== undefined && val !== null) {
+            formatedOutput[newKey] = { label, val };
           }
         }
 
         setOutput(formatedOutput);
+        console.log("formated Output", formatedOutput);
       } catch (error) {
         console.log(error);
         setOutput(null);
@@ -274,7 +286,6 @@ function CleatAngle() {
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
         "Detailing.Edge_type": inputs.detailing_edge_type,
         "Detailing.Gap": inputs.detailing_gap,
-        "Load.Axial": inputs.load_axial || "",
         "Load.Shear": inputs.load_shear || "",
         Material: inputs.connector_material,
         "Member.Supported_Section.Designation": inputs.beam_section,
@@ -284,9 +295,8 @@ function CleatAngle() {
         Module: "Cleat Angle Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Angle_List": (connectorAngleSelect == "All")
-          ? angleList
-          : inputs.angle_list,
+        "Connector.Angle_List":
+          connectorAngleSelect == "All" ? angleList : inputs.angle_list,
       };
     } else {
       if (!inputs.primary_beam || !inputs.secondary_beam) {
@@ -310,7 +320,6 @@ function CleatAngle() {
         "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
         "Detailing.Edge_type": inputs.detailing_edge_type,
         "Detailing.Gap": inputs.detailing_gap,
-        "Load.Axial": inputs.load_axial || "",
         "Load.Shear": inputs.load_shear || "",
         Material: "E 300 (Fe 440)",
         "Member.Supported_Section.Designation": inputs.secondary_beam,
@@ -320,13 +329,16 @@ function CleatAngle() {
         Module: "Cleat Angle Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Angle_List": (connectorAngleSelect == "All")
-          ? angleList
-          : inputs.angle_list,
+        "Connector.Angle_List":
+          connectorAngleSelect == "All" ? angleList : inputs.angle_list,
       };
     }
+    console.log(param);
     createDesign(param, "Cleat-Angle-Connection");
     setDisplayOutput(true);
+
+    setLoading(true);
+    setModelKey((prev) => prev + 1); //Forces model to reload
   };
   // Create design report ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   const [CreateDesignReportBool, setCreateDesignReportBool] = useState(false);
@@ -346,16 +358,21 @@ function CleatAngle() {
   const handleCreateDesignReport = () => {
     setCreateDesignReportBool(true);
   };
+
   useEffect(() => {
-    if (renderCadModel) {
+    if (renderCadModel && cadModelPaths) {
+      console.log("Received raw .obj data:", cadModelPaths);
       setRenderBoolean(true);
-    } else if (!renderCadModel) {
+      setLoading(false);
+    } else {
       setRenderBoolean(false);
     }
-  }, [renderCadModel]);
+  }, [renderCadModel, cadModelPaths]);
+
   const handleCancel = () => {
     setCreateDesignReportBool(false);
   };
+
   const convertToCSV = (data) => {
     const keys = Object.keys(data);
     const values = Object.values(data);
@@ -434,9 +451,8 @@ function CleatAngle() {
         Module: "Cleat Angle Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Angle_List": (connectorAngleSelect == "All")
-          ? angleList
-          : inputs.angle_list,
+        "Connector.Angle_List":
+          connectorAngleSelect == "All" ? angleList : inputs.angle_list,
       };
     } else {
       if (!inputs.primary_beam || !inputs.secondary_beam || !output) {
@@ -470,17 +486,20 @@ function CleatAngle() {
         Module: "Cleat Angle Connection",
         "Weld.Fab": inputs.weld_fab,
         "Weld.Material_Grade_OverWrite": inputs.weld_material_grade,
-        "Connector.Angle_List": (connectorAngleSelect == "All")
-          ? angleList
-          : inputs.angle_list,
+        "Connector.Angle_List":
+          connectorAngleSelect == "All" ? angleList : inputs.angle_list,
       };
     }
 
-    Object.keys(output).map((key, index) => {
-      Object.values(output[key]).map((elm, index1) => {
-        data[key + "." + elm.label.split(" ").join("_")] = elm.val;
-      });
-    });
+    for (const key in output) {
+      if (output.hasOwnProperty(key)) {
+        const { label, val } = output[key];
+        if (label && val !== undefined && val !== null) {
+          const safeLabel = label.replace(/\s+/g, "_");
+          data[`${key}.${safeLabel}`] = val;
+        }
+      }
+    }
 
     data = convertToCSV(data);
     const csvContent =
@@ -680,12 +699,10 @@ function CleatAngle() {
     }
   };
 
-  console.log(angleList);
-
   const navigate = useNavigate();
   return (
     <>
-      <div style={{ width: "100%" }}>
+      <div className="module_base">
         <div className="module_nav">
           {MenuItems.map((item, index) => (
             <DropdownMenu
@@ -703,6 +720,7 @@ function CleatAngle() {
               setCreateDesignReportBool={setCreateDesignReportBool}
               setDisplaySaveInputPopup={setDisplaySaveInputPopup}
               setSaveInputFileName={setSaveInputFileName}
+              triggerScreenshotCapture={triggerScreenshotCapture}
             />
           ))}
 
@@ -714,48 +732,31 @@ function CleatAngle() {
             </span>
           )}
 
-          <h1 className="element">
-            <Button
+          <div className="element">
+            <div
+              className="home-btn"
               onClick={() => {
                 navigate("/home");
               }}
-              style={{ backgroundColor: "black", color: "white" }}
             >
               Home
-            </Button>
-          </h1>
+            </div>
+          </div>
         </div>
         {/* <KeyPressListener /> */}
 
         {/* Main Body of code  */}
         <div className="superMainBody">
           {/* Left */}
-          <div>
-            <div className="component-grid">
-              {/*<div><h4>Workspace Name :</h4></div>
-                <div>
-                  <Input
-                    type="text"
-                    name="workspacename"
-                    // onChange={(event) => setInputs({ ...inputs, load_axial: event.target.value })}
-                    />
-                </div>
-              */}
-            </div>
-            <h5>Input Dock</h5>
+          <div className="InputDock">
+            <p>Input Dock</p>
             <div className="subMainBody scroll-data">
               {/* Section 1 Start */}
               <h3>Connecting Members</h3>
               <div className="component-grid">
-                <div>
+                <div className="component-grid-align">
                   <h4>Connectivity</h4>
-                </div>
-                <div>
-                  <Select
-                    style={{ width: "100%" }}
-                    onSelect={handleSelectChange}
-                    value={selectedOption}
-                  >
+                  <Select onSelect={handleSelectChange} value={selectedOption}>
                     {connectivityList.map((item, index) => (
                       <Option key={index} value={item}>
                         {item}
@@ -764,9 +765,7 @@ function CleatAngle() {
                   </Select>
                 </div>
 
-                <div>{/*Blank*/}</div>
-
-                <div>
+                <div className="connectionimg">
                   <img
                     src={imageSource}
                     alt="Component"
@@ -777,12 +776,9 @@ function CleatAngle() {
 
                 {selectedOption === "Beam-Beam" ? (
                   <>
-                    <div>
+                    <div className="component-grid-align">
                       <h4>Primary Beam*</h4>
-                    </div>
-                    <div>
                       <Select
-                        style={{ width: "100%" }}
                         value={inputs.primary_beam || beamList[2]}
                         onSelect={(value) =>
                           setInputs({ ...inputs, primary_beam: value })
@@ -796,12 +792,9 @@ function CleatAngle() {
                       </Select>
                     </div>
 
-                    <div>
+                    <div className="component-grid-align">
                       <h4>Secondary Beam*</h4>
-                    </div>
-                    <div>
                       <Select
-                        style={{ width: "100%" }}
                         value={inputs.secondary_beam || beamList[0]}
                         onSelect={(value) =>
                           setInputs({ ...inputs, secondary_beam: value })
@@ -817,12 +810,9 @@ function CleatAngle() {
                   </>
                 ) : (
                   <>
-                    <div>
+                    <div className="component-grid-align">
                       <h4>Column Section*</h4>
-                    </div>
-                    <div>
                       <Select
-                        style={{ width: "100%" }}
                         value={inputs.column_section || columnList[0]}
                         onSelect={(value) =>
                           setInputs({ ...inputs, column_section: value })
@@ -836,12 +826,9 @@ function CleatAngle() {
                       </Select>
                     </div>
 
-                    <div>
+                    <div className="component-grid-align">
                       <h4>Beam Section*</h4>
-                    </div>
-                    <div>
                       <Select
-                        style={{ width: "100%" }}
                         value={inputs.beam_section || beamList[28]}
                         onSelect={(value) =>
                           setInputs({ ...inputs, beam_section: value })
@@ -856,12 +843,9 @@ function CleatAngle() {
                     </div>
                   </>
                 )}
-                <div>
+                <div className="component-grid-align">
                   <h4>Material</h4>
-                </div>
-                <div>
                   <Select
-                    style={{ width: "100%" }}
                     value={inputs.connector_material || materialList[0].Grade}
                     onSelect={(value) => {
                       if (value == -1) {
@@ -889,11 +873,9 @@ function CleatAngle() {
               {/* Section End */}
               {/* Section Start  */}
               <h3>Factored Loads</h3>
-              <div className="component-grid    ">
-                <div>
+              <div className="component-grid">
+                <div className="component-grid-align">
                   <h4>Shear Force(kN)</h4>
-                </div>
-                <div>
                   <Input
                     type="text"
                     name="ShearForce"
@@ -914,13 +896,10 @@ function CleatAngle() {
               {/* Section End */}
               {/* Section Start */}
               <h3>Bolt</h3>
-              <div className="component-grid    ">
-                <div>
+              <div className="component-grid">
+                <div className="component-grid-align">
                   <h4>Diameter(mm)</h4>
-                </div>
-                <div>
                   <Select
-                    style={{ width: "100%" }}
                     onSelect={handleSelectChangeBoltBeam}
                     value={boltDiameterSelect}
                   >
@@ -933,37 +912,31 @@ function CleatAngle() {
                   open={isModalOpen}
                   onCancel={() => setModalOpen(false)}
                   footer={null}
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 >
-                  <div>
-                    <div style={{ display: "flex" }}>
-                      <div style={{ marginRight: "20px" }}>
-                        <h3>Customized</h3>
-                        <Transfer
-                          dataSource={boltDiameterList
-                            .sort((a, b) => Number(a) - Number(b))
-                            .map((label) => ({
-                              key: label,
-                              label: <h5>{label}</h5>,
-                            }))}
-                          targetKeys={selectedDiameterNewItems}
-                          onChange={handleTransferChange}
-                          render={(item) => item.label}
-                          titles={["Available", "Selected"]}
-                          showSearch
-                          listStyle={{ height: 600, width: 300 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={boltDiameterList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))}
+                      targetKeys={selectedDiameterNewItems}
+                      onChange={handleTransferChange}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
                   </div>
                 </Modal>
-                <div>
+
+                <div className="component-grid-align">
                   <h4>Type</h4>
-                </div>
-                <div>
                   <Select
-                    style={{ width: "100%" }}
                     value={inputs.bolt_type}
                     onSelect={(value) =>
                       setInputs({ ...inputs, bolt_type: value })
@@ -975,12 +948,10 @@ function CleatAngle() {
                     </Option>
                   </Select>
                 </div>
-                <div>
+
+                <div className="component-grid-align">
                   <h4>Property Class</h4>
-                </div>
-                <div>
                   <Select
-                    style={{ width: "100%" }}
                     onSelect={handleSelectChangePropertyClass}
                     value={propertyClassSelect}
                   >
@@ -988,45 +959,39 @@ function CleatAngle() {
                     <Option value="All">All</Option>
                   </Select>
                 </div>
+
                 <Modal
                   open={isModalpropertyClassListOpen}
                   onCancel={() => setModalpropertyClassListOpen(false)}
                   footer={null}
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 >
-                  <div>
-                    <div style={{ display: "flex" }}>
-                      <div style={{ marginRight: "20px" }}>
-                        <h3>Customized</h3>
-                        <Transfer
-                          dataSource={propertyClassList
-                            .sort((a, b) => Number(a) - Number(b))
-                            .map((label) => ({
-                              key: label,
-                              label: <h5>{label}</h5>,
-                            }))}
-                          targetKeys={selectedpropertyClassListItems}
-                          onChange={handleTransferChangeInPropertyClassList}
-                          render={(item) => item.label}
-                          titles={["Available", "Selected"]}
-                          showSearch
-                          listStyle={{ height: 600, width: 300 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={propertyClassList
+                        .sort((a, b) => Number(a) - Number(b))
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))}
+                      targetKeys={selectedpropertyClassListItems}
+                      onChange={handleTransferChangeInPropertyClassList}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
                   </div>
                 </Modal>
               </div>
               {/* Section End */}
               <h3>Cleat Angle</h3>
-              <div className="component-grid    ">
-                <div>
+              <div className="component-grid">
+                <div className="component-grid-align">
                   <h4>Cleat section* </h4>
-                </div>
-                <div>
                   <Select
-                    style={{ width: "100%" }}
                     onSelect={handleAllSelectAngle}
                     value={connectorAngleSelect}
                   >
@@ -1034,33 +999,32 @@ function CleatAngle() {
                     <Option value="All">All</Option>
                   </Select>
                 </div>
+
                 <Modal
                   open={angleModal}
                   onCancel={() => setAngleModal(false)}
                   footer={null}
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                 >
-                  <div>
-                    <div style={{ display: "flex" }}>
-                      <div style={{ marginRight: "20px" }}>
-                        <h3>Customized</h3>
-                        <Transfer
-                          dataSource={angleList
-                            .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-                            .map((label) => ({
-                              key: label,
-                              label: <h5>{label}</h5>,
-                            }))}
-                          targetKeys={selectedAngleListItems}
-                          onChange={handleTransferChangeInAngleList}
-                          render={(item) => item.label}
-                          titles={["Available", "Selected"]}
-                          showSearch
-                          listStyle={{ height: 600, width: 300 }}
-                        />
-                      </div>
-                    </div>
+                  <div className="popUp">
+                    <h3>Customized</h3>
+                    <Transfer
+                      dataSource={angleList
+                        .sort((a, b) =>
+                          a.toLowerCase().localeCompare(b.toLowerCase())
+                        )
+                        .map((label) => ({
+                          key: label,
+                          label: <h5>{label}</h5>,
+                        }))}
+                      targetKeys={selectedAngleListItems}
+                      onChange={handleTransferChangeInAngleList}
+                      render={(item) => item.label}
+                      titles={["Available", "Selected"]}
+                      showSearch
+                      listStyle={{ height: 400, width: 300 }}
+                    />
                   </div>
                 </Modal>
               </div>
@@ -1080,50 +1044,68 @@ function CleatAngle() {
           </div>
           {/* Middle */}
           <div className="superMainBody_mid">
-            {renderBoolean ? (
-              <div
-                style={{
-                  maxwidth: "740px",
-                  height: "600px",
-                  border: "1px solid black",
-                  backgroundImage: `url(${cad_background})`,
-                }}
-              >
-                <Canvas
-                  gl={{ antialias: true }}
-                  camera={{ aspect: 1, fov: 1500, position: [10, 10, 10] }}
+            <div className="options-container">
+              {options.map((option) => (
+                <div
+                  key={option}
+                  className="option-wrapper"
+                  onClick={() => setSelectedView(option)}
                 >
-                  <Model />
+                  <div
+                    className={`option-box ${
+                      selectedView === option ? "selected" : ""
+                    }`}
+                  ></div>
+                  <span className="option-label">{option}</span>
+                </div>
+              ))}
+            </div>
+            {loading ? (
+              <div className="modelLoading">
+                <p>Loading Model...</p>
+              </div>
+            ) : renderBoolean ? (
+              <div
+                className="cadModel"
+              >
+                <Canvas gl={{ antialias: true }} style={{ background: "#ADD8E6" }}>
+                  <PerspectiveCamera
+                    ref={cameraRef}
+                    makeDefault
+                    position={cameraPos}
+                    fov={fov}
+                    near={0.1}
+                    far={1000}
+                  />
+                  <Suspense
+                    fallback={
+                      <Html>
+                        <p>Loading 3D Model...</p>
+                      </Html>
+                    }
+                  >
+                    <Model
+                      modelPaths={cadModelPaths}
+                      selectedView={selectedView}
+                      key={modelKey}
+                    />
+                    <ScreenshotCapture
+                      screenshotTrigger={screenshotTrigger}
+                      setScreenshotTrigger={setScreenshotTrigger}
+                      selectedView={selectedView}
+                    />
+                  </Suspense>
                 </Canvas>
               </div>
             ) : (
-              <>
-                <div
-                  style={{
-                    maxwidth: "740px",
-                    height: "600px",
-                    border: "1px solid black",
-                  }}
-                >
-                  {
-                    <img
-                      src={cad_background}
-                      alt="Demo"
-                      height="100%"
-                      width="100%"
-                    />
-                  }
-                </div>
-              </>
+              <div className="modelback"></div>
             )}
-            <br />
-            <div>
-              <Logs logs={logs} />
-            </div>
+            <Logs logs={logs} />
           </div>
+
           {/* Right */}
-          <div>
-            {<CleatAngleOutputDock output={output} connectionType={"Cleat Angle Connection"}  />}
+          <div className="superMain_right">
+            {<CleatAngleOutputDock output={output} />}
             <div className="outputdock-btn">
               <Input
                 type="button"
@@ -1136,19 +1118,19 @@ function CleatAngle() {
                 open={CreateDesignReportBool}
                 onCancel={handleCancel}
                 footer={null}
-                style={{ border: "1px solid #ccc" }}
-                bodyStyle={{ padding: "20px" }}
+                className="designModal"
               >
-                <div>
+                <p>Design Report Summary</p>
+                <div className="design-report-form">
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Company Name:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input
                         id="companyName"
                         value={designReportInputs.companyName}
@@ -1164,12 +1146,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Company Logo : </label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <input
                         type="file"
                         accept="image/png , image/jpeg , image/jpg"
@@ -1181,12 +1163,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Group/Team Name:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input
                         id="groupTeamName"
                         value={designReportInputs.groupTeamName}
@@ -1202,12 +1184,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Designer:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input
                         id="designer"
                         value={designReportInputs.designer}
@@ -1229,12 +1211,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Project Title:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input
                         value={designReportInputs.projectTitle}
                         onChange={(e) =>
@@ -1249,12 +1231,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Subtitle:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input
                         value={designReportInputs.subtitle}
                         onChange={(e) =>
@@ -1269,7 +1251,7 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
                     <Col span={9}>
                       <label>Job Number:</label>
@@ -1289,12 +1271,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Client:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input
                         value={designReportInputs.client}
                         onChange={(e) =>
@@ -1309,12 +1291,12 @@ function CleatAngle() {
                   <Row
                     gutter={[16, 16]}
                     align="middle"
-                    style={{ marginBottom: "25px" }}
+                    style={{ marginBottom: "5px" }}
                   >
-                    <Col span={9}>
+                    <Col span={6}>
                       <label>Additional Comments:</label>
                     </Col>
-                    <Col span={15}>
+                    <Col span={18}>
                       <Input.TextArea
                         value={designReportInputs.additionalComments}
                         onChange={(e) =>
@@ -1323,6 +1305,7 @@ function CleatAngle() {
                             additionalComments: e.target.value,
                           })
                         }
+                        rows={10}
                       />
                     </Col>
                   </Row>
@@ -1333,10 +1316,14 @@ function CleatAngle() {
                       gap: "10px",
                     }}
                   >
-                    <Button type="button" onClick={handleOk}>
+                    <Button type="button" onClick={handleOk} className="btn">
                       OK
                     </Button>
-                    <Button type="button" onClick={handleCancelProfile}>
+                    <Button
+                      type="button"
+                      onClick={handleCancelProfile}
+                      className="btn"
+                    >
                       Cancel
                     </Button>
                   </div>

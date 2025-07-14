@@ -171,10 +171,8 @@ class CommonDesignLogic(object):
         self.display = display
         self.mainmodule = mainmodule
         self.connection = connection
-        print(self.connection)
-
-
         self.connectivityObj = None
+        self.CPObj = None
         self.folder = folder
 
 
@@ -303,9 +301,9 @@ class CommonDesignLogic(object):
 
         '''
 
-        A = self.module_class()
+        A = self.module_class
 
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             # A = self.module_class()
             # A = FinPlateConnection()
             plate = Plate(L=A.plate.height, W=A.plate.length, T=A.plate.thickness_provided)
@@ -316,8 +314,9 @@ class CommonDesignLogic(object):
             angle = Angle(L=A.cleat.height, A=A.cleat.leg_a_length, B=A.cleat.leg_b_length, T=A.cleat.thickness,
                           R1=A.cleat.root_radius, R2=A.cleat.toe_radius)
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
             # A = self.module_class()
+            print(f"CAD - EndPlate setup in create3DBeamWebBeamWeb")
             plate = Plate(L=A.plate.height, W=A.plate.width, T=A.plate.thickness_provided)
             Fweld1 = FilletWeld(L=A.plate.height, b=A.weld.size, h=A.weld.size)
 
@@ -338,7 +337,7 @@ class CommonDesignLogic(object):
 
 
         # --Notch dimensions
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             gap = A.plate.gap
             notchObj = Notch(R1=notch_R1,
                              height=notch_height,
@@ -357,7 +356,8 @@ class CommonDesignLogic(object):
             # print(notch_R1,notch_height,(A.supporting_section.flange_width / 2.0 -
             #                              (A.supporting_section.web_thickness / 2.0 + gap)) + gap, A.supported_section.flange_width)
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+            print(f"CAD - EndPlate notch in create3DBeamWebBeamWeb")
             notchObj = Notch(R1=notch_R1, height=notch_height,
                              width=(A.supporting_section.flange_width / 2.0 - (
                                      A.supporting_section.web_thickness / 2.0 + A.plate.thickness_provided)) + A.plate.gap,
@@ -387,13 +387,14 @@ class CommonDesignLogic(object):
         # nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
         nut = Nut(R=bolt_R, T=nut_T, H=nut_Ht, innerR1=bolt_r)
 
-        if self.connection == KEY_DISP_FINPLATE:  # finBeamWebBeamWeb/endBeamWebBeamWeb
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':  # finBeamWebBeamWeb/endBeamWebBeamWeb
             nut_space = A.supported_section.web_thickness + A.plate.thickness_provided + nut_T
             nutBoltArray = finNutBoltArray(A.bolt,  A.plate, nut, bolt, nut_space)
             beamwebconn = FinBeamWebBeamWeb(supporting, supported, notchObj, plate, Fweld1, nutBoltArray, gap)
             # column, beam, notch, plate, Fweld, nut_bolt_array
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+            print(f"CAD - EndPlate bolt array in create3DBeamWebBeamWeb")
             nut_space = A.supporting_section.web_thickness + A.plate.thickness_provided + nut_T
             nutBoltArray = endNutBoltArray(A.bolt, A.plate, nut, bolt, nut_space)
             beamwebconn = EndBeamWebBeamWeb(supporting, supported, notchObj, Fweld1, plate, nutBoltArray)
@@ -421,7 +422,7 @@ class CommonDesignLogic(object):
 
         '''
 
-        A = self.module_class()
+        A = self.module_class
 
         # if self.connection == KEY_DISP_FINPLATE:
             # A = self.module_class()
@@ -431,7 +432,8 @@ class CommonDesignLogic(object):
             angle = Angle(L=A.cleat.height, A=A.cleat.leg_a_length, B=A.cleat.leg_b_length, T=A.cleat.thickness,
                           R1=A.cleat.root_radius, R2=A.cleat.toe_radius)
 
-        elif self.connection == KEY_DISP_SEATED_ANGLE:
+        elif self.connection == KEY_DISP_SEATED_ANGLE or self.connection == 'Seated-Angle-Connection':
+            print(f"CAD - SeatedAngle setup in create3DColWebBeamWeb")
             angle = Angle(L=A.seated_angle.width, A=A.seated.leg_a_length, B=A.seated.leg_b_length,
                           T=A.seated.thickness, R1=A.seated.root_radius, R2=A.seated.toe_radius)
         else:
@@ -489,14 +491,16 @@ class CommonDesignLogic(object):
             # print(notch_R1, notch_height, (A.supporting_section.flange_width / 2.0 -
             #                                (A.supporting_section.web_thickness / 2.0 + gap)) + gap,
             #       A.supported_section.flange_width)
-        elif self.connection == KEY_DISP_SEATED_ANGLE:
+        elif self.connection == KEY_DISP_SEATED_ANGLE or self.connection == 'Seated-Angle-Connection':
+            print(f"CAD - SeatedAngle components in create3DColWebBeamWeb")
             gap = A.plate.gap
             seatangle = Angle(L=A.seated_angle.width, A=A.seated.leg_a_length, B=A.seated.leg_b_length,     #TODO:Check leg b length
                               T=A.seated.thickness, R1=A.seated.root_radius, R2=A.seated.toe_radius)
             topclipangle = Angle(L=A.top_angle.width, A=A.top_angle.leg_a_length, B=A.top_angle.leg_b_length,
                                  T=A.top_angle.thickness, R1=A.top_angle.root_radius, R2=A.top_angle.toe_radius)
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+            print(f"CAD - EndPlate setup in create3DColWebBeamWeb")
             plate = Plate(L=A.plate.height, W=A.plate.width, T=A.plate.thickness_provided)
             Fweld1 = FilletWeld(L=A.weld.length, b=A.weld.size, h=A.weld.size)
 
@@ -518,13 +522,14 @@ class CommonDesignLogic(object):
         bolt = Bolt(R=bolt_R, T=bolt_T, H=bolt_Ht, r=bolt_r)
         nut = Nut(R=bolt_R, T=nut_T, H=nut_Ht, innerR1=bolt_r)
 
-        if self.connection == KEY_DISP_FINPLATE:  # finColWebBeamWeb
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':  # finColWebBeamWeb
             gap = A.plate.gap
             nut_space = A.supported_section.web_thickness + int(A.plate.thickness_provided) + nut_T
             nutBoltArray = finNutBoltArray(A.bolt, A.plate, nut, bolt, nut_space)
             colwebconn = FinColWebBeamWeb(supporting, supported, Fweld1, plate, nutBoltArray,gap)
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+            print(f"CAD - EndPlate bolt array in create3DColWebBeamWeb")
             nut_space = A.supporting_section.web_thickness + int(A.plate.thickness_provided) + nut_T
             nutBoltArray = endNutBoltArray(A.bolt, A.plate, nut, bolt, nut_space)
             colwebconn = EndColWebBeamWeb(supporting, supported, Fweld1, plate, nutBoltArray)
@@ -557,17 +562,24 @@ class CommonDesignLogic(object):
 
         '''
 
-        A = self.module_class()
+        A = self.module_class
+        print(f"CAD - create3DColFlangeBeamWeb called")
+        print(f"CAD - self.connection: {self.connection}")
+        print(f"CAD - A type: {type(A)}")
+        print(f"CAD - Has cleat: {hasattr(A, 'cleat')}")
+        print(f"CAD - Has plate: {hasattr(A, 'plate')}")
 
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             # A = self.module_class()
             # A = FinPlateConnection()
             gap = A.plate.gap
-        elif self.connection == KEY_DISP_CLEATANGLE:
+        elif self.connection == KEY_DISP_CLEATANGLE or self.connection == 'Cleat-Angle-Connection' or 'cleat' in self.connection.lower():
             # A = CleatAngleConnection()
+            print(f"CAD - First block CleatAngle branch selected")
             angle = Angle(L=A.cleat.height, A=A.cleat.leg_a_length, B=A.cleat.leg_b_length, T=A.cleat.thickness,
                           R1=A.cleat.root_radius, R2=A.cleat.toe_radius)
-        elif self.connection == KEY_DISP_SEATED_ANGLE:
+        elif self.connection == KEY_DISP_SEATED_ANGLE or self.connection == 'Seated-Angle-Connection':
+            print(f"CAD - SeatedAngle setup in create3DColFlangeBeamWeb")
             angle = Angle(L=A.seated_angle.width, A=A.seated.leg_a_length, B=A.seated.leg_b_length,
                           T=A.seated.thickness, R1=A.seated.root_radius, R2=A.seated.toe_radius)
         else:
@@ -584,7 +596,8 @@ class CommonDesignLogic(object):
         # notch_height = A.supported_section.notch_ht
         # notch_R1 = max([A.supporting_section.root_radius, A.supported_section.root_radius, 10])
 
-        if self.connection == KEY_DISP_CLEATANGLE:
+        if self.connection == KEY_DISP_CLEATANGLE or self.connection == 'Cleat-Angle-Connection' or 'cleat' in self.connection.lower():
+            print(f"CAD - Second block CleatAngle branch selected")
             gap = A.cleat.gap
             # notchObj = Notch(R1=notch_R1,
             #                  height=notch_height,
@@ -595,14 +608,16 @@ class CommonDesignLogic(object):
             #                                (A.supporting_section.web_thickness / 2.0 + gap)) + gap,
             #       A.supported_section.flange_width)
 
-        elif self.connection == KEY_DISP_SEATED_ANGLE:
+        elif self.connection == KEY_DISP_SEATED_ANGLE or self.connection == 'Seated-Angle-Connection':
+            print(f"CAD - SeatedAngle components in create3DColFlangeBeamWeb")
             gap = A.plate.gap
             seatangle = Angle(L=A.seated_angle.width, A=A.seated.leg_a_length, B=A.seated.leg_b_length,     #TODO:Check leg b length
                               T=A.seated.thickness, R1=A.seated.root_radius, R2=A.seated.toe_radius)
             topclipangle = Angle(L=A.top_angle.width, A=A.top_angle.leg_a_length, B=A.top_angle.leg_b_length,
                                  T=A.top_angle.thickness, R1=A.top_angle.root_radius, R2=A.top_angle.toe_radius)
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+            print(f"CAD - EndPlate component setup branch selected")
             plate = Plate(L=A.plate.height, W=A.plate.width, T=A.plate.thickness_provided)
             Fweld1 = FilletWeld(L=A.weld.length, b=A.weld.size, h=A.weld.size)
         else:
@@ -630,7 +645,7 @@ class CommonDesignLogic(object):
         # nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
         nut = Nut(R=bolt_R, T=nut_T, H=nut_Ht, innerR1=bolt_r)
 
-        if self.connection == KEY_DISP_FINPLATE:
+        if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection':
             nut_space = A.supported_section.web_thickness+ int(A.plate.thickness_provided) + nut_T
             # nutBoltArray = finNutBoltArray(A, nut, bolt, nut_space)  # finColFlangeBeamWeb
             # colflangeconn = finColFlangeBeamWeb(column, beam, Fweld1, plate, nutBoltArray, gap)
@@ -638,13 +653,19 @@ class CommonDesignLogic(object):
             nutBoltArray = finNutBoltArray(A.bolt, A.plate, nut, bolt, nut_space)
             colflangeconn = FinColFlangeBeamWeb(supporting, supported, Fweld1, plate, nutBoltArray,gap)
 
-        elif self.connection == KEY_DISP_ENDPLATE:
+        elif self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+            print(f"CAD - EndPlate bolt array branch selected")
             nut_space = A.supporting_section.flange_thickness + int(A.plate.thickness_provided) + nut_T
             nutBoltArray = endNutBoltArray(A.bolt, A.plate, nut, bolt, nut_space)
             colflangeconn = EndColFlangeBeamWeb(supporting, supported, Fweld1, plate, nutBoltArray)
 
-        elif self.connection == KEY_DISP_CLEATANGLE:
-
+        elif self.connection == KEY_DISP_CLEATANGLE or self.connection == 'Cleat-Angle-Connection' or 'cleat' in self.connection.lower():
+            print(f"CAD - CleatAngle branch selected, connection: {self.connection}")
+            print(f"CAD - A.cleat exists: {hasattr(A, 'cleat')}")
+            if hasattr(A, 'cleat'):
+                print(f"CAD - A.cleat.thickness: {A.cleat.thickness}")
+                print(f"CAD - A.cleat.height: {A.cleat.height}")
+            
             # nut_space =  A.supported_section.web_thickness + 2 *  + nut_T
             # cnut_space = column_T + cleat_thick + nut_T
             # nut_bolt_array = cleatNutBoltArray(self.resultObj, nut, bolt, nut_space, cnut_space)
@@ -681,9 +702,10 @@ class CommonDesignLogic(object):
         '''
         :return: The calculated values/parameters to create 3D CAD model of individual components.
         '''
-
+        
+        B = self.module_class
         if self.connection == KEY_DISP_BEAMCOVERPLATE:
-            B = BeamCoverPlate()
+            # B = BeamCoverPlate()
             # beam_data = self.fetchBeamPara()  # Fetches the beam dimensions
 
             beam_tw = float(B.section.web_thickness)
@@ -743,13 +765,13 @@ class CommonDesignLogic(object):
                 B.web_plate.thickness_provided) + beam_tw  # Space between bolt head and nut for web bolts
 
             # Bolt placement for Above Flange bolts, call to nutBoltPlacement_AF.py
-            bolting_AF = NutBoltArray_AF(BeamCoverPlate(), nut, bolt, numOfBoltsF, nutSpaceF)
+            bolting_AF = NutBoltArray_AF(B, nut, bolt, numOfBoltsF, nutSpaceF)
 
             # Bolt placement for Below Flange bolts, call to nutBoltPlacement_BF.py
-            bolting_BF = NutBoltArray_BF(BeamCoverPlate(), nut, bolt, numOfBoltsF, nutSpaceF)
+            bolting_BF = NutBoltArray_BF(B, nut, bolt, numOfBoltsF, nutSpaceF)
 
             # Bolt placement for Web Plate bolts, call to nutBoltPlacement_Web.py
-            bolting_Web = NutBoltArray_Web(BeamCoverPlate(), nut, bolt, numOfBoltsW, nutSpaceW)
+            bolting_Web = NutBoltArray_Web(B, nut, bolt, numOfBoltsW, nutSpaceW)
 
             # bbCoverPlate is an object which is passed BBCoverPlateBoltedCAD.py file, which initialized the parameters of each CAD component
             bbCoverPlate = BBCoverPlateBoltedCAD(beam_Left, beam_Right, plateAbvFlange, plateBelwFlange,
@@ -757,13 +779,13 @@ class CommonDesignLogic(object):
                                                  innerplateAbvFlangeBack, innerplateBelwFlangeFront,
                                                  innerplateBelwFlangeBack,
                                                  WebPlateLeft, WebPlateRight, bolting_AF, bolting_BF, bolting_Web,
-                                                 BeamCoverPlate())
+                                                 B)
 
             # bbCoverPlate.create_3DModel() will create the CAD model of each component, debugging this line will give moe clarity
             bbCoverPlate.create_3DModel()
 
         elif self.connection == KEY_DISP_BEAMCOVERPLATEWELD:
-            B = self.module_class()
+            # B = self.module_class()
             beamLenght = (max(float(B.flange_plate.length), float(B.web_plate.length)) + 600) / 2
             beam = ISection(B=float(B.section.flange_width), T=float(B.section.flange_thickness),
                             D=float(B.section.depth), t=float(B.section.web_thickness), R1=float(B.section.root_radius),
@@ -1617,6 +1639,7 @@ class CommonDesignLogic(object):
         T = self.module_class
 
         # Types of connections =  #'Angles', 'Back to Back Angles', 'Star Angles', 'Channels', 'Back to Back Channels'
+        print("Creating Tension CAD for connection type: ", self.connection)
         if self.connection == KEY_DISP_TENSION_BOLTED:
             bolt_d = float(T.bolt.bolt_diameter_provided)  # Bolt diameter (shank part), entered by user
             bolt_r = bolt_d / 2  # Bolt radius (Shank part)
@@ -1725,13 +1748,15 @@ class CommonDesignLogic(object):
             self.loc = A.connectivity
 
 
-            if self.loc == "Column Flange-Beam Web" and self.connection == KEY_DISP_FINPLATE:
+            if self.loc == "Column Flange-Beam Web" and (self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection'):
                 # pass
                 # print("hghghghg")
                 self.display.View.SetProj(OCC.Core.V3d.V3d_XnegYnegZpos)
-            elif self.loc == "Column Flange-Beam Web" and self.connection == KEY_DISP_SEATED_ANGLE:
+            elif self.loc == "Column Flange-Beam Web" and (self.connection == KEY_DISP_SEATED_ANGLE or self.connection == 'Seated-Angle-Connection'):
+                print(f"CAD - SeatedAngle display setup 1")
                 self.display.View.SetProj(OCC.Core.V3d.V3d_XnegYnegZpos)
-            elif self.loc == "Column Flange-Beam Web" and self.connection == KEY_DISP_SEATED_ANGLE:
+            elif self.loc == "Column Flange-Beam Web" and (self.connection == KEY_DISP_SEATED_ANGLE or self.connection == 'Seated-Angle-Connection'):
+                print(f"CAD - SeatedAngle display setup 2")
                 self.display.View.SetProj(OCC.Core.V3d.V3d_XposYnegZpos)
 
             if self.component == "Column":
@@ -1769,7 +1794,8 @@ class CommonDesignLogic(object):
                 osdag_display_shape(self.display, self.connectivityObj.columnModel, update=True)
                 osdag_display_shape(self.display, self.connectivityObj.beamModel, material=Graphic3d_NOT_2D_ALUMINUM,
                                     update=True)
-                if self.connection == KEY_DISP_FINPLATE or self.connection == KEY_DISP_ENDPLATE:
+                if self.connection == KEY_DISP_FINPLATE or self.connection == 'Fin-Plate-Connection' or self.connection == KEY_DISP_ENDPLATE or self.connection == 'End-Plate-Connection':
+                    print(f"CAD - FinPlate/EndPlate display branch selected")
                     osdag_display_shape(self.display, self.connectivityObj.weldModelLeft, color=Quantity_NOC_RED, update=True)
                     osdag_display_shape(self.display, self.connectivityObj.weldModelRight, color=Quantity_NOC_RED, update=True)
                     osdag_display_shape(self.display, self.connectivityObj.plateModel, color=Quantity_NOC_BLUE1,
@@ -2014,14 +2040,20 @@ class CommonDesignLogic(object):
         else:
             if self.connection == KEY_DISP_TENSION_BOLTED:
                 self.T = self.module_class()
+                print("Creating Tension CAD for connection type: ", self.connection)
                 self.TObj = self.createTensionCAD()
+                print("TObj created: ", self.TObj)
 
                 member = self.TObj.get_members_models()
+                print("Member models: ", member)
                 plate = self.TObj.get_plates_models()
+                print("Plate models: ", plate)
 
                 nutbolt = self.TObj.get_nut_bolt_array_models()
+                print("Nutbolt models: ", nutbolt)
 
                 onlymember = self.TObj.get_only_members_models()
+                print("Only member models: ", onlymember)
                 # distance = self.T.length/2 - (2* self.T.plate.end_dist_provided + (self.T.plate.bolt_line - 1 ) * self.T.plate.pitch_provided)
                 # Point = gp_Pnt(distance, 0.0, 300)
                 # DisplayMsg(self.display, Point, self.T.section_size_1.designation)
@@ -2275,7 +2307,9 @@ class CommonDesignLogic(object):
 
         final_model = None
         cadlist = []
-
+        print("self.mainmodule", self.mainmodule)
+        print("self.Component", self.component)
+        print("self.connection", self.connection)
         if self.mainmodule == "Shear Connection":
             if self.component == "Beam":
                 final_model = self.connectivityObj.get_beamModel()
@@ -2295,6 +2329,7 @@ class CommonDesignLogic(object):
 
         elif self.mainmodule == "Moment Connection":
             if self.connection == KEY_DISP_BEAMCOVERPLATE or self.connection == KEY_DISP_BEAMCOVERPLATEWELD:
+                B = self.module_class
                 if self.component == "Beam":
                     if self.connection == KEY_DISP_BEAMCOVERPLATE:
                         final_model = self.CPObj.get_only_beams_Models()
@@ -2303,7 +2338,7 @@ class CommonDesignLogic(object):
                 elif self.component == "Connector":
                     if self.connection == KEY_DISP_BEAMCOVERPLATE:
                         cadlist = [self.CPObj.get_flangewebplatesModel(), self.CPObj.get_nut_bolt_arrayModels()]
-                        if self.B.preference != 'Outside':
+                        if B.preference != 'Outside':
                             cadlist.insert(1, self.CPObj.get_innetplatesModels())
                     else:
                         cadlist = [self.CPObj.get_plate_models(), self.CPObj.get_welded_modules()]
@@ -2375,7 +2410,9 @@ class CommonDesignLogic(object):
                     final_model = self.BPObj.get_models()
 
         elif self.mainmodule == "Member":
+            print("Main module is Member", self.connection)
             if self.connection == KEY_DISP_TENSION_BOLTED or self.connection == KEY_DISP_TENSION_WELDED:
+                print("Connection is ", self.connection)
                 if self.component == "Member":
                     final_model = self.TObj.get_members_models()
                 elif self.component == "Plate":
@@ -2383,15 +2420,30 @@ class CommonDesignLogic(object):
                         cadlist = [self.TObj.get_plates_models(), self.TObj.get_nut_bolt_array_models()]
                     else:
                         cadlist = [self.TObj.get_plates_models(), self.TObj.get_welded_models()]
+                elif self.component == "Endplate":
+                    if self.connection == KEY_DISP_TENSION_BOLTED:
+                        final_model = self.TObj.get_end_plates_models()
+                    else:
+                        # For welded connections, combine endplate with welds
+                        cadlist = [self.TObj.get_end_plates_models(), self.TObj.get_welded_models()]
+                elif self.component == "Model":
+                    final_model = self.TObj.get_models()
                 else:
-                    # print(type(self.TObj.shape))
+                    print("self.TObj: ", self.TObj.shape)   
                     final_model = self.TObj.shape
-                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.
-
-        if cadlist and len(cadlist) > 1:
-            final_model = cadlist[0]
-            for model in cadlist[1:]:
-                final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+                    # cadlist = self.TObj.get_models() #TODO: get_models() in BoltedCAD.py and WeldedCAD.py is not returning anything right now.        # Handle case where cadlist might be a single CAD object instead of a list
+        if cadlist:
+            # Check if cadlist is actually a list (has len method)
+            try:
+                if len(cadlist) > 1:
+                    final_model = cadlist[0]
+                    for model in cadlist[1:]:
+                        final_model = BRepAlgoAPI_Fuse(model, final_model).Shape()
+                elif len(cadlist) == 1:
+                    final_model = cadlist[0]
+            except TypeError:
+                # cadlist is not a list, it's a single CAD object
+                final_model = cadlist
 
         return final_model
 
@@ -2425,6 +2477,3 @@ class CommonDesignLogic(object):
 # if __name__!= "__main__":
 #
 #     CommonDesignLogic()
-
-
-

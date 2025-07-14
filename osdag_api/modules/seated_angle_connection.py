@@ -3,6 +3,9 @@ from osdag_api.errors import MissingKeyError, InvalidInputTypeError
 from osdag_api.utils import contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 import osdag_api.modules.shear_connection_common as scc
 from OCC.Core import BRepTools
+from OCC.Core.STEPControl import STEPControl_Writer, STEPControl_AsIs
+from OCC.Core.IGESControl import IGESControl_Writer
+from OCC.Core.Message import Message_ProgressRange
 from cad.common_logic import CommonDesignLogic
 # Will log a lot of unnessecary data.
 from design_type.connection.seated_angle_connection import SeatedAngleConnection
@@ -291,10 +294,46 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
 
     # Generate output values in unformatted form.
     raw_output_text = module.output_values(True)
-    raw_output_spacing = module.spacing(True)  # Generate output val
-    # raw_output_capacities = module.capacities(True)
+    raw_output_capacities = module.capacities(True)
+    raw_output_seated_spacing_beam = module.spacing(True)
+    raw_output_seated_spacing_col = module.seated_spacing_col(True)
+    raw_output_top_spacing_col = module.top_spacing_col(True)
+    raw_output_top_spacing_beam = module.top_spacing_beam(True)
+    
+    raw_seated_spacing_beam = [
+        (f"{key}_seated_beam", label, typ, value, visible if len(item) == 5 else True)
+        for item in raw_output_seated_spacing_beam
+        if len(item) >= 4 and item[0] and item[2] == "TextBox"
+        for (key, label, typ, value, *rest) in [item]
+        for visible in [rest[0] if rest else True]
+    ]
+
+    raw_seated_spacing_col = [
+        (f"{key}_seated_col", label, typ, value, visible if len(item) == 5 else True)
+        for item in raw_output_seated_spacing_col
+        if len(item) >= 4 and item[0] and item[2] == "TextBox"
+        for (key, label, typ, value, *rest) in [item]
+        for visible in [rest[0] if rest else True]
+    ]
+
+    raw_top_spacing_col = [
+        (f"{key}_top_col", label, typ, value, visible if len(item) == 5 else True)
+        for item in raw_output_top_spacing_col
+        if len(item) >= 4 and item[0] and item[2] == "TextBox"
+        for (key, label, typ, value, *rest) in [item]
+        for visible in [rest[0] if rest else True]
+    ]
+
+    raw_top_spacing_beam = [
+        (f"{key}_top_beam", label, typ, value, visible if len(item) == 5 else True)
+        for item in raw_output_top_spacing_beam
+        if len(item) >= 4 and item[0] and item[2] == "TextBox"
+        for (key, label, typ, value, *rest) in [item]
+        for visible in [rest[0] if rest else True]
+    ]
+    
     logs = module.logs
-    raw_output = raw_output_spacing + raw_output_text
+    raw_output = raw_output_text + raw_output_capacities + raw_seated_spacing_col + raw_seated_spacing_beam + raw_top_spacing_beam + raw_top_spacing_col
     # os.system("clear")
     # Loop over all the text values and add them to ouptut dict.
     for param in raw_output:
@@ -305,17 +344,17 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
             output[key] = {
                 "key": key,
                 "label": label,
-                "value": value
+                "val": value  # Changed from "value" to "val" to match frontend expectations
             }  # Set label, key and value in output
     return output, logs
 
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
-    if section not in ("Model", "Beam", "Column", "Plate"):  # Error checking: If section is valid.
+    if section not in ("Model", "Beam", "Column", "SeatedAngle"):  # Error checking: If section is valid.
         raise InvalidInputTypeError(
-            "section", "'Model', 'Beam', 'Column' or 'Plate'")
-    module = create_from_input(input_values)  # Cr`eate module from input.
+            "section", "'Model', 'Beam', 'Column' or 'SeatedAngle'")
+    module = create_from_input(input_values)  # Create module from input.
     print('module from input values : ' , module)
     # Object that will create the CAD model.
     try : 
@@ -353,10 +392,32 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     print('brep file path in create_cad_model : ' , file_path)
 
     try : 
-        BRepTools.breptools.Write(model, file_path) # Generate CAD Model
+        BRepTools.breptools.Write(model, file_path, Message_ProgressRange())
+        
+        # when section is model, then save some extra type of files
+        if section == "Model":
+            # Save STEP
+            step_writer = STEPControl_Writer()
+            step_writer.Transfer(model, STEPControl_AsIs)
+            step_file_path = file_path.replace(".brep", ".step")
+            full_step_file_path = os.path.join(os.getcwd(), step_file_path)
+            if step_writer.Write(full_step_file_path) == 1:
+                print(f"STEP file saved at {full_step_file_path}")
+            else:
+                print("Warning: Failed to save STEP file!")
+
+            # Save IGES
+            iges_writer = IGESControl_Writer()
+            iges_writer.AddShape(model)
+            iges_file_path = file_path.replace(".brep", ".iges")
+            full_iges_file_path = os.path.join(os.getcwd(), iges_file_path)
+            if iges_writer.Write(full_iges_file_path) == 1:
+                print(f"IGES file saved at {full_iges_file_path}")
+            else:
+                print("Warning: Failed to save IGES file!")
+
     except Exception as e : 
         print('Writing to BREP file failed e : ' , e)
     
     return file_path
-
 

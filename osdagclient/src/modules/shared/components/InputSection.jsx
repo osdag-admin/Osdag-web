@@ -1,0 +1,274 @@
+import React, { useState, useEffect } from 'react';
+import { Select, Input } from 'antd';
+import FRM from "../../../assets/flush_ep.png";
+import EOWIM from "../../../assets/owe_ep.png";
+import EBWRM from "../../../assets/extended.png";
+import CFBW from "../../../assets/ShearConnection/sc_fin_plate/fin_cf_bw.png";
+import CWBW from "../../../assets/ShearConnection/sc_fin_plate/fin_cw_bw.png";
+import BB from "../../../assets/ShearConnection/sc_fin_plate/fin_beam_beam.png";
+import ErrorImg from "../../../assets/notSelected.png";
+
+const { Option } = Select;
+
+export const InputSection = ({
+  section,
+  inputs,
+  setInputs,
+  selectionStates,
+  updateSelectionState,
+  updateModalState,
+  toggleAllSelected,
+  contextData,
+  extraState = {},
+  setExtraState = () => { }
+}) => {
+  // Ensure inputs and contextData are always defined
+  const safeInputs = inputs || {};
+  const safeContextData = contextData || {};
+  const [imageSource, setImageSource] = useState("");
+
+  // Handle connectivity selection with image (for FinePlate)
+  useEffect(() => {
+    if (extraState.selectedOption) {
+      const connectivityImageMap = {
+        "Column Flange-Beam-Web": CFBW,
+        "Column Web-Beam-Web": CWBW,
+        "Beam-Beam": BB,
+      };
+
+      const endPlateImageMap = {
+        "Flushed - Reversible Moment": FRM,
+        "Extended One Way - Irreversible Moment": EOWIM,
+        "Extended Both Ways - Reversible Moment": EBWRM,
+      };
+
+      // Check if it's a connectivity or end plate selection
+      if (connectivityImageMap[extraState.selectedOption]) {
+        setImageSource(connectivityImageMap[extraState.selectedOption]);
+      } else if (endPlateImageMap[extraState.selectedOption]) {
+        setImageSource(endPlateImageMap[extraState.selectedOption]);
+      } else {
+        setImageSource(ErrorImg);
+      }
+    }
+  }, [extraState.selectedOption]);
+
+  const handleCustomizableSelect = (field, value) => {
+    if (value === "Customized") {
+      if (safeInputs[field.key]?.length !== 0) {
+        setInputs({ ...safeInputs, [field.key]: safeInputs[field.key] });
+      } else {
+        setInputs({ ...safeInputs, [field.key]: [] });
+      }
+      updateSelectionState(field.selectionKey, "Customized");
+      toggleAllSelected(field.key, false);
+      updateModalState(field.modalKey, true);
+    } else {
+      updateSelectionState(field.selectionKey, "All");
+      toggleAllSelected(field.key, true);
+      updateModalState(field.modalKey, false);
+    }
+  };
+
+  const renderField = (field) => {
+    // Check conditional display
+    if (field.conditionalDisplay && !field.conditionalDisplay(extraState)) {
+      return null;
+    }
+
+    switch (field.type) {
+      case 'select': {
+        let optionsArr = [];
+        if (field.options === 'beamList') {
+          optionsArr = safeContextData.beamList || [];
+        } else if (field.options === 'columnList') {
+          optionsArr = safeContextData.columnList || [];
+        } else if (field.options === 'materialList') {
+          optionsArr = (safeContextData.materialList || []).map(item => item.Grade);
+        } else {
+          optionsArr = field.options.map(opt => (opt.value || opt));
+        }
+        // If loaded value is not in options, add it as a custom option
+        const selectValue = safeInputs[field.key];
+        const displayOptions = optionsArr.includes(selectValue) || selectValue === undefined ? optionsArr : [selectValue, ...optionsArr];
+        return (
+          <Select
+            value={selectValue}
+            onSelect={(value) => setInputs({ ...safeInputs, [field.key]: value })}
+          >
+            {displayOptions.map((option, index) => (
+              <Option key={index} value={option}>{option}</Option>
+            ))}
+          </Select>
+        );
+      }
+      case 'connectivitySelect':
+        return (
+          <Select
+            onSelect={(value) => {
+              setExtraState({ ...extraState, selectedOption: value });
+              setInputs({ ...safeInputs, connectivity: value, output: null });
+            }}
+            value={extraState.selectedOption || safeInputs.connectivity}
+          >
+            {(safeContextData.connectivityList || []).map((item, index) => (
+              <Option key={index} value={item}>{item}</Option>
+            ))}
+          </Select>
+        );
+      case 'endPlateSelect':
+        const conn_map = {
+          "Flushed - Reversible Moment": "Flushed - Reversible Moment",
+          "Extended One Way - Irreversible Moment": "Extended One Way - Irreversible Moment",
+          "Extended Both Ways - Reversible Moment": "Extended Both Ways - Reversible Moment",
+        };
+
+        return (
+          <Select
+            onSelect={(value) => {
+              setExtraState({ ...extraState, selectedOption: value });
+              setInputs({ ...safeInputs, output: null });
+            }}
+            value={extraState.selectedOption}
+          >
+            {Object.keys(conn_map).map((item, index) => (
+              <Option key={index} value={item}>
+                {conn_map[item]}
+              </Option>
+            ))}
+          </Select>
+        );
+      case 'number':
+        return (
+          <Input
+            type="text"
+            onInput={(event) => {
+              event.target.value = event.target.value.replace(/[^0-9.]/g, "");
+            }}
+            value={safeInputs[field.key] ?? ""}
+            onChange={(event) =>
+              setInputs({ ...safeInputs, [field.key]: event.target.value })
+            }
+          />
+        );
+      case 'customizable':
+        return (
+          <Select
+            onSelect={(value) => handleCustomizableSelect(field, value)}
+            value={selectionStates[field.selectionKey]}
+          >
+            <Option value="All">All</Option>
+            <Option value="Customized">Customized</Option>
+          </Select>
+        );
+      case 'sectionProfileList':
+        // Check for duplicates in sectionProfileList
+        const profiles = safeContextData.sectionProfileList || [];
+        const duplicateProfiles = profiles.filter(
+          (profile, index) => profiles.indexOf(profile) !== index
+        );
+        if (duplicateProfiles.length > 0) {
+          console.warn(`⚠️ Duplicate profiles found in sectionProfileList:`, duplicateProfiles);
+        }
+
+        return (
+          <Select
+            value={safeInputs[field.key]}
+            onSelect={(value) => {
+              if (field.onChange) {
+                field.onChange(
+                  value,
+                  safeInputs,
+                  setInputs,
+                  safeContextData,
+                  extraState,
+                  setExtraState
+                );
+              } else {
+                setInputs({ ...safeInputs, [field.key]: value });
+              }
+            }}
+          >
+            {(safeContextData.sectionProfileList || []).map((profile, index) => (
+              <Option key={`${profile}-${index}`} value={profile}>
+                {profile}
+              </Option>
+            ))}
+          </Select>
+        );
+      case 'dynamicSelect':
+        const options = field.getOptions ? field.getOptions(inputs, extraState) : [];
+        return (
+          <Select
+            value={safeInputs[field.key]}
+            onSelect={(value) => setInputs({ ...safeInputs, [field.key]: value })}
+          >
+            {options.map((option, index) => (
+              <Option key={index} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
+        );
+      case 'image':
+        const imageUrl = field.imageSource ? field.imageSource(extraState) : null;
+        return imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={field.label || "Section Profile"}
+            height={field.height || "100px"}
+            width={field.width || "100px"}
+          />
+        ) : null;
+      default:
+        return (
+          <Input
+            value={safeInputs[field.key] ?? ""}
+            onChange={(event) =>
+              setInputs({ ...safeInputs, [field.key]: event.target.value })
+            }
+          />
+        );
+    }
+  };
+
+  return (
+    <div>
+      <h3>{section.title}</h3>
+      <div className="component-grid">
+        {section.fields.map((field, index) => {
+          // Check conditional display again for the entire field container
+          if (field.conditionalDisplay && !field.conditionalDisplay(extraState)) {
+            return null;
+          }
+
+          return (
+            <div key={index}>
+              {field.type === 'image' ? (
+                <div className="connectionimg">
+                  {renderField(field)}
+                </div>
+              ) : (
+                <div className="component-grid-align">
+                  <h4>{field.label}</h4>
+                  {renderField(field)}
+                </div>
+              )}
+              {/* Render image separately for connectivity and endPlateSelect types */}
+              {(field.type === 'connectivitySelect' || field.type === 'endPlateSelect') && imageSource && (
+                <div className="connectionimg">
+                  <img
+                    src={imageSource}
+                    alt="Component"
+                    height="100px"
+                    width="100px"
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

@@ -6,8 +6,6 @@ from Report_functions import *
 import logging
 import os
 
-
-
 class FinPlateConnection(ShearConnection):
 
     def __init__(self):
@@ -505,6 +503,7 @@ class FinPlateConnection(ShearConnection):
     # Setting input values and start of Calculations
     ####################################
     def set_input_values(self, design_dictionary):
+        print(design_dictionary, "Design Dictionary of FIN PLATE")
 
         # if design_dictionary[KEY_SUPTNGSEC_MATERIAL] == "Custom":
         #     design_dictionary[KEY_SUPTNGSEC_MATERIAL] = "Custom" + " " + str(design_dictionary[KEY_SUPTNGSEC_FU]) + " " \

@@ -4,17 +4,17 @@
 
 
 def get_username() : 
-    return "myuser"
+    return "osdagdeveloper"
 
 def get_password() :
-    return "mypassword"
+    return "password"
 
 def get_host() : 
-    return 'db'
+    return 'localhost'
 
 
 def get_port() : 
     return '5432'
 
 def get_database_name() : 
-    return 'mydb'
+    return 'postgres_Intg_osdag'

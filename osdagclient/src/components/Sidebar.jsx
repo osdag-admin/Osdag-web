@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { GlobalContext } from '../context/GlobalState'
 import { useContext } from 'react'
 
+
 let initialRender = false;
 
 function Sidebar() {
@@ -39,11 +40,22 @@ function Sidebar() {
   }
 
   const navigate = useNavigate();
+
+  const handleModuleNavigation = (moduleName) => {
+    navigate(`design-type/${moduleName.toLowerCase().replaceAll("_", "-")}`);
+  };
+
+  const handleHomeNavigation = () => {
+    navigate('/home');
+  };
+
+  const handleUserAccountNavigation = () => {
+    navigate('/user');
+  };
+
   return (
     <>
-      <div className={'sidebar'}>
-        
-      
+      <div className='sidebar'>
         <div className="sidebar-container">
           {
             data && data.data && data.data.map((item) => {
@@ -51,7 +63,7 @@ function Sidebar() {
                 <div key={item.id} className="sidebar-item" >
                   
                   <button onClick={() => {
-                    navigate(`design-type/${item.name.toLowerCase().replaceAll("_", "-")}`)
+                    handleModuleNavigation(item.name)
                   }}>{item.name.toUpperCase().replaceAll("_", " ")}</button>
                 </div>
               )
@@ -60,16 +72,16 @@ function Sidebar() {
 
           {isGuestOrnot === 'guest' ? (
             <div className="sidebar-item">
-              <button onClick={() => {     window.location.href = '/';}}>
+              <button onClick={() => {     
+                window.location.href = '/';
+              }}>
                 Login
               </button>
             </div>
           ) : (
             <div className="sidebar-item">
               <button
-                onClick={() => {
-                  navigate('/user');
-                }}
+                onClick={handleUserAccountNavigation}
               >
                 My Account
               </button>

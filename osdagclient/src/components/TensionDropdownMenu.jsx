@@ -1,0 +1,557 @@
+/* eslint-disable react/prop-types */
+import React from "react";
+import { useContext, useRef, useState, useEffect } from "react";
+import { ModuleContext } from "../context/ModuleState";
+import { UserContext } from "../context/UserState";
+
+function TensionDropdownMenu({
+  label,
+  dropdown,
+  setDesignPrefModalStatus,
+  inputs,
+  allSelected,
+  selectedProfile = null,
+  setInputs,
+  setSelectedProfile = () => {},
+  setAllSelected,
+  logs,
+  setCreateDesignReportBool,
+  setDisplaySaveInputPopup,
+  setSaveInputFileName,
+  triggerScreenshotCapture
+}) {
+  const {
+    boltDiameterList,
+    propertyClassList,
+    thicknessList,
+    angleList,
+    channelList,
+    sectionProfileList,
+  } = useContext(ModuleContext);
+  const { SaveInputValueFile } = useContext(UserContext);
+  const { downloadCADModel } = useContext(ModuleContext);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const parentRef = useRef(null);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const loadInput = () => {
+    let element = document.createElement("input");
+    element.setAttribute("type", "file");
+    parentRef.current.appendChild(element);
+    element.click();
+
+    element.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const fileContent = event.target.result;
+        const fileArr = fileContent.split("\n");
+        let inputFromFileObj = {};
+        let boltDiameterIndex = -1;
+        let boltGradeIndex = -1;
+        let plateThicknessIndex = -1;
+        let sectionDesignationIndex = -1;
+
+        for (let i = 0; i < fileArr.length; i++) {
+          const item = fileArr[i];
+          const arr = item.split(":");
+          arr[0] = arr[0].trim();
+
+          console.log(arr[0]);
+
+          if (arr[0].includes("Bolt.Diameter")) {
+            boltDiameterIndex = i;
+            continue;
+          }
+          if (arr[0].includes("Bolt.Grade")) {
+            boltGradeIndex = i;
+            continue;
+          }
+          if (arr[0].includes("Member.Designation")) {
+            sectionDesignationIndex = i;
+            continue;
+          }
+          if (arr[0].includes("Thickness_List")) {
+            plateThicknessIndex = i;
+            continue;
+          }
+
+          if (arr.length <= 1) continue;
+
+          let val = arr[1].trim();
+          switch (arr[0]) {
+            case "Bolt.Bolt_Hole_Type":
+              inputFromFileObj.bolt_hole_type = val;
+              break;
+            case "Bolt.Slip_Factor":
+              inputFromFileObj.bolt_slip_factor = val;
+              break;
+            case "Bolt.Type":
+              inputFromFileObj.bolt_type = val;
+              break;
+            case "Connector.Material":
+              inputFromFileObj.connector_material = val;
+              break;
+            case "Material":
+              inputFromFileObj.material = val;
+              break;
+            case "Member.Material":
+              inputFromFileObj.material = val;
+              break;
+            case "Design.Design_Method":
+              inputFromFileObj.design_method = val;
+              break;
+            case "Detailing.Corrosive_Influences":
+              inputFromFileObj.detailing_corr_status = val;
+              break;
+            case "Detailing.Edge_type":
+              inputFromFileObj.detailing_edge_type = val;
+              break;
+            case "Detailing.Gap":
+              inputFromFileObj.detailing_gap = val;
+              break;
+            case "Load.Axial":
+              inputFromFileObj.axial_force = val;
+              break;
+            case "Member.Length":
+              inputFromFileObj.length = val;
+              break;
+            case "Member.Profile":
+              inputFromFileObj.section_profile = val;
+              setSelectedProfile(val);
+              break;
+            case "Conn_Location":
+              inputFromFileObj.location = val;
+              break;
+            case "Module":
+              inputFromFileObj.module = val;
+              break;
+          }
+        }
+
+        if (boltDiameterIndex !== -1) {
+          inputFromFileObj.bolt_diameter = getFormatedArrayFields(
+            fileArr,
+            boltDiameterIndex
+          );
+        }
+        if (boltGradeIndex !== -1) {
+          inputFromFileObj.bolt_grade = getFormatedArrayFields(
+            fileArr,
+            boltGradeIndex
+          );
+        }
+        if (sectionDesignationIndex !== -1) {
+          inputFromFileObj.section_designation = getFormatedArrayFields(
+            fileArr,
+            sectionDesignationIndex
+          );
+        }
+        if (plateThicknessIndex !== -1) {
+          inputFromFileObj.plate_thickness = getFormatedArrayFields(
+            fileArr,
+            plateThicknessIndex
+          );
+        }
+
+        console.log(inputFromFileObj);
+        
+        setInputs(inputFromFileObj);
+        setAllSelected({
+          plate_thickness: false,
+          bolt_diameter: false,
+          bolt_grade: false,
+          section_designation: false,
+        });
+      };
+
+      reader.readAsText(file);
+    });
+
+    parentRef.current.removeChild(element);
+  };
+
+  const downloadInput = () => {
+    let content = "";
+
+    content += `Bolt.Bolt_Hole_Type: ${inputs.bolt_hole_type}\n`;
+    content += `Bolt.Diameter:\n${formatArrayForText(
+      allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter
+    )}\n`;
+    content += `Bolt.Grade:\n${formatArrayForText(
+      allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade
+    )}\n`;
+    content += `Bolt.Slip_Factor: ${inputs.bolt_slip_factor}\n`;
+    content += `Bolt.Type: ${inputs.bolt_type}\n`;
+    content += `Connector.Material: ${inputs.connector_material}\n`;
+    content += `Material: ${inputs.material}\n`;
+    content += `Member.Material: ${inputs.material}\n`;
+    content += `Design.Design_Method: ${inputs.design_method}\n`;
+    content += `Detailing.Corrosive_Influences: ${inputs.detailing_corr_status}\n`;
+    content += `Detailing.Edge_type: ${inputs.detailing_edge_type}\n`;
+    content += `Detailing.Gap: ${inputs.detailing_gap}\n`;
+    content += `Load.Axial: ${inputs.axial_force || ""}\n`;
+    content += `Member.Length: ${inputs.length}\n`;
+    content += `Member.Profile: ${inputs.section_profile}\n`;
+    content += `Conn_Location: ${inputs.location}\n`;
+    content += `Module: ${inputs.module}\n`;
+
+    // Add section designation
+    content += `Member.Designation:\n${formatArrayForText(
+      allSelected.section_designation 
+        ? (selectedProfile && selectedProfile.includes("Angle") ? angleList : channelList)
+        : inputs.section_designation
+    )}\n`;
+
+    // Add plate thickness
+    content += `Connector.Plate.Thickness_List:\n${formatArrayForText(
+      allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
+    )}\n`;
+
+    console.log(content);
+
+    let element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:application/json;charset=utf-8," + encodeURIComponent(content)
+    );
+    element.setAttribute("download", "input_osdag.osi");
+    element.style.display = "none";
+    parentRef.current.appendChild(element);
+    element.click();
+    parentRef.current.removeChild(element);
+  };
+
+  const saveLogMessages = () => {
+    if (!logs) {
+      alert("No logs to save.");
+      return;
+    }
+
+    let logsArr = [];
+    let flag = false;
+
+    for (const log of logs) {
+      if (log.msg === "=== End Of Design ===") {
+        flag = true;
+        continue;
+      }
+
+      logsArr.push(`${log.type}: ${log.msg}`);
+    }
+    if (flag) logsArr.push(`INFO: === End Of Design ===`);
+
+    const content = logsArr.join("\n");
+    let element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:application/json;charset=utf-8," + encodeURIComponent(content)
+    );
+    element.setAttribute("download", "logs_osdag.osi");
+    element.style.display = "none";
+    parentRef.current.appendChild(element);
+    element.click();
+    parentRef.current.removeChild(element);
+  };
+
+  const saveInput = () => {
+    console.log("inside save input");
+    let content = "";
+
+    content += `Bolt.Bolt_Hole_Type: ${inputs.bolt_hole_type}\n`;
+    content += `Bolt.Diameter:\n${formatArrayForText(
+      allSelected.bolt_diameter ? boltDiameterList : inputs.bolt_diameter
+    )}\n`;
+    content += `Bolt.Grade:\n${formatArrayForText(
+      allSelected.bolt_grade ? propertyClassList : inputs.bolt_grade
+    )}\n`;
+    content += `Bolt.Slip_Factor: ${inputs.bolt_slip_factor}\n`;
+    content += `Bolt.Type: ${inputs.bolt_type}\n`;
+    content += `Connector.Material: ${inputs.connector_material}\n`;
+    content += `Material: ${inputs.material}\n`;
+    content += `Member.Material: ${inputs.material}\n`;
+    content += `Design.Design_Method: ${inputs.design_method}\n`;
+    content += `Detailing.Corrosive_Influences: ${inputs.detailing_corr_status}\n`;
+    content += `Detailing.Edge_type: ${inputs.detailing_edge_type}\n`;
+    content += `Detailing.Gap: ${inputs.detailing_gap}\n`;
+    content += `Load.Axial: ${inputs.axial_force || ""}\n`;
+    content += `Member.Length: ${inputs.length}\n`;
+    content += `Member.Profile: ${inputs.section_profile}\n`;
+    content += `Conn_Location: ${inputs.location}\n`;
+    content += `Module: ${inputs.module}\n`;
+
+    // Add section designation
+    content += `Member.Designation:\n${formatArrayForText(
+      allSelected.section_designation 
+        ? (selectedProfile && selectedProfile.includes("Angle") ? angleList : channelList)
+        : inputs.section_designation
+    )}\n`;
+
+    // Add plate thickness
+    content += `Connector.Plate.Thickness_List:\n${formatArrayForText(
+      allSelected.plate_thickness ? thicknessList : inputs.plate_thickness
+    )}\n`;
+
+    if (localStorage.getItem("userType") == "guest") {
+      alert("Cannot save, user is not loggedin in");
+    } else if (localStorage.getItem("userType") == "user") {
+      // send the content to the Server
+      SaveInputValueFile(content).then((response) => {
+        console.log("response in dropdown : ", response);
+        setDisplaySaveInputPopup(response.saveInputStatus);
+        setSaveInputFileName(response.saveInputFileName);
+      });
+    } else {
+      console.log("userType not matched");
+    }
+  };
+
+  const handleClick = (option) => {
+    switch (option.name) {
+      case `Load Input`:
+        loadInput();
+        break;
+
+      case `Download Input`:
+        downloadInput();
+        break;
+
+      case "Save Input":
+        saveInput();
+        break;
+
+      case `Save Log Messages`:
+        saveLogMessages();
+        break;
+
+      case `Create Design Report`:
+        setCreateDesignReportBool(true);
+        break;
+
+      case `Save 3D Model`:
+        console.log(`Save 3D model val ${option.name}`);
+        (async () => {
+          try {
+            // Check if File System Access API is supported
+            if ('showSaveFilePicker' in window) {
+              const options = {
+                types: [
+                  {
+                    description: "OBJ File",
+                    accept: { "application/octet-stream": [".obj"] },
+                  },
+                  {
+                    description: "BREP File",
+                    accept: { "application/octet-stream": [".brep"] },
+                  },
+                  {
+                    description: "STEP File",
+                    accept: { "application/octet-stream": [".step"] },
+                  },
+                  {
+                    description: "IGES File",
+                    accept: { "application/octet-stream": [".iges"] },
+                  },
+                ],
+                suggestedName: "3dmodel",
+              };
+              
+              const handle = await window.showSaveFilePicker(options);
+              const fileExtension = handle.name.split(".").pop(); // Get selected format
+              console.log("Selected extension:", fileExtension);
+
+              const blob = await downloadCADModel(fileExtension); // Call only to download
+
+              if (blob) {
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                console.log(
+                  `${fileExtension.toUpperCase()} CAD file saved successfully.`
+                );
+              } else {
+                console.error("Failed to download CAD model blob.");
+              }
+            } else {
+              // Fallback for browsers that don't support File System Access API
+              const format = prompt("Enter file format (obj, brep, step, iges):", "obj");
+              if (!format) return;
+              
+              const allowedFormats = ["obj", "brep", "step", "iges"];
+              if (!allowedFormats.includes(format.toLowerCase())) {
+                alert("Invalid format. Please choose from: obj, brep, step, iges");
+                return;
+              }
+
+              const blob = await downloadCADModel(format.toLowerCase());
+              if (blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `3dmodel.${format.toLowerCase()}`;
+                link.style.display = "none";
+                parentRef.current.appendChild(link);
+                link.click();
+                parentRef.current.removeChild(link);
+                URL.revokeObjectURL(url);
+                console.log(`${format.toUpperCase()} CAD file downloaded successfully.`);
+              } else {
+                console.error("Failed to download CAD model blob.");
+              }
+            }
+          } catch (error) {
+            console.error("Save 3D model cancelled or failed", error);
+          }
+        })();
+        break;
+
+      case `Save Cad Image`:
+        triggerScreenshotCapture();
+        console.log("Image saved successfully");
+        break;
+
+      // File End
+      // Edit Start
+      case `Design Preferences`:
+        setDesignPrefModalStatus(true);
+        break;
+      // Edit End
+      // Graphics Start
+      case `Zoom In`:
+        console.log(`Zoom In val ${option.name}`);
+        break;
+
+      case `Zoom Out`:
+        console.log(`Zoom Out val ${option.name}`);
+        break;
+
+      case `Pan`:
+        console.log(`Pan val ${option.name}`);
+        break;
+
+      case `Rotate 3D Model`:
+        console.log(`Rotate 3D Model val ${option.name}`);
+        break;
+
+      case `Model`:
+        console.log(`Model val ${option.name}`);
+        break;
+
+      case `Member`:
+        console.log(`Member val ${option.name}`);
+        break;
+
+      case `Plate`:
+        console.log(`Plate val ${option.name}`);
+        break;
+
+      case `Endplate`:
+        console.log(`Endplate val ${option.name}`);
+        break;
+      // Graphics End
+
+      case `Downloads`:
+        console.log(`Downloads val ${option.name}`);
+        break;
+
+      case `Reset`:
+        console.log(`Reset val ${option.name}`);
+        break;
+      // Database End
+      // Help Start
+      case `Video Tutorials`:
+        console.log(`Video Tutorials val ${option.name}`);
+        break;
+
+      case `Design Examples`:
+        console.log(`Design Examples val ${option.name}`);
+        break;
+
+      case `Ask us a question`:
+        console.log(`Ask us a question val ${option.name}`);
+        break;
+
+      case `About Osdag`:
+        console.log(`About Osdag val ${option.name}`);
+        break;
+      // Help End
+
+      default:
+        console.log(`Default Val: ${option.name}`);
+        break;
+    }
+  };
+
+  // UTILITY FUNCTIONS
+  const formatArrayForText = (arr) => {
+    let text = "";
+    for (let i = 0; i < arr.length; i++) {
+      if (i !== arr.length - 1) text += `- '${arr[i]}'\n`;
+      else text += `- '${arr[i]}'`;
+    }
+    return text;
+  };
+
+  const getFormatedArrayFields = (arr, index) => {
+    let res = [];
+    for (let i = index + 1; i < arr.length; i++) {
+      const line = arr[i].trim();
+      if (!line.startsWith("-")) break;
+
+      // Match string inside single quotes
+      const match = line.match(/'([^']+)'/);
+      if (match) {
+        res.push(match[1]);
+      }
+
+    }
+    return res;
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (parentRef.current && !parentRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      window.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
+
+  return (
+    <>
+      <div className="dropdown" ref={parentRef}>
+        <div className="dropdown-label" onClick={handleToggle}>
+          {label}
+        </div>
+        {isOpen && (
+          <div className="dropdown-menu">
+            {dropdown.map((option, index) => (
+              <div
+                className="dropdown-items"
+                key={index}
+                onClick={() => handleClick(option)}
+              >
+                {option.name}
+                {option.shortcut && (
+                  <span className="shortcut">{option.shortcut}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default TensionDropdownMenu; 
