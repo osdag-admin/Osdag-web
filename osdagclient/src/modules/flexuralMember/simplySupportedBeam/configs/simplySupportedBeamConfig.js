@@ -59,7 +59,7 @@ export const simplySupportedBeamConfig = {
   // Helper function to get section list based on profile  
   getDynamicSectionList: (profile, beamList, columnList) => {
     // Always return only columnList for simply supported beam, regardless of profile
-    return columnList || [];
+      return columnList || [];
   },
 
   validateInputs: (inputs) => {

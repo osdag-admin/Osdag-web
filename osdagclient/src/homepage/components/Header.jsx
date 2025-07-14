@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
+import { isGuestUser } from '../../utils/auth';
 
 const Header = ({ setshowSideBar, active }) => {
   const [isDark, setIsDark] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showResourcesDropdown, setShowResourcesDropdown] = useState(false);
+
+  // Check if user is a guest
+  const isGuest = isGuestUser();
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -52,7 +56,9 @@ const Header = ({ setshowSideBar, active }) => {
       item.name.toLowerCase().includes(query) ||
       item.type.toLowerCase().includes(query)
     );
-    const filteredProjects = searchData.projects.filter(item =>
+    
+    // Don't show projects for guest users
+    const filteredProjects = isGuest ? [] : searchData.projects.filter(item =>
       item.name.toLowerCase().includes(query) ||
       item.type.toLowerCase().includes(query)
     );
@@ -286,8 +292,8 @@ const Header = ({ setshowSideBar, active }) => {
           </div>
         </div>
       </div>
-      {/* Search Section */}
-      {!active && <div className="px-12 pb-8 dark:bg-slate-950">
+      {/* Search Section - Hidden for guest users */}
+      {!active && !isGuest && <div className="px-12 pb-8 dark:bg-slate-950">
         <div className="flex items-center justify-center">
           <div className="relative w-search search-container">
             <div className="absolute inset-y-0 left-5 flex items-center space-x-3">

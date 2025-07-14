@@ -11,6 +11,7 @@ from osdag.web_api.design_pref_api import DesignPreference, MaterialDetails
 from osdag.web_api.user_view import SignupView, ForgetPasswordView, LogoutView, LoginView, ObtainInputFileView, CheckEmailView, SaveInputFileView, SetRefreshTokenCookieView
 from osdag.web_api.jwt_api import JWTHomeView
 from osdag.web_api.google_sso_api import GoogleSSOView
+from osdag.web_api.project_api import ProjectAPI, ProjectDetailAPI, ProjectByNameAPI
 from . import views
 from osdag.web_api.endplate_outputView import EndPLateOutputData
 from osdag.web_api.cleatangle_outputView import CleatAngleOutputData
@@ -81,6 +82,11 @@ urlpatterns = [
     path('user/saveinput/' , SaveInputFileView.as_view()),
     path('user/obtain-input-file/' , ObtainInputFileView.as_view()),
     path('user/set-refresh/' , SetRefreshTokenCookieView.as_view()),
+
+    # project management urls
+    path('api/projects/', ProjectAPI.as_view(), name='projects'),
+    path('api/projects/<int:project_id>/', ProjectDetailAPI.as_view(), name='project-detail'),
+    path('api/projects/by-name/<str:project_name>/', ProjectByNameAPI.as_view(), name='project-by-name'),
 
     # output generation from input
     path('calculate-output/Fin-Plate-Connection',

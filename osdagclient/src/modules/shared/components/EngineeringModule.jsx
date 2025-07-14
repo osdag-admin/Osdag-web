@@ -70,6 +70,10 @@ export const EngineeringModule = ({
     extraState,
     setExtraState,
 
+    // Project management states
+    currentProjectId,
+    projectNameLoading,
+
     // Navigation and Reset states
     showResetConfirmation,
     setShowResetConfirmation,

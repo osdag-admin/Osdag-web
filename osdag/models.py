@@ -6,6 +6,25 @@ from django.contrib.postgres.fields import ArrayField
 # other imports 
 from django.contrib.auth.hashers import make_password, check_password
 
+class Project(models.Model):
+    """Project object to store user projects with inputs, outputs, and logs."""
+    name = models.CharField(max_length=200)
+    module_id = models.CharField(max_length=200)
+    module_name = models.CharField(max_length=200)
+    input_values = models.JSONField(blank=True, null=True)
+    output_values = models.JSONField(blank=True, null=True)
+    logs = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    user_email = models.CharField(max_length=200, blank=True, null=True)  # For future user authentication
+    
+    class Meta:
+        db_table = "Project"
+        ordering = ['-updated_at']  # Most recent first
+
+    def __str__(self):
+        return f"{self.name} - {self.module_name}"
+
 class Design(models.Model):
     """Design Session object in Database."""
     cookie_id = models.CharField(unique=True, max_length=32)

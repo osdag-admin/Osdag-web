@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import coverPlateBolted from "../../assets/ShearConnection/sc_fin_plate.png";
 import coverPlateWelded from "../../assets/ShearConnection/sc_fin_plate.png";
 import endPlate from "../../assets/ShearConnection/sc_fin_plate.png";
+import ProjectNameModal from "../../components/ProjectNameModal";
+import { getCurrentUserEmail } from "../../utils/auth";
 
 // Submodules for each main module
 const MODULE_SUBMODULES = {
@@ -132,31 +134,12 @@ const MODULE_ROUTES = {
 };
 
 // SectionCards component for rendering section cards
-const SectionCards = ({ section, activeSubmodule }) => {
+const SectionCards = ({ section, activeSubmodule, onModuleClick }) => {
   const navigate = useNavigate();
   
   const handleModuleClick = (optionKey, sectionLabel) => {
-    // Special handling for end plate modules based on context
-    if (optionKey === "ep") {
-      if (activeSubmodule === "moment") {
-        if (sectionLabel === "Beam to Beam Splice") {
-          navigate("/design/connections/beam-to-beam-splice/end_plate");
-                 } else if (sectionLabel === "Beam to Column Splice") {
-           navigate("/design/connections/column-beam/end_plate");
-        } else {
-          // Default for other moment connections (Column to Column, etc.)
-          navigate("/design/connections/beam-to-beam-splice/end_plate");
-        }
-             } else {
-         // Default to shear end plate
-         navigate("/design/connections/shear/end_plate");
-       }
-    } else {
-      const route = MODULE_ROUTES[optionKey];
-      if (route) {
-        navigate(route);
-      }
-    }
+    // Call the parent handler instead of directly navigating
+    onModuleClick(optionKey, sectionLabel);
   };
 
   return (
@@ -194,10 +177,89 @@ const TabbedModulePage = () => {
   const navigate = useNavigate();
   const submodules = MODULE_SUBMODULES[moduleName] || [];
   const [activeSubmodule, setActiveSubmodule] = useState(submodules[0]?.key);
-  console.log("Active moduleName:", moduleName);
+  
+  // Modal state
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [selectedModule, setSelectedModule] = useState(null);
+  
   useEffect(() => {
     setActiveSubmodule(submodules[0]?.key);
   }, [moduleName]);
+
+  const handleModuleClick = (optionKey, sectionLabel) => {
+    // Determine the route based on the module
+    let route = '';
+    
+    // Special handling for end plate modules based on context
+    if (optionKey === "ep") {
+      if (activeSubmodule === "moment") {
+        if (sectionLabel === "Beam to Beam Splice") {
+          route = "/design/connections/beam-to-beam-splice/end_plate";
+        } else if (sectionLabel === "Beam to Column Splice") {
+          route = "/design/connections/column-beam/end_plate";
+        } else {
+          // Default for other moment connections (Column to Column, etc.)
+          route = "/design/connections/beam-to-beam-splice/end_plate";
+        }
+      } else {
+        // Default to shear end plate
+        route = "/design/connections/shear/end_plate";
+      }
+    } else {
+      route = MODULE_ROUTES[optionKey];
+    }
+    
+    if (route) {
+      setSelectedModule({
+        key: optionKey,
+        label: sectionLabel,
+        route: route
+      });
+      setShowProjectModal(true);
+    }
+  };
+
+  const handleProjectModalConfirm = async (projectName) => {
+    if (selectedModule) {
+      try {
+        // Create project in database
+        const response = await fetch('http://localhost:8000/api/projects/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: projectName || `${selectedModule.label} Project`,
+            module_id: selectedModule.key,
+            module_name: selectedModule.label,
+            user_email: getCurrentUserEmail(),
+          }),
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          // Navigate to the module with project name in URL
+          const projectNameForUrl = encodeURIComponent(projectName || `${selectedModule.label} Project`);
+          navigate(`${selectedModule.route}/${projectNameForUrl}`);
+        } else {
+          // Still navigate even if project creation fails, but without project name
+          navigate(selectedModule.route);
+        }
+      } catch (error) {
+        // Navigate even if there's an error, but without project name
+        navigate(selectedModule.route);
+      }
+    }
+    
+    setShowProjectModal(false);
+    setSelectedModule(null);
+  };
+
+  const handleProjectModalCancel = () => {
+    setShowProjectModal(false);
+    setSelectedModule(null);
+  };
 
   if (!moduleName || !MODULE_SUBMODULES[moduleName]) {
     return <div className="p-8">Module not found</div>;
@@ -229,9 +291,26 @@ const TabbedModulePage = () => {
           ? (CONNECTIONS_TAB_CONTENT[activeSubmodule] || [])
           : (GENERIC_SUBMODULE_CONTENT[activeSubmodule] || [])
         ).map((section) => (
-          <SectionCards key={section.label} section={section} activeSubmodule={activeSubmodule} />
+          <SectionCards 
+            key={section.label} 
+            section={section} 
+            activeSubmodule={activeSubmodule}
+            onModuleClick={handleModuleClick}
+          />
         ))}
       </div>
+
+      {/* Project Name Modal */}
+      <ProjectNameModal
+        visible={showProjectModal}
+        onConfirm={handleProjectModalConfirm}
+        onCancel={handleProjectModalCancel}
+        title="Name Your Project"
+        message="Please give your project a name to save it for later access."
+        moduleName={selectedModule ? selectedModule.label : ''}
+        defaultValue=""
+        confirmText="Create Project"
+      />
     </div>
   );
 };

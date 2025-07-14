@@ -38,9 +38,13 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:5173',
-                        'http://localhost:5173']  # 5173 -> port for Vite App
+                        'http://localhost:5173',
+                        'http://127.0.0.1:3000',
+                        'http://localhost:3000',
+                        'http://127.0.0.1:8080',
+                        'http://localhost:8080']
 
-CORS_ALLOW_METHODS = ['POST', 'GET', 'OPTIONS']
+CORS_ALLOW_METHODS = ['POST', 'GET', 'OPTIONS', 'PUT', 'DELETE']
 
 CORS_ALLOW_HEADERS = ["accept",
                       "authorization",
@@ -48,6 +52,7 @@ CORS_ALLOW_HEADERS = ["accept",
                       "user-agent",
                       "x-csrftoken",
                       "x-requested-with",
+                      "x-user-email",
                       'access-control-allow-origin',
                       'Cache-Control',
                       'Pragma',
@@ -55,7 +60,7 @@ CORS_ALLOW_HEADERS = ["accept",
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5173', 'http://localhost:5173']
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5173', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://localhost:3000', 'http://127.0.0.1:8080', 'http://localhost:8080']
 
 
 # Application definition

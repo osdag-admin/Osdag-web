@@ -10,17 +10,14 @@ function Model({ modelPaths, selectedView }) {
 
   useEffect(() => {
     if (modelPaths) {
-      console.log("Received modelPaths in ThreeRender.jsx:", modelPaths);
       try {
         const loader = new OBJLoader();
         const parsedData = Object.fromEntries(
           Object.entries(modelPaths).map(([key, objData]) => {
-            console.log(`Parsing ${key}...`);
             return [key, loader.parse(objData)];
           })
         );
 
-        console.log("Successfully parsed models:", parsedData);
         setParsedModels(parsedData);
       } catch (error) {
         console.error("Error parsing .obj data:", error);
@@ -32,7 +29,6 @@ function Model({ modelPaths, selectedView }) {
     let g;
     obj.traverse((c) => {
       if (c.type === "Mesh") {
-        console.log("Found mesh in:", obj);
         c.material.map = texture;
         c.material.needsUpdate = true;
         g = c.geometry;

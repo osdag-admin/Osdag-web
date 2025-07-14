@@ -65,32 +65,32 @@ function App() {
         <Route path="/GroupDesign" element={<SelectModulePage />} />
         <Route path="/design-type/:designType" element={<Window />} />
         {/* Shear Connection Routes */}
-        <Route path="/design/connections/shear/fin_plate" element={<FinPlate />} />
-        <Route path="/design/connections/shear/end_plate" element={<EndPlate />} />
-        <Route path="/design/connections/shear/cleat_angle" element={<CleatAngle />} />
-        <Route path="/design/connections/shear/seated_angle" element={<SeatedAngle />} />
+        <Route path="/design/connections/shear/fin_plate/:projectId?" element={<FinPlate />} />
+        <Route path="/design/connections/shear/end_plate/:projectId?" element={<EndPlate />} />
+        <Route path="/design/connections/shear/cleat_angle/:projectId?" element={<CleatAngle />} />
+        <Route path="/design/connections/shear/seated_angle/:projectId?" element={<SeatedAngle />} />
         
         {/* Legacy Routes - Keep for backward compatibility */}
-        <Route path="/design/:designType/fin_plate" element={<FinPlate />} />
-        <Route path="/design/:designType/end_plate" element={<EndPlate />} />
+        <Route path="/design/:designType/fin_plate/:projectId?" element={<FinPlate />} />
+        <Route path="/design/:designType/end_plate/:projectId?" element={<EndPlate />} />
         <Route
-          path="/design/:designType/cleat_angle"
+          path="/design/:designType/cleat_angle/:projectId?"
           element={<CleatAngle />}
         />
         <Route
-          path="/design/:designType/seated_angle"
+          path="/design/:designType/seated_angle/:projectId?"
           element={<SeatedAngle />}
         />
         <Route
-          path="/design/:designType/beam-to-beam-splice/cover_plate_bolted"
+          path="/design/:designType/beam-to-beam-splice/cover_plate_bolted/:projectId?"
           element={<CoverPlateBolted />}
         />
         <Route
-          path="/design/:designType/beam-to-beam-splice/end_plate"
+          path="/design/:designType/beam-to-beam-splice/end_plate/:projectId?"
           element={<BeamBeamEndPlate />}
         />
         {/* Tension Member Routes */}
-        <Route path="/design/tension-member/bolted_to_end_gusset" element={<BoltedToEnd />} />
+        <Route path="/design/tension-member/bolted_to_end_gusset/:projectId?" element={<BoltedToEnd />} />
         
         {/* Legacy Tension Routes */}
         <Route
@@ -98,17 +98,17 @@ function App() {
           element={<BoltedToEnd />}
         />
         <Route
-          path="/design/:designType/beam-to-beam-splice/cover_plate_welded"
+          path="/design/:designType/beam-to-beam-splice/cover_plate_welded/:projectId?"
           element={<CoverPlateWelded />}
         />
         {/* Beam to Column Routes */}
-        <Route path="/design/connections/column-beam/end_plate" element={<BeamToColumnEndPlate />} />
+        <Route path="/design/connections/column-beam/end_plate/:projectId?" element={<BeamToColumnEndPlate />} />
         <Route
-          path="/design/connections/beam-to-column/end_plate"
+          path="/design/connections/beam-to-column/end_plate/:projectId?"
           element={<BeamToColumnEndPlate />}
         />
         <Route
-          path="/design/:designType/simply_supported_beam"
+          path="/design/:designType/simply_supported_beam/:projectId?"
           element={<SimplySupportedBeam />}
         />
         <Route path="/user" element={<UserAccount />} />

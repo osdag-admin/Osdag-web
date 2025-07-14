@@ -10,7 +10,6 @@ const SelectModulePage = () => {
     const [showSideBar, setshowSideBar] = useState(false);
     // Get module name from URL path
     const modulename = window.location.pathname.split('/')[1];
-    console.log("endpoint : ", modulename);
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 antialiased w-full">
             <div className="flex lg:h-screen">

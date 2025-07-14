@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
+import { getCurrentUserEmail } from "../../../utils/auth";
 
 export const useEngineeringModule = (moduleConfig) => {
   const navigate = useNavigate();
+  const { projectId } = useParams(); // Get project ID from URL parameter
 
   const {
     beamList,
@@ -38,13 +40,18 @@ export const useEngineeringModule = (moduleConfig) => {
   } = useContext(ModuleContext);
 
   // Core state management
-  const [inputs, setInputs] = useState(moduleConfig.defaultInputs);
+  const [inputs, setInputs] = useState(moduleConfig.defaultInputs || {});
   const [output, setOutput] = useState(null);
   const [logs, setLogs] = useState(null);
   const [displayOutput, setDisplayOutput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [renderBoolean, setRenderBoolean] = useState(false);
   const [modelKey, setModelKey] = useState(0);
+
+  // Project management states
+  const [projectNameLoading, setProjectNameLoading] = useState(false);
+  const [projectDataLoading, setProjectDataLoading] = useState(true);
+  const [projectDataLoaded, setProjectDataLoaded] = useState(false);
 
   // Modal states
   const [modalStates, setModalStates] = useState(
@@ -149,80 +156,155 @@ export const useEngineeringModule = (moduleConfig) => {
     return !!(output || renderBoolean);
   };
 
-  // Comprehensive reset function
-  const resetToDefaultState = () => {
+  // Project management functions
+  const BASE_URL = 'http://localhost:8000/api/';
 
-    if (resetModuleState) {
-      resetModuleState();
+  const createProject = async (projectName) => {
+    try {
+      setProjectNameLoading(true);
+      console.log('Creating project with name:', projectName);
+      console.log('Module config design type:', moduleConfig.designType);
+      console.log('User email:', getCurrentUserEmail());
+      
+      const response = await fetch(`${BASE_URL}projects/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: projectName,
+          module_id: moduleConfig.designType,
+          module_name: moduleConfig.sessionName,
+          user_email: getCurrentUserEmail(),
+        }),
+      });
+
+      const data = await response.json();
+      console.log('Project creation response:', data);
+      
+      if (data.success) {
+        console.log('Project created successfully with ID:', data.project_id);
+        return data.project_id;
+      } else {
+        throw new Error(data.error || 'Failed to create project');
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+      throw error;
+    } finally {
+      setProjectNameLoading(false);
     }
-
-    setRenderBoolean(false);
-    setModelKey(0);
-    setOutput(null);
-    setLogs(null);
-    setDisplayOutput(false);
-    setLoading(false);
-
-    setInputs(moduleConfig.defaultInputs);
-    setExtraState(getInitialExtraState());
-
-    // Reset selection states
-    setSelectionStates(
-      moduleConfig.selectionConfig.reduce((acc, selection) => {
-        acc[selection.key] = selection.defaultValue || "All";
-        return acc;
-      }, {})
-    );
-
-    setAllSelected(
-      moduleConfig.selectionConfig.reduce((acc, selection) => {
-        acc[selection.inputKey] = true;
-        return acc;
-      }, {})
-    );
-
-    // Reset modal states
-    setModalStates(
-      moduleConfig.modalConfig.reduce((acc, modal) => {
-        acc[modal.key] = false;
-        return acc;
-      }, {})
-    );
-
-    setSelectedItems(
-      moduleConfig.selectionConfig.reduce((acc, selection) => {
-        acc[selection.inputKey] = [];
-        return acc;
-      }, {})
-    );
-
-    setDesignPrefModalStatus(false);
-    setConfirmationModal(false);
-    setDisplaySaveInputPopup(false);
-    setCreateDesignReportBool(false);
-    setSelectedView("Model");
-    setScreenshotTrigger(false);
   };
 
-  // Initialize module data
-  useEffect(() => {
-    console.log("CleatAngle - Initializing module data for:", moduleConfig.designType);
-    console.log("CleatAngle - Module config:", moduleConfig);
-    console.log("CleatAngle - Camera key:", moduleConfig.cameraKey);
-    
-    resetToDefaultState();
-    
-    console.log("CleatAngle - After reset, inputs:", inputs);
-    console.log("CleatAngle - After reset, extraState:", extraState);
+  const saveProjectData = async (projectId, inputData, outputData, logData) => {
+    try {
+      const userEmail = getCurrentUserEmail();
+      console.log('saveProjectData called with:');
+      console.log('projectId:', projectId);
+      console.log('userEmail:', userEmail);
+      console.log('inputData:', inputData);
+      console.log('outputData:', outputData);
+      console.log('logData:', logData);
+      
+      const requestBody = {
+        input_values: inputData,
+        output_values: outputData,
+        logs: logData,
+      };
+      console.log('Request body being sent:', requestBody);
+      
+      const response = await fetch(`${BASE_URL}projects/${projectId}/?user_email=${encodeURIComponent(userEmail)}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-    // Simplified: One API call gets ALL module data
-    setTimeout(() => {
-      const moduleName = moduleConfig.designType;
-      console.log("CleatAngle - Calling getModuleData with:", moduleName);
-      getModuleData(moduleName);
+      const data = await response.json();
+      console.log('Response from server:', data);
+      
+      if (data.success) {
+        console.log('Project data saved successfully');
+      } else {
+        throw new Error(data.error || 'Failed to save project data');
+      }
+    } catch (error) {
+      console.error('Error saving project data:', error);
+      throw error;
+    }
+  };
 
-    }, 100);
-  }, []);
+  // Function to save project when CAD generation is successful
+  const saveProjectOnCADSuccess = async (outputData = null, logData = null) => {
+    console.log('saveProjectOnCADSuccess called');
+    console.log('currentProjectId:', projectId);
+    console.log('current inputs:', inputs);
+    console.log('outputData parameter:', outputData);
+    console.log('logData parameter:', logData);
+    
+    if (!projectId) {
+      console.log('Cannot save project: missing project ID');
+      console.log('This might happen if the project ID was reset during initialization');
+      return;
+    }
+
+    try {
+      // Use provided data or current state
+      const finalOutputData = outputData || output;
+      const finalLogData = logData || logs;
+      
+      console.log('Final output data to save:', finalOutputData);
+      console.log('Final log data to save:', finalLogData);
+      
+      // First, try to find the project by name
+      const userEmail = getCurrentUserEmail();
+      const findResponse = await fetch(`http://localhost:8000/api/projects/by-name/${encodeURIComponent(projectId)}/?user_email=${encodeURIComponent(userEmail)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (findResponse.ok) {
+        // Project exists, update it
+        const project = await findResponse.json();
+        if (project.success && project.data) {
+          console.log('Updating existing project:', project.data.id);
+          await saveProjectData(project.data.id, inputs, finalOutputData, finalLogData);
+          console.log('Project updated successfully after CAD generation');
+        }
+      } else {
+        // Project doesn't exist, create it
+        console.log('Project not found, creating new project with name:', projectId);
+        const createResponse = await fetch('http://localhost:8000/api/projects/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: projectId,
+            module_id: moduleConfig.moduleId,
+            module_name: moduleConfig.moduleName,
+            user_email: getCurrentUserEmail(),
+            inputs: inputs,
+            output: finalOutputData,
+            logs: finalLogData,
+          }),
+        });
+
+        const createData = await createResponse.json();
+        if (createData.success) {
+          console.log('New project created successfully with ID:', createData.project_id);
+        } else {
+          console.error('Failed to create new project:', createData);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving project after CAD generation:', error);
+    }
+  };
+
 
   // Navigation protection
   useEffect(() => {
@@ -428,6 +510,12 @@ export const useEngineeringModule = (moduleConfig) => {
       return;
     }
 
+    // Wait for project data loading to complete
+    if (projectDataLoading) {
+      console.log('Waiting for project data to load...');
+      return;
+    }
+
     const param = moduleConfig.buildSubmissionParams(
       inputs,
       allSelected,
@@ -447,12 +535,22 @@ export const useEngineeringModule = (moduleConfig) => {
     setIsLoadingModalVisible(true);
     setLoadingStage("Generating design calculations...");
 
-    const response = await createDesign(param, moduleConfig.designType);
-    console.log(" createDesign response:", response);
+    try {
+      // Pass the saveProjectOnCADSuccess callback to createDesign
+      const response = await createDesign(param, moduleConfig.designType, saveProjectOnCADSuccess);
+      console.log(" createDesign response:", response);
 
     setDisplayOutput(true);
     setModelKey((prev) => prev + 1);
+
+      // Project will be saved when CAD generation is successful
+      // (handled by the saveProjectOnCADSuccess callback)
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+    }
   };
+
+
 
   const handleReset = () => {
     setConfirmationType("reset");
@@ -660,6 +758,12 @@ export const useEngineeringModule = (moduleConfig) => {
     extraState,
     setExtraState,
 
+    // Project management states
+    // currentProjectId, // This line is removed
+    projectNameLoading,
+    projectDataLoading,
+    projectDataLoaded,
+
     // Navigation and Reset states
     showResetConfirmation,
     setShowResetConfirmation,
@@ -683,5 +787,13 @@ export const useEngineeringModule = (moduleConfig) => {
     handleCreateDesignReport,
     handleOkDesignReport,
     handleCancelDesignReport,
+
+    // Project management actions
+    createProject,
+    saveProjectData,
+    // loadProjectData, // This line is removed
+
+    // New actions
+    saveProjectOnCADSuccess,
   };
 };

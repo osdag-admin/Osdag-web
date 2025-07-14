@@ -447,7 +447,7 @@ function UnifiedDropdownMenu({
         setSaveInputFileName(response.saveInputFileName);
       });
     } else {
-      console.log("userType not matched");
+      // userType not matched
     }
   };
 
@@ -532,7 +532,8 @@ function UnifiedDropdownMenu({
               const writable = await handle.createWritable();
               await writable.write(blob);
               await writable.close();
-              console.log(`${fileExtension.toUpperCase()} CAD file saved successfully.`);
+              // CAD file saved successfully
+              message.success(`${fileExtension.toUpperCase()} CAD file saved successfully.`);
             } else {
               console.error("Failed to download CAD model blob.");
             }
@@ -548,7 +549,11 @@ function UnifiedDropdownMenu({
         setDesignPrefModalStatus(true);
         break;
       default:
-        console.log(`Default Val: ${option.name}`);
+        // Default value
+        setInputs({
+          ...inputs,
+          [inputKey]: option.name,
+        });
         break;
     }
   };

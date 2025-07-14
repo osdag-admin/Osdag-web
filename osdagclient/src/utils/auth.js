@@ -84,6 +84,23 @@ export const getUserFromToken = (token) => {
 };
 
 /**
+ * Check if user is a guest
+ */
+export const isGuestUser = () => {
+  const userType = localStorage.getItem('userType');
+  return userType === 'guest';
+};
+
+/**
+ * Get current user email
+ */
+export const getCurrentUserEmail = () => {
+  const email = localStorage.getItem('email') || '';
+  console.log('getCurrentUserEmail called, email from localStorage:', email);
+  return email;
+};
+
+/**
  * Check if user is authenticated (including guest mode)
  */
 export const isAuthenticated = () => {

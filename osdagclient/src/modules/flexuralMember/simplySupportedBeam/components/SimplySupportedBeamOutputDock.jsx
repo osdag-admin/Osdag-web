@@ -2,10 +2,7 @@ import React from "react";
 import { BaseOutputDock } from "../../../shared/components/BaseOutputDock";
 import { simplySupportedBeamOutputConfig } from "../configs/simplySupportedBeamOutputConfig";
 
-function SimplySupportedBeamOutputDock({ output }) {
-  console.log("SimplySupportedBeamOutputDock rendering with output:", output);
-  console.log("Using config:", simplySupportedBeamOutputConfig);
-  
+const SimplySupportedBeamOutputDock = ({ output }) => {
   return (
     <div className="OutputDock">
       <BaseOutputDock 

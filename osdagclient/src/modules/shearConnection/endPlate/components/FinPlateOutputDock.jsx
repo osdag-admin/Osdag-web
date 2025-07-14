@@ -1,15 +1,15 @@
 import React from "react";
 import { BaseOutputDock } from "../../../shared/components/BaseOutputDock";
-import { finPlateOutputConfig } from "../../finPlate/configs/finPlateOutputConfig";
+import { endPlateOutputConfig } from "../configs/endPlateOutputConfig";
 
-const FinPlateOutputDock = ({ output }) => {
+const EndPlateOutputDock = ({ output }) => {
   return (
     <BaseOutputDock
       output={output}
-      outputConfig={finPlateOutputConfig}
+      outputConfig={endPlateOutputConfig}
       title="Output Dock"
     />
   );
 };
 
-export default FinPlateOutputDock;
+export default EndPlateOutputDock;

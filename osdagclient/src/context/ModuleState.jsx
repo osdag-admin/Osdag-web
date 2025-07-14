@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useState } from "react";
 import ModuleReducer from "./ModuleReducer";
 
 // crypto packages
@@ -77,6 +77,7 @@ export const ModuleContext = createContext(initialValue);
 //provider component
 export const ModuleProvider = ({ children }) => {
   const [state, dispatch] = useReducer(ModuleReducer, initialValue);
+  const [projectSaveCallback, setProjectSaveCallback] = useState(null);
 
   // Session functions removed for multi-module support
   // actions
@@ -438,10 +439,12 @@ export const ModuleProvider = ({ children }) => {
     dispatch({ type: "RESET_MODULE_STATE" });
   };
 
-  const createCADModel = async (inputData, moduleId) => {
+  const createCADModel = async (inputData, moduleId, onCADSuccess = null) => {
     try {
       console.log("Creating CAD model with input data:", inputData);
       console.log("Module ID:", moduleId);
+      console.log("CAD Success callback provided:", !!onCADSuccess);
+      console.log("CAD Success callback type:", typeof onCADSuccess);
       
       // CAD generation now accepts POST with input data and module ID
       const response = await fetch(`${BASE_URL}design/cad`, {
@@ -465,23 +468,36 @@ export const ModuleProvider = ({ children }) => {
       }
 
       const data = await response.json();
+      console.log("CAD response status:", response.status);
+      console.log("CAD response data status:", data.status);
 
       if (response.status === 201 && data.status === "success") {
-        console.log("CAD Model Generated:", data.files);
+        console.log("CAD Model Generated Successfully:", data.files);
 
         // Store CAD `.obj` data instead of file paths
         dispatch({ type: "SET_CAD_MODEL_PATHS", payload: data.files });
 
         // Trigger rendering in modules
         dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: true });
-
-        console.log("Dispatched SET_CAD_MODEL_PATHS:", data.files);
+        
+        // Call the success callback to save project data
+        if (onCADSuccess && typeof onCADSuccess === 'function') {
+          console.log("Calling CAD success callback to save project data");
+          try {
+            await onCADSuccess();
+            console.log("CAD success callback executed successfully");
+          } catch (error) {
+            console.error("Error in CAD success callback:", error);
+          }
+        } else {
+          console.log("No CAD success callback provided or not a function");
+        }
       } else {
-        console.log(`CAD Generation Error: ${response.status} - ${data.message || 'Unknown error'}`);
+        console.error("CAD generation failed:", data);
         dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
       }
     } catch (error) {
-      console.log("Error in creating CAD model:", error);
+      console.error("Error in createCADModel:", error);
       dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
     }
   };
@@ -518,10 +534,12 @@ export const ModuleProvider = ({ children }) => {
     }
   };
 
-  const createDesign = async (param, module_id) => {
+  const createDesign = async (param, module_id, onCADSuccess = null) => {
     try {
       console.log("CleatAngle - Creating design with params:", param);
       console.log("CleatAngle - Module ID:", module_id);
+      console.log("CleatAngle - Material key in params:", param.Material);
+      console.log("CleatAngle - All param keys:", Object.keys(param));
       
       const response = await fetch(`${BASE_URL}calculate-output/${module_id}`, {
         method: "POST",
@@ -548,7 +566,14 @@ export const ModuleProvider = ({ children }) => {
         if (jsonResponse?.data && Object.keys(jsonResponse.data).length > 0) {
           console.log("CleatAngle - Valid output found, attempting CAD generation");
           try {
-            createCADModel(param, module_id);
+            // Pass the output and logs data directly to the CAD callback
+            const cadCallbackWithData = () => {
+              if (onCADSuccess && typeof onCADSuccess === 'function') {
+                // Pass the current output and logs data to the callback
+                onCADSuccess(jsonResponse.data, jsonResponse.logs);
+              }
+            };
+            createCADModel(param, module_id, cadCallbackWithData);
           } catch (error) {
             console.log("CleatAngle - Error in creating the CAD model from createDesign:", error);
           }
