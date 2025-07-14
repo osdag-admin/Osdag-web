@@ -2,7 +2,61 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
 import { isGuestUser, getCurrentUserEmail } from "../../../utils/auth";
+import { message } from 'antd';
 import { designAndGenerateCad } from '../api/moduleApi';
+
+// Helper to map DB keys to internal keys
+function mapDbInputKeysToInternal(dbInputs) {
+  if (!dbInputs) return {};
+  const keyMap = {
+    "Module": "module",
+    "Material": "connector_material",
+    "Weld.Fab": "weld_fab",
+    "Bolt.Type": "bolt_type",
+    "Bolt.Grade": "bolt_grade",
+    "Load.Axial": "load_axial",
+    "Load.Shear": "load_shear",
+    "Connectivity": "connectivity",
+    "Bolt.Diameter": "bolt_diameter",
+    "Detailing.Gap": "detailing_gap",
+    "Bolt.Slip_Factor": "bolt_slip_factor",
+    "Bolt.TensionType": "bolt_tension_type",
+    "Connector.Material": "connector_material",
+    "Bolt.Bolt_Hole_Type": "bolt_hole_type",
+    "Detailing.Edge_type": "detailing_edge_type",
+    "Design.Design_Method": "design_method",
+    "Weld.Material_Grade_OverWrite": "weld_material_grade",
+    "Connector.Plate.Thickness_List": "plate_thickness",
+    "Detailing.Corrosive_Influences": "detailing_corr_status",
+    "Member.Supported_Section.Material": "supported_material",
+    "Member.Supporting_Section.Material": "supporting_material",
+    "Member.Supported_Section.Designation": "beam_section",
+    "Member.Supporting_Section.Designation": "column_section",
+    "primary_beam": "primary_beam",
+    "secondary_beam": "secondary_beam"
+  };
+  const mapped = {};
+  for (const [k, v] of Object.entries(dbInputs)) {
+    mapped[keyMap[k] || k] = v;
+  }
+  return mapped;
+}
+
+// Helper to map DB output keys to config keys (for output dock)
+const outputKeyMap = {
+  "Bolt.Grade_Provided": "Bolt.Grade",
+  // Add more mappings if needed
+};
+
+function mapDbOutputToConfigKeys(dbOutput) {
+  if (!dbOutput) return {};
+  const mapped = {};
+  Object.entries(dbOutput).forEach(([key, value]) => {
+    const mappedKey = outputKeyMap[key] || key;
+    mapped[mappedKey] = { ...value, key: mappedKey };
+  });
+  return mapped;
+}
 
 export const useEngineeringModule = (moduleConfig) => {
   const navigate = useNavigate();
@@ -42,6 +96,108 @@ export const useEngineeringModule = (moduleConfig) => {
 
   // Core state management
   const [inputs, setInputs] = useState(moduleConfig.defaultInputs || {});
+  const [loadedFromProject, setLoadedFromProject] = useState(false);
+
+  // On mount: if projectId and not guest, load input values from DB
+  useEffect(() => {
+    if (!isGuestUser() && projectId) {
+      const userEmail = getCurrentUserEmail();
+      const url = `http://localhost:8000/api/projects/by-name/${encodeURIComponent(projectId)}/?user_email=${encodeURIComponent(userEmail)}`;
+      fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data && data.data.inputs) {
+            // Merge DB inputs with defaults: DB values override defaults, but fallback to default if DB value is undefined/empty
+            const mappedInputs = mapDbInputKeysToInternal(data.data.inputs);
+            const mergedInputs = { ...moduleConfig.defaultInputs };
+            for (const key in mappedInputs) {
+              if (
+                mappedInputs[key] !== undefined &&
+                mappedInputs[key] !== null &&
+                !(Array.isArray(mappedInputs[key]) && mappedInputs[key].length === 0) &&
+                mappedInputs[key] !== ""
+              ) {
+                mergedInputs[key] = mappedInputs[key];
+              }
+            }
+            setInputs(mergedInputs);
+            setLoadedFromProject(true);
+            message.success('Input fields loaded from saved project.');
+            console.log('Loaded project input from DB:', mergedInputs);
+            // Log output and logs as well
+            console.log('Loaded project output from DB:', data.data.output);
+            console.log('Loaded project logs from DB:', data.data.logs);
+            // Map output keys before dispatching to context
+            if (data.data.output && Object.keys(data.data.output).length > 0) {
+              const mappedOutput = mapDbOutputToConfigKeys(data.data.output);
+              dispatch({
+                type: 'SET_DESIGN_DATA_AND_LOGS',
+                payload: {
+                  data: mappedOutput,
+                  logs: data.data.logs || [],
+                }
+              });
+              setLogs(data.data.logs || []);
+              setDisplayOutput(true);
+            } else {
+              // If output is empty, clear output and logs
+              dispatch({
+                type: 'SET_DESIGN_DATA_AND_LOGS',
+                payload: {
+                  data: {},
+                  logs: [],
+                }
+              });
+              setLogs([]);
+              setDisplayOutput(false);
+            }
+          } else {
+            // If no data or inputs, treat as new/empty project
+            dispatch({
+              type: 'SET_DESIGN_DATA_AND_LOGS',
+              payload: {
+                data: {},
+                logs: [],
+              }
+            });
+            setLogs([]);
+            setDisplayOutput(false);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load project input from DB:', err);
+          // On error, clear logs/output
+          dispatch({
+            type: 'SET_DESIGN_DATA_AND_LOGS',
+            payload: {
+              data: {},
+              logs: [],
+            }
+          });
+          setLogs([]);
+          setDisplayOutput(false);
+        });
+    } else {
+      // If guest or no projectId, treat as new/empty project
+      dispatch({
+        type: 'SET_DESIGN_DATA_AND_LOGS',
+        payload: {
+          data: {},
+          logs: [],
+        }
+      });
+      setLogs([]);
+      setDisplayOutput(false);
+    }
+  }, [projectId]);
+
+  // Decouple logs from displayOutput: only set logs when designLogs changes
+  useEffect(() => {
+    setLogs(designLogs || []);
+  }, [designLogs]);
   const [logs, setLogs] = useState(null);
   const [displayOutput, setDisplayOutput] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -297,6 +453,41 @@ export const useEngineeringModule = (moduleConfig) => {
       setTimeout(() => setDisplaySaveInputPopup(false), 4000);
     }
   }, [displaySaveInputPopup]);
+
+  // After lists and inputs are loaded, set default for dropdowns if undefined/empty
+  useEffect(() => {
+    // Only run if not loaded from project (i.e., new project)
+    if (!loadedFromProject) {
+      setInputs((prev) => {
+        const updated = { ...prev };
+        // For bolt_diameter
+        if ((!updated.bolt_diameter || updated.bolt_diameter.length === 0) && boltDiameterList && boltDiameterList.length > 0) {
+          updated.bolt_diameter = [boltDiameterList[0]];
+        }
+        // For bolt_grade
+        if ((!updated.bolt_grade || updated.bolt_grade.length === 0) && propertyClassList && propertyClassList.length > 0) {
+          updated.bolt_grade = [propertyClassList[0]];
+        }
+        // For plate_thickness
+        if ((!updated.plate_thickness || updated.plate_thickness.length === 0) && thicknessList && thicknessList.length > 0) {
+          updated.plate_thickness = [thicknessList[0]];
+        }
+        // For connector_material
+        if ((!updated.connector_material || updated.connector_material === "") && materialList && materialList.length > 0) {
+          updated.connector_material = materialList[0].Grade || materialList[0];
+        }
+        // For beam_section
+        if ((!updated.beam_section || updated.beam_section === "") && beamList && beamList.length > 0) {
+          updated.beam_section = beamList[0].Designation || beamList[0];
+        }
+        // For column_section
+        if ((!updated.column_section || updated.column_section === "") && columnList && columnList.length > 0) {
+          updated.column_section = columnList[0].Designation || columnList[0];
+        }
+        return updated;
+      });
+    }
+  }, [boltDiameterList, propertyClassList, thicknessList, materialList, beamList, columnList, loadedFromProject]);
 
   const updateModalState = (modalKey, isOpen) => {
     setModalStates((prev) => ({
@@ -605,6 +796,8 @@ export const useEngineeringModule = (moduleConfig) => {
     setScreenshotTrigger,
     extraState,
     setExtraState,
+    loadedFromProject,
+    setLoadedFromProject,
 
     // Navigation and Reset states
     showResetConfirmation,
@@ -629,7 +822,7 @@ export const useEngineeringModule = (moduleConfig) => {
     handleCreateDesignReport,
     handleOkDesignReport,
     handleCancelDesignReport,
-    // Add designData as output for OutputDockComponent
-    output: designData,
+    // Add designData as output for OutputDockComponent, mapped to config keys
+    output: mapDbOutputToConfigKeys(designData),
   };
 };

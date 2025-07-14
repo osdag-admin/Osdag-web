@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Html, PerspectiveCamera } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
-import { Input, Modal, Button } from "antd";
+import { Input, Modal, Button, Alert } from "antd";
 
 import { useEngineeringModule } from "../hooks/useEngineeringModule";
 import { InputSection } from "../components/InputSection";
@@ -70,6 +70,7 @@ export const EngineeringModule = ({
     setScreenshotTrigger,
     extraState,
     setExtraState,
+    loadedFromProject,
 
     // Project management states
     currentProjectId,
@@ -241,6 +242,9 @@ export const EngineeringModule = ({
         {/* Left - Input Dock */}
         <div className="InputDock">
           <p>Input Dock</p>
+          {loadedFromProject && (
+            <Alert message="Input fields loaded from saved project." type="success" showIcon style={{ marginBottom: 16 }} />
+          )}
           <div className="subMainBody scroll-data">
             {moduleConfig.inputSections.map((section, index) => (
               <InputSection

@@ -23,16 +23,16 @@ export const finPlateConfig = {
     secondary_beam: "JB 150",
     supported_material: "E 165 (Fe 290)",
     supporting_material: "E 165 (Fe 290)",
+    // Hardcoded defaults for undefined fields:
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
+    bolt_tension_type: "Pre-tensioned",
     weld_fab: "Shop Weld",
     weld_material_grade: "410",
     detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
     detailing_gap: "10",
     detailing_corr_status: "No",
     design_method: "Limit State Design",
-    bolt_tension_type: "Pre-tensioned",
-    connectivity: "Column Flange-Beam-Web",
   },
 
   modalConfig: [

@@ -77,87 +77,31 @@ export const InputSection = ({
     }
 
     switch (field.type) {
-      case 'select':
+      case 'select': {
+        let optionsArr = [];
         if (field.options === 'beamList') {
-          return (
-            <Select
-              value={safeInputs[field.key] || (safeContextData.beamList?.[2] || '')}
-              onSelect={(value) => setInputs({ ...safeInputs, [field.key]: value })}
-            >
-              {(safeContextData.beamList || []).map((item, index) => (
-                <Option key={index} value={item}>
-                  {item}
-                </Option>
-              ))}
-            </Select>
-          );
+          optionsArr = safeContextData.beamList || [];
         } else if (field.options === 'columnList') {
-          return (
-            <Select
-              value={safeInputs[field.key] || (safeContextData.columnList?.[0] || '')}
-              onSelect={(value) => setInputs({ ...safeInputs, [field.key]: value })}
-            >
-              {(safeContextData.columnList || []).map((item, index) => (
-                <Option key={index} value={item}>
-                  {item}
-                </Option>
-              ))}
-            </Select>
-          );
+          optionsArr = safeContextData.columnList || [];
         } else if (field.options === 'materialList') {
-   
-          // Check for duplicates in materialList
-          const grades =
-            safeContextData.materialList?.map((item) => item.Grade) || [];
-          const duplicateGrades = grades.filter(
-            (grade, index) => grades.indexOf(grade) !== index
-          );
-          if (duplicateGrades.length > 0) {
-            console.warn(`⚠️ Duplicate grades found in materialList:`, duplicateGrades);
-          }
-
-          return (
-            <Select
-              value={safeInputs[field.key] || (safeContextData.materialList?.[0]?.Grade || '')}
-              onSelect={(value) => {
-                if (field.onChange) {
-                  field.onChange(
-                    value,
-                    safeInputs,
-                    setInputs,
-                    safeContextData.materialList
-                  );
-                } else {
-                  setInputs({ ...safeInputs, [field.key]: value });
-                }
-              }}
-            >
-              {(safeContextData.materialList || []).map((item, index) => (
-                <Option key={`${item.id}-${index}`} value={item.id}>
-                  {item.Grade}
-                </Option>
-              ))}
-            </Select>
-          );
+          optionsArr = (safeContextData.materialList || []).map(item => item.Grade);
         } else {
-          return (
-            <Select
-              value={safeInputs[field.key]}
-              onSelect={(value) => setInputs({ ...safeInputs, [field.key]: value })}
-            >
-              {field.options.map((option, index) => (
-                <Option
-                  key={index}
-                  value={option.value || option}
-                  disabled={option.disabled}
-                >
-                  {option.label || option}
-                </Option>
-              ))}
-            </Select>
-          );
+          optionsArr = field.options.map(opt => (opt.value || opt));
         }
-
+        // If loaded value is not in options, add it as a custom option
+        const selectValue = safeInputs[field.key];
+        const displayOptions = optionsArr.includes(selectValue) || selectValue === undefined ? optionsArr : [selectValue, ...optionsArr];
+        return (
+          <Select
+            value={selectValue}
+            onSelect={(value) => setInputs({ ...safeInputs, [field.key]: value })}
+          >
+            {displayOptions.map((option, index) => (
+              <Option key={index} value={option}>{option}</Option>
+            ))}
+          </Select>
+        );
+      }
       case 'connectivitySelect':
         return (
           <Select
@@ -168,13 +112,10 @@ export const InputSection = ({
             value={extraState.selectedOption || safeInputs.connectivity}
           >
             {(safeContextData.connectivityList || []).map((item, index) => (
-              <Option key={index} value={item}>
-                {item}
-              </Option>
+              <Option key={index} value={item}>{item}</Option>
             ))}
           </Select>
         );
-
       case 'endPlateSelect':
         const conn_map = {
           "Flushed - Reversible Moment": "Flushed - Reversible Moment",
@@ -197,7 +138,6 @@ export const InputSection = ({
             ))}
           </Select>
         );
-
       case 'number':
         return (
           <Input
@@ -205,13 +145,12 @@ export const InputSection = ({
             onInput={(event) => {
               event.target.value = event.target.value.replace(/[^0-9.]/g, "");
             }}
-            value={safeInputs[field.key]}
+            value={safeInputs[field.key] ?? ""}
             onChange={(event) =>
               setInputs({ ...safeInputs, [field.key]: event.target.value })
             }
           />
         );
-
       case 'customizable':
         return (
           <Select
@@ -222,7 +161,6 @@ export const InputSection = ({
             <Option value="Customized">Customized</Option>
           </Select>
         );
-
       case 'sectionProfileList':
         // Check for duplicates in sectionProfileList
         const profiles = safeContextData.sectionProfileList || [];
@@ -258,7 +196,6 @@ export const InputSection = ({
             ))}
           </Select>
         );
-
       case 'dynamicSelect':
         const options = field.getOptions ? field.getOptions(inputs, extraState) : [];
         return (
@@ -273,7 +210,6 @@ export const InputSection = ({
             ))}
           </Select>
         );
-
       case 'image':
         const imageUrl = field.imageSource ? field.imageSource(extraState) : null;
         return imageUrl ? (
@@ -284,11 +220,10 @@ export const InputSection = ({
             width={field.width || "100px"}
           />
         ) : null;
-
       default:
         return (
           <Input
-            value={safeInputs[field.key]}
+            value={safeInputs[field.key] ?? ""}
             onChange={(event) =>
               setInputs({ ...safeInputs, [field.key]: event.target.value })
             }
