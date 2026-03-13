@@ -160,13 +160,50 @@ export const EngineeringModule = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showCad, setShowCad] = useState(window.innerWidth >= 768); // Default: true on desktop, false on mobile
 
-  const { handleCreateProject, projectCreationModal } = useProjectCreation({
-    inputs,
-    extraState,
-    allSelected,
-    contextData,
-    moduleConfig,
-  });
+  // Hooking Graphics Options (Model / Selected Section & Bg Color)
+  const colorPickerRef = useRef(null);
+  const [customBgColor, setCustomBgColor] = useState(null);
+
+  useEffect(() => {
+    if (inputs?.graphicsOption) {
+      const opt = inputs.graphicsOption;
+      if (["Model", "Beam", "Column", "Seated Angle", "Cleat Angle"].includes(opt)) {
+        if (opt === "Model") {
+          setSelectedSection(["Model"]);
+          setSelectedView("Model");
+          setSelectedCameraView("Model");
+        } else {
+          // If a non-Model option is selected, add it
+          const newSelection = selectedSection.filter(s => s !== "Model");
+          if (!newSelection.includes(opt)) {
+            newSelection.push(opt);
+          }
+          if (newSelection.length > 0) {
+            setSelectedSection(newSelection);
+            setSelectedView(newSelection[0]);
+            setSelectedCameraView(newSelection[0]);
+          }
+        }
+      } else if (opt === "Change Background") {
+        if (colorPickerRef.current) {
+          colorPickerRef.current.click();
+        }
+      } else if (opt === "Show front view") {
+        setSelectedCameraView("XY");
+      } else if (opt === "Show side view") {
+        setSelectedCameraView("YZ");
+      } else if (opt === "Show top view") {
+        setSelectedCameraView("ZX");
+      }
+
+      // Cleanup graphicOption to allow consecutive clicks of same option
+      setInputs(prev => {
+        const next = { ...prev };
+        delete next.graphicsOption;
+        return next;
+      });
+    }
+  }, [inputs?.graphicsOption, selectedSection]);
 
   // Normalize CAD path keys to handle case/spacing differences
   const normalizedCadModelPaths = useMemo(() => {
@@ -1248,12 +1285,15 @@ export const EngineeringModule = ({
                 </div>
               ) : renderBoolean ? (
                 <div 
-                  className={`cadModel relative bg-gradient-to-b from-[#FFFFFF] to-[#7E7E7E] dark:from-[#535353] dark:to-[#000000]`}
+                  className={`cadModel relative ${!customBgColor ? 'bg-gradient-to-b from-[#FFFFFF] to-[#7E7E7E] dark:from-[#535353] dark:to-[#000000]' : ''}`}
+                  style={customBgColor ? { backgroundColor: customBgColor } : {}}
                 >
                   <input
                     type="color"
-                    // ref={colorPickerRef}
+                    ref={colorPickerRef}
                     className="absolute opacity-0 pointer-events-none w-0 h-0"
+                    value={customBgColor || "#ffffff"}
+                    onChange={(e) => setCustomBgColor(e.target.value)}
                   />
                   {/* Existing background color picker - left side */}
                   {/* <div className="absolute top-2 left-2 flex items-center gap-2 bg-white/90 dark:bg-osdag-dark-color/90 px-3 py-1.5 rounded-lg shadow-md z-10">
