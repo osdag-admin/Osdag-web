@@ -58,7 +58,6 @@ function CadScene({
     }
   });
 
-
   const modelRef = useRef();
 
   useEffect(() => {
