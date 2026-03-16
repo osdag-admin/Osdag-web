@@ -1,6 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { useMemo, useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+import AxisHelperWidget from "./widgets/AxisHelperWidget";  
 import ViewCubeWidget from "./widgets/ViewCubeWidget";
 import { getPartColor, getRenderOrder } from "./config/partConfig";
 import { createViewMapper } from "./config/viewMappings";
