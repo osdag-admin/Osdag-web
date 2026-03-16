@@ -16,7 +16,7 @@ export const menuItems = [
     dropdown: [
       { name: "Create Project", shortcut: "Ctrl+N" },
       { name: "Load Input", shortcut: "Ctrl+L" },
-      { name: "Save Input", shortcut: "Ctrl+S" },
+      { name: "Download Osi", shortcut: "Ctrl+S" },
       // { name: "Download Input", shortcut: "Alt+D" },
       { name: "Save Log Messages", shortcut: "Alt+M" },
       { name: "Create Design Report", shortcut: "Alt+C" },

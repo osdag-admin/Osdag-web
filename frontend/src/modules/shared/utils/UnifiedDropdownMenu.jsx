@@ -216,7 +216,7 @@ function UnifiedDropdownMenu({
       // case "Download Input":
       //   downloadInput();
       //   break;
-      case "Save Input":
+      case "Download Osi":
         saveInput();
         break;
       case "Save Log Messages":
@@ -235,6 +235,18 @@ function UnifiedDropdownMenu({
         break;
       case "Design Preferences":
         setDesignPrefModalStatus(true);
+        break;
+      case "Zoom In":
+        document.dispatchEvent(new CustomEvent('cad-camera-action', { detail: 'zoom-in' }));
+        break;
+      case "Zoom Out":
+        document.dispatchEvent(new CustomEvent('cad-camera-action', { detail: 'zoom-out' }));
+        break;
+      case "Pan":
+        document.dispatchEvent(new CustomEvent('cad-camera-action', { detail: 'pan-left' }));
+        break;
+      case "Rotate 3D Model":
+        document.dispatchEvent(new CustomEvent('cad-camera-action', { detail: 'auto-rotate' }));
         break;
       default:
         if (onMenuClick) {

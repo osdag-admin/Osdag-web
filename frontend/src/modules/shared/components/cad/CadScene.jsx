@@ -1,6 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { useMemo, useEffect, useRef, useState } from "react";
-import AxisHelperWidget from "./widgets/AxisHelperWidget";
+import { useFrame } from "@react-three/fiber";
+import ViewCubeWidget from "./widgets/ViewCubeWidget";
 import { getPartColor, getRenderOrder } from "./config/partConfig";
 import { createViewMapper } from "./config/viewMappings";
 import { SceneManager } from "./SceneManager";
@@ -50,6 +51,14 @@ function CadScene({
   const target = orbitTarget && orbitTarget.length === 3 ? orbitTarget : [0, 0, 0];
   const controlsRef = useRef();
   const [isAutoRotate, setIsAutoRotate] = useState(false);
+
+  useFrame(() => {
+    if (controlsRef.current) {
+      controlsRef.current.update();
+    }
+  });
+
+
 
   useEffect(() => {
     const handleAction = (e) => {
@@ -140,7 +149,7 @@ function CadScene({
         primaryView={primaryView}
       />
 
-      <OrbitControls ref={controlsRef} enableDamping={false} autoRotate={isAutoRotate} target={target} />
+      <OrbitControls ref={controlsRef} enableDamping={false} enableRotate={true} autoRotate={isAutoRotate} target={target} />
     </group>
   );
 }
