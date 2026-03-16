@@ -60,6 +60,14 @@ function CadScene({
 
   const modelRef = useRef();
 
+  useFrame(() => {
+    if (controlsRef.current) {
+      controlsRef.current.update();
+    }
+  });
+
+
+
   useEffect(() => {
     const handleAction = (e) => {
       const controls = controlsRef.current;
@@ -151,7 +159,9 @@ function CadScene({
         />
       </group>
 
+
       <OrbitControls ref={controlsRef} enableDamping={false} enableRotate={true} autoRotate={isAutoRotate} target={target} />
+
     </group>
   );
 }
