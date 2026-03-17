@@ -10,7 +10,7 @@ function CleatAngle() {
     <EngineeringModule
       moduleConfig={cleatAngleConfig}
       outputConfig={cleatAngleOutputConfig}
-      title={UI_STRINGS.OUTPUT_DOCK}
+      title={UI_STRINGS.CLEAT_ANGLE}
     />
   );
 }

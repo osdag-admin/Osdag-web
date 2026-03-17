@@ -9,9 +9,11 @@ function FinPlate() {
     <EngineeringModule
       moduleConfig={finPlateConfig}
       outputConfig={finPlateOutputConfig}
-      title={UI_STRINGS.OUTPUT_DOCK} 
+      title={UI_STRINGS.FIN_PLATE} 
     />
   );
 }
+
+
 
 export default FinPlate;

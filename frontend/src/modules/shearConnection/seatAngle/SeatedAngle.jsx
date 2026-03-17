@@ -10,9 +10,10 @@ function SeatedAngle() {
     <EngineeringModule
       moduleConfig={seatedAngleConfig}
       outputConfig={seatedAngleOutputConfig}
-      title={UI_STRINGS.OUTPUT_DOCK}
+      title={UI_STRINGS.SEATED_ANGLE}
     />  
   );
 }
+
 
 export default SeatedAngle;

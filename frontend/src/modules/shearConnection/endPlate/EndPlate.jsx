@@ -9,9 +9,10 @@ function EndPlate() {
     <EngineeringModule
       moduleConfig={endPlateConfig}
       outputConfig={endPlateOutputConfig}
-      title={UI_STRINGS.OUTPUT_DOCK}
+      title={UI_STRINGS.END_PLATE}
     />
   );
 }
+
 
 export default EndPlate;
