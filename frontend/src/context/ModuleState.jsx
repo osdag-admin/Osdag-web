@@ -623,60 +623,6 @@ export const ModuleProvider = ({ children }) => {
         // UTILITY
         resetModuleState,           // Reset state
         dispatch,                   // Direct dispatch access for advanced usage
-
-        // ===================================================================
-        // LEGACY COMPATIBILITY FUNCTIONS (DEPRECATED - WILL BE REMOVED)
-        // ===================================================================
-        // ⚠️  WARNING: These functions are deprecated and will be removed in v2.0
-        // ⚠️  Use the 8 core functions above for all new development
-        // ⚠️  These exist only for backward compatibility with existing components
-
-        // 🚫 DEPRECATED: Use getModuleData() instead
-        getConnectivityList: (moduleName) => {
-          console.warn('🚫 DEPRECATED: getConnectivityList() - Use getModuleData() instead');
-          return getConnectivityData(moduleName);
-        },
-        getBoltDiameterList: (moduleName) => {
-          console.warn('🚫 DEPRECATED: getBoltDiameterList() - Use getModuleData() instead');
-          return getModuleData(moduleName);
-        },
-        getThicknessList: (moduleName) => {
-          console.warn('🚫 DEPRECATED: getThicknessList() - Use getModuleData() instead');
-          return getModuleData(moduleName);
-        },
-        getPropertyClassList: (moduleName) => {
-          console.warn('🚫 DEPRECATED: getPropertyClassList() - Use getModuleData() instead');
-          return getModuleData(moduleName);
-        },
-
-        // 🚫 DEPRECATED: Use manageCustomMaterials() instead
-        addCustomMaterialToDB: (grade, inputs, connectivity, type) => {
-          console.warn('🚫 DEPRECATED: addCustomMaterialToDB() - Use manageCustomMaterials("add", {...}) instead');
-          return manageCustomMaterials('add', { grade, inputs, connectivity, type });
-        },
-        updateMaterialListFromCaches: () => {
-          console.warn('🚫 DEPRECATED: updateMaterialListFromCaches() - Use manageCustomMaterials("sync") instead');
-          return manageCustomMaterials('sync');
-        },
-
-        // 🚫 DEPRECATED: Use manageDesignPreferences() instead
-        getDesingPrefData: (params) => {
-          console.warn('🚫 DEPRECATED: getDesingPrefData() - Use manageDesignPreferences("get", params) instead');
-          return manageDesignPreferences('get', params);
-        },
-        getSupportedData: (params) => {
-          console.warn('🚫 DEPRECATED: getSupportedData() - Use manageDesignPreferences("get", {...}) instead');
-          return manageDesignPreferences('get', { supported_section: params.supported_section });
-        },
-        getMaterialDetails: (param) => {
-          console.warn('🚫 DEPRECATED: getMaterialDetails() - Use manageDesignPreferences("material_update", {...}) instead');
-          return manageDesignPreferences('material_update', { materialType: param.type, materialData: param.data });
-        },
-        updateSourceAndMechType: (id, materialValue) => {
-          console.warn('🚫 DEPRECATED: updateSourceAndMechType() - Use manageDesignPreferences("section_update", {...}) instead');
-          return manageDesignPreferences('section_update', { id, materialValue });
-        },
-
       }}
     >
       {children}

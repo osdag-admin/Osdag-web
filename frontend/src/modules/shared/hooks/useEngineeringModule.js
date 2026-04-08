@@ -86,7 +86,6 @@ export const useEngineeringModule = (moduleConfig) => {
     designData,
     designLogs,
     cadData,
-    renderCadModel,
     displayPDF,
     setDisplayPDF,
     output,
@@ -94,8 +93,6 @@ export const useEngineeringModule = (moduleConfig) => {
     loading,
     renderBoolean,
     modelKey,
-    isLoadingModalVisible,
-    loadingStage,
     status,
     setStatus,
     resetDesignState,
@@ -103,6 +100,7 @@ export const useEngineeringModule = (moduleConfig) => {
     screenshotTrigger,
     setScreenshotTrigger,
     loadSavedOutputs,
+    loadOutputs,
   } = useDesignSubmission(service, moduleConfig);
 
   // Form & selection state (moved into dedicated hook)
@@ -301,11 +299,8 @@ export const useEngineeringModule = (moduleConfig) => {
     renderBoolean,
     modelKey,
     cadData,
-    loadingStage,
-    isLoadingModalVisible,
     status,
     setStatus,
-    displayPDF,
     setDisplayPDF,
     screenshotTrigger,
     setScreenshotTrigger,
@@ -340,6 +335,7 @@ export const useEngineeringModule = (moduleConfig) => {
 
     clearDesignResults,
     loadSavedOutputs,
+    loadOutputs,
 
     // Explicitly expose reset functions for targeted clears that don't destroy `inputs`
     resetDesignState,

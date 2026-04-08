@@ -20,8 +20,7 @@ const CleatAngleSectionModal = ({
 }) => {
   const {
     materialList,
-    updateSourceAndMechType,
-    getMaterialDetails,
+    manageDesignPreferences,
     supported_material_details,
   } = useContext(ModuleContext);
   const [showModal, setShowModal] = useState(false);
@@ -30,7 +29,10 @@ const CleatAngleSectionModal = ({
     const material = materialList.filter(
       (value) => value.Grade === designPrefInputs.supported_material
     );
-    getMaterialDetails({ data: material[0], type: "supported" });
+    manageDesignPreferences("material_update", {
+      materialType: "supported",
+      materialData: material[0],
+    });
   }, []);
 
   const handleDownload = () => {
@@ -82,8 +84,14 @@ const CleatAngleSectionModal = ({
                       ...designPrefInputs,
                       supported_material: material.Grade,
                     }),
-                      updateSourceAndMechType(2, material.Grade);
-                    getMaterialDetails({ data: material, type: "supported" });
+                      manageDesignPreferences("section_update", {
+                        id: 2,
+                        materialValue: material.Grade,
+                      });
+                    manageDesignPreferences("material_update", {
+                      materialType: "supported",
+                      materialData: material,
+                    });
                   }}
                 >
                   {materialList.map((item, index) => (

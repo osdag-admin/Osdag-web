@@ -25,8 +25,7 @@ const ColumnSectionModal = ({
 }) => {
   const {
     materialList,
-    updateSourceAndMechType,
-    getMaterialDetails,
+    manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +35,10 @@ const ColumnSectionModal = ({
     const material = materialList.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
-    getMaterialDetails({ data: material[0], type: "supporting" });
+    manageDesignPreferences("material_update", {
+      materialType: "supporting",
+      materialData: material[0],
+    });
   }, []);
 
   const handleDownload = () => {
@@ -92,8 +94,14 @@ const ColumnSectionModal = ({
                       ...designPrefInputs,
                       supporting_material: material.Grade,
                     });
-                    updateSourceAndMechType(1, material.Grade);
-                    getMaterialDetails({ data: material, type: "supporting" });
+                    manageDesignPreferences("section_update", {
+                      id: 1,
+                      materialValue: material.Grade,
+                    });
+                    manageDesignPreferences("material_update", {
+                      materialType: "supporting",
+                      materialData: material,
+                    });
                   }}
                 >
                   {materialList.map((item) => {

@@ -20,8 +20,7 @@ const AnchorBoltSectionModal = ({
 }) => {
   const {
     materialList,
-    updateSourceAndMechType,
-    getMaterialDetails,
+    manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
   const [showModal, setShowModal] = useState(false);
@@ -30,7 +29,10 @@ const AnchorBoltSectionModal = ({
     const material = materialList.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
-    getMaterialDetails({ data: material[0], type: "supporting" });
+    manageDesignPreferences("material_update", {
+      materialType: "supporting",
+      materialData: material[0],
+    });
   }, []);
 
   const handleDownload = () => {

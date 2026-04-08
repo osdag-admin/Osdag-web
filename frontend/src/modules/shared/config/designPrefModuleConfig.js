@@ -132,7 +132,7 @@ const DESIGN_PREF_CONFIG = {
     getDefaultPrefs: (_inputs, _module, contextDefaults) => contextDefaults || {},
   },
   "Beam Cover Plate Bolted Connection": {
-    tabIds: [1, 3, 10, 11, 13],
+    tabIds: [1, 3, 6, 11, 13],
     initialTabIndex: 1,
     getInitialPrefs: (inputs) => ({
       supported_material: inputs.member_material,
@@ -286,18 +286,29 @@ const DESIGN_PREF_CONFIG = {
     getDefaultPrefs: (_inputs, _module, contextDefaults) => contextDefaults || {},
   },
   "Tension Member Welded Design":{
-    tabIds: [2, 3, 6, 11, 13],
+    tabIds: [2, 3, 10, 11, 13],
     initialTabIndex: 2,
     getInitialPrefs: (inputs) => ({
       supported_material: inputs.member_material,
       connector_material: inputs.connector_material,
-      bolt_tension_type: inputs.bolt_tension_type,
-      bolt_hole_type: inputs.bolt_hole_type,
-      bolt_slip_factor: inputs.bolt_slip_factor,
+      weld_fab: inputs.weld_fab,
+      weld_material_grade: inputs.weld_material_grade,
       detailing_edge_type: inputs.detailing_edge_type,
       detailing_gap: inputs.detailing_gap,
       detailing_corr_status: inputs.detailing_corr_status,
       design_method: inputs.design_method,
+    }),
+    getDefaultPrefs: (_inputs, _module, contextDefaults) => contextDefaults || {},
+  },
+  "Axially Loaded Column": {
+    tabIds: [0, 12, 13],
+    initialTabIndex: 0,
+    getInitialPrefs: (inputs) => ({
+      supported_material: inputs.member_material,
+      connector_material: inputs.connector_material,
+      design_method: inputs.design_method,
+      allow_ur: inputs.allow_ur,
+      effective_area_parameter: inputs.effective_area_parameter,
     }),
     getDefaultPrefs: (_inputs, _module, contextDefaults) => contextDefaults || {},
   },
