@@ -1290,7 +1290,7 @@ export const EngineeringModule = ({
                 >
                   <input
                     type="color"
-                    ref={colorPickerRef}
+                    // ref={colorPickerRef}
                     className="absolute opacity-0 pointer-events-none w-0 h-0"
                     value={customBgColor || "#ffffff"}
                     onChange={(e) => setCustomBgColor(e.target.value)}

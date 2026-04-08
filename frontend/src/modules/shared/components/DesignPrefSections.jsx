@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import ColumnSectionModal from "./ColumnSectionModal";
 import BeamSectionModal from "./BeamSectionModal";
@@ -42,6 +42,8 @@ const DesignPrefSections = ({
     designPrefConfig.getInitialPrefs(inputs, module)
   );
 
+  const fileInputRef = useRef(null);
+
   const saveCoreInputs = () => {
     setInputs({ ...inputs, ...designPrefInputs });
     setDesignPrefModalStatus(false);
@@ -63,6 +65,7 @@ const DesignPrefSections = ({
     <div>
       <div className="bloc-tabs" style={{ marginTop: "10px" }}>
         {tabs.map((item) => {
+          console.log('itemm:', item)
           return (
             <button
               key={item.id}
