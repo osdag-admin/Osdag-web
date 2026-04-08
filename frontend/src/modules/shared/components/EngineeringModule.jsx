@@ -1311,15 +1311,12 @@ export const EngineeringModule = ({
                 </div>
               ) : renderBoolean ? (
                 <div 
-                  className={`cadModel relative ${!customBgColor ? 'bg-gradient-to-b from-[#FFFFFF] to-[#7E7E7E] dark:from-[#535353] dark:to-[#000000]' : ''}`}
-                  style={customBgColor ? { backgroundColor: customBgColor } : {}}
+                  className={`cadModel relative bg-gradient-to-b from-[#FFFFFF] to-[#7E7E7E] dark:from-[#535353] dark:to-[#000000]`}
                 >
                   <input
                     type="color"
                     // ref={colorPickerRef}
                     className="absolute opacity-0 pointer-events-none w-0 h-0"
-                    value={customBgColor || "#ffffff"}
-                    onChange={(e) => setCustomBgColor(e.target.value)}
                   />
                   {/* Existing background color picker - left side */}
                   {/* <div className="absolute top-2 left-2 flex items-center gap-2 bg-white/90 dark:bg-osdag-dark-color/90 px-3 py-1.5 rounded-lg shadow-md z-10">
