@@ -43,14 +43,16 @@ const ConnectorSectionModal = ({
 
   return (
     <div className="Connector-col-beam-cont">
-      <div>
+      {/* Left Section */}
+      <div className="col-left">
         <div className="sub-container">
+          <h4>Inputs</h4>
           <div className="input-cont">
-            <h5>Material</h5>
+            <h5>Material *</h5>
             <div>
               <Select
                 disabled={isInputLocked}
-                style={{ width: "200px", height: "25px", fontSize: "12px" }}
+                style={{ width: "134px", height: "25px", fontSize: "12px" }}
                 value={designPrefInputs.connector_material}
                 onSelect={(value) => {
                   handleMaterialChange(value);
@@ -77,7 +79,6 @@ const ConnectorSectionModal = ({
                   ? conn_material_details[0].Ultimate_Tensile_Stress
                   : 0
               }
-              disabled
               style={readOnlyFontStyle}
             />
           </div>
@@ -92,7 +93,6 @@ const ConnectorSectionModal = ({
                   ? conn_material_details[0].Yield_Stress_less_than_20
                   : 0
               }
-              disabled
               style={readOnlyFontStyle}
             />
           </div>
@@ -107,7 +107,6 @@ const ConnectorSectionModal = ({
                   ? conn_material_details[0].Yield_Stress_between_20_and_neg40
                   : 0
               }
-              disabled
               style={readOnlyFontStyle}
             />
           </div>
@@ -122,7 +121,6 @@ const ConnectorSectionModal = ({
                   ? conn_material_details[0].Yield_Stress_greater_than_40
                   : 0
               }
-              disabled
               style={readOnlyFontStyle}
             />
           </div>

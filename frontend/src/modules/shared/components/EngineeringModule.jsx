@@ -51,7 +51,7 @@ export const EngineeringModule = ({
   const prevModuleRef = useRef(null); // Track previous module for change detection
   const prevProjectIdRef = useRef(null); // Track previous projectId for change detection
   const lastLoadedProjectIdRef = useRef(null); // Prevent re-fetching same project (stops infinite GET loop)
-
+  console.log('moduleConfig:', moduleConfig)
   const {
     // Module data
     beamList,
@@ -905,8 +905,8 @@ export const EngineeringModule = ({
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
       {/* Navigation */}
-      <div className="sticky top-0 z-[60] min-h-[48px] max-h-[80px] flex flex-row flex-wrap justify-center md:justify-between items-center bg-[#d2d4d2] gap-x-4 w-full text-sm flex-shrink-0 pl-4">
-        <div className="flex flex-row flex-wrap justify-center md:justify-start items-center gap-x-4">
+      <div className="sticky top-0 z-[60] h-[52px] flex flex-row justify-between items-center bg-[#d2d4d2] w-full text-sm flex-shrink-0 px-4">
+        <div className="flex flex-row items-center gap-x-4">
           {menuItems.map((item, index) => (
             <UnifiedDropdownMenu
               key={index}
@@ -1250,7 +1250,17 @@ export const EngineeringModule = ({
                   <p>{isRedesigning ? "Updating Model..." : "Loading Model..."}</p>
                 </div>
               ) : renderBoolean ? (
-                <div className="cadModel relative   bg-gradient-to-b from-[#FFFFFF] to-[#7E7E7E] dark:from-[#535353] dark:to-[#000000]">
+                <div 
+                  className={`cadModel relative ${!customBgColor ? 'bg-gradient-to-b from-[#FFFFFF] to-[#7E7E7E] dark:from-[#535353] dark:to-[#000000]' : ''}`}
+                  style={customBgColor ? { backgroundColor: customBgColor } : {}}
+                >
+                  <input
+                    type="color"
+                    // ref={colorPickerRef}
+                    className="absolute opacity-0 pointer-events-none w-0 h-0"
+                    value={customBgColor || "#ffffff"}
+                    onChange={(e) => setCustomBgColor(e.target.value)}
+                  />
                   {/* Existing background color picker - left side */}
                   {/* <div className="absolute top-2 left-2 flex items-center gap-2 bg-white/90 dark:bg-osdag-dark-color/90 px-3 py-1.5 rounded-lg shadow-md z-10">
                   <label htmlFor="bgColorPicker" className="text-xs font-medium text-black dark:text-white mr-1">

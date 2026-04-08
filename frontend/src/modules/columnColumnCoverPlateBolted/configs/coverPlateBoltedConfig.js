@@ -1,5 +1,5 @@
 export const coverPlateBoltedConfig = {
-  sessionName: "Cover Plate Bolted Connection",
+  sessionName: "Column Cover Plate Bolted Connection",
   routePath: "/design/connections/column-to-column-splice/cover_plate_bolted",
   designType: "Column-to-Column-Cover-Plate-Bolted-Connection",
   cameraKey: "CoverPlateBolted",

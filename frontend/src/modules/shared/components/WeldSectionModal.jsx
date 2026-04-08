@@ -23,13 +23,14 @@ Field weld takes a material safety factor of 1.5
     <>
       <div className="Connector-col-beam-cont">
         <div>
+          <h4>Inputs</h4>
           <div className="sub-container">
             <div className="input-cont">
               <h5>{isSimpleConnection ? "Type" : "Type of Weld Fabrication"}</h5>
               <div>
                 <Select
                   disabled={isInputLocked}
-                  style={{ width: "200px", height: "25px", fontSize: "12px" }}
+                  style={{ width: "132px", height: "25px", fontSize: "12px" }}
                   value={designPrefInputs.weld_fab}
                   onSelect={(value) =>
                     setDesignPrefInputs({ ...designPrefInputs, weld_fab: value })

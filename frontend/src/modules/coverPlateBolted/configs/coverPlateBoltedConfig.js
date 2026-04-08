@@ -1,5 +1,5 @@
 export const coverPlateBoltedConfig = {
-  sessionName: "Cover Plate Bolted Connection",
+  sessionName: "Beam Cover Plate Bolted Connection",
   routePath: "/design/connections/beam-to-beam-splice/cover_plate_bolted",
   designType: "Beam-to-Beam-Cover-Plate-Bolted-Connection",
   cameraKey: "CoverPlateBolted",

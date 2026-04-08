@@ -22,6 +22,7 @@ const DesignSectionModal = ({
     <>
       <div className="Connector-col-beam-cont">
         <div>
+          <h4>Inputs</h4>
           <div className="sub-container">
             {!isSimpleConnection && (
               <div className="input-cont">
@@ -29,7 +30,7 @@ const DesignSectionModal = ({
                 <div>
                   <Select
                     disabled={isInputLocked}
-                    style={{ width: "200px", height: "25px", fontSize: "12px" }}
+                    style={{ width: "132px", height: "25px", fontSize: "12px" }}
                     value={designPrefInputs.design_method}
                     onSelect={(value) =>
                       setDesignPrefInputs({
@@ -54,7 +55,7 @@ const DesignSectionModal = ({
                 </div>
               </div>
             )}
-            <div className="input-cont">
+            {/* <div className="input-cont">
               <h5>Design For</h5>
               <div>
                 <Select
@@ -72,7 +73,7 @@ const DesignSectionModal = ({
                   <Option value="Compression">Compression</Option>
                 </Select>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 export const coverPlateWeldedConfig = {
-  sessionName: "Cover Plate Welded Connection",
+  sessionName: "Column Cover Plate Welded Connection",
   routePath: "/design/connections/column-to-column-splice/cover_plate_welded",
   designType: "Column-to-Column-Cover-Plate-Welded-Connection",
   cameraKey: "CoverPlateWelded",

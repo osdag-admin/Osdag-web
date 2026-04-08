@@ -1340,40 +1340,89 @@
 /* Design pref container*/
 .design-pref-cont{
   margin-top: 10px;
-  border: 1px solid #000;
+  border: 1px solid #ccc;
   width: 100% !important;
   padding: 10px;
   overflow-y: scroll;
-  height: 70vh;
+  height: 60vh;
 }
 
 /* Column and Beam Section */
-.col-beam-cont{
+/* .col-beam-cont{
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+} */
+.col-beam-cont {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  width: 100%;
 }
+
+.col-left {
+  flex: 1;
+  min-width: 320px;
+}
+
+.col-middle {
+  flex: 1;
+  min-width: 320px;
+}
+
+.col-right {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 100px;
+}
+
+.section-img {
+  display: flex;
+  justify-content: center;
+}
+
+/* .section-properties {
+  margin-top: 5px;
+} */
 
 .Connector-col-beam-cont{
   display: flex;
-  flex-direction: row;
-  padding: 10px;
-  gap: 20px;
+  gap: 30px;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.connector-left {
+  width: 25%;
+}
+
+.connector-right {
+  width: 75%;
+}
+
+.connector-note {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid black;
+  font-size: 12px;
 }
 
 .input-cont{
   display: flex;
   align-items: center;
-  column-gap: 5px;
-  justify-content: space-between;
+  /* column-gap: 5px;
+  justify-content: space-between; */
 }
 .input-cont h5{
   font-weight: 400;
-  width: 150px;
+  width: 224px;
   margin-right: 10px;
 }
 .input-design-pref{
-  width: 200px;
+  width: 132px;
   height: 25px;
   font-size: 12px;
 }
@@ -1462,4 +1511,42 @@
 
 .loading-modal .ant-modal-mask {
   background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+
+.description-container {
+  border: 1px solid #ccc;
+  padding: 12px;
+  background: #f7f7f7;
+  font-size: 12px;
+}
+
+.description-container p {
+  margin-bottom: 10px;
+}
+
+.table-container {
+  margin: 10px 0;
+}
+
+.desc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.desc-table th,
+.desc-table td {
+  border: 1px solid #999;
+  padding: 3px 5px;
+}
+
+.desc-table th {
+  background: #e6e6e6;
+  text-align: center;
+  font-weight: 600;
+}
+
+.desc-table td {
+  background: #f9f9f9;
 }

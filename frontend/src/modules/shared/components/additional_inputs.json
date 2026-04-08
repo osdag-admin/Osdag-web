@@ -1,0 +1,27 @@
+{
+  "dimensions": {
+    "depth_D_mm": 200.0,
+    "flange_width_B_mm": 200.0,
+    "flange_thickness_T_mm": 9.0,
+    "web_thickness_t_mm": 7.8,
+    "flange_slope_alpha_deg": 94.0,
+    "root_radius_R1_mm": 9.0,
+    "toe_radius_R2_mm": 4.5
+  },
+  "section_properties": {
+    "mass_M_kg_per_m": 39.73,
+    "sectional_area_cm2": 50.6,
+    "second_moment_of_area_Iz_cm4": 3690.0,
+    "second_moment_of_area_Iy_cm4": 971.0,
+    "radius_of_gyration_rz_cm": 8.54,
+    "radius_of_gyration_ry_cm": 4.38,
+    "elastic_modulus_Zz_cm3": 369.0,
+    "elastic_modulus_Zy_cm3": 97.1
+  },
+  "advanced_properties": {
+    "plastic_modulus_Zpz_cm3": 411.0,
+    "plastic_modulus_Zpy_cm3": 160.0,
+    "torsion_constant_It_cm4": 16.6,
+    "warping_constant_Iw_cm6": 109000.0
+  }
+}

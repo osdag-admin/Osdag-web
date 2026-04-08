@@ -195,7 +195,7 @@ export const BaseOutputDock = ({
     <>
       <div className="flex flex-col h-full min-h-0">
         <div className="p-2">
-          <p className="p-2 inline-block bg-osdag-green text-white rounded">{title}</p>
+          <p className="p-2 inline-block bg-osdag-green text-white rounded">Output Dock</p>
         </div>
         <div className="flex-1 overflow-y-auto subMainBody scroll-data min-h-0 pb-20">
           {Object.entries(outputConfig.sections).map(([sectionName, fields]) => (

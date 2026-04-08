@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import { Input, Select, Button } from "antd";
-import Slope_Beam from "../../../assets/Slope_Beam.png";
+import equaldp from "../../../assets/equaldp.png";
 import CustomSectionModal from "./CustomSectionModal";
 
 const { Option } = Select;
@@ -12,12 +12,11 @@ const readOnlyFontStyle = {
   fontWeight: "600",
 };
 
-const BeamSectionModal = ({
+const CleatAngleSectionModal = ({
   supportedSectionData,
   designPrefInputs,
   setDesignPrefInputs,
   isInputLocked,
-  inputs,
 }) => {
   const {
     materialList,
@@ -57,7 +56,6 @@ const BeamSectionModal = ({
               name="Designation"
               className="input-design-pref"
               // value={supportedSectionData.Designation}
-              value={inputs.beam_section}
               // disabled
               style={readOnlyFontStyle}
             />
@@ -70,8 +68,7 @@ const BeamSectionModal = ({
                 <Select
                   disabled={isInputLocked}
                   style={{ width: "132px", height: "25px", fontSize: "12px" }}
-                  // value={designPrefInputs.supported_material}
-                  value={inputs.connector_material}
+                  value={designPrefInputs.supported_material}
                   onSelect={(value) => {
                     if (isInputLocked) return;
                     if (value === -1) {
@@ -181,11 +178,6 @@ const BeamSectionModal = ({
                   //     ? supportedSectionData.Type
                   //     : "Rolled"
                   // }
-                  value={
-                    inputs.Type
-                      ? inputs.Type
-                      : "Rolled"
-                  }
                   // disabled
                 >
                   {["Rolled", "Welded"].map((item, index) => (
@@ -203,8 +195,7 @@ const BeamSectionModal = ({
                 name="source"
                 className="input-design-pref"
                 // value={supportedSectionData.Source || 0}
-                value={inputs.Source || "IS808 Rev"}
-                disabled
+                // disabled
                 style={readOnlyFontStyle}
               />
             </div>
@@ -216,7 +207,7 @@ const BeamSectionModal = ({
           <div className="sub-container">
             <h4>Dimensions</h4>
             <div className="input-cont">
-              <h5>Depth, D (mm)*</h5>
+              <h5>Long Leg, A (mm)*</h5>
               <Input
                 type="text"
                 name="depth"
@@ -227,7 +218,7 @@ const BeamSectionModal = ({
               />
             </div>
             <div className="input-cont">
-              <h5>Flange Width, B (mm)*</h5>
+              <h5>Short Leg, B (mm)*</h5>
               <Input
                 type="text"
                 name="flange-widht"
@@ -238,34 +229,12 @@ const BeamSectionModal = ({
               />
             </div>
             <div className="input-cont">
-              <h5>Flange Thickness, T (mm)*</h5>
+              <h5>Leg Thickness, t (mm)*</h5>
               <Input
                 type="text"
                 name="flange-thickness"
                 className="input-design-pref"
                 // value={supportedSectionData.T || 0}
-                // disabled
-                style={readOnlyFontStyle}
-              />
-            </div>
-            <div className="input-cont">
-              <h5>Web Thickness, t (mm)*</h5>
-              <Input
-                type="text"
-                name="web-thickness"
-                className="input-design-pref"
-                // value={supportedSectionData.tw || 0}
-                // disabled
-                style={readOnlyFontStyle}
-              />
-            </div>
-            <div className="input-cont">
-              <h5>Flange Slope, a (deg.)*</h5>
-              <Input
-                type="text"
-                name="flange-slope"
-                className="input-design-pref"
-                // value={supportedSectionData.FlangeSlope || 0}
                 // disabled
                 style={readOnlyFontStyle}
               />
@@ -316,6 +285,26 @@ const BeamSectionModal = ({
               />
             </div>
             <div className="input-cont">
+              <h5>Cz(cm)</h5>
+              <Input
+                type="text"
+                name="depth"
+                className="input-design-pref"
+                // value={supportingSectionData.R2 || 0}
+                style={readOnlyFontStyle}
+              />
+            </div>
+            <div className="input-cont">
+              <h5>Cz(cm)</h5>
+              <Input
+                type="text"
+                name="depth"
+                className="input-design-pref"
+                // value={supportingSectionData.R2 || 0}
+                style={readOnlyFontStyle}
+              />
+            </div>
+            <div className="input-cont">
               <h5>2nd Moment of Area, Iz (cm⁴)</h5>
               <Input
                 type="text"
@@ -327,6 +316,26 @@ const BeamSectionModal = ({
             </div>
             <div className="input-cont">
               <h5>2nd Moment of Area, Iy (cm⁴)</h5>
+              <Input
+                type="text"
+                name="depth"
+                className="input-design-pref"
+                // value={supportingSectionData.R2 || 0}
+                style={readOnlyFontStyle}
+              />
+            </div>
+            <div className="input-cont">
+              <h5>2nd Moment of Area, Iu (cm⁴)</h5>
+              <Input
+                type="text"
+                name="depth"
+                className="input-design-pref"
+                // value={supportingSectionData.R2 || 0}
+                style={readOnlyFontStyle}
+              />
+            </div>
+            <div className="input-cont">
+              <h5>2nd Moment of Area, Iv (cm⁴)</h5>
               <Input
                 type="text"
                 name="depth"
@@ -355,6 +364,45 @@ const BeamSectionModal = ({
                 style={readOnlyFontStyle}
               />
             </div>
+          </div>
+        </div>
+
+        {/* Right Section (Image like SS-2) */}
+        <div className="col-right">  
+        <div className="section-image">
+          <img
+            // src={ISection}
+            src={equaldp}
+            alt="Section Diagram"
+            style={{ width: "100%", maxWidth: "320px" }}
+          />
+        </div>
+
+        {/* <div className="section-properties"> */}
+        <div className="sub-container" style={{width: "310px"}}>
+            <h4>Section Properties</h4>
+            <div className="input-cont">
+              <h5>Radius of Gyration, ru (cm)</h5>
+              <Input
+                type="text"
+                name="depth"
+                className="input-design-pref"
+                // value={supportingSectionData.R2 || 0}
+                style={readOnlyFontStyle}
+              />
+            </div>
+
+            <div className="input-cont">
+              <h5>Radius of Gyration, rv (cm)</h5>
+              <Input
+                type="text"
+                name="depth"
+                className="input-design-pref"
+                // value={supportingSectionData.R2 || 0}
+                style={readOnlyFontStyle}
+              />
+            </div>
+
             <div className="input-cont">
               <h5>Elastic Modulus, Zz (cm³)</h5>
               <Input
@@ -365,6 +413,7 @@ const BeamSectionModal = ({
                 style={readOnlyFontStyle}
               />
             </div>
+
             <div className="input-cont">
               <h5>Elastic Modulus, Zy (ccm³)</h5>
               <Input
@@ -375,23 +424,7 @@ const BeamSectionModal = ({
                 style={readOnlyFontStyle}
               />
             </div>
-          </div>
-        </div>
 
-        {/* Right Section (Image like SS-2) */}
-        <div className="col-right">  
-        <div className="section-image">
-          <img
-            // src={ISection}
-            src={Slope_Beam}
-            alt="Section Diagram"
-            style={{ width: "100%", maxWidth: "320px" }}
-          />
-        </div>
-
-        {/* <div className="section-properties"> */}
-        <div className="sub-container" style={{width: "310px"}}>
-            <h4>Section Properties</h4>
             <div className="input-cont">
               <h5>Plastic Modulus, Zpz (cm³)</h5>
               <Input
@@ -487,5 +520,4 @@ const BeamSectionModal = ({
   );
 };
 
-export default BeamSectionModal;
-
+export default CleatAngleSectionModal;

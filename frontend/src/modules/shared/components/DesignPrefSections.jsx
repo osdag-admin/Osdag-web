@@ -1,18 +1,25 @@
-import React, { useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import ColumnSectionModal from "./ColumnSectionModal";
 import BeamSectionModal from "./BeamSectionModal";
 import ConnectorSectionModal from "./ConnectorSectionModal";
+import CleatAngleSectionModal from "./CleatAngleSectionModal";
+import SeatedAngleSectionModal from "./SeatedAngleSectionModal";
+import AngleSectionModal from "./AngleSectionModal";
 import BoltSectionModal from "./BoltSectionModal";
+import BasePlateSectionModal from "./BasePlateSectionModal";
+import StiffenerSectionModal from "./StiffenerSectionModal";
+import AnchorBoltSectionModal from "./AnchorBoltSectionModal";
 import WeldSectionModal from "./WeldSectionModal";
 import DetailingSectionModal from "./DetailingSectionModal";
+import OptimizationSectionModal from "./OptimizationSectionModal";
 import DesignSectionModal from "./DesignSectionModal";
 import { Button, Modal } from "antd";
-import { MODULE_KEY_FIN_PLATE } from "../../../constants/DesignKeys";
+import { MODULE_KEY_FIN_PLATE, MODULE_KEY_CLEAT_ANGLE, MODULE_KEY_SEAT_ANGLE } from "../../../constants/DesignKeys";
 import { getDesignPrefConfig, getDesignPrefTabs } from "../config/designPrefModuleConfig";
 
 const DesignPrefSections = ({
-  module = MODULE_KEY_FIN_PLATE,
+  module,
   inputs,
   setInputs,
   selectedOption = null,
@@ -23,6 +30,8 @@ const DesignPrefSections = ({
 }) => {
   const designPrefConfig = getDesignPrefConfig(module);
   const tabs = getDesignPrefTabs(module);
+  console.log("tabs:", tabs)
+  console.log("inputs:", inputs)
 
   const [activeTab, setActiveTab] = useState(() => designPrefConfig.initialTabIndex);
   const { design_pref_defaults } = useContext(ModuleContext);
@@ -30,6 +39,8 @@ const DesignPrefSections = ({
   const [designPrefInputs, setDesignPrefInputs] = useState(() =>
     designPrefConfig.getInitialPrefs(inputs, module)
   );
+
+  const fileInputRef = useRef(null);
 
   const saveCoreInputs = () => {
     setInputs({ ...inputs, ...designPrefInputs });
@@ -52,6 +63,7 @@ const DesignPrefSections = ({
     <div>
       <div className="bloc-tabs" style={{ marginTop: "10px" }}>
         {tabs.map((item) => {
+          console.log('itemm:', item)
           return (
             <button
               key={item.id}
@@ -76,6 +88,7 @@ const DesignPrefSections = ({
         {activeTab === 0 && (
           <ColumnSectionModal
             module={module}
+            inputs={inputs}
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
@@ -84,13 +97,14 @@ const DesignPrefSections = ({
         {activeTab === 1 && (
           <BeamSectionModal
             module={module}
+            inputs={inputs}
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
           />
         )}
         {activeTab === 2 && (
-          <ConnectorSectionModal
+          <AngleSectionModal
             module={module}
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
@@ -98,6 +112,33 @@ const DesignPrefSections = ({
           />
         )}
         {activeTab === 3 && (
+            <ConnectorSectionModal
+              module={module}
+              designPrefInputs={designPrefInputs}
+              setDesignPrefInputs={setDesignPrefInputs}
+              isInputLocked={isInputLocked}
+            />
+          )}
+
+        {activeTab === 4 && (
+            <CleatAngleSectionModal
+              module={module}
+              designPrefInputs={designPrefInputs}
+              setDesignPrefInputs={setDesignPrefInputs}
+              isInputLocked={isInputLocked}
+            />
+          )}
+
+        {activeTab === 5 && (
+            <SeatedAngleSectionModal
+              module={module}
+              designPrefInputs={designPrefInputs}
+              setDesignPrefInputs={setDesignPrefInputs}
+              isInputLocked={isInputLocked}
+            />
+          )}
+     
+        {activeTab === 6 && (
           <BoltSectionModal
             module={module}
             designPrefInputs={designPrefInputs}
@@ -105,7 +146,31 @@ const DesignPrefSections = ({
             isInputLocked={isInputLocked}
           />
         )}
-        {activeTab === 4 && (
+        {activeTab === 7 && (
+          <BasePlateSectionModal
+            module={module}
+            designPrefInputs={designPrefInputs}
+            setDesignPrefInputs={setDesignPrefInputs}
+            isInputLocked={isInputLocked}
+          />
+        )}
+        {activeTab === 8 && (
+          <StiffenerSectionModal
+            module={module}
+            designPrefInputs={designPrefInputs}
+            setDesignPrefInputs={setDesignPrefInputs}
+            isInputLocked={isInputLocked}
+          />
+        )}
+        {activeTab === 9 && (
+          <AnchorBoltSectionModal
+            module={module}
+            designPrefInputs={designPrefInputs}
+            setDesignPrefInputs={setDesignPrefInputs}
+            isInputLocked={isInputLocked}
+          />
+        )}
+        {activeTab === 10 && (
           <WeldSectionModal
             module={module}
             inputs={inputs}
@@ -115,7 +180,7 @@ const DesignPrefSections = ({
             isInputLocked={isInputLocked}
           />
         )}
-        {activeTab === 5 && (
+        {activeTab === 11 && (
           <DetailingSectionModal
             module={module}
             designPrefInputs={designPrefInputs}
@@ -123,7 +188,15 @@ const DesignPrefSections = ({
             isInputLocked={isInputLocked}
           />
         )}
-        {activeTab === 6 && (
+        {activeTab === 12 && (
+          <OptimizationSectionModal
+            module={module}
+            designPrefInputs={designPrefInputs}
+            setDesignPrefInputs={setDesignPrefInputs}
+            isInputLocked={isInputLocked}
+          />
+        )}
+        {activeTab === 13 && (
           <DesignSectionModal
             module={module}
             designPrefInputs={designPrefInputs}
@@ -132,20 +205,23 @@ const DesignPrefSections = ({
           />
         )}
       </div>
+      
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          marginTop: "1rem",
+          justifyContent: "center",
+          gap: "10px",   // controls closeness
+          marginTop: "8px",
         }}
       >
-        <Button onClick={resetInputs} disabled={isInputLocked}>
-          Reset
+        <Button onClick={resetInputs} disabled={isInputLocked} style={{ minWidth: "140px" }}>
+          Defaults
         </Button>
         <Button
           type="primary"
           onClick={saveCoreInputs}
           disabled={isInputLocked}
+          style={{ minWidth: "140px" }}
         >
           Save
         </Button>

@@ -25,6 +25,7 @@ Specifying whether the members are exposed to corrosive influences, here, only a
     <>
       <div className="Connector-col-beam-cont">
         <div>
+          <h4>Inputs</h4>
           <div className="sub-container">
             <div className="input-cont">
               <h5>Edge Preparation Method</h5>
@@ -119,6 +120,7 @@ Specifying whether the members are exposed to corrosive influences, here, only a
         </div>
         {/*  */}
         <div>
+          <h4>Description</h4>
           <div className="sub-container">
             <Input.TextArea
               rows={25}

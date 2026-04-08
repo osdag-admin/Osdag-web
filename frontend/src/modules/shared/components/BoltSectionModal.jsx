@@ -2,7 +2,7 @@ import { Select, Input } from "antd";
 
 const { Option } = Select;
 
-const SIMPLE_CONNECTION_BOLT_MODULES = ["Butt Joint Bolted", "Lap Joint Bolted"];
+// const PLATED_CONNECTION_BOLT_MODULES = ["Butt Joint Bolted", "Lap Joint Bolted"];
 
 const BoltSectionModal = ({
   module,
@@ -10,8 +10,8 @@ const BoltSectionModal = ({
   setDesignPrefInputs,
   isInputLocked,
 }) => {
-  const isSimpleConnection =
-    module && SIMPLE_CONNECTION_BOLT_MODULES.includes(module);
+  // const isPlatedConnection =
+  //   module && PLATED_CONNECTION_BOLT_MODULES.includes(module);
 
   const Bolt_discription = `
 IS 800 Table 20 Typical Average Values for Coefficient of Friction (µf)
@@ -34,58 +34,59 @@ xii) Red lead painted surface     0.1
   return (
     <>
       <div className="Connector-col-beam-cont">
-        <div>
+        {/* Left Section */}
+        <div className="connector-left">
+          <h4>Inputs</h4>
           <div className="sub-container">
-            <div className="input-cont">
-              <h5>Bolt tensioning type</h5>
-              <div>
-                <Select
-                  disabled={isInputLocked}
-                  style={{ width: "200px", height: "25px", fontSize: "12px" }}
-                  value={designPrefInputs.bolt_tension_type}
-                  onSelect={(value) =>
-                    setDesignPrefInputs({
-                      ...designPrefInputs,
-                      bolt_tension_type: value,
-                    })
-                  }
-                >
-                  <Option value="Pre-tensioned">Pre-tensioned</Option>
-                  <Option value="Non Pre-tensioned">Non Pre-tensioned</Option>
-                </Select>
+              <div className="input-cont">
+                <h5>Type *</h5>
+                <div>
+                  <Select
+                    disabled={isInputLocked}
+                    style={{ width: "132px", height: "25px", fontSize: "12px" }}
+                    value={designPrefInputs.bolt_tension_type}
+                    onSelect={(value) =>
+                      setDesignPrefInputs({
+                        ...designPrefInputs,
+                        bolt_tension_type: value,
+                      })
+                    }
+                  >
+                    <Option value="Pre-tensioned">Pre-tensioned</Option>
+                    <Option value="Non Pre-tensioned">Non Pre-tensioned</Option>
+                  </Select>
+                </div>
               </div>
-            </div>
-            <div className="input-cont">
-              <h5>Hole Type</h5>
-              <div>
-                <Select
-                  disabled={isInputLocked}
-                  style={{ width: "200px", height: "25px", fontSize: "12px" }}
-                  value={designPrefInputs.bolt_hole_type}
-                  onSelect={(value) =>
-                    setDesignPrefInputs({
-                      ...designPrefInputs,
-                      bolt_hole_type: value,
-                    })
-                  }
-                >
-                  <Option value="Standard">Standard</Option>
-                  <Option value="Over-Sized">Over-Sized</Option>
-                </Select>
+              <div className="input-cont">
+                <h5>Hole Type</h5>
+                <div>
+                  <Select
+                    disabled={isInputLocked}
+                    style={{ width: "132px", height: "25px", fontSize: "12px" }}
+                    value={designPrefInputs.bolt_hole_type}
+                    onSelect={(value) =>
+                      setDesignPrefInputs({
+                        ...designPrefInputs,
+                        bolt_hole_type: value,
+                      })
+                    }
+                  >
+                    <Option value="Standard">Standard</Option>
+                    <Option value="Over-Sized">Over-Sized</Option>
+                  </Select>
+                </div>
               </div>
-            </div>
-            <div className="input-cont">
-              <h5>
-                Slip Factor, (µ
-                <span style={{ verticalAlign: "sub", fontSize: "smaller" }}>
-                  f
-                </span>
-                )
-              </h5>
-              <div>
+              <div className="input-cont">
+                <h5>
+                  Slip Factor, (µ
+                  <span style={{ verticalAlign: "sub", fontSize: "smaller" }}>
+                    f
+                  </span>
+                  )
+                </h5>
                 <Select
                   disabled={isInputLocked}
-                  style={{ width: "200px", height: "25px", fontSize: "12px" }}
+                  style={{ width: "132px", height: "25px", fontSize: "12px" }}
                   value={designPrefInputs.bolt_slip_factor}
                   onSelect={(value) =>
                     setDesignPrefInputs({
@@ -103,28 +104,29 @@ xii) Red lead painted surface     0.1
               </div>
             </div>
           </div>
-        </div>
-        {!isSimpleConnection && (
-          <>
-            <div>
+          {/* Right Section */}
+          {/* {!isPlatedConnection && ( */}
+            <div className="connector-right">
+              <h4>Description</h4>
+
               <div className="sub-container">
                 <Input.TextArea
-                  rows={20}
-                  cols={150}
+                  rows={18}
                   value={Bolt_discription}
                   readOnly
                 />
               </div>
             </div>
-            <div>
-              <b>
-                Note: If slip is permitted under the design load design the bolt
-                as a bearing bolt select corresponding bolt grade.
-              </b>
-            </div>
-          </>
-        )}
-      </div>
+          {/* )} */}
+        </div>
+        
+      {/* Bottom Note */}
+      <div className="connector-note">
+         
+            NOTE: If slip is permitted under the design load, design the bolt
+            as a bearing bolt select corresponding bolt grade.
+          
+        </div>
     </>
   );
 };

@@ -545,7 +545,7 @@ export const ModuleProvider = ({ children }) => {
   //   // Initialize with FinPlate module for backward compatibility
   //   populateModule(MODULE_KEY_FIN_PLATE, dispatch);
   // }, []);
-
+  console.log(state.materialList);
   return (
     <ModuleContext.Provider
       value={{
