@@ -41,7 +41,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
   const [output, setOutput] = useState(null);
   const [logs, setLogs] = useState(null);
   const [displayOutput, setDisplayOutput] = useState(false);
-  const [loading, setLoading] = useState(false); // Keep for backward compatibility
+  const [loading, setLoading] = useState(false);
   const [renderBoolean, setRenderBoolean] = useState(false);
   const [modelKey, setModelKey] = useState(0);
   const [screenshotTrigger, setScreenshotTrigger] = useState(false);
@@ -113,7 +113,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
       message: 'Running design calculations...',
       error: null
     });
-    setLoading(true); // Keep for backward compatibility
+    setLoading(true);
 
     try {
       const designResult = await service.createDesign(moduleConfig.designType, param);
@@ -331,32 +331,20 @@ export const useDesignSubmission = (service, moduleConfig) => {
     displayOutput,
     setDisplayOutput,
     // ui/flags
-    loading, // Keep for backward compatibility
+    loading,
     renderBoolean,
     modelKey,
     setModelKey,
     // status state machine
     status,
     setStatus,
-    // backward compatibility (deprecated, use status instead)
-    isLoadingModalVisible: status.step !== DESIGN_STATUS.IDLE,
-    setIsLoadingModalVisible: (visible) => {
-      if (!visible) {
-        setStatus({ step: DESIGN_STATUS.IDLE, message: '', error: null });
-      }
-    },
-    loadingStage: status.message,
-    setLoadingStage: (message) => {
-      if (status.step !== DESIGN_STATUS.IDLE) {
-        setStatus({ ...status, message });
-      }
-    },
     screenshotTrigger,
     setScreenshotTrigger,
     // helpers
     resetDesignState,
     clearDesignResults,
     loadSavedOutputs,
+    loadOutputs,
   };
 };
 

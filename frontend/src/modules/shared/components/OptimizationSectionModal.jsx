@@ -16,7 +16,7 @@ const OptimizationSectionModal = ({
   setDesignPrefInputs,
   isInputLocked,
 }) => {
-  const { materialList, conn_material_details, getMaterialDetails } =
+  const { materialList, conn_material_details, manageDesignPreferences } =
     useContext(ModuleContext);
   const [showModal, setShowModal] = useState(false);
 
@@ -24,7 +24,10 @@ const OptimizationSectionModal = ({
     const material = materialList.filter(
       (value) => value.Grade === designPrefInputs.supported_material
     );
-    getMaterialDetails({ data: material[0], type: "connector" });
+    manageDesignPreferences("material_update", {
+      materialType: "connector",
+      materialData: material[0],
+    });
   }, []);
 
   const handleMaterialChange = (value) => {
@@ -38,7 +41,10 @@ const OptimizationSectionModal = ({
       connector_material: material.Grade,
     });
 
-    getMaterialDetails({ data: material, type: "connector" });
+    manageDesignPreferences("material_update", {
+      materialType: "connector",
+      materialData: material,
+    });
   };
 
 

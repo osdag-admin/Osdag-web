@@ -11,12 +11,9 @@ const CustomSectionModal = ({
   type = "supported",
 }) => {
   const {
-    getMaterialDetails,
-    getColumnBeamMaterialList,
-    currentModuleName,
-    updateMaterialListFromCaches,
+    manageDesignPreferences,
+    manageCustomMaterials,
     materialList,
-    addCustomMaterialToDB,
   } = useContext(ModuleContext);
   const [inputs, setInputs] = useState({
     fy_20: "",
@@ -93,8 +90,11 @@ const CustomSectionModal = ({
         setInputValues({ ...inputValues, connector_material: grade });
       }
 
-      getMaterialDetails({ material: grade, type: type, data: customSectionData });
-      updateMaterialListFromCaches();
+      manageDesignPreferences("material_update", {
+        materialType: type,
+        materialData: customSectionData,
+      });
+      manageCustomMaterials("sync");
     } else {
       handleCustomMat();
     }
@@ -110,13 +110,13 @@ const CustomSectionModal = ({
   };
 
   const handleCustomMat = async () => {
-    const data = await addCustomMaterialToDB(
+    const result = await manageCustomMaterials("add", {
       grade,
       inputs,
-      "Column-Flange-Beam-Web",
-      type
-    );
-    if (data.success === true) {
+      connectivity: "Column-Flange-Beam-Web",
+      type,
+    });
+    if (result?.success === true) {
       if (type === "supported") {
         setInputValues({ ...inputValues, supported_material: grade });
       } else if (type === "supporting") {
@@ -124,8 +124,11 @@ const CustomSectionModal = ({
       } else if (type === "connector") {
         setInputValues({ ...inputValues, connector_material: grade });
       }
-      getMaterialDetails({ material: grade, type: type, data });
-      updateMaterialListFromCaches();
+      manageDesignPreferences("material_update", {
+        materialType: type,
+        materialData: result?.data?.data ?? result?.data ?? { Grade: grade, ...inputs },
+      });
+      manageCustomMaterials("sync");
     }
   };
 
