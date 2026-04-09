@@ -14,7 +14,7 @@ import WeldSectionModal from "./WeldSectionModal";
 import DetailingSectionModal from "./DetailingSectionModal";
 import OptimizationSectionModal from "./OptimizationSectionModal";
 import DesignSectionModal from "./DesignSectionModal";
-import { Button, Modal } from "antd";
+import { Button, Modal, Spin } from "antd";
 import { MODULE_KEY_FIN_PLATE, MODULE_KEY_CLEAT_ANGLE, MODULE_KEY_SEAT_ANGLE } from "../../../constants/DesignKeys";
 import { getDesignPrefConfig, getDesignPrefTabs } from "../config/designPrefModuleConfig";
 
@@ -32,7 +32,7 @@ const DesignPrefSections = ({
   const tabs = getDesignPrefTabs(module);
   console.log("tabs:", tabs)
   console.log("inputs:", inputs)
-
+  const { materialList } = useContext(ModuleContext);
   const [activeTab, setActiveTab] = useState(() => designPrefConfig.initialTabIndex);
   const { design_pref_defaults } = useContext(ModuleContext);
 
@@ -85,6 +85,12 @@ const DesignPrefSections = ({
         })}
       </div>
       <div className="design-pref-cont">
+      {!materialList?.length ? (
+        <div style={{ textAlign: "center", padding: "20px" }}>
+        <Spin size="small" /> 
+      </div>
+    ) : (
+      <>
         {activeTab === 0 && (
           <ColumnSectionModal
             module={module}
@@ -204,6 +210,8 @@ const DesignPrefSections = ({
             isInputLocked={isInputLocked}
           />
         )}
+        </>
+      )}
       </div>
       
       <div

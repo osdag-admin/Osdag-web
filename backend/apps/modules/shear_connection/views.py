@@ -232,6 +232,7 @@ class ShearConnectionViewSet(viewsets.ViewSet):
                     'boltDiameterList': bolt_diameters(),
                     'propertyClassList': property_classes,
                 }
+                print("data:", data)
                 return Response(data, status=status.HTTP_200_OK)
 
             if slug == 'end-plate':

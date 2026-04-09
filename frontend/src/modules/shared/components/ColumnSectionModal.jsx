@@ -76,7 +76,7 @@ const ColumnSectionModal = ({
             <div className="input-cont">
               <h5>Material *</h5>
               <div>
-                <Select
+                {/* <Select
                   disabled={isInputLocked}
                   style={{ width: "132px", height: "25px", fontSize: "12px" }}
                   // value={designPrefInputs.supporting_material}
@@ -111,7 +111,42 @@ const ColumnSectionModal = ({
                       </Option>
                     );
                   })}
-                </Select>
+                </Select> */}
+                <Select
+  disabled={isInputLocked}
+  style={{ width: "132px", height: "25px", fontSize: "12px" }}
+  value={
+    materialList.find(
+      (item) => item.Grade === (inputs.connector_material || inputs.material)
+    )?.id
+  }
+  onSelect={(value) => {
+    if (isInputLocked) return;
+    if (value === -1) {
+      setShowModal(true);
+      return;
+    }
+    const material = materialList.find((item) => item.id === value);
+    setDesignPrefInputs({
+      ...designPrefInputs,
+      supporting_material: material.Grade,
+    });
+    manageDesignPreferences("section_update", {
+      id: 1,
+      materialValue: material.Grade,
+    });
+    manageDesignPreferences("material_update", {
+      materialType: "supporting",
+      materialData: material,
+    });
+  }}
+>
+  {materialList.map((item) => (
+    <Option key={item.id} value={item.id}>
+      {item.Grade}
+    </Option>
+  ))}
+</Select>
               </div>
             </div>
             <div className="input-cont">
