@@ -17,22 +17,26 @@ const AnchorBoltSectionModal = ({
   designPrefInputs,
   setDesignPrefInputs,
   isInputLocked,
+  materialList: materialsFromParent,
 }) => {
   const {
-    materialList,
+    materialList: ctxMaterialList,
     manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
+  const materials = materialsFromParent ?? ctxMaterialList ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const material = materialList.filter(
+    const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
-    manageDesignPreferences("material_update", {
-      materialType: "supporting",
-      materialData: material[0],
-    });
+    if (material[0]) {
+      manageDesignPreferences("material_update", {
+        materialType: "supporting",
+        materialData: material[0],
+      });
+    }
   }, []);
 
   const handleDownload = () => {
@@ -228,6 +232,7 @@ const AnchorBoltSectionModal = ({
         setInputValues={setDesignPrefInputs}
         inputValues={designPrefInputs}
         type="supporting"
+        materialList={materials}
       />
 
       

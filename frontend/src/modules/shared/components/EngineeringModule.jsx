@@ -1443,6 +1443,7 @@ export const EngineeringModule = ({
               confirmationModal={confirmationModal}
               setConfirmationModal={setConfirmationModal}
               isInputLocked={isInputLocked}
+              moduleMaterialList={materialList}
             />
           </Modal>
         )

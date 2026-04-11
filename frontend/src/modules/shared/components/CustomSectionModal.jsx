@@ -9,12 +9,14 @@ const CustomSectionModal = ({
   setInputValues,
   inputValues,
   type = "supported",
+  materialList: materialsFromParent,
 }) => {
   const {
     manageDesignPreferences,
     manageCustomMaterials,
-    materialList,
+    materialList: ctxMaterialList,
   } = useContext(ModuleContext);
+  const materialList = materialsFromParent ?? ctxMaterialList ?? [];
   const [inputs, setInputs] = useState({
     fy_20: "",
     fy_20_40: "",

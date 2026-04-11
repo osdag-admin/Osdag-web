@@ -17,22 +17,26 @@ const AngleSectionModal = ({
   designPrefInputs,
   setDesignPrefInputs,
   isInputLocked,
+  materialList: materialsFromParent,
 }) => {
   const {
-    materialList,
+    materialList: ctxMaterialList,
     manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
+  const materials = materialsFromParent ?? ctxMaterialList ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const material = materialList.filter(
+    const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
-    manageDesignPreferences("material_update", {
-      materialType: "supporting",
-      materialData: material[0],
-    });
+    if (material[0]) {
+      manageDesignPreferences("material_update", {
+        materialType: "supporting",
+        materialData: material[0],
+      });
+    }
   }, []);
 
   const handleDownload = () => {
@@ -115,9 +119,8 @@ const AngleSectionModal = ({
                       setShowModal(true);
                       return;
                     }
-                    const material = materialList.find(
-                      (item) => item.id === value
-                    );
+                    const material = materials.find((item) => item.Grade === value);
+                    if (!material) return;
                     setDesignPrefInputs({
                       ...designPrefInputs,
                       supporting_material: material.Grade,
@@ -132,9 +135,9 @@ const AngleSectionModal = ({
                     });
                   }}
                 >
-                  {materialList.map((item) => {
+                  {materials.map((item) => {
                     return (
-                      <Option key={item.id} value={item.id}>
+                      <Option key={item.id} value={item.Grade}>
                         {item.Grade}
                       </Option>
                     );
@@ -566,6 +569,7 @@ const AngleSectionModal = ({
         setInputValues={setDesignPrefInputs}
         inputValues={designPrefInputs}
         type="supporting"
+        materialList={materials}
       />
 
       

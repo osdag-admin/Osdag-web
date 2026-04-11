@@ -22,23 +22,26 @@ const ColumnSectionModal = ({
   setDesignPrefInputs,
   isInputLocked,
   inputs,
+  materialList: materialsFromParent,
 }) => {
   const {
-    materialList,
+    materialList: ctxMaterialList,
     manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
+  const materials = materialsFromParent ?? ctxMaterialList ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    console.log("designPrefInputs:", designPrefInputs);
-    const material = materialList.filter(
+    const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
-    manageDesignPreferences("material_update", {
-      materialType: "supporting",
-      materialData: material[0],
-    });
+    if (material[0]) {
+      manageDesignPreferences("material_update", {
+        materialType: "supporting",
+        materialData: material[0],
+      });
+    }
   }, []);
 
   const handleDownload = () => {
@@ -79,17 +82,20 @@ const ColumnSectionModal = ({
                 <Select
                   disabled={isInputLocked}
                   style={{ width: "132px", height: "25px", fontSize: "12px" }}
-                  // value={designPrefInputs.supporting_material}
-                  value={inputs.connector_material || inputs.material}
+                  value={
+                    designPrefInputs.supporting_material ??
+                    inputs.supporting_material ??
+                    inputs.connector_material ??
+                    inputs.material
+                  }
                   onSelect={(value) => {
                     if (isInputLocked) return;
                     if (value === -1) {
                       setShowModal(true);
                       return;
                     }
-                    const material = materialList.find(
-                      (item) => item.id === value
-                    );
+                    const material = materials.find((item) => item.Grade === value);
+                    if (!material) return;
                     setDesignPrefInputs({
                       ...designPrefInputs,
                       supporting_material: material.Grade,
@@ -104,9 +110,9 @@ const ColumnSectionModal = ({
                     });
                   }}
                 >
-                  {materialList.map((item) => {
+                  {materials.map((item) => {
                     return (
-                      <Option key={item.id} value={item.id}>
+                      <Option key={item.id} value={item.Grade}>
                         {item.Grade}
                       </Option>
                     );
@@ -512,6 +518,7 @@ const ColumnSectionModal = ({
         setInputValues={setDesignPrefInputs}
         inputValues={designPrefInputs}
         type="supporting"
+        materialList={materials}
       />
 
       

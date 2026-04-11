@@ -17,22 +17,26 @@ const CleatAngleSectionModal = ({
   designPrefInputs,
   setDesignPrefInputs,
   isInputLocked,
+  materialList: materialsFromParent,
 }) => {
   const {
-    materialList,
+    materialList: ctxMaterialList,
     manageDesignPreferences,
     supported_material_details,
   } = useContext(ModuleContext);
+  const materials = materialsFromParent ?? ctxMaterialList ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const material = materialList.filter(
+    const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supported_material
     );
-    manageDesignPreferences("material_update", {
-      materialType: "supported",
-      materialData: material[0],
-    });
+    if (material[0]) {
+      manageDesignPreferences("material_update", {
+        materialType: "supported",
+        materialData: material[0],
+      });
+    }
   }, []);
 
   const handleDownload = () => {
@@ -77,25 +81,24 @@ const CleatAngleSectionModal = ({
                       setShowModal(true);
                       return;
                     }
-                    const material = materialList.find(
-                      (item) => item.id === value
-                    );
+                    const material = materials.find((item) => item.Grade === value);
+                    if (!material) return;
                     setDesignPrefInputs({
                       ...designPrefInputs,
                       supported_material: material.Grade,
-                    }),
-                      manageDesignPreferences("section_update", {
-                        id: 2,
-                        materialValue: material.Grade,
-                      });
+                    });
+                    manageDesignPreferences("section_update", {
+                      id: 2,
+                      materialValue: material.Grade,
+                    });
                     manageDesignPreferences("material_update", {
                       materialType: "supported",
                       materialData: material,
                     });
                   }}
                 >
-                  {materialList.map((item, index) => (
-                    <Option key={index} value={item.id}>
+                  {materials.map((item, index) => (
+                    <Option key={item.id ?? index} value={item.Grade}>
                       {item.Grade}
                     </Option>
                   ))}
@@ -523,6 +526,7 @@ const CleatAngleSectionModal = ({
         setInputValues={setDesignPrefInputs}
         inputValues={designPrefInputs}
         type="supported"
+        materialList={materials}
       />
     </>
   );
