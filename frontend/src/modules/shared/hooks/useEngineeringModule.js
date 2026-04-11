@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
 import { useEngineeringService } from "./useEngineeringService";
@@ -58,7 +58,15 @@ export const useEngineeringModule = (moduleConfig) => {
   // ===================================================================
   // MODULE DATA - Loaded via dedicated hook
   // ===================================================================
-  const moduleData = useModuleData(getModuleData, moduleConfig.designType);
+  const [optionsRefetchKey, setOptionsRefetchKey] = useState(0);
+  const moduleData = useModuleData(
+    getModuleData,
+    moduleConfig.designType,
+    optionsRefetchKey
+  );
+  const refetchModuleOptions = useCallback(() => {
+    setOptionsRefetchKey((k) => k + 1);
+  }, []);
 
   // Extract module data for easy access
   const {
@@ -268,6 +276,7 @@ export const useEngineeringModule = (moduleConfig) => {
     // ===================================================================
     service,                    // Full service object for advanced usage
 
+    refetchModuleOptions,
 
     // ===================================================================
     // COMPONENT STATE - Internal hook state

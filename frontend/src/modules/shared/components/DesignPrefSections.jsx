@@ -28,6 +28,8 @@ const DesignPrefSections = ({
   isInputLocked,
   /** From `useEngineeringModule`; `ModuleContext.materialList` is empty on engineering-module routes. */
   moduleMaterialList,
+  isGuest = false,
+  onRefetchModuleOptions,
 }) => {
   const designPrefConfig = getDesignPrefConfig(module);
   const tabs = getDesignPrefTabs(module);
@@ -90,6 +92,8 @@ const DesignPrefSections = ({
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
             materialList={materialListForModals}
+            isGuest={isGuest}
+            onRefetchModuleOptions={onRefetchModuleOptions}
           />
         )}
         {activeTab === 1 && (
@@ -100,15 +104,20 @@ const DesignPrefSections = ({
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
             materialList={materialListForModals}
+            isGuest={isGuest}
+            onRefetchModuleOptions={onRefetchModuleOptions}
           />
         )}
         {activeTab === 2 && (
           <AngleSectionModal
             module={module}
+            inputs={inputs}
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
             materialList={materialListForModals}
+            isGuest={isGuest}
+            onRefetchModuleOptions={onRefetchModuleOptions}
           />
         )}
         {activeTab === 3 && (
@@ -124,20 +133,26 @@ const DesignPrefSections = ({
         {activeTab === 4 && (
             <CleatAngleSectionModal
               module={module}
+              inputs={inputs}
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
               materialList={materialListForModals}
+              isGuest={isGuest}
+              onRefetchModuleOptions={onRefetchModuleOptions}
             />
           )}
 
         {activeTab === 5 && (
             <SeatedAngleSectionModal
               module={module}
+              inputs={inputs}
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
               materialList={materialListForModals}
+              isGuest={isGuest}
+              onRefetchModuleOptions={onRefetchModuleOptions}
             />
           )}
      

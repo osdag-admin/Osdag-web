@@ -10,6 +10,7 @@ const CustomSectionModal = ({
   inputValues,
   type = "supported",
   materialList: materialsFromParent,
+  onRefetchModuleOptions,
 }) => {
   const {
     manageDesignPreferences,
@@ -131,6 +132,7 @@ const CustomSectionModal = ({
         materialData: result?.data?.data ?? result?.data ?? { Grade: grade, ...inputs },
       });
       manageCustomMaterials("sync");
+      onRefetchModuleOptions?.();
     }
   };
 

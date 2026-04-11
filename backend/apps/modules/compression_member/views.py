@@ -11,6 +11,7 @@ from .registry import CompressionMemberRegistry
 from apps.core.utils.module_helpers import handle_design_request
 from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from apps.core.models import Material, CustomMaterials, Bolt, Angles, Channels, Beams, Columns, RHS, SHS, CHS
+from apps.sections.options_merge import merge_user_sections_into_options
 
 
 class CompressionMemberViewSet(viewsets.ViewSet):
@@ -175,7 +176,10 @@ class CompressionMemberViewSet(viewsets.ViewSet):
                     'loadTypeList': load_type_list,
                     'connLocationList': conn_location_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             if slug == 'axially-loaded-column':
                 section_profile_list = [
@@ -209,7 +213,10 @@ class CompressionMemberViewSet(viewsets.ViewSet):
                     "channelList": [str(x) for x in channels_list],
                     "endConditionList": end_condition_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             return Response({'error': f'Sub-module {slug} not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as exc:

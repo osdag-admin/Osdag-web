@@ -75,7 +75,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.core.apps.OsdagConfig',  # New core app (replaces osdag)
+    'apps.core.apps.OsdagConfig', 
+    'apps.sections.apps.SectionsConfig',  # User-owned custom section catalog (UserCustom*)
     'apps.modules.shear_connection',  # Shear connection parent module
     'apps.modules.moment_connection',  # Moment connection parent module
     'apps.modules.tension_member',  # Tension member parent module
@@ -162,6 +163,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
+    # Used by ScopedRateThrottle on section import/export views only.
+    'DEFAULT_THROTTLE_RATES': {
+        'sections_import': '60/hour',
+        'sections_export': '120/hour',
+    },
 }
 
 

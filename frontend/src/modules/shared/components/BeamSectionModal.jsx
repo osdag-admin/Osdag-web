@@ -3,6 +3,7 @@ import { ModuleContext } from "../../../context/ModuleState";
 import { Input, Select, Button } from "antd";
 import Slope_Beam from "../../../assets/Slope_Beam.png";
 import CustomSectionModal from "./CustomSectionModal";
+import SectionTabToolbar from "./SectionTabToolbar";
 
 const { Option } = Select;
 
@@ -19,6 +20,8 @@ const BeamSectionModal = ({
   isInputLocked,
   inputs,
   materialList: materialsFromParent,
+  isGuest,
+  onRefetchModuleOptions,
 }) => {
   const {
     materialList: ctxMaterialList,
@@ -40,15 +43,15 @@ const BeamSectionModal = ({
     }
   }, []);
 
-  const handleDownload = () => {
-    const fileName = "Columns_Details.xlsx";
-  
-    const link = document.createElement("a");
-    link.href = `/downloads/${fileName}`;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleClearSectionTab = () => {
+    setDesignPrefInputs((prev) => ({
+      ...prev,
+      supported_material:
+        inputs.supported_material ??
+        inputs.connector_material ??
+        inputs.material ??
+        prev.supported_material,
+    }));
   };
 
   return (
@@ -452,44 +455,13 @@ const BeamSectionModal = ({
           </div>
           </div>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          padding: "5px",
-          borderTop: "1px solid #ccc",
-        }}
-      >
-        <Button style={{ minWidth: "140px" }}>Add</Button>
-        <Button style={{ minWidth: "140px" }}>Clear</Button>
-        <Button
-          style={{ minWidth: "140px" }}
-          onClick={() => document.getElementById("import-xlsx").click()}
-        >
-          Import xlsx file
-        </Button>
-        <input
-          id="import-xlsx"
-          type="file"
-          accept=".xlsx"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              console.log("Selected file:", file);
-              const formData = new FormData();
-              formData.append("file", file);
-              fetch("/api/upload", { method: "POST", body: formData });
-            }
-          }}
-        />
-        <Button
-          style={{ minWidth: "140px" }}
-          onClick={handleDownload}
-        >
-          Download xlsx file
-        </Button>
-        </div>
+      <SectionTabToolbar
+        sectionTable="Beams"
+        isInputLocked={isInputLocked}
+        isGuest={isGuest}
+        onRefetchModuleOptions={onRefetchModuleOptions}
+        onClearTab={handleClearSectionTab}
+      />
       <CustomSectionModal
         showModal={showModal}
         setShowModal={setShowModal}
@@ -497,6 +469,7 @@ const BeamSectionModal = ({
         inputValues={designPrefInputs}
         type="supported"
         materialList={materials}
+        onRefetchModuleOptions={onRefetchModuleOptions}
       />
     </>
   );

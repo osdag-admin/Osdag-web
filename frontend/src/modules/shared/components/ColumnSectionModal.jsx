@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import { Input, Select, Button } from "antd";
 import CustomSectionModal from "./CustomSectionModal";
+import SectionTabToolbar from "./SectionTabToolbar";
 import Slope_Beam from "../../../assets/Slope_Beam.png";
 // Parallel_Beam.png
 import sectionData from "./additional_inputs.json";
@@ -23,6 +24,8 @@ const ColumnSectionModal = ({
   isInputLocked,
   inputs,
   materialList: materialsFromParent,
+  isGuest,
+  onRefetchModuleOptions,
 }) => {
   const {
     materialList: ctxMaterialList,
@@ -44,17 +47,16 @@ const ColumnSectionModal = ({
     }
   }, []);
 
-  const handleDownload = () => {
-    const fileName = "Columns_Details.xlsx";
-  
-    const link = document.createElement("a");
-    link.href = `/downloads/${fileName}`;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleClearSectionTab = () => {
+    setDesignPrefInputs((prev) => ({
+      ...prev,
+      supporting_material:
+        inputs.supporting_material ??
+        inputs.connector_material ??
+        inputs.material ??
+        prev.supporting_material,
+    }));
   };
-
 
   return (
     <>
@@ -474,44 +476,13 @@ const ColumnSectionModal = ({
         </div>
               </div>
       
-              <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          padding: "5px",
-          borderTop: "1px solid #ccc",
-        }}
-      >
-        <Button style={{ minWidth: "140px" }}>Add</Button>
-        <Button style={{ minWidth: "140px" }}>Clear</Button>
-        <Button
-          style={{ minWidth: "140px" }}
-          onClick={() => document.getElementById("import-xlsx").click()}
-        >
-          Import xlsx file
-        </Button>
-        <input
-          id="import-xlsx"
-          type="file"
-          accept=".xlsx"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              console.log("Selected file:", file);
-              const formData = new FormData();
-              formData.append("file", file);
-              fetch("/api/upload", { method: "POST", body: formData });
-            }
-          }}
-        />
-        <Button
-          style={{ minWidth: "140px" }}
-          onClick={handleDownload}
-        >
-          Download xlsx file
-        </Button>
-        </div>
+      <SectionTabToolbar
+        sectionTable="Columns"
+        isInputLocked={isInputLocked}
+        isGuest={isGuest}
+        onRefetchModuleOptions={onRefetchModuleOptions}
+        onClearTab={handleClearSectionTab}
+      />
       <CustomSectionModal
         showModal={showModal}
         setShowModal={setShowModal}
@@ -519,6 +490,7 @@ const ColumnSectionModal = ({
         inputValues={designPrefInputs}
         type="supporting"
         materialList={materials}
+        onRefetchModuleOptions={onRefetchModuleOptions}
       />
 
       

@@ -45,14 +45,28 @@ class MaterialDetails(APIView):
         material = request.GET.get("material")
         # Session validation removed - now stateless
 
+        material_qs = Material.objects.all()
+        if material:
+            material_qs = material_qs.filter(Grade=material)
+        material_details = list(material_qs.values())
+
+        custom_materials = []
         if email:
-            custom_materials = CustomMaterials.object.filter(email=email).values()
+            custom_materials = list(
+                CustomMaterials.objects.filter(email=email).values()
+            )
 
-        material_details = Material.objects.filter(Grade=material).values()
+        # Same ordering as module `options` `material_list()`: standard, then custom, then sentinel.
+        material_list = material_details + custom_materials + [{"id": -1, "Grade": "Custom"}]
 
-        total_materials = custom_materials + material_details
-
-        return Response({"material_details": material_details }, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "materialList": material_list,
+                "material_details": material_details,
+                "custom_materials": custom_materials,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request):
         email = request.data.get("email")

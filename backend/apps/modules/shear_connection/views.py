@@ -14,6 +14,7 @@ from apps.core.utils.module_helpers import handle_design_request
 from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from apps.core.models import Columns, Beams, Bolt, Material, CustomMaterials, Angles
 from apps.core.api.design.report_customization_api import generate_initial_report_core
+from apps.sections.options_merge import merge_user_sections_into_options
 
 
 SHEAR_REPORT_MODULE_ID_MAP = {
@@ -220,7 +221,10 @@ class ShearConnectionViewSet(viewsets.ViewSet):
                     'propertyClassList': property_classes,
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             if slug == 'cleat-angle':
                 data = {
@@ -232,8 +236,10 @@ class ShearConnectionViewSet(viewsets.ViewSet):
                     'boltDiameterList': bolt_diameters(),
                     'propertyClassList': property_classes,
                 }
-                print("data:", data)
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             if slug == 'end-plate':
                 data = {
@@ -246,7 +252,10 @@ class ShearConnectionViewSet(viewsets.ViewSet):
                     'propertyClassList': property_classes,
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             if slug == 'seated-angle':
                 data = {
@@ -261,7 +270,10 @@ class ShearConnectionViewSet(viewsets.ViewSet):
                     'propertyClassList': property_classes,
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             return Response({'error': f'Sub-module {slug} not found'}, status=404)
         except Exception as e:

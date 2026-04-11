@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.core.urls')),  # Core app URLs (replaces osdag.urls)
+    path('api/sections/', include('apps.sections.urls')),
     path('api/modules/', include('apps.modules.urls')),  # All module URLs aggregated here
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
