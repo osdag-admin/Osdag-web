@@ -13,6 +13,7 @@ from apps.core.utils.module_helpers import handle_design_request
 from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from apps.core.models import Columns, Beams, Bolt, Material, CustomMaterials
 from apps.core.api.design.report_customization_api import generate_initial_report_core
+from apps.sections.options_merge import merge_user_sections_into_options
 
 
 # Mapping from moment-connection submodule slug to legacy report module_id
@@ -191,7 +192,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     'propertyClassList': property_classes,
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             # Beam-to-Beam Cover Plate Welded
             if slug == 'beam-beam-cover-plate-welded':
@@ -208,7 +212,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     ],
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             # Beam-Beam End Plate
             if slug == 'beam-beam-end-plate':
@@ -219,7 +226,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     'propertyClassList': property_classes,
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             # Beam-Column End Plate
             if slug == 'beam-column-end-plate':
@@ -233,7 +243,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     'thicknessList': thickness_list,
                     'boltTypeList': ['Bearing Bolt', 'Friction Grip Bolt'],
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             # Column-to-Column Cover Plate Bolted
             if slug == 'column-column-cover-plate-bolted':
@@ -244,7 +257,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     'propertyClassList': property_classes,
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             # Column-to-Column Cover Plate Welded
             if slug == 'column-column-cover-plate-welded':
@@ -261,7 +277,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     ],
                     'thicknessList': thickness_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             # Column-to-Column End Plate
             if slug == 'column-column-end-plate':
@@ -273,7 +292,10 @@ class MomentConnectionViewSet(viewsets.ViewSet):
                     'thicknessList': thickness_list,
                     'boltTypeList': ['Bearing Bolt', 'Friction Grip Bolt'],
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             return Response({'error': f'Sub-module {slug} not found'}, status=404)
         except Exception as e:

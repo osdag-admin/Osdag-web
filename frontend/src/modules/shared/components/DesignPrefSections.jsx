@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import ColumnSectionModal from "./ColumnSectionModal";
 import BeamSectionModal from "./BeamSectionModal";
@@ -15,7 +15,6 @@ import DetailingSectionModal from "./DetailingSectionModal";
 import OptimizationSectionModal from "./OptimizationSectionModal";
 import DesignSectionModal from "./DesignSectionModal";
 import { Button, Modal } from "antd";
-import { MODULE_KEY_FIN_PLATE, MODULE_KEY_CLEAT_ANGLE, MODULE_KEY_SEAT_ANGLE } from "../../../constants/DesignKeys";
 import { getDesignPrefConfig, getDesignPrefTabs } from "../config/designPrefModuleConfig";
 
 const DesignPrefSections = ({
@@ -27,20 +26,21 @@ const DesignPrefSections = ({
   setConfirmationModal,
   confirmationModal,
   isInputLocked,
+  /** From `useEngineeringModule`; `ModuleContext.materialList` is empty on engineering-module routes. */
+  moduleMaterialList,
+  isGuest = false,
+  onRefetchModuleOptions,
 }) => {
   const designPrefConfig = getDesignPrefConfig(module);
   const tabs = getDesignPrefTabs(module);
-  console.log("tabs:", tabs)
-  console.log("inputs:", inputs)
-  const { materialList } = useContext(ModuleContext);
+  const ctx = useContext(ModuleContext);
+  const materialListForModals = moduleMaterialList ?? ctx.materialList ?? [];
   const [activeTab, setActiveTab] = useState(() => designPrefConfig.initialTabIndex);
-  const { design_pref_defaults } = useContext(ModuleContext);
+  const { design_pref_defaults } = ctx;
 
   const [designPrefInputs, setDesignPrefInputs] = useState(() =>
     designPrefConfig.getInitialPrefs(inputs, module)
   );
-
-  const fileInputRef = useRef(null);
 
   const saveCoreInputs = () => {
     setInputs({ ...inputs, ...designPrefInputs });
@@ -63,7 +63,6 @@ const DesignPrefSections = ({
     <div>
       <div className="bloc-tabs" style={{ marginTop: "10px" }}>
         {tabs.map((item) => {
-          console.log('itemm:', item)
           return (
             <button
               key={item.id}
@@ -92,6 +91,9 @@ const DesignPrefSections = ({
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
+            isGuest={isGuest}
+            onRefetchModuleOptions={onRefetchModuleOptions}
           />
         )}
         {activeTab === 1 && (
@@ -101,14 +103,21 @@ const DesignPrefSections = ({
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
+            isGuest={isGuest}
+            onRefetchModuleOptions={onRefetchModuleOptions}
           />
         )}
         {activeTab === 2 && (
           <AngleSectionModal
             module={module}
+            inputs={inputs}
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
+            isGuest={isGuest}
+            onRefetchModuleOptions={onRefetchModuleOptions}
           />
         )}
         {activeTab === 3 && (
@@ -117,24 +126,33 @@ const DesignPrefSections = ({
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
+              materialList={materialListForModals}
             />
           )}
 
         {activeTab === 4 && (
             <CleatAngleSectionModal
               module={module}
+              inputs={inputs}
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
+              materialList={materialListForModals}
+              isGuest={isGuest}
+              onRefetchModuleOptions={onRefetchModuleOptions}
             />
           )}
 
         {activeTab === 5 && (
             <SeatedAngleSectionModal
               module={module}
+              inputs={inputs}
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
+              materialList={materialListForModals}
+              isGuest={isGuest}
+              onRefetchModuleOptions={onRefetchModuleOptions}
             />
           )}
      
@@ -152,6 +170,7 @@ const DesignPrefSections = ({
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
           />
         )}
         {activeTab === 8 && (
@@ -160,6 +179,7 @@ const DesignPrefSections = ({
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
           />
         )}
         {activeTab === 9 && (
@@ -168,6 +188,7 @@ const DesignPrefSections = ({
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
           />
         )}
         {activeTab === 10 && (
@@ -194,6 +215,7 @@ const DesignPrefSections = ({
             designPrefInputs={designPrefInputs}
             setDesignPrefInputs={setDesignPrefInputs}
             isInputLocked={isInputLocked}
+            materialList={materialListForModals}
           />
         )}
         {activeTab === 13 && (

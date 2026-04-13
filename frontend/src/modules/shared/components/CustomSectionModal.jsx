@@ -9,12 +9,15 @@ const CustomSectionModal = ({
   setInputValues,
   inputValues,
   type = "supported",
+  materialList: materialsFromParent,
+  onRefetchModuleOptions,
 }) => {
   const {
     manageDesignPreferences,
     manageCustomMaterials,
-    materialList,
+    materialList: ctxMaterialList,
   } = useContext(ModuleContext);
+  const materialList = materialsFromParent ?? ctxMaterialList ?? [];
   const [inputs, setInputs] = useState({
     fy_20: "",
     fy_20_40: "",
@@ -129,6 +132,7 @@ const CustomSectionModal = ({
         materialData: result?.data?.data ?? result?.data ?? { Grade: grade, ...inputs },
       });
       manageCustomMaterials("sync");
+      onRefetchModuleOptions?.();
     }
   };
 

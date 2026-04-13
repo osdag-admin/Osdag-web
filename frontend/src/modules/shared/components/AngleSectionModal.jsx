@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import { Input, Select, Button } from "antd";
 import CustomSectionModal from "./CustomSectionModal";
+import SectionTabToolbar from "./SectionTabToolbar";
 import equaldp from "../../../assets/equaldp.png";
 
 const { Option } = Select;
@@ -14,36 +15,49 @@ const readOnlyFontStyle = {
 
 const AngleSectionModal = ({
   supportingSectionData,
+  inputs,
   designPrefInputs,
   setDesignPrefInputs,
   isInputLocked,
+  materialList: materialsFromParent,
+  isGuest,
+  onRefetchModuleOptions,
 }) => {
   const {
-    materialList,
+    materialList: ctxMaterialList,
     manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
+  const materials = materialsFromParent ?? ctxMaterialList ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const material = materialList.filter(
+    const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
-    manageDesignPreferences("material_update", {
-      materialType: "supporting",
-      materialData: material[0],
-    });
+    if (material[0]) {
+      manageDesignPreferences("material_update", {
+        materialType: "supporting",
+        materialData: material[0],
+      });
+    }
   }, []);
 
-  const handleDownload = () => {
-    const fileName = "Columns_Details.xlsx";
-  
-    const link = document.createElement("a");
-    link.href = `/downloads/${fileName}`;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleClearSectionTab = () => {
+    setDesignPrefInputs((prev) => ({
+      ...prev,
+      supporting_material:
+        inputs?.supporting_material ??
+        inputs?.connector_material ??
+        inputs?.material ??
+        prev.supporting_material,
+      Designation:
+        inputs?.member_designation ??
+        inputs?.angle_section ??
+        inputs?.column_section ??
+        inputs?.beam_section ??
+        prev.Designation,
+    }));
   };
 
   return (
@@ -115,9 +129,8 @@ const AngleSectionModal = ({
                       setShowModal(true);
                       return;
                     }
-                    const material = materialList.find(
-                      (item) => item.id === value
-                    );
+                    const material = materials.find((item) => item.Grade === value);
+                    if (!material) return;
                     setDesignPrefInputs({
                       ...designPrefInputs,
                       supporting_material: material.Grade,
@@ -132,9 +145,9 @@ const AngleSectionModal = ({
                     });
                   }}
                 >
-                  {materialList.map((item) => {
+                  {materials.map((item) => {
                     return (
-                      <Option key={item.id} value={item.id}>
+                      <Option key={item.id} value={item.Grade}>
                         {item.Grade}
                       </Option>
                     );
@@ -522,50 +535,21 @@ const AngleSectionModal = ({
           </div>
               </div>
       
-              <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          padding: "5px",
-          borderTop: "1px solid #ccc",
-        }}
-      >
-        <Button style={{ minWidth: "140px" }}>Add</Button>
-        <Button style={{ minWidth: "140px" }}>Clear</Button>
-        <Button
-          style={{ minWidth: "140px" }}
-          onClick={() => document.getElementById("import-xlsx").click()}
-        >
-          Import xlsx file
-        </Button>
-        <input
-          id="import-xlsx"
-          type="file"
-          accept=".xlsx"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              console.log("Selected file:", file);
-              const formData = new FormData();
-              formData.append("file", file);
-              fetch("/api/upload", { method: "POST", body: formData });
-            }
-          }}
-        />
-        <Button
-          style={{ minWidth: "140px" }}
-          onClick={handleDownload}
-        >
-          Download xlsx file
-        </Button>
-        </div>
+      <SectionTabToolbar
+        sectionTable="Angles"
+        isInputLocked={isInputLocked}
+        isGuest={isGuest}
+        onRefetchModuleOptions={onRefetchModuleOptions}
+        onClearTab={handleClearSectionTab}
+      />
       <CustomSectionModal
         showModal={showModal}
         setShowModal={setShowModal}
         setInputValues={setDesignPrefInputs}
         inputValues={designPrefInputs}
         type="supporting"
+        materialList={materials}
+        onRefetchModuleOptions={onRefetchModuleOptions}
       />
 
       

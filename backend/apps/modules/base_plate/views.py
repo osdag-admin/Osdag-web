@@ -14,6 +14,7 @@ from apps.core.utils.cad_helpers import generate_cad_models, get_default_section
 
 from .service import BasePlateService
 from .adapter import create_from_input
+from apps.sections.options_merge import merge_user_sections_into_options
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +106,10 @@ class BasePlateViewSet(viewsets.ViewSet):
                 'weldTypeList': WELD_TYPE_LIST,
                 'anchorTypeList': ANCHOR_TYPE_LIST,
             }
-            return Response(data, status=status.HTTP_200_OK)
+            return Response(
+                merge_user_sections_into_options(request, data),
+                status=status.HTTP_200_OK,
+            )
         except Exception as exc:
             logger.exception("Base plate options failed")
             return Response({'error': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

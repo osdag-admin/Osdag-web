@@ -2,6 +2,18 @@ import { Select, Input } from "antd";
 
 const { Option } = Select;
 
+const BOLT_SLIP_FACTOR_OPTIONS = [
+  "0.2",
+  "0.5",
+  "0.1",
+  "0.25",
+  "0.3",
+  "0.33",
+  "0.48",
+  "0.52",
+  "0.55",
+];
+
 // const PLATED_CONNECTION_BOLT_MODULES = ["Butt Joint Bolted", "Lap Joint Bolted"];
 
 const BoltSectionModal = ({
@@ -95,11 +107,11 @@ xii) Red lead painted surface     0.1
                     })
                   }
                 >
-                  <Option value="0.5">0.5</Option>
-                  <Option value="0.3">0.3</Option>
-                  <Option value="0.2">0.2</Option>
-                  <Option value="0.25">0.25</Option>
-                  <Option value="0.1">0.1</Option>
+                  {BOLT_SLIP_FACTOR_OPTIONS.map((v) => (
+                    <Option key={v} value={v}>
+                      {v}
+                    </Option>
+                  ))}
                 </Select>
               </div>
             </div>

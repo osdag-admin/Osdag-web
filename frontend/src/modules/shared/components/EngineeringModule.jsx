@@ -139,6 +139,7 @@ export const EngineeringModule = ({
     // Direct access to module context reset
     resetModuleState,
     contextData,
+    refetchModuleOptions,
   } = useEngineeringModule(moduleConfig);
 
   const [showResetButton, setShowResetButton] = useState(false);
@@ -1443,6 +1444,9 @@ export const EngineeringModule = ({
               confirmationModal={confirmationModal}
               setConfirmationModal={setConfirmationModal}
               isInputLocked={isInputLocked}
+              moduleMaterialList={materialList}
+              isGuest={isGuestUser()}
+              onRefetchModuleOptions={refetchModuleOptions}
             />
           </Modal>
         )

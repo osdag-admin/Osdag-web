@@ -12,6 +12,7 @@ from apps.core.utils.module_helpers import handle_design_request
 from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from apps.core.models import Material, CustomMaterials, Bolt, Angles, Channels
 from apps.core.api.design.report_customization_api import generate_initial_report_core
+from apps.sections.options_merge import merge_user_sections_into_options
 
 
 # Mapping from tension-member slug to legacy report module_id
@@ -221,7 +222,10 @@ class TensionMemberViewSet(viewsets.ViewSet):
                     'edgeTypeList': edge_type_list,
                     'corrosiveInfluencesList': corrosive_influences_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             if slug == 'welded':
                 data = {
@@ -235,7 +239,10 @@ class TensionMemberViewSet(viewsets.ViewSet):
                     'edgeTypeList': edge_type_list,
                     'corrosiveInfluencesList': corrosive_influences_list,
                 }
-                return Response(data, status=status.HTTP_200_OK)
+                return Response(
+                    merge_user_sections_into_options(request, data),
+                    status=status.HTTP_200_OK,
+                )
 
             return Response({'error': f'Sub-module {slug} not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as exc:

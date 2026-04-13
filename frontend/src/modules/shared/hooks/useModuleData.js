@@ -5,7 +5,7 @@ import { MODULE_DATA_LIST_KEYS, API_KEY_MAP } from "../constants/moduleDataKeys"
  * Data layer for engineering modules.
  * Fetches dropdown/static lists for the given design type.
  */
-export const useModuleData = (getModuleData, designType) => {
+export const useModuleData = (getModuleData, designType, optionsRefetchKey = 0) => {
   const initialState = MODULE_DATA_LIST_KEYS.reduce((acc, k) => ({ ...acc, [k]: [] }), {});
   const [moduleData, setModuleData] = useState(initialState);
 
@@ -29,7 +29,7 @@ export const useModuleData = (getModuleData, designType) => {
     };
 
     loadModuleData();
-  }, [designType, getModuleData]);
+  }, [designType, getModuleData, optionsRefetchKey]);
 
   return moduleData;
 };

@@ -58,6 +58,22 @@ export const DESIGN_PREFERENCES = {
 };
 
 // ----------------------
+// User custom sections (catalog-shaped rows; auth for mutations)
+// ----------------------
+export const SECTIONS = {
+  /** GET xlsx — query: table=Columns|Beams|Angles|Channels */
+  template: `${API_PREFIX}sections/template/`,
+  /** POST multipart — form: file, table */
+  import: `${API_PREFIX}sections/import/`,
+  /** POST JSON — query: table=… */
+  customCreate: `${API_PREFIX}sections/custom/`,
+  /** GET xlsx — query: table=…&scope=user */
+  export: `${API_PREFIX}sections/export/`,
+  /** DELETE — query: table=…&designation=… */
+  customDelete: `${API_PREFIX}sections/custom/`,
+};
+
+// ----------------------
 // Auth / Firebase sync
 // ----------------------
 export const AUTH = {

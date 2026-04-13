@@ -15,19 +15,23 @@ const OptimizationSectionModal = ({
   designPrefInputs,
   setDesignPrefInputs,
   isInputLocked,
+  materialList: materialsFromParent,
 }) => {
-  const { materialList, conn_material_details, manageDesignPreferences } =
+  const { materialList: ctxMaterialList, conn_material_details, manageDesignPreferences } =
     useContext(ModuleContext);
+  const materials = materialsFromParent ?? ctxMaterialList ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const material = materialList.filter(
-      (value) => value.Grade === designPrefInputs.supported_material
+    const material = materials.filter(
+      (value) => value.Grade === designPrefInputs.connector_material
     );
-    manageDesignPreferences("material_update", {
-      materialType: "connector",
-      materialData: material[0],
-    });
+    if (material[0]) {
+      manageDesignPreferences("material_update", {
+        materialType: "connector",
+        materialData: material[0],
+      });
+    }
   }, []);
 
   const handleMaterialChange = (value) => {
@@ -35,7 +39,7 @@ const OptimizationSectionModal = ({
       setShowModal(true);
       return;
     }
-    const material = materialList.find((item) => item.id === value);
+    const material = materials.find((item) => item.Grade === value);
     setDesignPrefInputs({
       ...designPrefInputs,
       connector_material: material.Grade,
@@ -65,9 +69,9 @@ const OptimizationSectionModal = ({
                   handleMaterialChange(value);
                 }}
               >
-                {materialList.map((item, index) => {
+                {materials.map((item, index) => {
                   return (
-                    <Option key={index} value={item.id}>
+                    <Option key={item.id ?? index} value={item.Grade}>
                       {item.Grade}
                     </Option>
                   );
@@ -269,6 +273,7 @@ const OptimizationSectionModal = ({
         setInputValues={setDesignPrefInputs}
         inputValues={designPrefInputs}
         type="connector"
+        materialList={materials}
       />
     </div>
   );

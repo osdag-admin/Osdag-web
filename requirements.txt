@@ -42,7 +42,7 @@ proto-plus==1.26.1
 protobuf==6.33.0
 
 # --- File / Data handling ---
-openpyxl
+# openpyxl pinned in "Excel / Office helpers" (>=3.1.2 for NumPy 2 / no np.float)
 XlsxWriter==1.2.8
 pandas==2.3.3
 pdfkit==0.6.1
@@ -85,8 +85,7 @@ rsa==4.9.1
 
 # --- Excel / Office helpers ---
 et-xmlfile==1.1.0
-openpyxl==3.0.3
-XlsxWriter==1.2.8
+openpyxl==3.1.5
 
 # --- Logging / Debugging / Misc ---
 loguru
