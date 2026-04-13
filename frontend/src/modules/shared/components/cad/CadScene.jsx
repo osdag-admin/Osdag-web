@@ -1,8 +1,7 @@
 import { OrbitControls } from "@react-three/drei";
 import { useMemo, useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import AxisHelperWidget from "./widgets/AxisHelperWidget";  
-import ViewCubeWidget from "./widgets/ViewCubeWidget";
+import { ViewCube } from "@geo-mpy/viewcube-react";
 import { getPartColor, getRenderOrder } from "./config/partConfig";
 import { createViewMapper } from "./config/viewMappings";
 import { SceneManager } from "./SceneManager";
@@ -60,6 +59,7 @@ function CadScene({
   });
 
 
+  const modelRef = useRef();
 
   useEffect(() => {
     const handleAction = (e) => {
@@ -129,26 +129,28 @@ function CadScene({
       <pointLight position={[-10, -10, -10]} intensity={1.5} />
       <spotLight position={[0, 10, 0]} angle={0.3} penumbra={1} intensity={1.0} />
 
-      <ViewCubeWidget controlsRef={controlsRef} />
+      <ViewCube controlsRef={controlsRef} focusRef={modelRef} placement="top-right" showPan={false} showRotate={false} showZoom={false}/>
 
-      <SceneManager
-        modelPaths={modelPaths}
-        activeViews={activeViews}
-        modelPosition={modelPosition}
-        modelScale={modelScale}
-        modelRotation={[Math.PI / -2, 0, 0]}
-        orthographicView={orthographicView}
-        hoverDict={hoverDict}
-        onHoverLabel={onHoverLabel}
-        onHoverEnd={onHoverEnd}
-        moduleCadConfig={moduleCadConfig}
-        shouldShowPart={shouldShowPart}
-        getPartRenderOrder={getPartRenderOrder}
-        getColorForPart={getColorForPart}
-        isColumnWebBeamWeb={isColumnWebBeamWeb}
-        GRID_VIEWS={GRID_VIEWS}
-        primaryView={primaryView}
-      />
+      <group ref={modelRef}>
+        <SceneManager
+          modelPaths={modelPaths}
+          activeViews={activeViews}
+          modelPosition={modelPosition}
+          modelScale={modelScale}
+          modelRotation={[Math.PI / -2, 0, 0]}
+          orthographicView={orthographicView}
+          hoverDict={hoverDict}
+          onHoverLabel={onHoverLabel}
+          onHoverEnd={onHoverEnd}
+          moduleCadConfig={moduleCadConfig}
+          shouldShowPart={shouldShowPart}
+          getPartRenderOrder={getPartRenderOrder}
+          getColorForPart={getColorForPart}
+          isColumnWebBeamWeb={isColumnWebBeamWeb}
+          GRID_VIEWS={GRID_VIEWS}
+          primaryView={primaryView}
+        />
+      </group>
 
       <OrbitControls ref={controlsRef} enableDamping={false} enableRotate={true} autoRotate={isAutoRotate} target={target} />
     </group>
