@@ -159,7 +159,7 @@ function CadScene({
         />
       </group>
 
-
+    
       <OrbitControls ref={controlsRef} enableDamping={false} enableRotate={true} autoRotate={isAutoRotate} target={target} />
 
     </group>
