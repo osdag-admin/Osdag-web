@@ -17,9 +17,9 @@ const OptimizationSectionModal = ({
   isInputLocked,
   materialList: materialsFromParent,
 }) => {
-  const { materialList: ctxMaterialList, conn_material_details, manageDesignPreferences } =
+  const { conn_material_details, manageDesignPreferences } =
     useContext(ModuleContext);
-  const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  const materials = materialsFromParent ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

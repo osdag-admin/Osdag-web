@@ -24,11 +24,10 @@ const CleatAngleSectionModal = ({
   onRefetchModuleOptions,
 }) => {
   const {
-    materialList: ctxMaterialList,
     manageDesignPreferences,
     supported_material_details,
   } = useContext(ModuleContext);
-  const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  const materials = materialsFromParent ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

@@ -28,11 +28,14 @@ const ColumnSectionModal = ({
   onRefetchModuleOptions,
 }) => {
   const {
-    materialList: ctxMaterialList,
+    // materialList: ctxMaterialList,
     manageDesignPreferences,
     supporting_material_details,
+    conn_material_details,
   } = useContext(ModuleContext);
-  const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  const materials = materialsFromParent ?? [];
+  console.log("designPrefInputs:", designPrefInputs);
+  // console.log("materials1:", materials);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -47,16 +50,65 @@ const ColumnSectionModal = ({
     }
   }, []);
 
-  const handleClearSectionTab = () => {
-    setDesignPrefInputs((prev) => ({
-      ...prev,
-      supporting_material:
-        inputs.supporting_material ??
-        inputs.connector_material ??
-        inputs.material ??
-        prev.supporting_material,
-    }));
+  const handleMaterialChange = (value) => {
+    if (value === -1) {
+      setShowModal(true);
+      return;
+    }
+    const material = materials.find((item) => item.Grade === value);
+    if (!material) return;
+    setDesignPrefInputs({
+      ...designPrefInputs,
+      supporting_material: material.Grade,
+    });
+
+    manageDesignPreferences("material_update", {
+      materialType: "supporting",
+      materialData: material,
+    });
   };
+
+  // const handleClearSectionTab = () => {
+  //   setDesignPrefInputs((prev) => ({
+  //     ...prev,
+  //     supporting_material:
+  //       inputs.supporting_material ??
+  //       inputs.connector_material ??
+  //       inputs.material ??
+  //       prev.supporting_material,
+  //   }));
+  // };
+  const handleClearSectionTab = () => {
+  setDesignPrefInputs((prev) => ({
+    ...prev,
+
+    // Preserve material related values (like desktop)
+    supporting_material:
+      inputs.supporting_material ??
+      inputs.connector_material ??
+      inputs.material ??
+      prev.supporting_material,
+
+    material:
+      inputs.material ?? prev.material,
+
+    connector_material:
+      inputs.connector_material ?? prev.connector_material,
+
+    // Preserve mechanical properties
+    fu: prev.fu,
+    fy: prev.fy,
+    E: prev.E,
+    G: prev.G,
+    poisson_ratio: prev.poisson_ratio,
+    thermal_expansion: prev.thermal_expansion,
+
+    // Preserve type/source
+    type: prev.type,
+    source: prev.source,
+  }));
+  alert("rr");
+};
 
   return (
     <>
@@ -78,18 +130,19 @@ const ColumnSectionModal = ({
           </div>
           <div className="sub-container">
             <h4>Mechanical Properties</h4>
-            <div className="input-cont">
+            {/* <div className="input-cont">
               <h5>Material *</h5>
               <div>
                 <Select
                   disabled={isInputLocked}
                   style={{ width: "132px", height: "25px", fontSize: "12px" }}
-                  value={
-                    designPrefInputs.supporting_material ??
-                    inputs.supporting_material ??
-                    inputs.connector_material ??
-                    inputs.material
-                  }
+                  // value={
+                  //   designPrefInputs.supporting_material ??
+                  //   inputs.supporting_material ??
+                  //   inputs.connector_material ??
+                  //   inputs.material
+                  // }
+                  value={designPrefInputs.supporting_material || ""}
                   onSelect={(value) => {
                     if (isInputLocked) return;
                     if (value === -1) {
@@ -122,7 +175,29 @@ const ColumnSectionModal = ({
                 </Select>
                 
               </div>
+            </div> */}
+            <div className="input-cont">
+            <h5>Material *</h5>
+            <div>
+              <Select
+                disabled={isInputLocked}
+                style={{ width: "134px", height: "25px", fontSize: "12px" }}
+                // value={designPrefInputs.connector_material}
+                value={designPrefInputs.supporting_material || ""}
+                onSelect={(value) => {
+                  handleMaterialChange(value);
+                }}
+              >
+                {materials.map((item, index) => {
+                  return (
+                    <Option key={`columnSection-${item.id??index}`} value={item.Grade}>
+                      {item.Grade}
+                    </Option>
+                  );
+                })}
+              </Select>
             </div>
+          </div>
             <div className="input-cont">
               <h5>Ultimate Strength, Fu (MPa)</h5>
               <Input
@@ -134,7 +209,7 @@ const ColumnSectionModal = ({
                     ? supporting_material_details[0].Ultimate_Tensile_Stress
                     : 0
                 }
-                disabled
+                // disabled
                 style={readOnlyFontStyle}
               />
             </div>

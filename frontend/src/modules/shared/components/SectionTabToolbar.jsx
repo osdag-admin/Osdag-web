@@ -46,17 +46,6 @@ export default function SectionTabToolbar({
     }
   }, [sectionTable]);
 
-  const runExport = useCallback(async () => {
-    setBusy("export");
-    try {
-      await downloadSectionExportUser(sectionTable);
-      message.success("Export downloaded.");
-    } catch (e) {
-      message.error(e?.message || "Export failed.");
-    } finally {
-      setBusy(null);
-    }
-  }, [sectionTable]);
 
   const handleAddClick = useCallback(() => {
     Modal.info({
@@ -141,16 +130,9 @@ export default function SectionTabToolbar({
         loading={busy === "template"}
         onClick={() => void runTemplateDownload()}
       >
-        Download template
+        Download xlsx file
       </Button>
-      <Button
-        style={{ minWidth: "140px" }}
-        disabled={!canMutateSections || Boolean(busy)}
-        loading={busy === "export"}
-        onClick={() => void runExport()}
-      >
-        Export my sections
-      </Button>
+      
     </div>
   );
 }

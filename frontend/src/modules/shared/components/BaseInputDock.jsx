@@ -48,6 +48,7 @@ export const BaseInputDock = ({
         <div className="flex items-center gap-2 mr-4">
           <button
             onClick={() => setDesignPrefModalStatus(true)}
+            // onClick={openDesignPrefModal}
             className="flex items-center justify-center px-4 py-1 my-2 text-sm font-medium rounded-lg transition-colors bg-osdag-green text-white hover:bg-osdag-dark-green"
             title={isInputLocked ? 'Unlock the dock to edit additional inputs' : 'Open Additional Inputs'}
           >

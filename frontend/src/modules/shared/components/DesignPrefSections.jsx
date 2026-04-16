@@ -31,6 +31,7 @@ const DesignPrefSections = ({
   isGuest = false,
   onRefetchModuleOptions,
 }) => {
+  console.log("inputs:", inputs); 
   const designPrefConfig = getDesignPrefConfig(module);
   const tabs = getDesignPrefTabs(module);
   const ctx = useContext(ModuleContext);
@@ -41,6 +42,30 @@ const DesignPrefSections = ({
   const [designPrefInputs, setDesignPrefInputs] = useState(() =>
     designPrefConfig.getInitialPrefs(inputs, module)
   );
+
+  const prevMaterialRef = useRef();
+
+  useEffect(() => {
+    console.log("inputs**:", inputs.material)
+    if (
+      inputs.material
+    ) {
+      // const updated = syncDesignPrefMaterialsFromBase(
+      //   inputs.material,
+      //   materialListForModals,
+      //   designPrefInputs
+      // );
+      alert("aa");
+      const stateObj = {...designPrefInputs, connector_material:inputs.connector_material, supported_material:inputs.connector_material, supporting_material:inputs.connector_material }
+      // if (updated) {
+
+        setDesignPrefInputs(stateObj);
+      // }
+
+
+      // prevMaterialRef.current = inputs.material;
+    }
+  }, [inputs.material]);
 
   const fileInputRef = useRef(null);
 
@@ -60,6 +85,16 @@ const DesignPrefSections = ({
     setConfirmationModal(false);
     setDesignPrefModalStatus(false);
   };
+  
+  const handleDiscard = () => {
+    setConfirmationModal(false);
+    setDesignPrefModalStatus(false);
+  };
+
+  // const openDesignPrefModal = () => {
+  //   setDesignPrefInputs({ ...inputs }); // populate saved values
+  //   setDesignPrefModalStatus(true);
+  // };
 
   return (
     <div>
@@ -252,7 +287,7 @@ const DesignPrefSections = ({
           Save
         </Button>
       </div>
-      <Modal
+      {/* <Modal
         title="Design Preferences"
         open={confirmationModal}
         onOk={saveCoreInputs}
@@ -261,7 +296,25 @@ const DesignPrefSections = ({
         cancelText="No"
       >
         <p>Do you want to apply these design preferences to the current design?</p>
-      </Modal>
+      </Modal> */}
+      <Modal
+  title="Save"
+  open={confirmationModal}
+  onCancel={() => setConfirmationModal(false)}
+  footer={[
+    <Button key="yes" type="primary" onClick={saveCoreInputs}>
+      Yes
+    </Button>,
+    <Button key="no" onClick={handleDiscard}>
+      No
+    </Button>,
+    <Button key="cancel" onClick={() => setConfirmationModal(false)}>
+      Cancel
+    </Button>,
+  ]}
+>
+  Do you want to save the changes?
+</Modal>
     </div>
   );
 };

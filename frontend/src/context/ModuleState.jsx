@@ -71,6 +71,7 @@ let initialValue = {
     supported_material: "E 165 (Fe 290)",
     supporting_material: "E 165 (Fe 290)",
     connector_material: "E 250 (Fe 410 W)A",
+    material: "E 250 (Fe 410 W)A",
     bolt_tension_type: "Pre-tensioned",
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
@@ -473,6 +474,45 @@ export const ModuleProvider = ({ children }) => {
     }
   }, []);
 
+  const syncDesignPrefMaterialsFromBase = (
+    baseMaterialGrade,
+    materialList,
+    currentDesignPrefInputs
+  ) => {
+    if (!baseMaterialGrade || !materialList?.length) return;
+  
+    const selectedMaterial = materialList.find(
+      (mat) => mat.Grade === baseMaterialGrade
+    );
+  
+    if (!selectedMaterial) return;
+  
+    const updatedInputs = {
+      ...currentDesignPrefInputs,
+      supporting_material: baseMaterialGrade,
+      supported_material: baseMaterialGrade,
+      connector_material: baseMaterialGrade,
+    };
+  
+    // Dispatch updates
+    manageDesignPreferences("material_update", {
+      materialType: "supporting",
+      materialData: selectedMaterial,
+    });
+  
+    manageDesignPreferences("material_update", {
+      materialType: "supported",
+      materialData: selectedMaterial,
+    });
+  
+    manageDesignPreferences("material_update", {
+      materialType: "connector",
+      materialData: selectedMaterial,
+    });
+  
+    return updatedInputs;
+  };
+
   // ===================================================================
   // 5. DESIGN PREFERENCES - Manage Design Settings
   // ===================================================================
@@ -561,6 +601,7 @@ export const ModuleProvider = ({ children }) => {
         thicknessList: state.thicknessList,
         propertyClassList: state.propertyClassList,
         boltTypeList: state.boltTypeList,
+        syncDesignPrefMaterialsFromBase: state.syncDesignPrefMaterialsFromBase,
 
         // Structural elements
         beamList: state.beamList,

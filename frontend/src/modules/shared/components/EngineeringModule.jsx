@@ -142,6 +142,14 @@ export const EngineeringModule = ({
     refetchModuleOptions,
   } = useEngineeringModule(moduleConfig);
 
+  const { handleCreateProject, projectCreationModal } = useProjectCreation({
+    inputs,
+    extraState,
+    allSelected,
+    contextData,
+    moduleConfig,
+  });
+
   const [showResetButton, setShowResetButton] = useState(false);
   const [showInputDock, setShowInputDock] = useState(true);
   const [showOutputDock, setShowOutputDock] = useState(false);
@@ -195,7 +203,7 @@ export const EngineeringModule = ({
       } else if (opt === "Show top view") {
         setSelectedCameraView("ZX");
       }
-
+      alert("QQ");
       // Cleanup graphicOption to allow consecutive clicks of same option
       setInputs(prev => {
         const next = { ...prev };
@@ -1464,11 +1472,20 @@ export const EngineeringModule = ({
           <Modal
             title="Additional Inputs"
             open={designPrefModalStatus}
-            onCancel={() =>
-              isInputLocked
-                ? setDesignPrefModalStatus(false)   // Directly close
-                : setConfirmationModal(true)        // Ask confirmation
-            }
+            // onCancel={() =>
+            //   isInputLocked
+            //     ? setDesignPrefModalStatus(false)   // Directly close
+            //     : setConfirmationModal(true)        // Ask confirmation
+            // }
+            onCancel={(e) => {
+              e.preventDefault(); // prevent default close
+          
+              if (isInputLocked) {
+                setDesignPrefModalStatus(false); // Direct close when locked
+              } else {
+                setConfirmationModal(true); // Show Save dialog
+              }
+            }}
             footer={null}
             minWidth={isMobile ? undefined : 1200}
             width={isMobile ? '100%' : 1400}

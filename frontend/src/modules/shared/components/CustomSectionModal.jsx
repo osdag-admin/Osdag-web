@@ -15,9 +15,8 @@ const CustomSectionModal = ({
   const {
     manageDesignPreferences,
     manageCustomMaterials,
-    materialList: ctxMaterialList,
   } = useContext(ModuleContext);
-  const materialList = materialsFromParent ?? ctxMaterialList ?? [];
+  const materialList = materialsFromParent ?? [];
   const [inputs, setInputs] = useState({
     fy_20: "",
     fy_20_40: "",

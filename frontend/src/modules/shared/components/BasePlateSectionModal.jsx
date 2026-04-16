@@ -20,11 +20,10 @@ const BasePlateSectionModal = ({
   materialList: materialsFromParent,
 }) => {
   const {
-    materialList: ctxMaterialList,
     manageDesignPreferences,
     supporting_material_details,
   } = useContext(ModuleContext);
-  const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  const materials = materialsFromParent ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

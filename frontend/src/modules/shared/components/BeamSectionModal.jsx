@@ -24,11 +24,12 @@ const BeamSectionModal = ({
   onRefetchModuleOptions,
 }) => {
   const {
-    materialList: ctxMaterialList,
+    // materialList: ctxMaterialList,
     manageDesignPreferences,
     supported_material_details,
   } = useContext(ModuleContext);
-  const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  // const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  const materials = materialsFromParent ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -42,6 +43,24 @@ const BeamSectionModal = ({
       });
     }
   }, []);
+
+  const handleMaterialChange = (value) => {
+    if (value === -1) {
+      setShowModal(true);
+      return;
+    }
+    const material = materials.find((item) => item.Grade === value);
+    if (!material) return;
+    setDesignPrefInputs({
+      ...designPrefInputs,
+      supported_material: material.Grade,
+    });
+
+    manageDesignPreferences("material_update", {
+      materialType: "supported",
+      materialData: material,
+    });
+  };
 
   const handleClearSectionTab = () => {
     setDesignPrefInputs((prev) => ({
@@ -73,7 +92,7 @@ const BeamSectionModal = ({
           </div>
           <div className="sub-container">
             <h4>Mechanical Properties</h4>
-            <div className="input-cont">
+            {/* <div className="input-cont">
               <h5>Material *</h5>
               <div>
                 <Select
@@ -113,7 +132,29 @@ const BeamSectionModal = ({
                   ))}
                 </Select>
               </div>
+            </div> */}
+            <div className="input-cont">
+            <h5>Material *</h5>
+            <div>
+              <Select
+                disabled={isInputLocked}
+                style={{ width: "134px", height: "25px", fontSize: "12px" }}
+                // value={designPrefInputs.connector_material}
+                value={designPrefInputs.supported_material || ""}
+                onSelect={(value) => {
+                  handleMaterialChange(value);
+                }}
+              >
+                {materials.map((item, index) => {
+                  return (
+                    <Option key={`beamSection-${item.id??index}`} value={item.Grade}>
+                      {item.Grade}
+                    </Option>
+                  );
+                })}
+              </Select>
             </div>
+          </div>
             <div className="input-cont">
               <h5>Ultimate Strength, Fu (MPa)</h5>
               <Input

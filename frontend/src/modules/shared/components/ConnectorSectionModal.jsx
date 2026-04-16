@@ -17,9 +17,9 @@ const ConnectorSectionModal = ({
   isInputLocked,
   materialList: materialsFromParent,
 }) => {
-  const { materialList: ctxMaterialList, conn_material_details, manageDesignPreferences } =
+  const { conn_material_details, manageDesignPreferences } =
     useContext(ModuleContext);
-  const materials = materialsFromParent ?? ctxMaterialList ?? [];
+  const materials = materialsFromParent ?? [];
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -64,14 +64,15 @@ const ConnectorSectionModal = ({
               <Select
                 disabled={isInputLocked}
                 style={{ width: "134px", height: "25px", fontSize: "12px" }}
-                value={designPrefInputs.connector_material}
+                // value={designPrefInputs.connector_material}
+                value={designPrefInputs.connector_material || ""}
                 onSelect={(value) => {
                   handleMaterialChange(value);
                 }}
               >
                 {materials.map((item, index) => {
                   return (
-                    <Option key={item.id ?? index} value={item.Grade}>
+                    <Option key={`connectorSection-${item.id??index}`} value={item.Grade}>
                       {item.Grade}
                     </Option>
                   );
