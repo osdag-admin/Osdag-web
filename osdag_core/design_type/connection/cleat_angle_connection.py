@@ -177,10 +177,10 @@ class CleatAngleConnection(ShearConnection):
         t3 = (KEY_IMAGE, None, TYPE_IMAGE, str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_cf_bw.png")), True, 'No Validator')
         options_list.append(t3)
 
-        t4 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUES_COLSEC, True, 'No Validator')
+        t4 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t4)
 
-        t5 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUES_SECBM, True, 'No Validator')
+        t5 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t5)
 
         t6 = (KEY_MATERIAL, KEY_DISP_MATERIAL, TYPE_COMBOBOX, VALUES_MATERIAL, True, 'No Validator')
@@ -261,9 +261,9 @@ class CleatAngleConnection(ShearConnection):
 
         conn = input[0]
         if conn in VALUES_CONN_1:
-            return VALUES_COLSEC
+            return VALUE_BEAM_COL
         elif conn in VALUES_CONN_2:
-            return VALUES_PRIBM
+            return VALUE_BEAM_COL
         else:
             return []
 
@@ -271,9 +271,9 @@ class CleatAngleConnection(ShearConnection):
 
         conn = input[0]
         if conn in VALUES_CONN_1:
-            return VALUES_SECBM
+            return VALUE_BEAM_COL
         elif conn in VALUES_CONN_2:
-            return VALUES_SECBM
+            return VALUE_BEAM_COL
         else:
             return []
 
@@ -584,8 +584,7 @@ class CleatAngleConnection(ShearConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -1594,15 +1593,11 @@ class CleatAngleConnection(ShearConnection):
                     self.report_check.append(t1)
 
         Disp_2d_image = []
-        # 3D view image is expected directly in the report folder
-        # (e.g. file_storage/design_report/{report_id}/3d.png)
-        Disp_3D_image = "/3d.png"
-        fname_no_ext = popup_summary['filename']
-        # Use the report directory (where the .tex file is) as rel_path
-        # This ensures images are looked for in: {report_dir}/3d.png, etc.
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)  # Make it absolute
+        Disp_3D_image = "/ResourceFiles/images/3d.png"
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+        fname_no_ext = popup_summary['filename']
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,
                                rel_path, Disp_2d_image, Disp_3D_image, module=self.module)
         return True

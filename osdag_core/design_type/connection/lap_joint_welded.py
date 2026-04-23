@@ -53,7 +53,7 @@ class LapJointWelded(MomentConnection):
         tabs = []
         tabs.append((("Weld", TYPE_TAB_2, self.weld_values)))
         tabs.append(("Detailing", TYPE_TAB_2, self.detailing_values))
-        tabs.append(("Design", TYPE_TAB_2, self.design_values))  # Add design tab
+        #tabs.append(("Design", TYPE_TAB_2, self.design_values))  # Add design tab
         return tabs
 
     def tab_value_changed(self):
@@ -71,7 +71,7 @@ class LapJointWelded(MomentConnection):
         design_input.append(("Detailing", TYPE_COMBOBOX, [
             KEY_DP_DETAILING_EDGE_TYPE,
         ]))
-        design_input.append(("Design", TYPE_COMBOBOX, [KEY_DESIGN_FOR]))  # Add design preference
+
         return design_input
 
     def input_dictionary_without_design_pref(self):
@@ -79,8 +79,7 @@ class LapJointWelded(MomentConnection):
         design_input.append((None, [
             KEY_DP_WELD_TYPE,
             KEY_DP_WELD_MATERIAL_G_O,
-            KEY_DP_DETAILING_EDGE_TYPE,
-            KEY_DESIGN_FOR  # Add design preference
+            KEY_DP_DETAILING_EDGE_TYPE
         ], ''))
         return design_input
 
@@ -98,18 +97,7 @@ class LapJointWelded(MomentConnection):
         return defaults.get(key)
     
     def design_values(self, input_dictionary):
-        """Content of the 'Design' tab in Design Preferences."""
-        values = {
-                KEY_DESIGN_FOR: 'Tension',
-        }
-        if input_dictionary and KEY_DESIGN_FOR in input_dictionary:
-                values[KEY_DESIGN_FOR] = input_dictionary[KEY_DESIGN_FOR]
-
-        design_tab_content = []
-        t1 = (KEY_DESIGN_FOR, KEY_DISP_DESIGN_FOR, TYPE_COMBOBOX,
-             ['Tension', 'Compression'], values[KEY_DESIGN_FOR])
-        design_tab_content.append(t1)
-        return design_tab_content
+        return []
 
     def detailing_values(self, input_dictionary):
         values = {
@@ -176,8 +164,7 @@ class LapJointWelded(MomentConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -341,8 +328,8 @@ class LapJointWelded(MomentConnection):
                             flag1 = True
                     # Change from KEY_TENSILE_FORCE to KEY_AXIAL_FORCE
                     elif option[0] == KEY_AXIAL_FORCE:
-                        if float(design_dictionary[option[0]]) <= 0.0:
-                            error = "Input value(s) cannot be equal or less than zero."
+                        if math.isclose(float(design_dictionary[option[0]]), 0.0, abs_tol=1e-9):
+                            error = "Input value for Axial Force must be non-zero."
                             all_errors.append(error)
                         else:
                             flag2 = True
@@ -374,8 +361,8 @@ class LapJointWelded(MomentConnection):
         self.mainmodule = "Lap Joint Welded Connection"
         self.main_material = design_dictionary[KEY_MATERIAL]
         
-        # Design mode: default to Tension if not provided
-        self.design_for = design_dictionary.get(KEY_DESIGN_FOR, 'Tension')
+        # Design mode:
+        # self.design_for = design_dictionary.get(KEY_DESIGN_FOR, 'Tension')
         
         # Use axial force instead of tensile force
         axial_kN_str = design_dictionary.get(KEY_AXIAL_FORCE, 
@@ -383,6 +370,10 @@ class LapJointWelded(MomentConnection):
                  design_dictionary.get(KEY_TENSILE_FORCE, 0)))
                  
         self.axial_force = abs(float(axial_kN_str)) * 1000  # N, always positive magnitude
+        if float(axial_kN_str) < 0:
+            self.design_for = 'Compression'
+        else:
+            self.design_for = 'Tension'
         # Maintain backward compatibility: many methods use tensile_force name
         self.tensile_force = self.axial_force
         
@@ -405,6 +396,74 @@ class LapJointWelded(MomentConnection):
         self.logger.info(": Design Approach: IS 800:2007 Clause 10.5")
         self.utilization_ratios = {}
 
+        weld_size_input = design_dictionary[KEY_WELD_SIZE]
+        
+        # Check if user selected "All" or provided a list of sizes - iterate through valid sizes
+        if (isinstance(weld_size_input, str) and weld_size_input.lower() == 'all') or isinstance(weld_size_input, list):
+            # Get valid weld sizes based on plate thickness
+            plate1_thk = float(design_dictionary[KEY_PLATE1_THICKNESS])
+            plate2_thk = float(design_dictionary[KEY_PLATE2_THICKNESS])
+            Tmin = min(plate1_thk, plate2_thk)
+            s_min = IS800_2007.cl_10_5_2_3_min_weld_size(plate1_thk, plate2_thk)
+            s_max = Tmin - 1.5 if Tmin >= 10 else Tmin
+            
+            # Determine potential sizes to check
+            if isinstance(weld_size_input, list):
+                # Use provided list, convert to float for comparison
+                potential_sizes = []
+                for s in weld_size_input:
+                    try:
+                        val = float(s)
+                        potential_sizes.append(val)
+                    except ValueError:
+                        continue
+                potential_sizes.sort()
+            else:
+                # "All" case - use standard sizes
+                potential_sizes = ALL_WELD_SIZES
+
+            valid_sizes = [s for s in potential_sizes if s_min <= s <= s_max]
+            
+            if not valid_sizes:
+                self.logger.error(f": No valid weld sizes available for given plate thicknesses (s_min={s_min}, s_max={s_max}).")
+                self.design_status = False
+                return
+            
+            self.logger.info(f": Valid weld sizes for iteration: {valid_sizes}")
+            
+            # Iterate through valid sizes (smallest to largest) until one passes
+            for candidate_size in valid_sizes:
+                self.logger.info(f": Trying weld size = {candidate_size} mm")
+                
+                # Temporarily set the weld size for this iteration
+                temp_dict = design_dictionary.copy()
+                temp_dict[KEY_WELD_SIZE] = str(candidate_size)
+                
+                if not self.weld_size_check(temp_dict):
+                    continue  # This size didn't pass basic geometric check (though we filtered by min/max, weld_size_check might have other logic or logging)
+                
+                self.calculate_weld_strength(temp_dict)
+                
+                if not self.calculate_weld_length():
+                    self.logger.info(f": Weld size {candidate_size} mm failed length check. Trying next size...")
+                    continue  # Weld length exceeded max limit, try next size
+                
+                if not self.check_long_joint():
+                    self.logger.info(f": Weld size {candidate_size} mm failed long joint check. Trying next size...")
+                    continue  # Modified weld length exceeded max limit, try next size
+                
+                # This size passed all weld checks
+                self.logger.info(f": Weld size {candidate_size} mm passed all checks!")
+                self.check_base_metal_strength(temp_dict)
+                self.calculate_final_utilization_ratio()
+                return  # Success - exit the function
+            
+            # If we reach here, no size worked
+            self.logger.error(": No suitable weld size found. Design failed.")
+            self.design_status = False
+            return
+        
+        # Original logic for specific weld size selection
         if not self.weld_size_check(design_dictionary):
             return
 
@@ -615,7 +674,7 @@ class LapJointWelded(MomentConnection):
             #=========== EXTRACT ALL DESIGN VALUES ==========
             #================================================
             module = g('module', 'Lap Joint Welded')
-            mainmodule = 'Simple Connection'
+            mainmodule = 'Plated Connection'
             design_for = g('design_for', 'Tension').strip()
             is_comp = design_for.lower().startswith('c')
             
@@ -686,7 +745,6 @@ class LapJointWelded(MomentConnection):
             self.report_input = {
                 KEY_MODULE: module,
                 KEY_MAIN_MODULE: mainmodule,
-                KEY_DISP_DESIGN_FOR: design_for,
                 f"Thickness of Plate-1 (mm) *": plate1_thk,
                 f"Thickness of Plate-2 (mm) *": plate2_thk,
                 KEY_DISP_PLATE_WIDTH: width,
@@ -962,15 +1020,10 @@ class LapJointWelded(MomentConnection):
             #==========================================
             Disp_2d_image = []
             Disp_3D_image = "/ResourceFiles/images/3d.png"
+            rel_path = os.path.abspath(".").replace("\\", "/")
             fname_no_ext = popup_summary.get("filename", "LapJointWeldedReport")
-            # Use directory of filename if it's a full path (web API), otherwise use folder (GUI)
-            if fname_no_ext and os.path.isabs(fname_no_ext):
-                rel_path = os.path.dirname(fname_no_ext)
-            else:
-                folder = popup_summary.get('folder', './reports')
-                rel_path = folder
-                os.makedirs(folder, exist_ok=True)
-            rel_path = os.path.abspath(rel_path).replace("\\", "/")
+            folder = popup_summary.get('folder', './reports')
+            os.makedirs(folder, exist_ok=True)
 
             CreateLatex.save_latex(
                 CreateLatex(), self.report_input, self.report_check,

@@ -239,8 +239,7 @@ class Tension_bolted(Member):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -599,8 +598,8 @@ class Tension_bolted(Member):
               round((self.section_size_1.block_shear_capacity_axial/1000),2) if flag else '', True)
         out_list.append(t5)
 
-        t17 = (KEY_OUT_PATTERN_1, KEY_OUT_DISP_PATTERN, TYPE_OUT_BUTTON, ['Shear Pattern ', self.memb_pattern], True)
-        out_list.append(t17)
+        # t17 = (KEY_OUT_PATTERN_1, KEY_OUT_DISP_PATTERN, TYPE_OUT_BUTTON, ['Shear Pattern ', self.memb_pattern], True)
+        # out_list.append(t17)
 
         t6 = (KEY_TENSION_CAPACITY, KEY_DISP_TENSION_CAPACITY, TYPE_TEXTBOX,
               round((self.section_size_1.tension_capacity/1000),2) if flag else '', True)
@@ -653,10 +652,8 @@ class Tension_bolted(Member):
         t14 = (KEY_OUT_BOLT_FORCE, KEY_OUT_DISP_BOLT_FORCE, TYPE_TEXTBOX, round(self.plate.bolt_force / 1000, 2) if flag else '', True)
         out_list.append(t14)
 
-
-
-        t17 = (KEY_OUT_SPACING, KEY_OUT_DISP_SPACING, TYPE_OUT_BUTTON, ['Spacing Details', self.spacing], True)
-        out_list.append(t17)
+        # t17 = (KEY_OUT_SPACING, KEY_OUT_DISP_SPACING, TYPE_OUT_BUTTON, ['Spacing Details', self.spacing], True)
+        # out_list.append(t17)
 
         t18 = (None, DISP_TITLE_GUSSET_PLATE, TYPE_TITLE, None, True)
         out_list.append(t18)
@@ -682,8 +679,8 @@ class Tension_bolted(Member):
                (round(self.plate.block_shear_capacity/ 1000, 2)) if flag else '', True)
         out_list.append(t21)
 
-        t17 = (KEY_OUT_PATTERN_2, KEY_OUT_DISP_PATTERN, TYPE_OUT_BUTTON, ['Shear Pattern ', self.plate_pattern], True)
-        out_list.append(t17)
+        # t17 = (KEY_OUT_PATTERN_2, KEY_OUT_DISP_PATTERN, TYPE_OUT_BUTTON, ['Shear Pattern ', self.plate_pattern], True)
+        # out_list.append(t17)
 
         t21 = (KEY_OUT_PLATE_CAPACITY, KEY_DISP_TENSION_CAPACITY, TYPE_TEXTBOX,
                (round(self.plate_tension_capacity/1000, 2)) if flag else '', True)
@@ -2771,10 +2768,14 @@ class Tension_bolted(Member):
 
         Disp_2d_image = []
         Disp_3D_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)
+
+
+        print(sys.path[0])
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+
+        fname_no_ext = popup_summary['filename']
 
 
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,

@@ -1,12 +1,13 @@
-from PyQt5.QtWidgets import QMainWindow, QDialog,QMessageBox, QFileDialog, QApplication
-from PyQt5.QtCore import pyqtSlot,pyqtSignal, QObject
-from PyQt5.QtCore import QFile, pyqtSignal, QTextStream, Qt, QIODevice
+from PySide6.QtWidgets import QMainWindow, QDialog, QMessageBox, QFileDialog, QApplication
+from PySide6.QtCore import Signal, Slot, QObject, QFile, QTextStream, Qt, QIODevice
 from ..gui.ui_template import Ui_ModuleWindow
 
+
 class Cadcontroller(QMainWindow):
-    closed = pyqtSignal()
+    closed = Signal()
+
     def __init__(self, Ui_ModuleWindow):
-        super(Cadcontroller,self).__init__()
+        super(Cadcontroller, self).__init__()
         QMainWindow.__init__(self)
         self.ui = Ui_ModuleWindow()
         self.ui.setupUi(self)
@@ -28,7 +29,6 @@ class Cadcontroller(QMainWindow):
             self.ui.chkBxFinplate.setChecked(Qt.Unchecked)
         self.commLogicObj.display_3DModel("Model", bgcolor)
 
-
     def call_3DBeam(self, bgcolor):
         '''
         Creating and displaying 3D Beam
@@ -42,7 +42,6 @@ class Cadcontroller(QMainWindow):
 
         self.commLogicObj.display_3DModel("Beam", bgcolor)
 
-
     def call_3DColumn(self, bgcolor):
         '''
         '''
@@ -53,7 +52,6 @@ class Cadcontroller(QMainWindow):
             self.ui.btn3D.setChecked(Qt.Unchecked)
             self.ui.mytabWidget.setCurrentIndex(0)
         self.commLogicObj.display_3DModel("Column", bgcolor)
-
 
     def call_3DFinplate(self, bgcolor):
         '''
@@ -69,14 +67,14 @@ class Cadcontroller(QMainWindow):
         self.commLogicObj.display_3DModel("Plate", bgcolor)
 
     def unchecked_allChkBox(self):
-            '''
-            This routine is responsible for unchecking all checkboxes in GUI
-            '''
+        '''
+        This routine is responsible for unchecking all checkboxes in GUI
+        '''
 
-            self.ui.btn3D.setChecked(Qt.Unchecked)
-            self.ui.chkBxBeam.setChecked(Qt.Unchecked)
-            self.ui.chkBxCol.setChecked(Qt.Unchecked)
-            self.ui.chkBxFinplate.setChecked(Qt.Unchecked)
+        self.ui.btn3D.setChecked(Qt.Unchecked)
+        self.ui.chkBxBeam.setChecked(Qt.Unchecked)
+        self.ui.chkBxCol.setChecked(Qt.Unchecked)
+        self.ui.chkBxFinplate.setChecked(Qt.Unchecked)
 
     # def create2Dcad(self):
     #         ''' Returns the 3D model of finplate depending upon component

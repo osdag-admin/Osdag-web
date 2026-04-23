@@ -48,7 +48,6 @@ from ...design_report.reportGenerator_latex import CreateLatex
 from ...Report_functions import *
 import logging
 from importlib.resources import files
-from pathlib import Path
 from ...custom_logger import CustomLogger
 
 
@@ -62,19 +61,6 @@ class EndPlateConnection(ShearConnection):
         self.design_status = False
         # To capture all the hover labels required
         self.hover_dict = {}
-
-    @staticmethod
-    def _image_path(filename: str) -> str:
-        """
-        Resolve image path robustly.
-        Prefer importlib.resources, but fall back to filesystem path when package
-        metadata is not available (e.g., namespace/editable runtime).
-        """
-        try:
-            return str(files("osdag_core.data.ResourceFiles.images").joinpath(filename))
-        except Exception:
-            fallback = Path(__file__).resolve().parents[2] / "data" / "ResourceFiles" / "images" / filename
-            return str(fallback)
 
     ###############################################
     # Design Preference Functions Start
@@ -195,13 +181,13 @@ class EndPlateConnection(ShearConnection):
         else:
             fu = ''
 
-        val = {KEY_DP_BOLT_TYPE: "Pretensioned",
+        val = {KEY_DP_BOLT_TYPE: 'Pre-tensioned',
                KEY_DP_BOLT_HOLE_TYPE: "Standard",
                KEY_DP_BOLT_SLIP_FACTOR: str(0.3),
                KEY_DP_WELD_FAB: KEY_DP_FAB_SHOP,
                KEY_DP_WELD_MATERIAL_G_O: str(fu),
                KEY_DP_DETAILING_EDGE_TYPE: "Sheared or hand flame cut",
-               KEY_DP_DETAILING_GAP: '0',
+               KEY_DP_DETAILING_GAP: '10',
                KEY_DP_DETAILING_CORROSIVE_INFLUENCES: 'No',
                KEY_DP_DESIGN_METHOD: "Limit State Design",
                KEY_CONNECTOR_MATERIAL: str(design_dictionary[KEY_MATERIAL])
@@ -227,8 +213,7 @@ class EndPlateConnection(ShearConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -286,13 +271,13 @@ class EndPlateConnection(ShearConnection):
         t2 = (KEY_CONN, KEY_DISP_CONN, TYPE_COMBOBOX, VALUES_CONN, True, 'No Validator')
         options_list.append(t2)
 
-        t15 = (KEY_IMAGE, None, TYPE_IMAGE, self._image_path("fin_cf_bw.png"), True, 'No Validator')
+        t15 = (KEY_IMAGE, None, TYPE_IMAGE, str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_cf_bw.png")), True, 'No Validator')
         options_list.append(t15)
 
-        t3 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUES_COLSEC, True, 'No Validator')
+        t3 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t3)
 
-        t4 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUES_SECBM, True, 'No Validator')
+        t4 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t4)
 
         t5 = (KEY_MATERIAL, KEY_DISP_MATERIAL, TYPE_COMBOBOX, VALUES_MATERIAL, True, 'No Validator')
@@ -947,7 +932,7 @@ class EndPlateConnection(ShearConnection):
         self.bolt.bolt_tension = self.load.axial_force * 1000 / no_bolt  # N
         # print("bolt_tension", self.bolt.bolt_tension)
         if self.bolt.bolt_type == TYP_FRICTION_GRIP:
-            self.bolt.bolt_tensioning = 'Pretensioned'
+            self.bolt.bolt_tensioning = 'Pre-tensioned'
         # TODO: check available effective width per pair of bolts (b_e)
         self.bolt.bolt_tension_prying = IS800_2007.cl_10_4_7_bolt_prying_force(self.bolt.bolt_tension, l_v,
                                                                                0.7 * self.bolt.bolt_fu, b_e,
@@ -1121,7 +1106,7 @@ class EndPlateConnection(ShearConnection):
             self.bolt.bolt_tension = self.load.axial_force * 1000 / no_bolt  # N
             # print("bolt_tension", self.bolt.bolt_tension)
             if self.bolt.bolt_type == TYP_FRICTION_GRIP:
-                self.bolt.bolt_tensioning = 'Pretensioned'
+                self.bolt.bolt_tensioning = 'Pre-tensioned'
             # TODO: check available effective width per pair of bolts (b_e)
             self.bolt.bolt_tension_prying = IS800_2007.cl_10_4_7_bolt_prying_force(self.bolt.bolt_tension, l_v,
                                         0.7*self.bolt.bolt_fu, b_e, self.plate.thickness_provided,
@@ -1418,7 +1403,7 @@ class EndPlateConnection(ShearConnection):
         spacing.append(t00)
 
         t99 = (None, 'Spacing Details', TYPE_SECTION,
-               [self._image_path("ep_shear.png"), 400, 277, ""])  # [image, width, height, caption]
+               [str(files("osdag_core.data.ResourceFiles.images").joinpath("ep_shear.png")), 400, 277, ""])  # [image, width, height, caption]
         spacing.append(t99)
 
         t9 = (KEY_OUT_PITCH, KEY_OUT_DISP_PITCH, TYPE_TEXTBOX, self.output[0][13] if status else '')
@@ -1624,7 +1609,7 @@ class EndPlateConnection(ShearConnection):
                   '','')
             self.report_check.append(t1)
 
-            if self.bolt.bolt_tensioning == 'Pretensioned':
+            if self.bolt.bolt_tensioning == 'Pre-tensioned':
                 beta = 1
             else:
                 beta = 2
@@ -1792,15 +1777,12 @@ class EndPlateConnection(ShearConnection):
 
         Disp_2d_image = []
         Disp_3D_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        # Use the report directory (where the .tex file is) as rel_path
-        # This ensures images are looked for in: {report_dir}/ResourceFiles/images/
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)  # Make it absolute
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+        fname_no_ext = popup_summary['filename']
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,
                                rel_path, Disp_2d_image, Disp_3D_image, module=self.module)
-        return True
 
     def get_plate_status(self):
         if self.plate.plate_moment < self.plate.plate_moment_capacity \

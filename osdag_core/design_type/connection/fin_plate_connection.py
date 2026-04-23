@@ -4,7 +4,6 @@ from ...utils.common.component import *
 from ...utils.common.material import *
 from ...Report_functions import *
 from ...custom_logger import CustomLogger
-from ...Common import _get_resource_path
 
 
 class FinPlateConnection(ShearConnection):
@@ -148,8 +147,7 @@ class FinPlateConnection(ShearConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -211,13 +209,13 @@ class FinPlateConnection(ShearConnection):
         t2 = (KEY_CONN, KEY_DISP_CONN, TYPE_COMBOBOX, VALUES_CONN, True, 'No Validator')
         options_list.append(t2)
 
-        t15 = (KEY_IMAGE, None, TYPE_IMAGE, str(_get_resource_path("data", "ResourceFiles", "images", "fin_cf_bw.png")), True, 'No Validator')
+        t15 = (KEY_IMAGE, None, TYPE_IMAGE, str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_cf_bw.png")), True, 'No Validator')
         options_list.append(t15)
 
-        t3 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, connectdb("Columns"), True, 'No Validator')
+        t3 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t3)
 
-        t4 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, connectdb("Beams"), True, 'No Validator')
+        t4 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t4)
 
         t5 = (KEY_MATERIAL, KEY_DISP_MATERIAL, TYPE_COMBOBOX, VALUES_MATERIAL, True, 'No Validator')
@@ -260,7 +258,7 @@ class FinPlateConnection(ShearConnection):
         spacing.append(t00)
 
         t99 = (None, 'Spacing Details', TYPE_SECTION,
-            [str(_get_resource_path("data", "ResourceFiles", "images", "spacing_3.png")), 400, 277, ""])  # [image, width, height, caption]
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("spacing_3.png")), 400, 277, ""])  # [image, width, height, caption]
         spacing.append(t99)
 
         t9 = (KEY_OUT_PITCH, KEY_OUT_DISP_PITCH, TYPE_TEXTBOX, self.plate.gauge_provided if status else '')
@@ -284,7 +282,7 @@ class FinPlateConnection(ShearConnection):
         capacities.append(t00)
 
         t99 = (None, 'Failure Pattern due to Shear in Plate', TYPE_SECTION,
-            [str(_get_resource_path("data", "ResourceFiles", "images", "L_shear1.png")), 400, 210, "Block Shear Pattern"])  # [image, width, height, caption]
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("L_shear1.png")), 400, 210, "Block Shear Pattern"])  # [image, width, height, caption]
         capacities.append(t99)
 
         t17 = (KEY_OUT_PLATE_SHEAR, KEY_OUT_DISP_PLATE_SHEAR, TYPE_TEXTBOX, round(self.plate.shear_yielding_capacity/1000,2) if status else '')
@@ -297,7 +295,7 @@ class FinPlateConnection(ShearConnection):
         capacities.append(t17)
 
         t99 = (None, 'Failure Pattern due to Tension in Plate', TYPE_SECTION,
-            [str(_get_resource_path("data", "ResourceFiles", "images", "U.png")), 400, 202, "Block Shear Pattern"])  # [image, width, height, caption]
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("U.png")), 400, 202, "Block Shear Pattern"])  # [image, width, height, caption]
         capacities.append(t99)
 
         t17 = (KEY_OUT_PLATE_TENSION, KEY_OUT_DISP_PLATE_TENSION, TYPE_TEXTBOX,
@@ -332,7 +330,7 @@ class FinPlateConnection(ShearConnection):
         capacities.append(t00)
 
         t99 = (None, 'Failure Pattern due to Shear in Member', TYPE_SECTION,
-            [str(_get_resource_path("data", "ResourceFiles", "images", "L_shear1.png")), 400, 210, "Block Shear Pattern"])  # [image, width, height, caption]
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("L_shear1.png")), 400, 210, "Block Shear Pattern"])  # [image, width, height, caption]
         capacities.append(t99)
 
         t17 = (KEY_SHEAR_YIELDCAPACITY, KEY_OUT_DISP_PLATE_SHEAR, TYPE_TEXTBOX, round(self.supported_section.shear_yielding_capacity/1000,2) if status else '')
@@ -345,7 +343,7 @@ class FinPlateConnection(ShearConnection):
         capacities.append(t17)
 
         t99 = (None, 'Failure Pattern due to Tension in Member', TYPE_SECTION,
-            [str(_get_resource_path("data", "ResourceFiles", "images", "U.png")), 400, 202, "Block Shear Pattern"])  # [image, width, height, caption]
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("U.png")), 400, 202, "Block Shear Pattern"])  # [image, width, height, caption]
         capacities.append(t99)
 
         t17 = (KEY_TENSION_YIELDCAPACITY, KEY_OUT_DISP_PLATE_TENSION, TYPE_TEXTBOX,
@@ -429,14 +427,14 @@ class FinPlateConnection(ShearConnection):
         t16 = (KEY_OUT_PLATE_LENGTH, KEY_OUT_DISP_PLATE_LENGTH, TYPE_TEXTBOX, float(self.plate.length) if flag else '', True)
         out_list.append(t16)
 
-        t22 = ('button1', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON, ['Capacity Details', self.capacities],True)
-        out_list.append(t22)
+        # t22 = ('button1', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON, ['Capacity Details', self.capacities],True)
+        # out_list.append(t22)
 
-        t13 = (None, DISP_TITLE_SECTION, TYPE_TITLE, None, True)
-        out_list.append(t13)
+        # t13 = (None, DISP_TITLE_SECTION, TYPE_TITLE, None, True)
+        # out_list.append(t13)
 
-        t22 = ('button2', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON, ['Capacity Details', self.capacities],True)
-        out_list.append(t22)
+        # t22 = ('button2', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON, ['Capacity Details', self.capacities],True)
+        # out_list.append(t22)
 
         t13 = (None, DISP_TITLE_WELD, TYPE_TITLE, None, True)
         out_list.append(t13)
@@ -997,29 +995,7 @@ class FinPlateConnection(ShearConnection):
     # Function to create design report (LateX/PDF)
     ######################################
     def save_design(self,popup_summary):
-        print(f"\n[FinPlateConnection.save_design] Called with popup_summary keys: {list(popup_summary.keys())[:10]}")
-        print(f"[FinPlateConnection.save_design] Before super().save_design():")
-        print(f"   self.module: {self.module}")
-        print(f"   self.mainmodule: {getattr(self, 'mainmodule', 'N/A')}")
-        print(f"   self.connectivity: {getattr(self, 'connectivity', 'N/A')}")
-        print(f"   hasattr(self, 'report_input'): {hasattr(self, 'report_input')}")
-        print(f"   hasattr(self, 'load'): {hasattr(self, 'load')}")
-        print(f"   hasattr(self, 'bolt'): {hasattr(self, 'bolt')}")
-        print(f"   hasattr(self, 'supported_section'): {hasattr(self, 'supported_section')}")
-        print(f"   hasattr(self, 'supporting_section'): {hasattr(self, 'supporting_section')}")
-        
-        from osdag_core.Common import KEY_DISP_FINPLATE, KEY_DISP_ENDPLATE
-        print(f"   KEY_DISP_FINPLATE: '{KEY_DISP_FINPLATE}'")
-        print(f"   self.module == KEY_DISP_FINPLATE: {self.module == KEY_DISP_FINPLATE}")
-        
         super(FinPlateConnection,self).save_design()
-        
-        print(f"[FinPlateConnection.save_design] After super().save_design():")
-        print(f"   hasattr(self, 'report_input'): {hasattr(self, 'report_input')}")
-        if hasattr(self, 'report_input'):
-            print(f"   self.report_input keys: {list(self.report_input.keys())[:10]}")
-        else:
-            print(f"   ❌ ERROR: report_input was not set by parent save_design()!")
         # bolt_list = str(*self.bolt.bolt_diameter, sep=", ")
 
         self.report_check = []
@@ -1323,10 +1299,10 @@ class FinPlateConnection(ShearConnection):
 
         Disp_2d_image = []
         Disp_3D_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)  # Make it absolute
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+        fname_no_ext = popup_summary['filename']
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext, rel_path, Disp_2d_image,
                                Disp_3D_image, module=self.module)
         return True  

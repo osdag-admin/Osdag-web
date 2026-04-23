@@ -66,7 +66,7 @@ def init_display(backend_str=None, size=(1024, 768)):
 
         return BlindViewer(), do_nothing, do_nothing, call_function
     used_backend = load_backend(backend_str)
-    # Removed verbose print - use logging instead if needed
+    print("used_backend ",used_backend)
 
     if used_backend == 'wx':
         import wx

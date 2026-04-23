@@ -190,7 +190,7 @@ class BeamCoverPlateWeld(MomentConnection):
         else:
             fu = ''
 
-        val = {KEY_DP_BOLT_TYPE: "Pretensioned",
+        val = {KEY_DP_BOLT_TYPE: 'Pre-tensioned',
                KEY_DP_BOLT_HOLE_TYPE: "Standard",
                KEY_DP_BOLT_SLIP_FACTOR: str(0.3),
                KEY_DP_WELD_FAB: KEY_DP_FAB_SHOP,
@@ -246,8 +246,7 @@ class BeamCoverPlateWeld(MomentConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -319,7 +318,7 @@ class BeamCoverPlateWeld(MomentConnection):
         t1 = (None, DISP_TITLE_CM, TYPE_TITLE, None, True, 'No Validator')
         options_list.append(t1)
 
-        t4 = (KEY_SECSIZE, KEY_DISP_SECSIZE, TYPE_COMBOBOX, connectdb("Beams"), True, 'No Validator')
+        t4 = (KEY_SECSIZE, KEY_DISP_SECSIZE, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t4)
 
         # t15 = (KEY_IMAGE, None, TYPE_IMAGE, None, True, 'No Validator')
@@ -545,9 +544,10 @@ class BeamCoverPlateWeld(MomentConnection):
 
         t21 = (KEY_WEB_CAPACITY, KEY_DISP_WEB_CAPACITY, TYPE_OUT_BUTTON, ['Web Capacity', self.webcapacity], True)
         out_list.append(t21)
-        t17 = (
-        KEY_OUT_PATTERN_2, KEY_OUT_DISP_PATTERN, TYPE_OUT_BUTTON, ['Block Shear Pattern ', self.web_pattern], True)
-        out_list.append(t17)
+        
+        # t17 = (KEY_OUT_PATTERN_2, KEY_OUT_DISP_PATTERN, TYPE_OUT_BUTTON, ['Block Shear Pattern ', self.web_pattern], True)
+        # out_list.append(t17)
+
         t21 = (KEY_WEB_WELD_DETAILS, KEY_DISP_WEB_WELD_DETAILS, TYPE_OUT_BUTTON, ['Web Plate Weld', self.web_weld_details], True)
         out_list.append(t21)
         t17 = (None, DISP_TITLE_FLANGESPLICEPLATE, TYPE_TITLE, None, True)
@@ -1999,13 +1999,15 @@ class BeamCoverPlateWeld(MomentConnection):
         return components
 
     def call_3DPlate(self, ui, bgcolor):
-        from PyQt5.QtWidgets import QCheckBox
-        from PyQt5.QtCore import Qt
-        for chkbox in ui.frame.children():
-            if chkbox.objectName() == 'Cover Plate Welded':
+        from PySide6.QtWidgets import QCheckBox
+        for chkbox in ui.cad_comp_widget.children():
+            if chkbox.objectName() == 'Cover Plate':
                 continue
             if isinstance(chkbox, QCheckBox):
-                chkbox.setChecked(Qt.Unchecked)
+                # CRITICAL: Block signals to prevent cascading display_3DModel calls
+                chkbox.blockSignals(True)
+                chkbox.setChecked(False)
+                chkbox.blockSignals(False)
         ui.commLogicObj.display_3DModel("Connector", bgcolor)
 
 
@@ -2788,12 +2790,10 @@ class BeamCoverPlateWeld(MomentConnection):
 
         Disp_2d_image = []
         Disp_3D_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        # Use the report directory (where the .tex file is) as rel_path
-        # This ensures images are looked for in: {report_dir}/ResourceFiles/images/
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)  # Make it absolute
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+        fname_no_ext = popup_summary['filename']
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext, rel_path, Disp_2d_image, Disp_3D_image)
         return True
 

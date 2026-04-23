@@ -259,8 +259,7 @@ class BeamColumnEndPlate(MomentConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -323,10 +322,10 @@ class BeamColumnEndPlate(MomentConnection):
         t15 = (KEY_IMAGE, None, TYPE_IMAGE, str(files("osdag_core.data.ResourceFiles.images").joinpath("BC_CF-BW-Flush.png")), True, 'No Validator')
         options_list.append(t15)    
 
-        t3 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, connectdb("Columns"), True, 'No Validator')
+        t3 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t3)
 
-        t4 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, connectdb("Beams"), True, 'No Validator')
+        t4 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t4)
 
         t5 = (KEY_MATERIAL, KEY_DISP_MATERIAL, TYPE_COMBOBOX, VALUES_MATERIAL, True, 'No Validator')
@@ -555,8 +554,8 @@ class BeamColumnEndPlate(MomentConnection):
         t33 = (KEY_OUT_STIFFENER_DETAILS, KEY_OUT_DISP_STIFFENER_DIMENSIONS, TYPE_OUT_BUTTON, ['Details', self.stiffener_details], True)
         out_list.append(t33)
 
-        t34 = (KEY_OUT_STIFFENER_SKETCH, KEY_OUT_DISP_STIFFENER_SKETCH, TYPE_OUT_BUTTON, ['Details', self.stiffener_detailing], True)
-        out_list.append(t34)
+        # t34 = (KEY_OUT_STIFFENER_SKETCH, KEY_OUT_DISP_STIFFENER_SKETCH, TYPE_OUT_BUTTON, ['Details', self.stiffener_detailing], True)
+        # out_list.append(t34)
 
         # Weld
         t23 = (None, DISP_TITLE_WELD, TYPE_TITLE, None, True)
@@ -879,7 +878,7 @@ class BeamColumnEndPlate(MomentConnection):
                KEY_DP_WELD_FAB: KEY_DP_FAB_SHOP,
                KEY_DP_WELD_MATERIAL_G_O: str(fu),
                KEY_DP_DETAILING_EDGE_TYPE: "Sheared or hand flame cut",
-               KEY_DP_DETAILING_GAP: '0',
+               KEY_DP_DETAILING_GAP: '10',
                KEY_DP_DETAILING_CORROSIVE_INFLUENCES: 'No',
                KEY_DP_DESIGN_METHOD: "Limit State Design",
                KEY_CONNECTOR_MATERIAL: str(design_dictionary[KEY_MATERIAL])
@@ -3311,10 +3310,12 @@ class BeamColumnEndPlate(MomentConnection):
 
         Disp_2d_image = [path_weld, path_detailing, path_stiffener]
         Disp_3d_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)
+        print(sys.path[0])
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+
+        fname_no_ext = popup_summary['filename']
 
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,
                                rel_path, Disp_2d_image, Disp_3d_image, module=self.module)

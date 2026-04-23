@@ -16,7 +16,6 @@ from .moment_connection import MomentConnection
 from ...utils.common.component import *
 from ...utils.common.is800_2007 import *
 from ...Common import *
-from ...Common import _get_resource_str
 from ...design_report.reportGenerator_latex import CreateLatex
 from ...Report_functions import *
 from ...utils.common.load import Load
@@ -62,7 +61,7 @@ class LapJointBolted(MomentConnection):
         # Only Bolt and Detailing tabs
         tabs.append(("Bolt", TYPE_TAB_2, self.bolt_values))
         tabs.append(("Detailing", TYPE_TAB_2, self.detailing_values))
-        tabs.append(("Design", TYPE_TAB_2, self.design_values))
+        #tabs.append(("Design", TYPE_TAB_2, self.design_values))
         return tabs
 
     def tab_value_changed(self):
@@ -87,10 +86,7 @@ class LapJointBolted(MomentConnection):
             KEY_DP_DETAILING_EDGE_TYPE  # For edge preparation method
         ]))
 
-        # Design preferences
-        design_input.append(("Design", TYPE_COMBOBOX, [
-            KEY_DESIGN_FOR
-        ]))
+
         
         return design_input
 
@@ -102,8 +98,7 @@ class LapJointBolted(MomentConnection):
             KEY_DP_BOLT_TYPE,
             KEY_DP_BOLT_HOLE_TYPE, 
             KEY_DP_BOLT_SLIP_FACTOR,
-            KEY_DP_DETAILING_EDGE_TYPE,
-            KEY_DESIGN_FOR
+            KEY_DP_DETAILING_EDGE_TYPE
         ], ''))
         
         return design_input
@@ -114,25 +109,12 @@ class LapJointBolted(MomentConnection):
             KEY_DP_BOLT_TYPE: "Non Pre-tensioned",
             KEY_DP_BOLT_HOLE_TYPE: "Standard",
             KEY_DP_BOLT_SLIP_FACTOR: "0.3",
-            KEY_DP_DETAILING_EDGE_TYPE: "Sheared or hand flame cut",
-            KEY_DESIGN_FOR: 'Tension'
+            KEY_DP_DETAILING_EDGE_TYPE: "Sheared or hand flame cut"
         }
         return defaults.get(key)
 
     def design_values(self, input_dictionary):
-        values = {
-            KEY_DESIGN_FOR: 'Tension'
-        }
-
-        if input_dictionary and KEY_DESIGN_FOR in input_dictionary:
-            values[KEY_DESIGN_FOR] = input_dictionary[KEY_DESIGN_FOR]
-
-        design = []
-        t1 = (KEY_DESIGN_FOR, KEY_DISP_DESIGN_FOR, TYPE_COMBOBOX,
-              ['Tension', 'Compression'], values[KEY_DESIGN_FOR])
-        design.append(t1)
-
-        return design
+        return []
 
     def detailing_values(self, input_dictionary):
         values = {
@@ -175,8 +157,7 @@ class LapJointBolted(MomentConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -279,7 +260,7 @@ class LapJointBolted(MomentConnection):
         spacing.append(t00)
 
         t99 = (None, 'Spacing Details', TYPE_SECTION,
-            [_get_resource_str("data", "ResourceFiles", "images", "spacing_3.png"), 400, 277, ""])
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("spacing_3.png")), 400, 277, ""])
         spacing.append(t99)
 
         t9 = (KEY_OUT_PITCH, KEY_OUT_DISP_PITCH, TYPE_TEXTBOX, self.final_pitch if status else '')
@@ -469,14 +450,16 @@ class LapJointBolted(MomentConnection):
         self.mainmodule = "Lap Joint Bolted Connection"
         self.main_material = design_dictionary[KEY_MATERIAL]
 
-        self.design_for = design_dictionary.get(KEY_DESIGN_FOR, 'Tension')
+        # self.design_for = design_dictionary.get(KEY_DESIGN_FOR, 'Tension')
         axial_input = design_dictionary.get(
             KEY_AXIAL_FORCE,
             design_dictionary.get(KEY_AXIAL,
                                   design_dictionary.get(KEY_TENSILE_FORCE, 0)))
         axial_value = float(axial_input)
-        if axial_value < 0 and KEY_DESIGN_FOR not in design_dictionary:
+        if axial_value < 0:
             self.design_for = 'Compression'
+        else:
+            self.design_for = 'Tension'
         self.axial_force_kN = abs(axial_value)
         self.axial_force = self.axial_force_kN * 1000.0
         # Legacy naming issue
@@ -620,13 +603,18 @@ class LapJointBolted(MomentConnection):
 
     def number_r_c_bolts(self, design_dictionary, count=0, hit=0):
         """
-        Calculate bolt layout (rows x cols) using deterministic algorithm.
+        Calculate bolt layout (rows x cols) using row-first increment algorithm.
         
         Per IS 800:2007:
         - min_pitch/gauge: Cl. 10.2.2 (2.5d)
         - min_end_dist: Cl. 10.2.4.2 (1.7d₀ or 1.5d₀)
         - max_pitch: Cl. 10.2.3.1 (min(32t, 300mm))
         - max_end_dist: Cl. 10.2.4.3 (12tε)
+        
+        Bolt layout convention:
+        - rows: bolts across width (gauge direction) - min 2 for lap joint
+        - cols: bolts along length (pitch direction) - min 1 for lap joint
+        - For economical design, rows are incremented first to minimize connection length
         """
         bolt_cap = self.bolt.bolt_capacity
         if self.bolt.bolt_type == 'Bearing Bolt':
@@ -643,51 +631,62 @@ class LapJointBolted(MomentConnection):
             self.number_bolts += 1
 
         self.number_bolts = math.ceil(self.number_bolts)
+        
+        # Minimum bolts for lap joint: 2 (in 2 rows × 1 column arrangement)
         if self.number_bolts < 2:
             self.number_bolts = 2
 
-        # === DETERMINISTIC LAYOUT ALGORITHM ===
-        # Step 1: Calculate available width for bolts (after deducting end distances)
-        min_end_dist = self.bolt.min_end_dist_round
+        # === ROW-FIRST LAYOUT ALGORITHM ===
+        # Step 1: Calculate available width for bolts (after deducting edge distances)
+        min_edge_dist = self.bolt.min_end_dist_round  # Edge distance across width
         min_gauge = self.bolt.min_gauge_round
         max_gauge = self.max_gauge_round
-        max_end_dist = self.bolt.max_end_dist_round
+        max_edge_dist = self.bolt.max_end_dist_round
         plate_width = float(self.width)
 
-        available_width = plate_width - 2 * min_end_dist
+        available_width = plate_width - 2 * min_edge_dist
 
         # Step 2: Check if plate width is sufficient
         if available_width < 0:
             self.design_status = False
             self.logger.error(f": Design Failed - Plate width ({plate_width} mm) is too small. "
-                            f"Minimum required = {2 * min_end_dist} mm (2 × min_end_dist per Cl. 10.2.4.2)")
+                            f"Minimum required = {2 * min_edge_dist} mm (2 × min_edge_dist per Cl. 10.2.4.2)")
             self.logger.info(" :=========End Of design===========")
             self.design_error = "Plate width is too small for bolt arrangement."
             return
 
-        # Step 3: Calculate maximum bolts that can fit in one row (gauge direction)
+        # Step 3: Calculate maximum bolts that can fit across width (rows in gauge direction)
         if available_width >= min_gauge:
             max_bolts_per_row = int(available_width / min_gauge) + 1
         else:
-            # Only one bolt can fit per row
+            # Only one bolt can fit across width
             max_bolts_per_row = 1
 
-        # Step 4: Calculate optimal rows and columns
-        if self.number_bolts <= max_bolts_per_row:
-            # All bolts fit in one row
-            self.rows = self.number_bolts
-            self.cols = 1
-        else:
-            # Need multiple columns (pitch direction)
-            self.rows = max_bolts_per_row
-            self.cols = math.ceil(self.number_bolts / self.rows)
-            # Rebalance to minimize empty spaces
-            self.rows = math.ceil(self.number_bolts / self.cols)
+        # Step 4: Row-first increment algorithm for economical design
+        # Start with minimum: 1 column, and fill rows first
+        self.cols = 1
+        self.rows = min(self.number_bolts, max_bolts_per_row)
+        
+        # If more bolts needed, add columns (along length)
+        while self.rows * self.cols < self.number_bolts:
+            if self.rows < max_bolts_per_row:
+                # First try to add more rows (across width)
+                self.rows += 1
+            else:
+                # If rows maxed out, add a column
+                self.cols += 1
+                # Redistribute rows for this new column count
+                self.rows = math.ceil(self.number_bolts / self.cols)
+                if self.rows > max_bolts_per_row:
+                    self.rows = max_bolts_per_row
 
-        # Ensure minimum of 2 bolts
-        if self.rows * self.cols < 2:
+        # Update actual number of bolts
+        self.number_bolts = self.rows * self.cols
+
+        # Enforce minimum for lap joint: 2 rows × 1 column
+        if self.rows < 2:
             self.rows = 2
-            self.cols = 1
+            self.number_bolts = self.rows * self.cols
 
         # Step 5: Calculate actual gauge distance
         if self.rows > 1:
@@ -705,28 +704,28 @@ class LapJointBolted(MomentConnection):
                 self.number_bolts = self.rows * self.cols
                 actual_gauge = available_width / (self.rows - 1) if self.rows > 1 else 0
 
-        # Step 7: Calculate actual end distance
+        # Step 7: Calculate actual edge distance
         if self.rows > 1:
-            actual_end_dist = (plate_width - (self.rows - 1) * min_gauge) / 2
+            actual_edge_dist = (plate_width - (self.rows - 1) * min_gauge) / 2
         else:
-            actual_end_dist = plate_width / 2
+            actual_edge_dist = plate_width / 2
 
-        # Step 8: Validate end distance against maximum (Cl. 10.2.4.3)
-        if actual_end_dist > max_end_dist:
-            self.logger.warning(f": End distance ({actual_end_dist:.1f} mm) exceeds maximum "
-                               f"({max_end_dist} mm) per Cl. 10.2.4.3. Adding more bolts.")
-            # Add more bolts to reduce end distance
-            required_rows = math.ceil((plate_width - 2 * max_end_dist) / min_gauge) + 1
+        # Step 8: Validate edge distance against maximum (Cl. 10.2.4.3)
+        if actual_edge_dist > max_edge_dist:
+            self.logger.warning(f": Edge distance ({actual_edge_dist:.1f} mm) exceeds maximum "
+                               f"({max_edge_dist} mm) per Cl. 10.2.4.3. Adding more bolts.")
+            # Add more bolts to reduce edge distance
+            required_rows = math.ceil((plate_width - 2 * max_edge_dist) / min_gauge) + 1
             if required_rows > self.rows:
                 self.rows = required_rows
                 self.cols = math.ceil(self.number_bolts / self.rows)
                 self.number_bolts = self.rows * self.cols
 
-        # Calculate connection length
+        # Calculate connection length (determined by columns along pitch direction)
         if self.cols > 1:
             self.len_conn = (self.cols - 1) * self.bolt.min_pitch_round + 2 * self.bolt.min_end_dist_round
         else:
-            self.len_conn = self.bolt.min_pitch_round + 2 * self.bolt.min_end_dist_round
+            self.len_conn = 2 * self.bolt.min_end_dist_round
 
         # Continue to capacity reduction checks
         if self.number_bolts >= 2 and count == 0:
@@ -788,33 +787,57 @@ class LapJointBolted(MomentConnection):
 
 
     def final_formatting(self,design_dictionary):
+        # Calculate gauge (spacing across width direction)
+        # Use min_edge_dist_round (edge distance is for across width)
         gauge_divisor = max(self.rows - 1, 1)
-        gauge_dist = (float(self.width) - 2 * self.bolt.min_end_dist_round) / gauge_divisor
+        gauge_dist = (float(self.width) - 2 * self.bolt.min_edge_dist_round) / gauge_divisor
 
-        if gauge_dist > self.max_gauge_round:
+        # Handle single row case (no gauge required)
+        if self.rows <= 1:
+            self.final_gauge = 0  # No gauge for single row
+            self.final_pitch = self.bolt.min_pitch_round
+            self.final_edge_dist = float(self.width) / 2.0  # Center single bolt row
+            self.final_end_dist = self.bolt.min_end_dist_round
+            self.design_status = True
+        # Check minimum gauge per IS 800:2007 Cl 10.2.2: min = 2.5d
+        elif gauge_dist < self.bolt.min_gauge_round:
+            # Cannot fit 2+ rows with minimum gauge - plate too narrow
+            # Try single row instead
+            self.logger.warning(f": Plate width ({self.width}mm) insufficient for {self.rows} rows "
+                               f"with min gauge ({self.bolt.min_gauge_round}mm). Reducing to 1 row.")
+            self.rows = 1
+            self.cols = self.number_bolts  # All bolts in single row
+            self.final_gauge = 0
+            self.final_pitch = self.bolt.min_pitch_round
+            self.final_edge_dist = float(self.width) / 2.0
+            self.final_end_dist = self.bolt.min_end_dist_round
+            # Recalculate connection length for single row
+            self.len_conn = (self.cols - 1) * self.bolt.min_pitch_round + 2 * self.bolt.min_end_dist_round
+            self.design_status = True
+        elif gauge_dist > self.max_gauge_round:
             self.final_gauge = self.max_gauge_round
             self.final_pitch = self.bolt.min_pitch_round
 
-            enddist = (float(self.width) - ((self.rows - 1) * self.final_gauge)) / 2
-            if enddist > self.bolt.max_end_dist_round:
+            edge_dist = (float(self.width) - ((self.rows - 1) * self.final_gauge)) / 2
+            if edge_dist > self.bolt.max_edge_dist_round:
                 self.design_status = False
                 self.number_r_c_bolts(design_dictionary, 0, 1)
                 return
             else:
-                self.final_end_dist = enddist
-                self.final_edge_dist = enddist
+                self.final_edge_dist = edge_dist
+                self.final_end_dist = self.bolt.min_end_dist_round
                 self.design_status = True
         else:
             self.final_gauge = gauge_dist
             self.final_pitch = self.bolt.min_pitch_round
-            enddist = (float(self.width) - ((self.rows - 1) * self.final_gauge)) / 2
-            if enddist > self.bolt.max_end_dist_round:
+            edge_dist = (float(self.width) - ((self.rows - 1) * self.final_gauge)) / 2
+            if edge_dist > self.bolt.max_edge_dist_round:
                 self.design_status = False
                 self.number_r_c_bolts(design_dictionary, 0, 1)
                 return
             else:
-                self.final_end_dist = enddist
-                self.final_edge_dist = enddist
+                self.final_edge_dist = edge_dist
+                self.final_end_dist = self.bolt.min_end_dist_round
                 self.design_status = True
 
         if self.bolt.bolt_type == 'Bearing Bolt':
@@ -1036,7 +1059,7 @@ class LapJointBolted(MomentConnection):
             if not getattr(self, 'design_status', False):
                 self.report_input = {
                     KEY_MODULE: "Lap Joint Bolted Connection",
-                    KEY_MAIN_MODULE: "Simple Connection",
+                    KEY_MAIN_MODULE: "Plated Connection",
                     "Design Status": "TITLE",
                     "Status": "Design not completed successfully.",
                 }
@@ -1048,15 +1071,10 @@ class LapJointBolted(MomentConnection):
                 
                 Disp_2d_image = []
                 Disp_3D_image = "/ResourceFiles/images/3d.png"
+                rel_path = os.path.abspath(".").replace("\\", "/")
                 fname_no_ext = popup_summary.get("filename", "LapJointBoltedReport")
-                # Use directory of filename if it's a full path (web API), otherwise use folder (GUI)
-                if fname_no_ext and os.path.isabs(fname_no_ext):
-                    rel_path = os.path.dirname(fname_no_ext)
-                else:
-                    folder = popup_summary.get('folder', './reports')
-                    rel_path = folder
-                    os.makedirs(folder, exist_ok=True)
-                rel_path = os.path.abspath(rel_path).replace("\\", "/")
+                folder = popup_summary.get('folder', './reports')
+                os.makedirs(folder, exist_ok=True)
                 
                 CreateLatex.save_latex(
                     CreateLatex(), self.report_input, self.report_check,
@@ -1066,7 +1084,7 @@ class LapJointBolted(MomentConnection):
                 return True
 
             self.module = g('module', 'Lap Joint Bolted')
-            self.mainmodule = 'Simple Connection'
+            self.mainmodule = 'Plated Connection'
             design_for = str(g('design_for', 'Tension')).strip()
             is_comp = design_for.lower().startswith('c')
             
@@ -1110,7 +1128,7 @@ class LapJointBolted(MomentConnection):
 
             self.report_input = {
                 KEY_MODULE: "Lap Joint Bolted Connection",
-                KEY_MAIN_MODULE: "Simple Connection",
+                KEY_MAIN_MODULE: "Plated Connection",
                 KEY_DISP_DESIGN_FOR: design_for,
                 "Thickness of Plate-1 (mm) *": plate1_thk,
                 "Thickness of Plate-2 (mm) *": plate2_thk,
@@ -1595,15 +1613,10 @@ class LapJointBolted(MomentConnection):
 
             Disp_2d_image = []
             Disp_3D_image = "/ResourceFiles/images/3d.png"
+            rel_path = os.path.abspath(".").replace("\\", "/")
             fname_no_ext = popup_summary.get("filename", "LapJointBoltedReport")
-            # Use directory of filename if it's a full path (web API), otherwise use folder (GUI)
-            if fname_no_ext and os.path.isabs(fname_no_ext):
-                rel_path = os.path.dirname(fname_no_ext)
-            else:
-                folder = popup_summary.get('folder', './reports')
-                rel_path = folder
-                os.makedirs(folder, exist_ok=True)
-            rel_path = os.path.abspath(rel_path).replace("\\", "/")
+            folder = popup_summary.get('folder', './reports')
+            os.makedirs(folder, exist_ok=True)
             
             CreateLatex.save_latex(
                 CreateLatex(), self.report_input, self.report_check,

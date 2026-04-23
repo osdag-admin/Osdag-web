@@ -258,8 +258,7 @@ class ColumnDesign(Member):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -596,6 +595,15 @@ class ColumnDesign(Member):
         flag = False
         option_list = self.input_values()
         missing_fields_list = []
+        # ---------- Allowable UR validation ----------
+        if float(design_dictionary.get(KEY_ALLOW_UR, 1.0)) > 1.0:
+            all_errors.append(
+                "Utilisation ratio greater than 1.0 is an invalid input."
+            )
+            design_dictionary[KEY_ALLOW_UR] = "1.0"
+            return all_errors
+
+
         #print(f'func_for_validation option_list {option_list}')
         for option in option_list:
             if option[2] == TYPE_TEXTBOX:
@@ -1510,9 +1518,11 @@ class ColumnDesign(Member):
 
         Disp_2d_image = []
         Disp_3D_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)
+
+        print(sys.path[0])
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+        fname_no_ext = popup_summary['filename']
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,
                               rel_path, Disp_2d_image, Disp_3D_image, module=self.module)

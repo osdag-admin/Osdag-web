@@ -832,11 +832,20 @@ class CADFillet(object): # not used in the current version as groove weld is pre
         welds = self.get_welded_models()
         nut_bolt_array = self.get_nut_bolt_array_models()
 
-        CAD_list = [plate_connectors, welds, nut_bolt_array]
-        CAD = CAD_list[0]
+        # Flatten all lists into a single list of shapes
+        all_shapes = []
+        for item in [plate_connectors, welds, nut_bolt_array]:
+            if isinstance(item, list):
+                all_shapes.extend(item)
+            else:
+                all_shapes.append(item)
 
-        for model in CAD_list[1:]:
-            CAD = BRepAlgoAPI_Fuse(CAD, model).Shape()
+        if not all_shapes:
+            return None
+
+        CAD = all_shapes[0]
+        for shape in all_shapes[1:]:
+            CAD = BRepAlgoAPI_Fuse(CAD, shape).Shape()
 
         return CAD
 
@@ -851,11 +860,20 @@ class CADFillet(object): # not used in the current version as groove weld is pre
         welds = self.get_welded_models()
         nut_bolt_array = self.get_nut_bolt_array_models()
 
-        CAD_list = [beams, plate_connectors, welds, nut_bolt_array]
-        CAD = CAD_list[0]
+        # Flatten all lists into a single list of shapes
+        all_shapes = []
+        for item in [beams, plate_connectors, welds, nut_bolt_array]:
+            if isinstance(item, list):
+                all_shapes.extend(item)
+            else:
+                all_shapes.append(item)
 
-        for model in CAD_list[1:]:
-            CAD = BRepAlgoAPI_Fuse(CAD, model).Shape()
+        if not all_shapes:
+            return None
+
+        CAD = all_shapes[0]
+        for shape in all_shapes[1:]:
+            CAD = BRepAlgoAPI_Fuse(CAD, shape).Shape()
 
         return CAD
 
@@ -1790,11 +1808,20 @@ class CADGroove(object):
         welds = self.get_welded_models()
         nut_bolt_array = self.get_nut_bolt_array_models()
 
-        CAD_list = [plate_connectors, welds, nut_bolt_array]
-        CAD = CAD_list[0]
+        # Flatten all lists into a single list of shapes
+        all_shapes = []
+        for item in [plate_connectors, welds, nut_bolt_array]:
+            if isinstance(item, list):
+                all_shapes.extend(item)
+            else:
+                all_shapes.append(item)
 
-        for model in CAD_list[1:]:
-            CAD = BRepAlgoAPI_Fuse(CAD, model).Shape()
+        if not all_shapes:
+            return None
+
+        CAD = all_shapes[0]
+        for shape in all_shapes[1:]:
+            CAD = BRepAlgoAPI_Fuse(CAD, shape).Shape()
 
         return CAD
 
@@ -1810,13 +1837,23 @@ class CADGroove(object):
         welds = self.get_welded_models()
         nut_bolt_array = self.get_nut_bolt_array_models()
 
-        CAD_list = [beams, plate_connectors, welds, nut_bolt_array]
-        CAD = CAD_list[0]
+        # Flatten all lists into a single list of shapes
+        all_shapes = []
+        for item in [beams, plate_connectors, welds, nut_bolt_array]:
+            if isinstance(item, list):
+                all_shapes.extend(item)
+            else:
+                all_shapes.append(item)
 
-        for model in CAD_list[1:]:
-            CAD = BRepAlgoAPI_Fuse(CAD, model).Shape()
+        if not all_shapes:
+            return None
+
+        CAD = all_shapes[0]
+        for shape in all_shapes[1:]:
+            CAD = BRepAlgoAPI_Fuse(CAD, shape).Shape()
 
         return CAD
+
 
 
 

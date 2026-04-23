@@ -61,6 +61,9 @@ def create_bolted_lap_joint(plate1_thickness = 16, plate2_thickness = 8, plate_w
     # Calculate bolt positions 
     count = 0
     exit_loops = False  # Flag to break both loops
+    
+    print(f"[DEBUG CAD] Creating bolt positions: rows={bolt_rows}, cols={bolt_cols}, gauge={gauge}, pitch={pitch}, edge={edge}, end={end}")
+    print(f"[DEBUG CAD] plate_length={plate_length}, actual_overlap_length={actual_overlap_length}")
 
     for col in range(bolt_cols):
         for row in range(bolt_rows):
@@ -68,13 +71,17 @@ def create_bolted_lap_joint(plate1_thickness = 16, plate2_thickness = 8, plate_w
                 exit_loops = True
                 break  # Break out of the inner loop
             
-            bolt_positions.append((edge + (row * gauge), 
-                                plate_length / 2 - actual_overlap_length + end + (col * pitch), 
-                                (0.5 * plate1_thickness) + plate2_thickness))
+            x_pos = edge + (row * gauge)
+            y_pos = plate_length / 2 - actual_overlap_length + end + (col * pitch)
+            z_pos = (0.5 * plate1_thickness) + plate2_thickness
+            bolt_positions.append((x_pos, y_pos, z_pos))
+            print(f"[DEBUG CAD] Bolt {count}: col={col}, row={row}, pos=({x_pos:.1f}, {y_pos:.1f}, {z_pos:.1f})")
             count += 1
         
         if exit_loops:  # Check flag to break outer loop
             break
+
+    print(f"[DEBUG CAD] Total bolt positions created: {len(bolt_positions)}")
 
         
     

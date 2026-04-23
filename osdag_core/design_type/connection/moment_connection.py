@@ -550,9 +550,7 @@ class MomentConnection(Connection, IS800_2007):
             IS 800:2007,  cl 10.5.7.1.1
 
         """
-        # Ignore zero overwrites (use other stress); avoid division by zero
-        nonzero = [s for s in ultimate_stresses if s and float(s) > 0]
-        f_u = min(nonzero) if nonzero else 410.0  # default MPa if missing
+        f_u = min(ultimate_stresses)
         gamma_mw = IS800_2007.cl_5_4_1_Table_5['gamma_mw'][fabrication]
         weld_size = (strength_unit_len / (0.7 * f_u)) * math.sqrt(3) * gamma_mw
 

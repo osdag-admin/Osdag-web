@@ -2537,14 +2537,14 @@ class Member(Main):
         else:
             fu = ''
 
-        val = {KEY_DP_BOLT_TYPE: "Pretensioned",
+        val = {KEY_DP_BOLT_TYPE: 'Pre-tensioned',
                KEY_DP_BOLT_HOLE_TYPE: "Standard",
                KEY_DP_BOLT_SLIP_FACTOR: str(0.3),
                KEY_DP_WELD_MATERIAL_G_O: fu,
                KEY_DP_WELD_FAB: KEY_DP_FAB_SHOP,
                KEY_DP_WELD_MATERIAL_G_O: str(fu),
                KEY_DP_DETAILING_EDGE_TYPE: "Sheared or hand flame cut",
-               KEY_DP_DETAILING_GAP: '0',
+               KEY_DP_DETAILING_GAP: '10',
                KEY_DP_DETAILING_CORROSIVE_INFLUENCES: 'No',
                KEY_DP_DESIGN_METHOD: "Limit State Design",
                KEY_CONNECTOR_MATERIAL: str(design_dictionary[KEY_MATERIAL])
@@ -2613,7 +2613,7 @@ class Member(Main):
 
         optimum = []
 
-        t2 = (KEY_ALLOW_UR, KEY_DISP_UR, TYPE_TEXTBOX, None, values[KEY_ALLOW_UR])
+        t2 = (KEY_ALLOW_UR, KEY_DISP_UR, TYPE_TEXTBOX, None, values[KEY_ALLOW_UR], 'Double Validator')
         optimum.append(t2)
 
         t2 = (KEY_OPTIMIZATION_PARA, KEY_DISP_OPTIMIZATION_PARA, TYPE_COMBOBOX, ['Utilization Ratio'], values[KEY_OPTIMIZATION_PARA]) #, 'Cost'
@@ -2904,9 +2904,21 @@ class Member(Main):
             KEY_LENGTH_OVERWRITE, KEY_DISPP_LENGTH_OVERWRITE, TYPE_TEXTBOX, None, values[KEY_LENGTH_OVERWRITE])
         optimum.append(t2)
 
-
-        
-        t9 = ("textBrowser", "", TYPE_TEXT_BROWSER, "DUMMYTEXT TODO: replace" , None)
+        doc_text = """
+            <p><b>Effective Area Parameter</b> is the parameter used to define the reduction in the area of the section due to 
+            connection detailing and other such requirements. The default value of this parameter is set at <b>1.0</b>, which means 
+            that the effective area is 100% of the gross area for Plastic, Compact and Semi-compact sections.</p>
+            <p>For <b>Slender sections</b>, the initial area will be computed based on the recommendations in Fig.2B of the National 
+            Building Code (2016). The value of the parameter should be defined in terms of the effective area to be considered for 
+            design simulation after deducting the area lost.</p>
+            <p>The maximum value of the parameter is <b>1.0</b> (effective area is 100% of the gross area) with a minimum value of <b>0.1</b>.</p>
+            <hr>
+            <p><b>Effective Length</b> is the parameter used to <b>overwrite the length multiplier</b>. The default value of this ratio is set at <b>NA</b>. 
+            The value can be re-defined for any particular design session with a minimum of <b>0.1</b>. If an invalid value is given, it is set to <b>NA</b> or <b>1.0</b>.</p>
+            <p>For simply supported beams of overall depth <b>D</b> and span length <b>L</b>, the effective length LLT is given by the table below.</p>
+            """
+                    
+        t9 = ("textBrowser", "", TYPE_TEXT_BROWSER, doc_text , None)
         optimum.append(t9)
 
         return optimum
@@ -2940,7 +2952,52 @@ class Member(Main):
         optimum.append(t1)
         t2 = (KEY_ShearBucklingOption, KEY_ShearBuckling, TYPE_COMBOBOX, KEY_DISP_SB_Option, values[KEY_ShearBucklingOption])
         optimum.append(t2)
-        t9 = ("textBrowser", "", TYPE_TEXT_BROWSER, "DUMMYTEXT TODO: replace" , None)
+
+        stiffener_doc = """
+            <div style="max-width: 650px; line-height: 1.6;">
+
+            <h2>Intermediate and Longitudinal Stiffeners</h2>
+
+            <p><b>Intermediate stiffeners</b> are structural elements designed to provide additional support and reinforcement along the length of a beam or girder. Provision of intermediate transverse stiffeners is based on the <b>shear buckling strength of webs</b> in I-section girders.</p>
+
+            <p><b>Clause 8.7.2</b> discusses the provisions for intermediate transverse stiffener design.</p>
+
+            <hr>
+
+            <h3>Longitudinal Stiffeners</h3>
+
+            <p><b>Longitudinal stiffeners</b> increase the buckling resistance of the web. These stiffeners remain straight and subdivide the web into smaller panels, thereby limiting web buckling to smaller regions.</p>
+
+            <p><b>Clause 8.7.13</b> explains when horizontal stiffeners are added in addition to vertical stiffeners.</p>
+
+            <hr>
+
+            <h3>Shear Buckling Design Methods</h3>
+
+            <p><b>Clause 8.4.2.2 of IS 800:2007</b> provides the design calculations for shear buckling methods.</p>
+
+            <h4>Post-Critical Method</h4>
+            <p>The <b>Post-Critical method</b> (Simple Post-Critical method) applies to both unstiffened and stiffened webs, provided transverse stiffeners are present at supports. It offers a straightforward way to evaluate shear buckling strength while considering stiffener influence and critical buckling stress.</p>
+
+            <h4>Tension Field Method (TFA)</h4>
+            <p>The <b>Tension Field method</b> is mainly used for steel plate girders. It considers redistribution of internal forces in the web to enhance load-carrying capacity.</p>
+
+            <p>Here, the web behaves like a <b>tension field</b> where diagonal tension struts form between flanges and web panel points, improving shear resistance.</p>
+
+            <hr>
+
+            <h3>Key Functions of Longitudinal Stiffeners</h3>
+            <ul>
+            <li>Increase web buckling resistance</li>
+            <li>Subdivide the web into smaller panels</li>
+            <li>Reduce slenderness of individual web panels</li>
+            <li>Improve shear capacity</li>
+            </ul>
+
+            </div>
+            """
+        
+        t9 = ("textBrowser", "", TYPE_TEXT_BROWSER, stiffener_doc , None)
         optimum.append(t9)
         return optimum
     
@@ -2952,7 +3009,7 @@ class Member(Main):
         for key in values.keys():
             if key in input_dictionary.keys():
                 values[key] = input_dictionary[key]
-
+        
         optimum = []
 
         t2 = (KEY_IS_IT_SYMMETRIC, KEY_DISP_IS_IT_SYMMETRIC, TYPE_COMBOBOX, KEY_DISP_SYMMETRIC_list, values[KEY_IS_IT_SYMMETRIC])

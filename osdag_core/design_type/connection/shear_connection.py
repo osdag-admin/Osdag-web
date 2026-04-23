@@ -391,7 +391,7 @@ class ShearConnection(Connection):
         else:
             fu = ''
 
-        val = {KEY_DP_BOLT_TYPE: "Pretensioned",
+        val = {KEY_DP_BOLT_TYPE: 'Pre-tensioned',
                KEY_DP_BOLT_HOLE_TYPE: "Standard",
                KEY_DP_BOLT_SLIP_FACTOR: str(0.3),
                KEY_DP_WELD_FAB: KEY_DP_FAB_SHOP,
@@ -455,9 +455,9 @@ class ShearConnection(Connection):
 
         conn = input[0]
         if conn in VALUES_CONN_1:
-            return connectdb("Columns")
+            return VALUE_BEAM_COL
         elif conn in VALUES_CONN_2:
-            return connectdb("Beams")
+            return VALUE_BEAM_COL
         else:
             return []
 
@@ -465,7 +465,7 @@ class ShearConnection(Connection):
 
         conn = input[0]
         if conn in VALUES_CONN:
-            return connectdb("Beams")
+            return VALUE_BEAM_COL
         else:
             return []
 

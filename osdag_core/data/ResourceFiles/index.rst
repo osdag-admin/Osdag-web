@@ -11,7 +11,7 @@
 Welcome to Osdag help!
 ================================================
 
-Osdag is a cross-platform free and open-source software for the design and detailing of steel structures, following relevant Indian Standards. Osdag is primarily built upon Python and other Python-based FOSS tools, such as, PyQt, OpenCascade, PythonOCC, SQLite, etc. It is developed by the Darshan in Osdag team at IIT Bombay. 
+Osdag is a cross-platform free and open-source software for the design and detailing of steel structures, following relevant Indian Standards. Osdag is primarily built upon Python and other Python-based FOSS tools, such as, PySide, OpenCascade, PythonOCC, SQLite, etc. It is developed by the Darshan in Osdag team at IIT Bombay. 
  
 This beta version of Osdag contains four shear connection modules.
 

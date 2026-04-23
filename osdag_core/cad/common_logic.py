@@ -212,6 +212,56 @@ class CommonDesignLogic(object):
         self.connectivityObj = None
         self.folder = folder
 
+    def _register_shapes(self, *shapes):
+        """
+        Register OCC shapes with memory manager to prevent premature garbage collection.
+        
+        This method should be called immediately after creating OCC shapes in CAD creation
+        functions to ensure shapes are not freed by Python's GC while still referenced
+        by OpenCASCADE's AIS context or GPU buffers.
+        
+        Args:
+            *shapes: Variable number of TopoDS_Shape objects, lists of shapes, 
+                     tuples of shapes, or dicts containing shapes as values.
+                     
+        Returns:
+            None
+        """
+        try:
+            from osdag_gui.OS_safety_protocols import get_occ_memory_manager
+            manager = get_occ_memory_manager()
+            widget_id = id(self.cad_widget)
+            
+            # Ensure widget is registered
+            if hasattr(self, 'display') and self.display:
+                manager.register_widget(widget_id, self.display.Context)
+            
+            def register_recursive(obj):
+                """Recursively register shapes from various container types."""
+                if obj is None:
+                    return
+                if isinstance(obj, dict):
+                    for v in obj.values():
+                        register_recursive(v)
+                elif isinstance(obj, (list, tuple)):
+                    for item in obj:
+                        register_recursive(item)
+                else:
+                    # Assume it's a TopoDS_Shape or similar OCC object
+                    try:
+                        manager.register_shape(widget_id, obj)
+                    except Exception:
+                        pass  # Not a registerable shape type
+            
+            for shape_arg in shapes:
+                register_recursive(shape_arg)
+                
+        except ImportError:
+            # Memory manager not available (e.g., running CAD tests without GUI)
+            pass
+        except Exception as e:
+            print(f"[WARNING] Could not register shapes with memory manager: {e}")
+
 
     def get_notch_ht(self, PB_T, PB_R1, SB_T, SB_R1):
         """
@@ -448,6 +498,10 @@ class CommonDesignLogic(object):
 
         beamwebconn.create_3dmodel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(beamwebconn, 'get_models'):
+            self._register_shapes(beamwebconn.get_models())
+
         return beamwebconn
 
     def create3DColWebBeamWeb(self):
@@ -584,6 +638,11 @@ class CommonDesignLogic(object):
             colwebconn = seatColWebBeamWeb(supporting, supported, seatangle, topclipangle, nutBoltArray, gap)
 
         colwebconn.create_3dmodel()
+        
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(colwebconn, 'get_models'):
+            self._register_shapes(colwebconn.get_models())
+        
         return colwebconn
 
     def create3DColFlangeBeamWeb(self):
@@ -721,6 +780,11 @@ class CommonDesignLogic(object):
         #     colflangeconn = seatColFlangeBeamWeb(column, beam, seatangle, topclipangle, nutBoltArray,gap)
 
         colflangeconn.create_3dmodel()
+        
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(colflangeconn, 'get_models'):
+            self._register_shapes(colflangeconn.get_models())
+        
         return colflangeconn
 
     def createBBCoverPlateCAD(self):
@@ -841,7 +905,12 @@ class CommonDesignLogic(object):
             # bbCoverPlate.create_3DModel() will create the CAD model of each component, debugging this line will give moe clarity
             bbCoverPlate.create_3DModel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(bbCoverPlate, 'get_models'):
+            self._register_shapes(bbCoverPlate.get_models())
+
         return bbCoverPlate
+
 
     def createBBEndPlateCAD(self):
         """
@@ -966,7 +1035,12 @@ class CommonDesignLogic(object):
                                     bbWeldWeb,beam_stiffeners,beam_stiffenerFlush,bbWeldStiffHeight,bbWeldStiffLength,bbWeldFlushstiffHeight,bbWeldFlushstiffLength)
         extbothWays.create_3DModel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(extbothWays, 'get_models'):
+            self._register_shapes(extbothWays.get_models())
+
         return extbothWays
+
 
     def createBCEndPlateCAD(self):
         """
@@ -1307,6 +1381,10 @@ class CommonDesignLogic(object):
 
             col_web_connectivity.create_3DModel()
 
+            # Register model shapes with memory manager to prevent premature GC
+            if hasattr(col_web_connectivity, 'get_models'):
+                self._register_shapes(col_web_connectivity.get_models())
+
             return col_web_connectivity
 
 
@@ -1398,6 +1476,10 @@ class CommonDesignLogic(object):
 
             ccCoverPlateCAD.create_3DModel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(ccCoverPlateCAD, 'get_models'):
+            self._register_shapes(ccCoverPlateCAD.get_models())
+
         return ccCoverPlateCAD
 
     def createCCEndPlateCAD(self):
@@ -1441,6 +1523,10 @@ class CommonDesignLogic(object):
         ccEndPlateCad = CCEndPlateCAD(CEP, column, endPlate, flangeWeld, webWeld, nut_bolt_array, stiffener, weld_stiff_h, weld_stiff_v)
 
         ccEndPlateCad.create_3DModel()
+
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(ccEndPlateCad, 'get_models'):
+            self._register_shapes(ccEndPlateCad.get_models())
 
         return ccEndPlateCad
 
@@ -1675,6 +1761,10 @@ class CommonDesignLogic(object):
 
         basePlate.create_3DModel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(basePlate, 'get_models'):
+            self._register_shapes(basePlate.get_models())
+
         return basePlate
 
     def createTensionCAD(self):
@@ -1765,7 +1855,12 @@ class CommonDesignLogic(object):
 
         tensionCAD.create_3DModel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(tensionCAD, 'get_models'):
+            self._register_shapes(tensionCAD.get_models())
+
         return tensionCAD
+
 
     def createColumnInFrameCAD(self):
         """
@@ -1836,7 +1931,11 @@ class CommonDesignLogic(object):
 
             col.create_3DModel()
 
+        # Register shape with memory manager to prevent premature GC
+        self._register_shapes(sec)
+
         return sec
+
 
     def createBoltedLapJoint(self):
 
@@ -1864,7 +1963,12 @@ class CommonDesignLogic(object):
                                                                          actual_overlap_length=Conn.len_conn,bolt_cols=Conn.cols,bolt_rows=Conn.rows, number_bolts=Conn.number_bolts,
                                                                          pitch=Conn.final_pitch,gauge=Conn.final_gauge,
                                                                          edge=Conn.final_edge_dist,end=Conn.final_end_dist)
+        
+        # Register all shapes with memory manager to prevent premature GC
+        self._register_shapes(lap_joint, plate1, plate2, bolts, nuts)
+        
         return lap_joint, plate1, plate2, bolts, nuts
+
 
     def createWeldedLapJoint(self):
         Conn = self.module_object
@@ -1879,7 +1983,12 @@ class CommonDesignLogic(object):
         
         lap_joint, plate1, plate2, welds = create_welded_lap_joint(plate1_thickness, plate2_thickness, plate_width, overlap_length, weld_size)
         print(f"DEBUG: create_welded_lap_joint returned: {lap_joint}, {plate1}, {plate2}, {welds}")
+        
+        # Register all shapes with memory manager to prevent premature GC
+        self._register_shapes(lap_joint, plate1, plate2, welds)
+        
         return lap_joint, plate1, plate2, welds
+
 
     def createPlateGirderCAD(self):
         """
@@ -2131,7 +2240,11 @@ class CommonDesignLogic(object):
         # Store components for display_3DModel
         self.plate_girder_components = components
         
+        # Register all shapes with memory manager to prevent premature GC
+        self._register_shapes(components)
+        
         return components
+
 
     def createButtJointBoltedCAD(self):
           
@@ -2144,8 +2257,8 @@ class CommonDesignLogic(object):
             self.cover_thickness = float(Col.calculated_cover_plate_thickness)
             self.plate_width = float(Col.width)
             self.bolt_dia = float(Col.bolt.bolt_diameter_provided)
-            self.bolt_rows = int(Col.rows)
-            self.bolt_cols = int(Col.cols)
+            self.bolt_rows = int(Col.cols)
+            self.bolt_cols = int(Col.rows)
             self.pitch = float(Col.final_pitch)
             self.gauge = float(Col.final_gauge)
             self.edge = float(Col.final_edge_dist)
@@ -2162,7 +2275,12 @@ class CommonDesignLogic(object):
                 self.plate1_thickness, self.plate2_thickness, self.cover_thickness, self.plate_width, self.bolt_dia,
                 self.bolt_rows, self.bolt_cols, self.pitch, self.gauge, self.edge, self.end, self.number_bolts,
                 cover_type=self.cover_type)
+            
+            # Register all shapes with memory manager to prevent premature GC
+            self._register_shapes(butt_joint, plate1, plate2, platec, platec2, bolts, nuts, packing1, packing2)
+            
             return butt_joint, plate1, plate2, platec, platec2, bolts, nuts, packing1, packing2
+
 
     def createButtJointWeldedCAD(self):
         # Get input values from the design object
@@ -2215,7 +2333,12 @@ class CommonDesignLogic(object):
             import traceback
             traceback.print_exc()
             return None, None, None, None, None, [], None, None
+        
+        # Register all shapes with memory manager to prevent premature GC
+        self._register_shapes(assembly, plate1, plate2, platec, platec2, welds, packing1, packing2)
+        
         return assembly, plate1, plate2, platec, platec2, welds, packing1, packing2
+
 
     def createSimplySupportedBeam(self):
 
@@ -2357,7 +2480,11 @@ class CommonDesignLogic(object):
             'support_hatch': hatching_lines
         }
 
+        # Register all shapes with memory manager to prevent premature GC
+        self._register_shapes(components)
+
         return components
+
 
     def createCantileverBeam(self):
         print("DEBUG: Entering createCantileverBeam")
@@ -2432,13 +2559,19 @@ class CommonDesignLogic(object):
             hatching_lines = None
 
             # Return both beam and support block + hatch as a dictionary
-            return {'beam': beam_model, 'support_block': support_block, 'support_hatch': hatching_lines}
+            components = {'beam': beam_model, 'support_block': support_block, 'support_hatch': hatching_lines}
+            
+            # Register all shapes with memory manager to prevent premature GC
+            self._register_shapes(components)
+            
+            return components
             
         except Exception as e:
             print("DEBUG ERROR in createCantileverBeam:")
             print(e)
             traceback.print_exc()
             return {'beam': None, 'support_block': None}
+
 
     def createPurlin(self):
 
@@ -2460,7 +2593,11 @@ class CommonDesignLogic(object):
         web_thickness = Flex.section_property.web_thickness,
         flange_thickness = Flex.section_property.flange_thickness)
 
+        # Register shape with memory manager to prevent premature GC
+        self._register_shapes(purlin)
+
         return purlin
+
 
     def createStrutsInTrusses(self):
         Col = self.module_object
@@ -2488,6 +2625,9 @@ class CommonDesignLogic(object):
             _place = angle.place(origin, uDir, wDir)
             point = angle.computeParams()
             prism = angle.create_model()
+
+            # Register shape with memory manager to prevent premature GC
+            self._register_shapes(prism)
 
             return prism
         elif Col.sec_profile=="Back to Back Angles - Same side of gusset":
@@ -2524,6 +2664,9 @@ class CommonDesignLogic(object):
             assembly = BackToBackAnglesWithGussetsSameSide(L, A, B, T, R1, R2, gusset_L, gusset_H, gusset_T, gusset_degree, spacing)
             assembly.place(origin, uDir, wDir)
             shape = assembly.create_model()
+
+            # Register shape with memory manager to prevent premature GC
+            self._register_shapes(shape)
 
             return shape
 
@@ -2562,6 +2705,10 @@ class CommonDesignLogic(object):
             assembly = BackToBackAnglesWithGussetsOppSide(L, A, B, T, R1, R2, gusset_L, gusset_H, gusset_T, gusset_degree, spacing)
             assembly.place(origin, uDir, wDir)
             shape = assembly.create_model()
+            
+            # Register shape with memory manager to prevent premature GC
+            self._register_shapes(shape)
+            
             return shape
 
     def createStrutBoltedCAD(self):
@@ -2634,7 +2781,12 @@ class CommonDesignLogic(object):
         strutCAD.create_3DModel()
         print("DEBUG: createStrutBoltedCAD completed successfully")
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(strutCAD, 'get_models'):
+            self._register_shapes(strutCAD.get_models())
+        
         return strutCAD
+
 
     def createStrutWeldedCAD(self):
         T = self.module_object
@@ -2686,7 +2838,12 @@ class CommonDesignLogic(object):
 
         strutCAD.create_3DModel()
 
+        # Register model shapes with memory manager to prevent premature GC
+        if hasattr(strutCAD, 'get_models'):
+            self._register_shapes(strutCAD.get_models())
+
         return strutCAD
+
 
     def display_3DModel(self, component, bgcolor):
         
@@ -2700,18 +2857,10 @@ class CommonDesignLogic(object):
 
         self.component = component
 
-        # Use CleanupCoordinator for centralized cleanup (optional - may not be available in headless/web mode)
-        try:
-            from osdag_gui.OS_safety_protocols import get_cleanup_coordinator
-            coordinator = get_cleanup_coordinator()
-            coordinator.cleanup_for_new_design(self.cad_widget, self.display)
-        except ImportError:
-            # Headless/web mode - cleanup coordinator not available, just clear display manually
-            try:
-                if self.display:
-                    self.display.EraseAll()
-            except Exception:
-                pass  # Ignore errors in headless mode
+        # Use CleanupCoordinator for centralized cleanup
+        from osdag_gui.OS_safety_protocols import get_cleanup_coordinator
+        coordinator = get_cleanup_coordinator()
+        coordinator.cleanup_for_new_design(self.cad_widget, self.display)
 
         # Show Cube
         self.cad_widget.display_view_cube()
@@ -3139,27 +3288,31 @@ class CommonDesignLogic(object):
                 osdag_display_shape(self.display, self.ColObj, update=True, color=column_color, label=label_column,canvas=self.cad_widget)
 
         elif self.mainmodule == KEY_DISP_LAPJOINTBOLTED:
-            self.ColObj = self.createBoltedLapJoint()
+            # NOTE: Reuse self.ColObj created in call_3DModel() to prevent duplicate CAD creation
+            # which causes OpenCASCADE memory corruption (malloc double linked list error)
+            # Do NOT call createBoltedLapJoint() again here - it's already called in call_3DModel()
             self.col = self.module_object 
 
             # Hover dict
             hover_dict = self.module_object.hover_dict
             self.cad_widget.model_hover_labels = hover_dict.copy()
 
-            if isinstance(self.ColObj, (tuple, list)):
-                _, plate1, plate2, _, _ = self.ColObj
+            # Unpack the tuple returned by createBoltedLapJoint() called in call_3DModel()
+            if hasattr(self, 'ColObj') and self.ColObj is not None:
+                self.assembly, plate1, plate2, self.bolt_models, self.nuts_models = self.ColObj
             else:
-                plate1 = self.ColObj.plate1
-                plate2 = self.ColObj.plate2         
-                bolt = self.ColObj.bolt         
-                nut = self.ColObj.nut        
+                # Fallback (should not happen if call_3DModel ran correctly)
+                print("[WARNING] ColObj not found, creating shapes - this may cause memory issues")
+                self.assembly, plate1, plate2, self.bolt_models, self.nuts_models = self.createBoltedLapJoint()
+            
+            # Store references for use in component display
+            self.plate1_model = plate1
+            self.plate2_model = plate2
 
             # lap_joint, plate1, plate2, bolts, nuts
             label_plate1 = ["Plate 1", hover_dict.get("Plate 1")]
             label_plate2 = ["Plate 2", hover_dict.get("Plate 2")]
             label_bolt = ["Bolt", hover_dict.get("Bolt")]
-
-            self.assembly,self.plate1_model,self.plate2_model,self.bolt_models,self.nuts_models = self.createBoltedLapJoint()
 
             if self.component == "Model":
                 osdag_display_shape(self.display, plate1, update=True, color=column_color, label=label_plate1, canvas=self.cad_widget)
@@ -4002,41 +4155,52 @@ class CommonDesignLogic(object):
 
             # ---------------- SIMPLY SUPPORTED BEAM ----------------
             elif self.mainmodule == 'Flexure Member':
-                obj = self.FObj  # dict
+                obj = self.FObj
 
-                if self.component == "Beam":
-                    final_model = obj.get('beam')
+                # CASE 1: Legacy / broken return (TopoDS_Shape)
+                if isinstance(obj, TopoDS_Shape):
+                    # Save 3D → beam only (supports excluded)
+                    final_model = obj
 
-                elif self.component in ("Support", "Connector"):
-                    cadlist = [
-                        obj.get('support_tri'),
-                        obj.get('support_cyl'),
-                        obj.get('support_block')
-                    ]
+                # CASE 2: Correct dict-based return
+                elif isinstance(obj, dict):
+                    if self.component == "Beam":
+                        final_model = obj.get('beam')
 
-                else:
-                    cadlist = [
-                        obj.get('beam'),
-                        obj.get('support_tri'),
-                        obj.get('support_cyl'),
-                        obj.get('support_block')
-                    ]
+                    elif self.component in ("Support", "Connector"):
+                        # Viewer usage only
+                        cadlist = [
+                            obj.get('support_tri'),
+                            obj.get('support_cyl'),
+                            obj.get('support_block')
+                        ]
 
-            # ---------------- CANTILEVER BEAM ----------------
+                    else:
+                        # Save 3D → beam ONLY (no supports)
+                        final_model = obj.get('beam')
+
+
+            # CANTILEVER BEAM 
             elif self.mainmodule == 'Flexural Members - Cantilever':
-                obj = self.FObj  # dict
+                obj = self.FObj
 
-                if self.component == "Beam":
-                    final_model = obj.get('beam')
+                # CASE 1: Legacy / fused solid
+                if isinstance(obj, TopoDS_Shape):
+                    final_model = obj
 
-                elif self.component in ("Support", "Connector"):
-                    final_model = obj.get('support_block')
+                # CASE 2: Dict-based CAD
+                elif isinstance(obj, dict):
+                    if self.component == "Beam":
+                        final_model = obj.get('beam')
 
-                else:
-                    cadlist = [
-                        obj.get('beam'),
-                        obj.get('support_block')
-                    ]
+                    elif self.component in ("Support", "Connector"):
+                        # Viewer only
+                        final_model = obj.get('support_block')
+
+                    else:
+                        # Save 3D → beam ONLY
+                        final_model = obj.get('beam')
+
 
             # ---------------- PLATE GIRDER ----------------
             elif self.mainmodule == 'PLATE GIRDER':
@@ -4243,5 +4407,8 @@ class CommonDesignLogic(object):
         result = shapes[0]
         for shp in shapes[1:]:
             result = BRepAlgoAPI_Fuse(result, shp).Shape()
+
+        # Register the fused result shape with memory manager to prevent premature GC
+        self._register_shapes(result)
 
         return result

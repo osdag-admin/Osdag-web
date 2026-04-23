@@ -2558,7 +2558,7 @@ def cl_10_4_7_tension_in_bolt_due_to_prying(T_e, l_v, f_o, b_e, t, f_y, end_dist
                       t - thickness of the end plate
                       f_y - yield strength of end plate
                       end_dist - end distance of bolt
-                      pre_tensioned: 'Pretensioned' if bolt is pretension None if it is not
+                      pre_tensioned: 'Pre-tensioned' if bolt is pretension None if it is not
                       beta - 2 for non pre-tensioned bolt and 1 for pre-tensioned bolt
                       Q - Prying force
                       l_e - min(e, 1.1~t~\sqrt{\frac{\beta~f_o}{f_y}})
@@ -2586,7 +2586,7 @@ def cl_10_4_7_tension_in_bolt_due_to_prying(T_e, l_v, f_o, b_e, t, f_y, end_dist
         r'\begin{aligned} Q &= \frac{l_v}{2\times l_e} \Bigg[T_e - \frac{\beta \times  \eta \times f_o \times b_e \times t^4}'
         r'{27 \times l_e \times l_v^2}\Bigg] \\ \\'))
 
-    if pre_tensioned == 'Pretensioned':
+    if pre_tensioned == 'Pre-tensioned':
         tension_in_bolt_due_to_prying.append(NoEscape(r'\beta &= 1 ~(pre-tensioned~ bolt) \\ '))
     else:
         tension_in_bolt_due_to_prying.append(NoEscape(r'\beta &= 2 ~(non~ pre-tensioned~bolt) \\'))
@@ -2625,7 +2625,7 @@ def cl_10_4_7_prying_force(l_v, l_e, l_e2, T_e, beta, f_o, b_e, t, end_dist, bea
                       t - thickness of the end plate
                       f_y - yield strength of end plate
                       end_dist - end distance of bolt
-                      pre_tensioned: 'Pretensioned' if bolt is pretension None if it is not
+                      pre_tensioned: 'Pre-tensioned' if bolt is pretension None if it is not
                       beta - 2 for non pre-tensioned bolt and 1 for pre-tensioned bolt
                       Q - Prying force
                       l_e - min(e, 1.1~t~\sqrt{\frac{\beta~f_o}{f_y}})

@@ -19,7 +19,6 @@ from pylatex import Document, PageStyle, Head, MiniPage, Foot, LargeText, Medium
 from importlib.resources import files
 from ..Report_functions import *
 from ..utils.common.common_calculation import *
-from ..Common import _get_resource_path
 # from ..Common import *
 # from ..utils.common import component
 
@@ -39,9 +38,8 @@ class CreateLatex(Document):
         client = str(reportsummary['Client'])
 
         does_design_exist = reportsummary['does_design_exist']
-        # Use _get_resource_path helper with fallback for importlib.resources issues
-        pkg_images = _get_resource_path("data", "ResourceFiles", "images")
-        imgpath_osdagheader = str(pkg_images / "Osdag_header_report.png").replace("\\", "/")
+        pkg_images = files("osdag_core.data.ResourceFiles.images")
+        imgpath_osdagheader = str(pkg_images.joinpath("Osdag_header_report.png")).replace("\\", "/")
         # Add document header
         geometry_options = {"top": "5cm", "hmargin": "2cm", "headheight": "100pt", "footskip": "100pt", "bottom":"5cm"}
         doc = Document(geometry_options=geometry_options, indent=False)
@@ -116,15 +114,12 @@ class CreateLatex(Document):
                             sectiondetails = uiObj[i]
                             image_name = sectiondetails[KEY_DISP_SEC_PROFILE]
 
-                            Img_path = str(pkg_images / (image_name + ".png")).replace("\\", "/")
+                            Img_path = str(pkg_images.joinpath(image_name + ".png")).replace("\\", "/")
                             if (len(sectiondetails))% 2 == 0:
                             # merge_rows = int(round_up(len(sectiondetails),2)/2 + 2)
                                 merge_rows = int((len(sectiondetails)/2)) +2
                             else:
-                                if len(sectiondetails) < 5:
-                                    merge_rows = len(sectiondetails) - 1
-                                else:
-                                    merge_rows = int(len(sectiondetails)/2) + 2
+                                merge_rows = round_up((len(sectiondetails)/2),2)
                             if (len(sectiondetails))% 2 == 0:
                                 sectiondetails['']=''
 
@@ -208,11 +203,15 @@ class CreateLatex(Document):
                     with doc.create(Subsection("List of Input Section")):
                         with doc.create(Tabularx('|p{4cm}|X|', row_height=1.2)) as table:
                             list_sec = uiObj[i].strip("['']")
+                            print( 'list_sec', list_sec,'\n', list_sec.split("', '"))
                             # count = 0
                             # for i in list_sec:
                             #     print(i)
                             #     count += 1
                             str_len = len(list_sec.split("', '"))
+                            print( 'str_len', str_len)
+                            print(f"list_sec.split("', '")[0:220].strip("")", list_sec.split("', '")[0:220])
+                            print('\n',','.join(f"'{x}'" for x in list_sec.split("', '")[0:220]))
                             # list_sec.split("', '")[0:220]
                             if str_len > 200: # 130
                                 table.add_hline()
@@ -301,16 +300,19 @@ class CreateLatex(Document):
                             for i in uiObj:
                                 # row_cells = ('9', MultiColumn(3, align='|c|', data='Multicolumn not on left'))
 
+                                print(i)
                                 if type(uiObj[i]) == dict and i == 'Selected Section Details':
                                     table.add_hline()
                                     sectiondetails = uiObj[i]
                                     image_name = sectiondetails[KEY_DISP_SEC_PROFILE]
-                                    Img_path = str(pkg_images / (image_name + ".png")).replace("\\", "/")
+                                    Img_path = str(pkg_images.joinpath(image_name + ".png")).replace("\\", "/")
                                     if (len(sectiondetails)) % 2 == 0:
                                         # merge_rows = int(round_up(len(sectiondetails),2)/2 + 2)
                                         merge_rows = int(round_up((len(sectiondetails) / 2), 1, 0) + 2)
                                     else:
                                         merge_rows = int(round_up((len(sectiondetails) / 2), 1, 0) + 1)
+                                    print('Hi', len(sectiondetails) / 2, round_up(len(sectiondetails), 2) / 2,
+                                          merge_rows)
                                     if (len(sectiondetails)) % 2 == 0:
                                         sectiondetails[''] = ''
                                     a = list(sectiondetails.keys())
@@ -453,166 +455,87 @@ class CreateLatex(Document):
                                 image_5.add_caption('Typical Shear Key Details')
                                 # doc.append(NewPage())
 
-        # Views: web saves captures under {report_dir}/ResourceFiles/images/ (3d.png, top.png, ...)
-        # Previously required ALL four files or every slot showed "broken" — too strict for some modules.
-        # Use per-view fallback to broken.png only for missing files.
-        view_3dimg_path = None
-        view_topimg_path = None
-        view_sideimg_path = None
-        view_frontimg_path = None
-
-        if Disp_3d_image is None:
-            Disp_3d_image = ''
-
-        imgpath_broken = str((pkg_images / "broken.png").resolve())
-
-        def _report_asset_path(base, posix_fragment):
-            """Join rel_path with e.g. '/ResourceFiles/images/3d.png' without broken string concat."""
-            frag = (posix_fragment or "").strip().replace("\\", "/").lstrip("/")
-            if not frag:
-                return os.path.normpath(base)
-            return os.path.normpath(os.path.join(base, *frag.split("/")))
-
-        def _view_or_placeholder(candidate_path, label):
-            p = str(candidate_path)
-            exists = os.path.isfile(p)
-            use = p if exists else imgpath_broken
-            try:
-                print(
-                    "[ReportViews] %s candidate=%r exists=%s use_broken=%s size=%s"
-                    % (
-                        label,
-                        p,
-                        exists,
-                        not exists,
-                        os.path.getsize(p) if exists else None,
-                    )
-                )
-            except Exception as _log_exc:
-                print("[ReportViews] log error for %s: %s" % (label, _log_exc))
-            return use
-
         if does_design_exist and sys.platform != 'darwin' and Disp_3d_image != '':
+            doc.append(NewPage())
             Disp_top_image = "/ResourceFiles/images/top.png"
             Disp_side_image = "/ResourceFiles/images/side.png"
             Disp_front_image = "/ResourceFiles/images/front.png"
-
-            print(
-                "[ReportViews] rel_path=%r does_design_exist=%s sys.platform=%s"
-                % (rel_path, does_design_exist, sys.platform)
-            )
-            raw_3d = _report_asset_path(rel_path, Disp_3d_image)
-            raw_top = _report_asset_path(rel_path, Disp_top_image)
-            raw_side = _report_asset_path(rel_path, Disp_side_image)
-            raw_front = _report_asset_path(rel_path, Disp_front_image)
-
-            view_3dimg_path = _view_or_placeholder(raw_3d, "3d")
-            view_topimg_path = _view_or_placeholder(raw_top, "top")
-            view_sideimg_path = _view_or_placeholder(raw_side, "side")
-            view_frontimg_path = _view_or_placeholder(raw_front, "front")
-
-            doc.append(NewPage())
+            view_3dimg_path = rel_path + Disp_3d_image
+            view_topimg_path = rel_path + Disp_top_image
+            view_sideimg_path = rel_path + Disp_side_image
+            view_frontimg_path = rel_path + Disp_front_image
             with doc.create(Section('Views')):
-                doc.append(pyl.Command('setlength', arguments=[NoEscape(r'\arrayrulewidth'), NoEscape(r'1pt')]))
                 with doc.create(Tabularx(r'|>{\centering}X|>{\centering\arraybackslash}X|', row_height=1.1)) as table:
+                    view_3dimg_path = rel_path + Disp_3d_image
+                    view_topimg_path = rel_path + Disp_top_image
+                    view_sideimg_path = rel_path + Disp_side_image
+                    view_frontimg_path = rel_path + Disp_front_image
                     table.add_hline()
-                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=str(view_3dimg_path)),
-                                  StandAloneGraphic(image_options="height=4cm", filename=str(view_topimg_path))])
+                    table.add_row([StandAloneGraphic(image_options="height=4cm",filename=view_3dimg_path),
+                                  StandAloneGraphic(image_options="height=4cm",filename=view_topimg_path)])
                     table.add_row('(a) 3D View', '(b) Top View')
                     table.add_hline()
-                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=str(view_sideimg_path)),
-                                  StandAloneGraphic(image_options="height=4cm", filename=str(view_frontimg_path))])
+                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=view_sideimg_path),
+                                  StandAloneGraphic(image_options="height=4cm", filename=view_frontimg_path)])
                     table.add_row('(c) Side View', '(d) Front View')
                     table.add_hline()
+                # with doc.create(Figure(position='h!')) as view_3D:
+                #     view_3dimg_path = rel_path + Disp_3d_image
+                #     # view_3D.add_image(filename=view_3dimg_path, width=NoEscape(r'\linewidth'))
+                #
+                #     view_3D.add_image(filename=view_3dimg_path,width=NoEscape(r'\linewidth,height=6.5cm'))
+                #
+                #     view_3D.add_caption('3D View')
         else:
-            print(
-                "[ReportViews] using placeholder grid: does_design_exist=%s platform=%s Disp_3d_image=%r"
-                % (does_design_exist, sys.platform, Disp_3d_image)
-            )
             doc.append(NewPage())
+            imgpath_broken = pkg_images.joinpath("broken.png")
+            view_3dimg_path = imgpath_broken
+            view_topimg_path = imgpath_broken
+            view_sideimg_path = imgpath_broken
+            view_frontimg_path = imgpath_broken
             with doc.create(Section('Views')):
-                doc.append(pyl.Command('setlength', arguments=[NoEscape(r'\arrayrulewidth'), NoEscape(r'1pt')]))
                 with doc.create(Tabularx(r'|>{\centering}X|>{\centering\arraybackslash}X|', row_height=1.1)) as table:
                     view_3dimg_path = imgpath_broken
                     view_topimg_path = imgpath_broken
                     view_sideimg_path = imgpath_broken
                     view_frontimg_path = imgpath_broken
                     table.add_hline()
-                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=str(view_3dimg_path)),
-                                   StandAloneGraphic(image_options="height=4cm", filename=str(view_topimg_path))])
+                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=view_3dimg_path),
+                                   StandAloneGraphic(image_options="height=4cm", filename=view_topimg_path)])
                     table.add_row('(a) 3D View', '(b) Top View')
                     table.add_hline()
-                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=str(view_sideimg_path)),
-                                   StandAloneGraphic(image_options="height=4cm", filename=str(view_frontimg_path))])
+                    table.add_row([StandAloneGraphic(image_options="height=4cm", filename=view_sideimg_path),
+                                   StandAloneGraphic(image_options="height=4cm", filename=view_frontimg_path)])
                     table.add_row('(c) Side View', '(d) Front View')
                     table.add_hline()
 
         with doc.create(Section('Design Log')):
             doc.append(pyl.Command('Needspace', arguments=NoEscape(r'10\baselineskip')))
-            logger_raw = reportsummary.get('logger_messages', '')
-            # Ensure we always have a string to work with
-            if isinstance(logger_raw, list):
-                logger_raw = "\n".join(str(x) for x in logger_raw)
-            logger_msgs = str(logger_raw).split('\n')
-
+            logger_msgs=reportsummary['logger_messages'].split('\n')
             for msg in logger_msgs:
-                # Skip completely empty lines
-                if not msg or not str(msg).strip():
+                if('WARNING' in msg):
+                    colour='blue'
+                elif('INFO' in msg):
+                    colour='OsdagGreen'
+                elif('ERROR' in msg):
+                    colour='red'
+                else:
                     continue
+                doc.append(TextColor(colour,'\n'+msg))
+        
+        doc.append(pyl.Command('vspace', arguments='10mm'))
+        with doc.create(Tabularx('|X|', row_height=1.5)) as table:
+            table.add_hline()
+            table.add_row((MultiColumn(1, align='|c|', data=bold('Note')),), color='OsdagGreen')
+            table.add_hline()
+            table.add_row([NoEscape(r'The sharing of unabridged Osdag design reports is encouraged between the designer and the reviewer for clarity (on code compliance) and openness. The output from Osdag shall be owned by the individual structural designer, and the designer also remains responsible for the final design submitted to the client, along with associated documents.')])
+            table.add_hline()
 
-                msg_str = str(msg)
-                msg_lower = msg_str.lower()
-
-                # Default colour
-                colour = 'OsdagGreen'
-                if 'warning' in msg_lower:
-                    colour = 'blue'
-                elif 'error' in msg_lower:
-                    colour = 'red'
-
-                doc.append(TextColor(colour, '\n' + msg_str))
         try:
-            # **CRITICAL FIX**: Use proper file path handling
-            full_filename = os.path.join(rel_path, filename)
-            doc.generate_pdf(full_filename, compiler='pdflatex', clean_tex=False)
-            
-            # Check if PDF was created in the correct location
-            pdf_path = f"{full_filename}.pdf"
-            if os.path.exists(pdf_path):
-                return True
-            else:
-                # **DEBUG**: Check if PDF was created in wrong location
-                wrong_pdf_path = f"{filename}.pdf"
-                if os.path.exists(wrong_pdf_path):
-                    # Move it to correct location
-                    try:
-                        import shutil
-                        shutil.move(wrong_pdf_path, pdf_path)
-                        return True
-                    except Exception as move_error:
-                        pass
-                
-                return False
-                
-        except Exception as e:
-            # **ENHANCED ERROR HANDLING**: Try multiple paths
-            possible_paths = [
-                f"{os.path.join(rel_path, filename)}.pdf",
-                f"{filename}.pdf",
-                os.path.join(rel_path, f"{filename}.pdf")
-            ]
-            
-            for path in possible_paths:
-                if os.path.exists(path):
-                    file_size = os.path.getsize(path)
-                    if file_size > 1000:
-                        return True
-            
-            return False
-
+            latex_executable = get_latex_executable()
+            doc.generate_pdf(filename, compiler=latex_executable, clean_tex = False)
         except Exception as e:
             pass
-            
   
 
 def color_cell(cellcolor,celltext):

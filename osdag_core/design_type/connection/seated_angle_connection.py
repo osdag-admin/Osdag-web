@@ -39,7 +39,7 @@ from ...Report_functions import *
 from ...Common import *
 from ...utils.common.load import Load
 import logging
-from ...resource_paths import resource_image_path
+from importlib.resources import files
 from ...custom_logger import CustomLogger
 
 
@@ -240,8 +240,7 @@ class SeatedAngleConnection(ShearConnection):
         if not isinstance(self.logger, CustomLogger):
             logging.getLogger(unique_logger_name).manager.loggerDict.pop(unique_logger_name, None)
             self.logger = logging.getLogger(f"{unique_logger_name}_{id}")
-        if isinstance(self.logger, CustomLogger):
-            self.logger.clear_logs()
+        
         # Clear any existing handlers
         self.logger.handlers.clear()
         self.logger.setLevel(logging.DEBUG)
@@ -293,13 +292,13 @@ class SeatedAngleConnection(ShearConnection):
         t2 = (KEY_CONN, KEY_DISP_CONN, TYPE_COMBOBOX, VALUES_CONN_1, True, 'No Validator')
         options_list.append(t2)
 
-        t3 = (KEY_IMAGE, None, TYPE_IMAGE, resource_image_path("fin_cf_bw.png"), True, 'No Validator')
+        t3 = (KEY_IMAGE, None, TYPE_IMAGE, str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_cf_bw.png")), True, 'No Validator')
         options_list.append(t3)
 
-        t4 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUES_COLSEC, True, 'No Validator')
+        t4 = (KEY_SUPTNGSEC, KEY_DISP_COLSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t4)
 
-        t5 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUES_SECBM, True, 'No Validator')
+        t5 = (KEY_SUPTDSEC, KEY_DISP_BEAMSEC, TYPE_COMBOBOX, VALUE_BEAM_COL, True, 'No Validator')
         options_list.append(t5)
 
         t6 = (KEY_MATERIAL, KEY_DISP_MATERIAL, TYPE_COMBOBOX, VALUES_MATERIAL, True, 'No Validator')
@@ -391,7 +390,7 @@ class SeatedAngleConnection(ShearConnection):
 
         conn = input[0]
         if conn in VALUES_CONN_1:
-            return VALUES_COLSEC
+            return VALUE_BEAM_COL
         # elif self in VALUES_CONN_2:
         #     return VALUES_PRIBM
         else:
@@ -401,7 +400,7 @@ class SeatedAngleConnection(ShearConnection):
 
         conn = input[0]
         if conn in VALUES_CONN_1:
-            return VALUES_SECBM
+            return VALUE_BEAM_COL
         # elif self in VALUES_CONN_2:
         #     return VALUES_SECBM
         else:
@@ -410,11 +409,11 @@ class SeatedAngleConnection(ShearConnection):
     def fn_conn_image(self, input):
         conn = input[0]
         if conn == VALUES_CONN[0]:
-            return resource_image_path("fin_cf_bw.png")
+            return str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_cf_bw.png"))
         elif conn == VALUES_CONN[1]:
-            return resource_image_path("fin_cw_bw.png")
+            return str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_cw_bw.png"))
         # elif self in VALUES_CONN_2:
-        #     return resource_image_path("fin_beam_beam.png")
+        #     return str(files("osdag_core.data.ResourceFiles.images").joinpath("fin_beam_beam.png"))
         else:
             return ''
 
@@ -587,11 +586,11 @@ class SeatedAngleConnection(ShearConnection):
         seated_spacing_col.append(t00)
         if self.connectivity == VALUES_CONN_1[0]:
             t99 = (None, 'Spacing Details', TYPE_SECTION,
-                [resource_image_path("seated_column_cfbw.svg"), 400, 277, ""])  # [image, width, height, caption]
+                [str(files("osdag_core.data.ResourceFiles.images").joinpath("seated_column_cfbw.png")), 400, 277, ""])  # [image, width, height, caption]
             seated_spacing_col.append(t99)
         else:
             t99 = (None, 'Spacing Details', TYPE_SECTION,
-                [resource_image_path("seated_column.svg"), 400, 277, ""])  # [image, width, height, caption]
+                [str(files("osdag_core.data.ResourceFiles.images").joinpath("seated_column.png")), 400, 277, ""])  # [image, width, height, caption]
             seated_spacing_col.append(t99)
 
         t9 = (KEY_OUT_ROW_PROVIDED, KEY_OUT_DISP_ROW_PROVIDED, TYPE_TEXTBOX, self.bolt.bolt_row if flag else '')
@@ -632,7 +631,7 @@ class SeatedAngleConnection(ShearConnection):
         seated_spacing_beam.append(t00)
 
         t99 = (None, 'Spacing Details', TYPE_SECTION,
-            [resource_image_path("seated_beam.svg"), 400, 277, ""])  # [image, width, height, caption]
+            [str(files("osdag_core.data.ResourceFiles.images").joinpath("seated_beam.png")), 400, 277, ""])  # [image, width, height, caption]
         seated_spacing_beam.append(t99)
 
         t9 = (KEY_OUT_ROW_PROVIDED, KEY_OUT_DISP_ROW_PROVIDED, TYPE_TEXTBOX, 1 if flag else '')
@@ -1810,16 +1809,13 @@ class SeatedAngleConnection(ShearConnection):
 
         Disp_2d_image = []
         Disp_3D_image = "/ResourceFiles/images/3d.png"
-        fname_no_ext = popup_summary['filename']
-        # Use the report directory (where the .tex file is) as rel_path
-        # This ensures images are looked for in: {report_dir}/ResourceFiles/images/
-        rel_path = os.path.dirname(fname_no_ext) if fname_no_ext else os.path.abspath(".")
-        rel_path = os.path.abspath(rel_path)  # Make it absolute
+        rel_path = str(sys.path[0])
+        rel_path = os.path.abspath(".") # TEMP
         rel_path = rel_path.replace("\\", "/")
+        fname_no_ext = popup_summary['filename']
         CreateLatex.save_latex(CreateLatex(), self.report_input, self.report_check, popup_summary, fname_no_ext,
                                rel_path, Disp_2d_image, Disp_3D_image, module=self.module)
-        return True
-
+    
     def get_3d_components(self):
         components = []
 

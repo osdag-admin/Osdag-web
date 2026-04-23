@@ -1261,6 +1261,8 @@ class ISection(Material):
             table = "Beams" if designation in connectdb("Beams", "popup") else "Columns"
         if table == "Channels":
             self.connect_to_database_update_other_attributes_channels(table, designation, material_grade)
+        elif table == "Beams and Columns":
+            self.connect_to_database_update_other_attributes(table, designation, material_grade, tables_combined=True)
         else:
             self.connect_to_database_update_other_attributes(table, designation, material_grade)
         self.design_status = True
@@ -1301,11 +1303,16 @@ class ISection(Material):
         # self.member_rup_eqn = 0.0
         # self.member_block_eqn = 0.0
 
-    def connect_to_database_update_other_attributes(self, table, designation, material_grade=""):
+    def connect_to_database_update_other_attributes(self, table, designation, material_grade="", tables_combined=False):
         conn = sqlite3.connect(PATH_TO_DATABASE)
-        db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
-        cur = conn.cursor()
-        cur.execute(db_query, (designation,))
+        if tables_combined:
+            db_query = f"SELECT * FROM Beams WHERE Designation = ? UNION SELECT * FROM Columns WHERE Designation = ?"
+            cur = conn.cursor()
+            cur.execute(db_query, (designation, designation))
+        else:
+            db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
+            cur = conn.cursor()
+            cur.execute(db_query, (designation,))
         row = cur.fetchone()
         self.mass = row[2]
         self.area = row[3] * 100
@@ -1618,7 +1625,7 @@ class ISection(Material):
 class Beam(ISection):
 
     def __init__(self, designation, material_grade):
-        super(Beam, self).__init__(designation, material_grade,"Beams")
+        super(Beam, self).__init__(designation, material_grade, "Beams and Columns")
 
     def min_plate_height(self):
         return 0.6 * (self.depth- 2*self.root_radius - 2*self.flange_thickness)
@@ -1634,7 +1641,7 @@ class Beam(ISection):
 class Column(ISection):
 
     def __init__(self, designation, material_grade):
-        super(Column, self).__init__(designation, material_grade, "Columns")
+        super(Column, self).__init__(designation, material_grade, "Beams and Columns")
 
     def min_plate_height(self):
         return 0.6 * self.depth

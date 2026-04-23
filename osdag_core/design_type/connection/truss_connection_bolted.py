@@ -11,8 +11,6 @@ class TrussConnectionBolted(TrussConnection):
     def __init__(self):
         super(TrussConnectionBolted, self).__init__()
 
-
-
     def tab_list(self):
         tabs = []
 
@@ -43,19 +41,22 @@ class TrussConnectionBolted(TrussConnection):
 
         logger.setLevel(logging.DEBUG)
         handler = logging.StreamHandler()
-        formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        formatter = logging.Formatter(
+            fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         handler = logging.FileHandler('logging_text.log')
 
-        formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        formatter = logging.Formatter(
+            fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
         if key is not None:
             handler = OurLog(key)
-            formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+            formatter = logging.Formatter(
+                fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
             handler.setFormatter(formatter)
             logger.addHandler(handler)
 
@@ -69,7 +70,6 @@ class TrussConnectionBolted(TrussConnection):
         return member
 
     def input_values(self):
-
         '''
         Fuction to return a list of tuples to be displayed as the UI.(Input Dock)
 
@@ -77,15 +77,16 @@ class TrussConnectionBolted(TrussConnection):
         t = (Key, Key_display, Type, existing_val, Current_Value, enabled/disabled, Validator_type)
         '''
 
-
         self.module = KEY_DISP_TRUSS_BOLTED
 
         options_list = []
 
-        t16 = (KEY_MODULE, KEY_DISP_TRUSS_BOLTED, TYPE_MODULE, None, True, 'No Validator')
+        t16 = (KEY_MODULE, KEY_DISP_TRUSS_BOLTED,
+               TYPE_MODULE, None, True, 'No Validator')
         options_list.append(t16)
 
-        t0 = (KEY_MEMBERS, KEY_DISP_MEMBERS, TYPE_COMBOBOX_CUSTOMIZED, VALUES_MEMBERS, True, 'No Validator')
+        t0 = (KEY_MEMBERS, KEY_DISP_MEMBERS, TYPE_COMBOBOX_CUSTOMIZED,
+              VALUES_MEMBERS, True, 'No Validator')
         options_list.append(t0)
 
         t1 = (None, DISP_TITLE_CM, TYPE_TITLE, None, True, 'No Validator')
@@ -97,27 +98,29 @@ class TrussConnectionBolted(TrussConnection):
         t9 = (None, DISP_TITLE_BOLT, TYPE_TITLE, None, True, 'No Validator')
         options_list.append(t9)
 
-        t10 = (KEY_D, KEY_DISP_D, TYPE_COMBOBOX_CUSTOMIZED, VALUES_D, True, 'No Validator')
+        t10 = (KEY_D, KEY_DISP_D, TYPE_COMBOBOX_CUSTOMIZED,
+               VALUES_D, True, 'No Validator')
         options_list.append(t10)
 
-        t11 = (KEY_TYP, KEY_DISP_TYP, TYPE_COMBOBOX, VALUES_TYP, True, 'No Validator')
+        t11 = (KEY_TYP, KEY_DISP_TYP, TYPE_COMBOBOX,
+               VALUES_TYP, True, 'No Validator')
         options_list.append(t11)
 
         t15 = (KEY_COF, KEY_DISP_COF, TYPE_TEXTBOX, None, True, 'No Validator')
         options_list.append(t15)
 
-        t12 = (KEY_GRD, KEY_DISP_GRD, TYPE_COMBOBOX_CUSTOMIZED, VALUES_GRD, True, 'No Validator')
+        t12 = (KEY_GRD, KEY_DISP_GRD, TYPE_COMBOBOX_CUSTOMIZED,
+               VALUES_GRD, True, 'No Validator')
         options_list.append(t12)
 
         t13 = (None, DISP_TITLE_PLATE, TYPE_TITLE, None, True, 'No Validator')
         options_list.append(t13)
 
-        t14 = (KEY_PLATETHK, KEY_DISP_PLATETHK, TYPE_COMBOBOX_CUSTOMIZED, VALUES_D, True, 'No Validator')
+        t14 = (KEY_PLATETHK, KEY_DISP_PLATETHK,
+               TYPE_COMBOBOX_CUSTOMIZED, VALUES_D, True, 'No Validator')
         options_list.append(t14)
 
         return options_list
-
-
 
     def spacing(self, status):
 
@@ -132,9 +135,6 @@ class TrussConnectionBolted(TrussConnection):
         summary.append(t1)
 
         return summary
-
-
-
 
     def output_values(self, flag):
         '''
@@ -151,17 +151,17 @@ class TrussConnectionBolted(TrussConnection):
         t00 = (KEY_TABLE, '', TYPE_TABLE_OU, None, True, 'No Validator')
         out_list.append(t00)
 
-        t2 = (KEY_OUT_SPACING, KEY_OUT_DISP_SPACING, TYPE_OUT_BUTTON, ['Spacing Details', self.spacing], True)
+        t2 = (KEY_OUT_SPACING, KEY_OUT_DISP_SPACING, TYPE_OUT_BUTTON,
+              ['Spacing Details', self.spacing], True)
         out_list.append(t2)
 
-        t3= (None, "Gusset Plate Detail", TYPE_TITLE, None, True)
+        t3 = (None, "Gusset Plate Detail", TYPE_TITLE, None, True)
         out_list.append(t3)
 
         t4 = (KEY_TABLE, '', TYPE_TABLE_GUS, None, True, 'No Validator')
         out_list.append(t4)
 
         return out_list
-
 
     def get_3d_components(self):
         components = []
@@ -181,16 +181,14 @@ class TrussConnectionBolted(TrussConnection):
         return components
 
     def call_3DPlate(self, ui, bgcolor):
-        from PyQt5.QtWidgets import QCheckBox
-        from PyQt5.QtCore import Qt
+        from PySide6.QtWidgets import QCheckBox
+        from PySide6.QtCore import Qt
         for chkbox in ui.frame.children():
             if chkbox.objectName() == 'Truss Connection Bolted':
                 continue
             if isinstance(chkbox, QCheckBox):
                 chkbox.setChecked(Qt.Unchecked)
-        #ui.commLogicObj.display_3DModel("Plate", bgcolor)
-
-
+        # ui.commLogicObj.display_3DModel("Plate", bgcolor)
 
 
 # # Author: Devesh Kumar
