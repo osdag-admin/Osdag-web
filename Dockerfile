@@ -23,17 +23,18 @@ RUN bash -c "source /opt/miniconda/etc/profile.d/conda.sh && \
     conda create -n myenv python=3.7.6 -y && \
     conda activate myenv && \
     pip install --upgrade pip pyopenssl && \
-    pip install /app/conda_packages/pdflatex-0.1.3.tar.gz \
-                 /app/conda_packages/PyLaTeX-1.3.1.tar.gz \
-                 /app/conda_packages/XlsxWriter-1.2.8.tar.gz \
-                 /app/conda_packages/Pygments-2.6.1.tar.gz \
-                 /app/conda_packages/openpyxl-3.0.3.tar.gz \
-                 /app/conda_packages/PyYAML-5.3.1.tar.gz \
-                 /app/conda_packages/PyQt5-5.14.2-5.14.2-cp35.cp36.cp37.cp38-abi3-manylinux2014_x86_64.whl \
-                 /app/conda_packages/pdfkit-0.6.1-py3-none-any.whl \
-                 /app/conda_packages/pandas-1.0.5-cp37-cp37m-manylinux1_x86_64.whl \
-                 /app/conda_packages/pynput-1.6.8-py2.py3-none-any.whl \
-                 /app/conda_packages/PyGithub-1.54.1.tar.gz"
+    pip install -r requirements.txt"
+    # pip install /app/conda_packages/pdflatex-0.1.3.tar.gz \
+    #              /app/conda_packages/PyLaTeX-1.3.1.tar.gz \
+    #              /app/conda_packages/XlsxWriter-1.2.8.tar.gz \
+    #              /app/conda_packages/Pygments-2.6.1.tar.gz \
+    #              /app/conda_packages/openpyxl-3.0.3.tar.gz \
+    #              /app/conda_packages/PyYAML-5.3.1.tar.gz \
+    #              /app/conda_packages/PyQt5-5.14.2-5.14.2-cp35.cp36.cp37.cp38-abi3-manylinux2014_x86_64.whl \
+    #              /app/conda_packages/pdfkit-0.6.1-py3-none-any.whl \
+    #              /app/conda_packages/pandas-1.0.5-cp37-cp37m-manylinux1_x86_64.whl \
+    #              /app/conda_packages/pynput-1.6.8-py2.py3-none-any.whl \
+    #              /app/conda_packages/PyGithub-1.54.1.tar.gz"
 
 WORKDIR /app
 

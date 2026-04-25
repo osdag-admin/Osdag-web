@@ -212,7 +212,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    * Install the node dependencies
 
      ```
-     cd osdagclient
+     cd frontend
      npm install
      cd ..
      ```
@@ -224,7 +224,7 @@ The Osdag-Web application uses 'Conda' environment which contains all the depend
    * Open another terminal, navigate to root of Osdag-web folder adn run the following commands :
 
      ```
-     cd osdagclient
+     cd frontend
      ```
      ```
      npm run dev

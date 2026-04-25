@@ -1,50 +1,128 @@
-asgiref==3.7.2
-asn1crypto==1.3.0
-attrs==18.2.0
-cairocffi==1.1.0
-CairoSVG==2.4.2
-certifi==2020.4.5.1
-chardet==3.0.4
-click==7.1.2
+# --- Core Framework ---
+# Use 4.2.x series (fixed minor compatibility target)
+Django~=4.2.0
 
-cssselect2==0.2.1
-defusedxml==0.6.0
-Deprecated==1.2.13
-Django==3.2.19
-django-cors-headers==4.0.0
-django-rest-framework==0.1.0
-djangorestframework==3.14.0
-djangorestframework-simplejwt==5.2.2
+# --- ASGI / Async ---
+asgiref==3.10.0
+anyio==4.11.0
+uvicorn
+
+# --- API & Auth ---
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-allauth==65.13.0
+dj-rest-auth==7.0.1
+
+# --- Database Connector ---
+# binary wheel for Python 3.12 (choose psycopg2-binary for simpler dev installs)
+psycopg2-binary
+
+# --- HTTP / Async HTTP clients ---
+httpx==0.28.1
+httpcore==1.0.9
+aiohttp
+aiosignal
+h11
+h2
+hyperframe
+
+# --- Google Cloud (added as requested) ---
+google-api-core==2.28.1
+google-auth==2.42.1
+google-cloud-core==2.5.0
+google-cloud-firestore==2.21.0
+google-cloud-storage==3.4.1
+google-crc32c==1.7.1
+google-resumable-media==2.7.2
+googleapis-common-protos==1.71.0
+grpcio==1.76.0
+grpcio-status==1.76.0
+proto-plus==1.26.1
+protobuf==6.33.0
+
+# --- File / Data handling ---
+# openpyxl pinned in "Excel / Office helpers" (>=3.1.2 for NumPy 2 / no np.float)
+XlsxWriter==1.2.8
+pandas==2.3.3
+pdfkit==0.6.1
+CairoSVG==2.4.2
+pdflatex==0.1.3
+PyLaTeX
+
+# --- Image / Graphics / PDF utilities ---
+pillow==11.3.0
+cairocffi==1.1.0
+svgwrite==1.4
+
+# --- CAD Rendering (for report image generation) ---
+# Note: Using VTK (already installed) and PySide6 (already installed) for rendering
+# Open3D is optional - can be installed separately if needed: pip install open3d>=0.17.0
+
+# --- Firebase ---
+firebase_admin==7.1.0
+google-cloud-firestore==2.21.0
+
+# --- Utility libs ---
+requests==2.32.5
+urllib3==2.5.0
+certifi==2020.4.5.1
+charset-normalizer==3.4.4
+idna
+six==1.17.0
+python-dateutil==2.9.0.post0
+pytz==2025.2
+tzdata==2025.2
+PyYAML==5.3.1
+ruamel.yaml==0.18.15
+ruamel.yaml.clib==0.2.12
+
+# --- Security / Crypto ---
+cryptography==46.0.3
+cffi==2.0.0
+PyJWT==2.10.1
+rsa==4.9.1
+
+# --- Excel / Office helpers ---
 et-xmlfile==1.1.0
-idna==2.8
-jdcal==1.4.1
-olefile==0.46
-openpyxl==3.0.3
-ordered-set==4.1.0
+openpyxl==3.1.5
+
+# --- Logging / Debugging / Misc ---
+loguru
+tqdm==4.42.1
+cachetools==6.2.1
+CacheControl==0.14.3
+
+# --- XML / HTML parsing / CSS ---
+lxml
+cssselect2==0.2.1
+tinycss2==1.0.2
+defusedxml==0.6.0
+webencodings==0.5.1
+
+# --- PDF / LaTeX / Reporting extras (project-specific) ---
 pdfkit==0.6.1
 pdflatex==0.1.3
-psycopg2-binary==2.9.6
-pycosat==0.6.3
-pycparser==2.19
-Pygments==2.6.1
-PyJWT==1.7.1
+PyLaTeX
+
+# --- Development / Git utilities ---
+git-filter-repo==2.47.0
+setuptools==78.1.1
+wheel==0.45.1
+
+# --- Optional / Projects-specific (keep if used) ---
+PyQt5
 pynput==1.6.8
-pyparsing==2.4.7
-PySocks==1.7.1
-python-dateutil==2.8.2
-python-xlib==0.33
-pytz==2023.3
-PyYAML==5.3.1
-requests==2.22.0
-ruamel-yaml
-secure-smtplib==0.1.1
-six==1.14.0
-sqlparse==0.4.4
-svgwrite==1.4
-tinycss2==1.0.2
-tqdm==4.42.1
-typing-extensions==4.6.3
-urllib3==1.25.8
-webencodings==0.5.1
-wrapt==1.15.0
-XlsxWriter==1.2.8
+PyGithub
+vtk==9.3.1
+
+# --- GUI Dependencies (Required for osdag_core imports) ---
+PySide6>=6.0.0  # Required for osdag_core.design_type.member and other modules
+
+# --- Notes / Extras (un-pinned local builds were in original) ---
+# The original file included many packages with local file:// build references
+# (e.g., frozenlist, multidict, yarl, msgpack, etc.). If you rely on specific
+# compiled wheels from conda-build artifacts, add those explicit references.
+# For most dev setups pip will resolve compatible wheels from PyPI.
+
+# End of file
