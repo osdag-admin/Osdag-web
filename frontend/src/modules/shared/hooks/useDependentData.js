@@ -1,0 +1,86 @@
+import { useEffect } from "react";
+import { MODULE_KEY_FIN_PLATE, MODULE_KEY_CLEAT_ANGLE } from "../../../constants/DesignKeys";
+
+/**
+ * Handles side-effect data fetches that depend on form inputs.
+ * - Supported section preferences (non Fin/Cleat)
+ * - Design preferences for FinPlate/CleatAngle connectivity combos
+ */
+export const useDependentData = (getDesignPreferences, moduleConfig, inputs, extraState) => {
+  // Supported section preferences for other modules
+  useEffect(() => {
+    const loadSupportedData = async () => {
+      if (
+        inputs.member_designation &&
+        moduleConfig.cameraKey !== MODULE_KEY_FIN_PLATE &&
+        moduleConfig.cameraKey !== MODULE_KEY_CLEAT_ANGLE
+      ) {
+        try {
+          await getDesignPreferences({
+            supported_section: inputs.member_designation,
+          });
+        } catch (error) {
+          console.error("Failed to load supported data:", error);
+        }
+      }
+    };
+
+    loadSupportedData();
+  }, [inputs.member_designation, moduleConfig.cameraKey, getDesignPreferences]);
+
+  // Design preferences for FinPlate / CleatAngle modules
+  useEffect(() => {
+    const loadDesignPreferences = async () => {
+      if (moduleConfig.cameraKey === MODULE_KEY_FIN_PLATE || moduleConfig.cameraKey === MODULE_KEY_CLEAT_ANGLE) {
+        const conn_map = {
+          "Column Flange-Beam-Web": "Column Flange-Beam Web",
+          "Column Web-Beam-Web": "Column Web-Beam Web",
+          "Beam-Beam": "Beam-Beam",
+        };
+
+        const connectivity = extraState?.selectedOption || inputs.connectivity;
+
+        try {
+          let params = null;
+
+          if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
+            if (inputs.column_section && inputs.beam_section) {
+              params = {
+                supported_section: inputs.beam_section,
+                supporting_section: inputs.column_section,
+                connectivity: conn_map[connectivity].split(" ").join("-"),
+              };
+            }
+          } else if (connectivity === "Beam-Beam") {
+            if (inputs.primary_beam && inputs.secondary_beam) {
+              params = {
+                supported_section: inputs.secondary_beam,
+                supporting_section: inputs.primary_beam,
+                connectivity: conn_map[connectivity],
+              };
+            }
+          }
+
+          if (params) {
+            await getDesignPreferences(params);
+          }
+        } catch (error) {
+          // Swallow error; caller can log if needed
+        }
+      }
+    };
+
+    loadDesignPreferences();
+  }, [
+    inputs.column_section,
+    inputs.beam_section,
+    inputs.primary_beam,
+    inputs.secondary_beam,
+    extraState?.selectedOption,
+    inputs.connectivity,
+    getDesignPreferences,
+    moduleConfig.cameraKey,
+  ]);
+};
+
+
