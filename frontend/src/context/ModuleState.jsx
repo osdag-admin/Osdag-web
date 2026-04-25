@@ -64,6 +64,12 @@ let initialValue = {
   report_id: "",
   blobUrl: "",
   designPrefData: {},
+  /** Snapshot used to restore last successful preference sync. */
+  lastKnownGoodDesignPrefSnapshot: null,
+  /** Last strict linked reseed metadata (dock-driver refresh path). */
+  lastStrictLinkedReseedMeta: null,
+  /** Set after pref/CAD-invalidating change; UI may show redesign hint */
+  designOutputsInvalidated: false,
   conn_material_details: [],
   supported_material_details: [],
   supporting_material_details: [],
@@ -581,11 +587,29 @@ export const ModuleProvider = ({ children }) => {
     dispatch({ type: "RESET_MODULE_STATE" });
   }, [dispatch]);
 
+  const applyDesignPrefSyncBundle = useCallback((payload) => {
+    dispatch({ type: "APPLY_DESIGN_PREF_SYNC_BUNDLE", payload });
+  }, [dispatch]);
+
+  const setLastKnownGoodDesignPrefSnapshot = useCallback((snapshot) => {
+    dispatch({ type: "SET_LAST_KNOWN_GOOD_DESIGN_PREF_SNAPSHOT", payload: snapshot });
+  }, [dispatch]);
+
+  const applyStrictLinkedReseed = useCallback(({ material_details, metadata, snapshot }) => {
+    dispatch({
+      type: "APPLY_STRICT_LINKED_RESEED",
+      payload: { material_details, metadata, snapshot },
+    });
+  }, [dispatch]);
+
+  const invalidateDesignOutputs = useCallback(() => {
+    dispatch({ type: "INVALIDATE_DESIGN_OUTPUTS" });
+  }, [dispatch]);
+
   // useEffect(() => {
   //   // Initialize with FinPlate module for backward compatibility
   //   populateModule(MODULE_KEY_FIN_PLATE, dispatch);
   // }, []);
-  console.log(state.materialList);
   return (
     <ModuleContext.Provider
       value={{
@@ -601,7 +625,7 @@ export const ModuleProvider = ({ children }) => {
         thicknessList: state.thicknessList,
         propertyClassList: state.propertyClassList,
         boltTypeList: state.boltTypeList,
-        syncDesignPrefMaterialsFromBase: state.syncDesignPrefMaterialsFromBase,
+        syncDesignPrefMaterialsFromBase,
 
         // Structural elements
         beamList: state.beamList,
@@ -634,6 +658,9 @@ export const ModuleProvider = ({ children }) => {
         displayPDF: state.displayPDF,
         blobUrl: state.blobUrl,
         designPrefData: state.designPrefData,
+        lastKnownGoodDesignPrefSnapshot: state.lastKnownGoodDesignPrefSnapshot,
+        designOutputsInvalidated: state.designOutputsInvalidated,
+        lastStrictLinkedReseedMeta: state.lastStrictLinkedReseedMeta,
         conn_material_details: state.conn_material_details,
         supported_material_details: state.supported_material_details,
         supporting_material_details: state.supporting_material_details,
@@ -660,6 +687,10 @@ export const ModuleProvider = ({ children }) => {
 
         // 5. PREFERENCES (1 function)
         manageDesignPreferences,    // Design settings and material properties
+        applyDesignPrefSyncBundle,
+        applyStrictLinkedReseed,
+        setLastKnownGoodDesignPrefSnapshot,
+        invalidateDesignOutputs,
 
         // UTILITY
         resetModuleState,           // Reset state

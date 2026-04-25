@@ -22,6 +22,7 @@ const CleatAngleSectionModal = ({
   materialList: materialsFromParent,
   isGuest,
   onRefetchModuleOptions,
+  suppressInitialMaterialDispatch = false,
 }) => {
   const {
     manageDesignPreferences,
@@ -31,6 +32,7 @@ const CleatAngleSectionModal = ({
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    if (suppressInitialMaterialDispatch) return;
     const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supported_material
     );
@@ -40,7 +42,7 @@ const CleatAngleSectionModal = ({
         materialData: material[0],
       });
     }
-  }, []);
+  }, [suppressInitialMaterialDispatch]);
 
   const handleClearSectionTab = () => {
     setDesignPrefInputs((prev) => ({

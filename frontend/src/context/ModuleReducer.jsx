@@ -251,6 +251,11 @@ export default (state, action) => {
         report_id: "",
         blobUrl: "",
         designPrefData: {},
+        lastKnownGoodDesignPrefSnapshot: null,
+        designOutputsInvalidated: false,
+        conn_material_details: [],
+        supported_material_details: [],
+        supporting_material_details: [],
         error_msg: "",
         // Keep module data lists (they're module-specific, not design-specific)
         // These will be refreshed when getModuleData is called for the new module
@@ -267,6 +272,71 @@ export default (state, action) => {
         ...state,
         currentModuleName: action.payload,
         error_msg: "",
+      };
+
+    /** Atomically apply material detail rows returned by preference sync. */
+    case "APPLY_DESIGN_PREF_SYNC_BUNDLE": {
+      const md = action.payload?.material_details || {};
+      const conn = md.connector;
+      const supd = md.supported;
+      const supg = md.supporting;
+      return {
+        ...state,
+        ...(Array.isArray(conn) ? { conn_material_details: conn } : {}),
+        ...(Array.isArray(supd) ? { supported_material_details: supd } : {}),
+        ...(Array.isArray(supg) ? { supporting_material_details: supg } : {}),
+        error_msg: "",
+      };
+    }
+
+    /**
+     * Strict linked-key reseed metadata from dock-driver refresh.
+     * Keeps material details and last-known snapshot aligned with linked resets.
+     */
+    case "APPLY_STRICT_LINKED_RESEED": {
+      const md = action.payload?.material_details || {};
+      const conn = md.connector;
+      const supd = md.supported;
+      const supg = md.supporting;
+      const snapshot = action.payload?.snapshot ?? null;
+      const metadata = action.payload?.metadata ?? null;
+      return {
+        ...state,
+        ...(Array.isArray(conn) ? { conn_material_details: conn } : {}),
+        ...(Array.isArray(supd) ? { supported_material_details: supd } : {}),
+        ...(Array.isArray(supg) ? { supporting_material_details: supg } : {}),
+        ...(snapshot ? { lastKnownGoodDesignPrefSnapshot: snapshot } : {}),
+        lastStrictLinkedReseedMeta: metadata,
+        error_msg: "",
+      };
+    }
+
+    case "SET_LAST_KNOWN_GOOD_DESIGN_PREF_SNAPSHOT":
+      return {
+        ...state,
+        lastKnownGoodDesignPrefSnapshot: action.payload ?? null,
+      };
+
+    /** Invalidate prior design/CAD/report after effective pref change */
+    case "INVALIDATE_DESIGN_OUTPUTS":
+      return {
+        ...state,
+        designData: {},
+        designLogs: [],
+        renderCadModel: false,
+        cadModelPaths: {},
+        hoverDict: {},
+        displayPDF: false,
+        report_id: "",
+        blobUrl: "",
+        designOutputsInvalidated: true,
+        error_msg: "",
+      };
+
+    case "CLEAR_DESIGN_OUTPUTS_INVALIDATED_FLAG":
+      return {
+        ...state,
+        designOutputsInvalidated: false,
       };
 
     // Remove unused cookie action

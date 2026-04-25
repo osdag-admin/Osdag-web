@@ -100,6 +100,8 @@ export const EngineeringModule = ({
     setConfirmationModal,
     displaySaveInputPopup,
     saveInputFileName,
+    designPrefOverrides,
+    setDesignPrefOverrides,
     selectedView,
     setSelectedView,
     screenshotTrigger,
@@ -421,8 +423,19 @@ export const EngineeringModule = ({
         }
         if (result.project.inputs_json) {
           try {
-            console.log('[EngineeringModule] Project inputs_json keys:', Object.keys(result.project.inputs_json));
-            setInputs(result.project.inputs_json);
+            const savedInputs = result.project.inputs_json;
+            if (
+              savedInputs &&
+              typeof savedInputs === "object" &&
+              Object.prototype.hasOwnProperty.call(savedInputs, "dock")
+            ) {
+              setInputs(savedInputs.dock || {});
+              setDesignPrefOverrides(savedInputs.pref || {});
+            } else {
+              // Backward compatibility for older projects that stored a flat inputs_json.
+              setInputs(savedInputs || {});
+              setDesignPrefOverrides({});
+            }
           } catch (err) {
             console.error('[EngineeringModule] Error parsing inputs_json:', err);
             message.error('Failed to parse saved project inputs.');
@@ -550,7 +563,9 @@ export const EngineeringModule = ({
         const pid = getProjectIdFromUrl();
         if (pid && !Number.isNaN(pid)) {
           try {
-            await service.updateProject(pid, { inputs_json: inputs });
+            await service.updateProject(pid, {
+              inputs_json: { dock: inputs, pref: designPrefOverrides || {} },
+            });
           } catch (_e) {
             // ignore persistence errors; UI will still show outputs
           }
@@ -803,7 +818,9 @@ export const EngineeringModule = ({
         message.warning('No active project. Open or create a project first.');
         return;
       }
-      const updateResult = await service.updateProject(projectId, { inputs_json: inputsForSave });
+      const updateResult = await service.updateProject(projectId, {
+        inputs_json: { dock: inputsForSave, pref: designPrefOverrides || {} },
+      });
       if (!updateResult.success) {
         message.error(updateResult.error || 'Failed to save inputs');
         return;
@@ -967,6 +984,7 @@ export const EngineeringModule = ({
               }
               cadModelPaths={cadModelPaths}
               contextData={contextData}
+              selectionStates={selectionStates}
               onCreateProject={handleCreateProject}
               isExistingProject={!!projectIdFromUrl}
             />
@@ -1498,6 +1516,8 @@ export const EngineeringModule = ({
               inputs={inputs}
               setInputs={setInputs}
               setDesignPrefModalStatus={setDesignPrefModalStatus}
+              designPrefOverrides={designPrefOverrides}
+              setDesignPrefOverrides={setDesignPrefOverrides}
               confirmationModal={confirmationModal}
               setConfirmationModal={setConfirmationModal}
               isInputLocked={isInputLocked}

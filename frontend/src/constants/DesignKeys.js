@@ -82,11 +82,11 @@ export const KEY_DISP_DP_DETAILING_PACKING_PLATE = 'Packing Plate';
 // Flexural Member Constants - Must match exactly with Common.py backend constants
 export const KEY_ALLOW_CLASS = 'Design.Allowable_Class';
 export const KEY_EFFECTIVE_AREA_PARA = 'Design.Effective_Area_Parameter';
-export const KEY_LENGTH_OVERWRITE = 'Length.Overwrite';           // Matches Common.py KEY_LENGTH_OVERWRITE = 'Length.Overwrite'
-export const KEY_BEARING_LENGTH = 'Bearing.Length';               // Matches Common.py KEY_BEARING_LENGTH = 'Bearing.Length'
+export const KEY_LENGTH_OVERWRITE = 'Length.Overwrite';
+export const KEY_BEARING_LENGTH = 'Bearing.Length';
 export const KEY_SUPPORT = 'Support.Type';
-export const KEY_TORSIONAL_RES = 'Torsion.restraint';             // Matches Common.py KEY_TORSIONAL_RES = 'Torsion.restraint'
-export const KEY_WARPING_RES = 'Warping.restraint';               // Matches Common.py KEY_WARPING_RES = 'Warping.restraint'
+export const KEY_TORSIONAL_RES = 'Torsion.restraint';
+export const KEY_WARPING_RES = 'Warping.restraint';
 
 // Flexural Member Display Constants
 export const KEY_DISP_PLASTIC_STRENGTH_MOMENT = 'Plastic Strength (kNm)';
@@ -106,13 +106,13 @@ export const KEY_DESIGN_TYPE_FLEXURE = "KEY_DESIGN_TYPE_FLEXURE";
 
 // Module Keys - FinPlate
 
-export const MODULE_KEY_FIN_PLATE = 'FinPlateConnection'; // canonical key for API, state, config
-export const MODULE_KEY_SEAT_ANGLE = 'SeatedAngleConnection'; // canonical key for API, state, config
-export const MODULE_DISPLAY_FIN_PLATE = 'FinPlateConnection'; // display name for UI 
+export const MODULE_KEY_FIN_PLATE = 'FinPlateConnection';
+export const MODULE_KEY_SEAT_ANGLE = 'SeatedAngleConnection';
+export const MODULE_DISPLAY_FIN_PLATE = 'FinPlateConnection';
 // Module Keys - CleatAngle
 export const MODULE_KEY_CLEAT_ANGLE = 'CleatAngleConnection';
 export const MODULE_DISPLAY_CLEAT_ANGLE = 'CleatAngleConnection';
-export const MODULE_DISPLAY_SEAT_ANGLE = 'SeatedAngleConnection'; // display name for UI 
+export const MODULE_DISPLAY_SEAT_ANGLE = 'SeatedAngleConnection';
 
 // Module Keys - End Plate / Beam-Column End Plate / Beam-Beam End Plate
 export const MODULE_KEY_END_PLATE = 'EndPlateConnection';

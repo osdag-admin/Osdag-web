@@ -10,7 +10,7 @@ from apps.core.api import (
     ProjectAPI, ProjectDetailAPI, ProjectByNameAPI,
     SaveOsiFromInputs, OpenOsiUpload, OpenOsiById, ModuleRoutes, ProjectOsiDownload,
     ParseReportSections, CustomizeReport,
-    DesignPreference, MaterialDetails, CompanyLogoView,
+    DesignPreference, DesignPreferenceSync, DesignPreferenceDefaults, MaterialDetails, CompanyLogoView,
     CADGeneration, CADDownload
 )
 from apps.core import views
@@ -20,6 +20,8 @@ app_name = 'core'
 urlpatterns = [
     # Design preferences
     path('api/design-preferences/', DesignPreference.as_view(), name="design-pref"),
+    path('api/design-preferences/defaults/', DesignPreferenceDefaults.as_view(), name="design-pref-defaults"),
+    path('api/design-preferences/sync/', DesignPreferenceSync.as_view(), name="design-pref-sync"),
     path('api/materialDetails/', MaterialDetails.as_view()),
     path('api/company-logo/', CompanyLogoView.as_view()),
     

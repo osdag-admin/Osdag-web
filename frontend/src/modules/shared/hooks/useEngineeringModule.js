@@ -1,4 +1,5 @@
-import { useState, useContext, useCallback } from "react";
+import { useState, useContext, useCallback, useEffect, useRef } from "react";
+import { useDesignPrefSync } from "./useDesignPrefSync";
 import { useNavigate } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
 import { useEngineeringService } from "./useEngineeringService";
@@ -53,7 +54,11 @@ export const useEngineeringModule = (moduleConfig) => {
   const { getModuleData, getDesignPreferences } = service;
 
   // Access ModuleContext to get resetModuleState function
-  const { resetModuleState } = useContext(ModuleContext);
+  const {
+    resetModuleState,
+    applyStrictLinkedReseed,
+    setLastKnownGoodDesignPrefSnapshot,
+  } = useContext(ModuleContext);
 
   // ===================================================================
   // MODULE DATA - Loaded via dedicated hook
@@ -129,6 +134,8 @@ export const useEngineeringModule = (moduleConfig) => {
     setConfirmationModal,
     displaySaveInputPopup,
     saveInputFileName,
+    designPrefOverrides,
+    setDesignPrefOverrides,
     updateModalState,
     updateSelectionState,
     updateSelectedItems,
@@ -136,7 +143,55 @@ export const useEngineeringModule = (moduleConfig) => {
     resetFormState,
   } = useModuleForm(moduleConfig, moduleData);
 
+  useDesignPrefSync({
+    sessionName: moduleConfig.sessionName,
+    inputs,
+    setInputs,
+    applyStrictLinkedReseed,
+    setLastKnownGoodDesignPrefSnapshot,
+    pause: designPrefModalStatus,
+  });
+
   const [selectedView, setSelectedView] = useState("Model");
+  const dockDriverSnapshotRef = useRef(null);
+
+  useEffect(() => {
+    const currentDockDrivers = {
+      material: inputs?.material,
+      member_material: inputs?.member_material,
+      connector_material: inputs?.connector_material,
+    };
+
+    // Seed snapshot on first render without mutating overrides.
+    if (!dockDriverSnapshotRef.current) {
+      dockDriverSnapshotRef.current = currentDockDrivers;
+      return;
+    }
+
+    const prev = dockDriverSnapshotRef.current;
+    const dockDriverChanged =
+      prev.material !== currentDockDrivers.material ||
+      prev.member_material !== currentDockDrivers.member_material ||
+      prev.connector_material !== currentDockDrivers.connector_material;
+
+    dockDriverSnapshotRef.current = currentDockDrivers;
+    if (!dockDriverChanged) return;
+
+    // Dock driver changed: clear only linked material overrides so modal reseeds from dock.
+    setDesignPrefOverrides((prevOverrides) => {
+      if (!prevOverrides || typeof prevOverrides !== "object") return prevOverrides;
+      const nextOverrides = { ...prevOverrides };
+      delete nextOverrides.supporting_material;
+      delete nextOverrides.supported_material;
+      delete nextOverrides.connector_material;
+      return nextOverrides;
+    });
+  }, [
+    inputs?.material,
+    inputs?.member_material,
+    inputs?.connector_material,
+    setDesignPrefOverrides,
+  ]);
 
   // Helper function to check if there's unsaved work
   const hasUnsavedWork = () => {
@@ -182,8 +237,11 @@ export const useEngineeringModule = (moduleConfig) => {
   };
 
   const handleSubmit = async () => {
+    const mergedInputs = { ...inputs, ...(designPrefOverrides || {}) };
     await submitDesign({
-      inputs,
+      inputs: mergedInputs,
+      dockInputs: inputs,
+      designPrefOverrides,
       selectionStates,
       allSelected,
       moduleData,
@@ -300,6 +358,8 @@ export const useEngineeringModule = (moduleConfig) => {
     setConfirmationModal,
     displaySaveInputPopup,
     saveInputFileName,
+    designPrefOverrides,
+    setDesignPrefOverrides,
 
     // Submission
     output,

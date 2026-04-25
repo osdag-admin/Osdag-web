@@ -14,6 +14,8 @@ from .projects.osi_api import SaveOsiFromInputs, OpenOsiUpload, OpenOsiById, Mod
 
 # Design exports
 from .design.design_pref_api import DesignPreference, MaterialDetails
+from .design.design_pref_sync_api import DesignPreferenceSync
+from .design.design_pref_defaults_api import DesignPreferenceDefaults
 from .design.design_report_csv_view import CompanyLogoView, CreateDesignReport, GetPDF
 from .design.report_customization_api import ParseReportSections, CustomizeReport
 
@@ -32,7 +34,7 @@ __all__ = [
     'ProjectAPI', 'ProjectDetailAPI', 'ProjectByNameAPI',
     'SaveOsiFromInputs', 'OpenOsiUpload', 'OpenOsiById', 'ModuleRoutes', 'ProjectOsiDownload',
     # Design
-    'DesignPreference', 'MaterialDetails', 'CompanyLogoView',
+    'DesignPreference', 'DesignPreferenceSync', 'DesignPreferenceDefaults', 'MaterialDetails', 'CompanyLogoView',
     'CreateDesignReport', 'GetPDF',
     'ParseReportSections', 'CustomizeReport',
     # CAD

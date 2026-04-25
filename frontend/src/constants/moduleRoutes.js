@@ -13,7 +13,7 @@ import {
   MODULE_KEY_SIMPLY_SUPPORTED_BEAM,
 } from "./DesignKeys";
 
-// Centralized route paths keyed by canonical module keys.
+// Centralized route paths keyed by stable module keys.
 const ROUTES_BY_KEY = {
   [MODULE_KEY_FIN_PLATE]: "/design/connections/shear/fin_plate",
   [MODULE_KEY_CLEAT_ANGLE]: "/design/connections/shear/cleat_angle",
@@ -30,12 +30,12 @@ const ROUTES_BY_KEY = {
 };
 
 /**
- * Get the route path for a canonical module key.
- * @param {string} canonicalKey
+ * Get the route path for a stable module key.
+ * @param {string} moduleKey
  * @returns {string|undefined}
  */
-export function getModuleRoute(canonicalKey) {
-  return ROUTES_BY_KEY[canonicalKey];
+export function getModuleRoute(moduleKey) {
+  return ROUTES_BY_KEY[moduleKey];
 }
 
 export { ROUTES_BY_KEY };

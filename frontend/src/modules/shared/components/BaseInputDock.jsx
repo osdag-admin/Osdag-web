@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
+import { message } from "antd";
 import { InputSection } from "./InputSection";
+import { canOpenAdditionalInputs } from "../utils/designPrefOpenGuard";
 
 export const BaseInputDock = ({
   moduleConfig,
@@ -31,6 +33,21 @@ export const BaseInputDock = ({
   const internalLockBtnRef = useRef(null);
   const lockBtnRef = externalLockBtnRef || internalLockBtnRef;
 
+  const openAdditionalInputs = () => {
+    const guard = canOpenAdditionalInputs(
+      moduleConfig,
+      inputs,
+      extraState,
+      contextData,
+      selectionStates
+    );
+    if (!guard.ok) {
+      message.warning(guard.message);
+      return;
+    }
+    setDesignPrefModalStatus(true);
+  };
+
   return (
     <div className={`
       flex
@@ -47,7 +64,7 @@ export const BaseInputDock = ({
         </span>
         <div className="flex items-center gap-2 mr-4">
           <button
-            onClick={() => setDesignPrefModalStatus(true)}
+            onClick={openAdditionalInputs}
             // onClick={openDesignPrefModal}
             className="flex items-center justify-center px-4 py-1 my-2 text-sm font-medium rounded-lg transition-colors bg-osdag-green text-white hover:bg-osdag-dark-green"
             title={isInputLocked ? 'Unlock the dock to edit additional inputs' : 'Open Additional Inputs'}

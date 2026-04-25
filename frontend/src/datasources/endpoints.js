@@ -55,6 +55,10 @@ export const MATERIALS = {
 
 export const DESIGN_PREFERENCES = {
   list: `${API_PREFIX}design-preferences/`, // GET with query
+  // POST - resolve Additional Inputs defaults from dock context.
+  defaults: `${API_PREFIX}design-preferences/defaults/`,
+  // POST - server-resolved design preference sync.
+  sync: `${API_PREFIX}design-preferences/sync/`,
 };
 
 // ----------------------

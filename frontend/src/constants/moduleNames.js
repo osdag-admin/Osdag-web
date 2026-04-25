@@ -15,7 +15,7 @@ import {
   MODULE_DISPLAY_SEAT_ANGLE,
 } from "./DesignKeys";
 
-// Centralized display names keyed by canonical module keys.
+// Centralized display names keyed by stable module keys.
 const DISPLAY_BY_KEY = {
   [MODULE_KEY_FIN_PLATE]: MODULE_DISPLAY_FIN_PLATE,
   [MODULE_KEY_CLEAT_ANGLE]: MODULE_DISPLAY_CLEAT_ANGLE,
@@ -33,10 +33,10 @@ const DISPLAY_BY_KEY = {
 /**
  * Get a human-readable display name for a module key.
  * Falls back to the key itself if no display name is defined.
- * @param {string} canonicalKey
+ * @param {string} moduleKey
  * @returns {string}
  */
-export function getModuleDisplayName(canonicalKey) {
-  return DISPLAY_BY_KEY[canonicalKey] ?? canonicalKey;
+export function getModuleDisplayName(moduleKey) {
+  return DISPLAY_BY_KEY[moduleKey] ?? moduleKey;
 }
 

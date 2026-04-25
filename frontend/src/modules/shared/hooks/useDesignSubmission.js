@@ -53,7 +53,15 @@ export const useDesignSubmission = (service, moduleConfig) => {
     error: null
   });
 
-  const submitDesign = async ({ inputs, selectionStates, allSelected, moduleData, extraState }) => {
+  const submitDesign = async ({
+    inputs,
+    dockInputs = null,
+    designPrefOverrides = null,
+    selectionStates,
+    allSelected,
+    moduleData,
+    extraState,
+  }) => {
     console.log("[useDesignSubmission] submitDesign start", {
       designType: moduleConfig.designType,
       inputs,
@@ -156,8 +164,11 @@ export const useDesignSubmission = (service, moduleConfig) => {
       if (projectId && service.updateProject) {
         try {
           await service.updateProject(projectId, {
-            inputs_json: { ...inputs, ...extraState },
-            outputs_json: designBody.data
+            inputs_json: {
+              dock: dockInputs || { ...inputs, ...extraState },
+              pref: designPrefOverrides || {},
+            },
+            outputs_json: designBody.data,
           });
         } catch (err) {
           console.error('[useDesignSubmission] Failed to save outputs:', err);

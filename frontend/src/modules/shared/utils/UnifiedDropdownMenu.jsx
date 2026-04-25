@@ -9,6 +9,7 @@ import { getModuleConfig } from "./moduleConfig";
 import { expandAllSelectedInputs, buildOsiContent } from "./osiInputSerializer";
 import { buildLogFileContent } from "./logExport";
 import { downloadCadSectionsAsStl } from "./cadExport";
+import { canOpenAdditionalInputs } from "./designPrefOpenGuard";
 
 function UnifiedDropdownMenu({
   label,
@@ -31,6 +32,8 @@ function UnifiedDropdownMenu({
   topAngleList = [],
   cadModelPaths = null,
   contextData = null, // moduleData from hook; used for expandAllSelectedInputs
+  /** Cleat / selection-driven validateInputs (optional) */
+  selectionStates = {},
   onMenuClick,
   onCreateProject = null,
   isExistingProject = false, // When true, disable "Create Project" menu item
@@ -233,9 +236,23 @@ function UnifiedDropdownMenu({
       case "Save Cad Image":
         triggerScreenshotCapture();
         break;
-      case "Design Preferences":
+      case "Design Preferences": {
+        const mod = getModuleConfig();
+        const guard = canOpenAdditionalInputs(
+          mod,
+          inputs,
+          { selectedOption },
+          contextData,
+          selectionStates
+        );
+        if (!guard.ok) {
+          message.warning(guard.message);
+          setIsOpen(false);
+          return;
+        }
         setDesignPrefModalStatus(true);
         break;
+      }
       case "Zoom In":
         document.dispatchEvent(new CustomEvent('cad-camera-action', { detail: 'zoom-in' }));
         break;

@@ -478,8 +478,6 @@ export function getDesignPrefConfig(module) {
 }
 
 export function getDesignPrefTabs(module) {
-  console.log("module:", module)
   const config = getDesignPrefConfig(module);
-  console.log('config:', config)
   return ALL_TABS.filter((tab) => config.tabIds.includes(tab.id));
 }

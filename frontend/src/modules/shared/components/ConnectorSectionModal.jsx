@@ -16,6 +16,7 @@ const ConnectorSectionModal = ({
   setDesignPrefInputs,
   isInputLocked,
   materialList: materialsFromParent,
+  suppressInitialMaterialDispatch = false,
 }) => {
   const { conn_material_details, manageDesignPreferences } =
     useContext(ModuleContext);
@@ -23,6 +24,7 @@ const ConnectorSectionModal = ({
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    if (suppressInitialMaterialDispatch) return;
     const material = materials.filter(
       (value) => value.Grade === designPrefInputs.connector_material
     );
@@ -32,7 +34,7 @@ const ConnectorSectionModal = ({
         materialData: material[0],
       });
     }
-  }, []);
+  }, [suppressInitialMaterialDispatch]);
 
   const handleMaterialChange = (value) => {
     if (value === -1) {

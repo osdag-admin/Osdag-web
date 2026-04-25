@@ -318,7 +318,7 @@ class CreateDesignReport(APIView):
                 print(msg, flush=True)
                 os.makedirs(image_base_dir, exist_ok=True)
 
-                # Map canonical frontend keys to the filenames expected by
+                # Map frontend keys to the filenames expected by
                 # existing LaTeX templates.
                 filename_map = {
                     "iso": "3d.png",    # 3D/iso view

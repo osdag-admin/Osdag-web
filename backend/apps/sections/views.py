@@ -58,7 +58,7 @@ def _safe_table(request, *, source: str = "query") -> Tuple[Optional[str], Optio
 
 
 class SectionTemplateView(APIView):
-    """GET empty xlsx: sheet name = table, row 1 = canonical headers (guest allowed)."""
+    """GET empty xlsx: sheet name = table, row 1 = expected headers (guest allowed)."""
 
     permission_classes = [AllowAny]
 
@@ -159,7 +159,7 @@ class SectionImportView(APIView):
             if not headers_match_table(header_row, table):
                 return Response(
                     {
-                        "detail": "Header row does not match canonical headers for this table.",
+                        "detail": "Header row does not match expected headers for this table.",
                         "expected": get_db_header(table),
                         "got": header_row,
                     },

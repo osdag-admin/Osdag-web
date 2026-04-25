@@ -177,7 +177,7 @@ def can_insert_custom_section(
     exclude_user_section_pk: Optional[int] = None,
 ) -> Tuple[bool, str]:
     """
-    Desktop parity: block if designation exists in global catalog or in this
+    Rule: block if designation exists in global catalog or in this
     user's custom rows for that section family.
 
     `exclude_user_section_pk`: when updating an existing `UserCustom*` row,

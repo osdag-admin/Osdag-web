@@ -123,7 +123,7 @@ export const finPlateConfig = {
         "Detailing.Gap": inputs.detailing_gap,
         "Load.Axial": inputs.load_axial || "",
         "Load.Shear": inputs.load_shear || "",
-        "Material": "E 300 (Fe 440)",
+        "Material": inputs.connector_material,
         "Member.Supported_Section.Designation": inputs.secondary_beam,
         "Member.Supported_Section.Material": inputs.supported_material,
         "Member.Supporting_Section.Designation": inputs.primary_beam,

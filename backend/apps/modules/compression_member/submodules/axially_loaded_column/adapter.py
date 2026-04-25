@@ -21,7 +21,7 @@ from apps.core.utils import (
     InvalidInputTypeError,
 )
 
-from osdag_core.design_type.compression_member.compression_column import ColumnDesign
+from osdag_core.design_type.compression_member.compression_welded_column import ColumnDesign
 from osdag_core.cad.common_logic import CommonDesignLogic
 
 try:

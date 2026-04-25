@@ -5,9 +5,6 @@ import CustomSectionModal from "./CustomSectionModal";
 import SectionTabToolbar from "./SectionTabToolbar";
 import Slope_Beam from "../../../assets/Slope_Beam.png";
 // Parallel_Beam.png
-import sectionData from "./additional_inputs.json";
-
-const { dimensions, section_properties, advanced_properties } = sectionData;
 
 const { Option } = Select;
 
@@ -26,6 +23,7 @@ const ColumnSectionModal = ({
   materialList: materialsFromParent,
   isGuest,
   onRefetchModuleOptions,
+  suppressInitialMaterialDispatch = false,
 }) => {
   const {
     // materialList: ctxMaterialList,
@@ -39,6 +37,7 @@ const ColumnSectionModal = ({
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    if (suppressInitialMaterialDispatch) return;
     const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
@@ -48,7 +47,7 @@ const ColumnSectionModal = ({
         materialData: material[0],
       });
     }
-  }, []);
+  }, [suppressInitialMaterialDispatch]);
 
   const handleMaterialChange = (value) => {
     if (value === -1) {
@@ -324,7 +323,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.D || 0}
-                value={dimensions.depth_D_mm || 0}
+                value={supportingSectionData.D || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -335,7 +334,7 @@ const ColumnSectionModal = ({
                 name="flange-widht"
                 className="input-design-pref"
                 // value={supportingSectionData.B || 0}
-                value={dimensions.flange_width_B_mm || 0}
+                value={supportingSectionData.B || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -346,7 +345,7 @@ const ColumnSectionModal = ({
                 name="flange-thickness"
                 className="input-design-pref"
                 // value={supportingSectionData.T || 0}
-                value={dimensions.flange_thickness_T_mm || 0}
+                value={supportingSectionData.T || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -357,7 +356,7 @@ const ColumnSectionModal = ({
                 name="web-thickness"
                 className="input-design-pref"
                 // value={supportingSectionData.tw || 0}
-                value={dimensions.web_thickness_t_mm || 0}
+                value={supportingSectionData.tw || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -368,7 +367,7 @@ const ColumnSectionModal = ({
                 name="flange-slope"
                 className="input-design-pref"
                 // value={supportingSectionData.FlangeSlope || 0}
-                value={dimensions.flange_slope_alpha_deg || 0}
+                value={supportingSectionData.FlangeSlope || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -379,7 +378,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R1 || 0}
-                value={dimensions.root_radius_R1_mm || 0}
+                value={supportingSectionData.R1 || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -390,7 +389,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={dimensions.toe_radius_R2_mm || 0}
+                value={supportingSectionData.R2 || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -403,7 +402,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.mass_M_kg_per_m || 0}
+                value={supportingSectionData.Mass || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -414,7 +413,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.sectional_area_cm2 || 0}
+                value={supportingSectionData.Area || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -425,7 +424,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.second_moment_of_area_Iz_cm4 || 0}
+                value={supportingSectionData.Iz || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -436,7 +435,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.second_moment_of_area_Iy_cm4 || 0}
+                value={supportingSectionData.Iy || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -447,7 +446,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.radius_of_gyration_rz_cm || 0}
+                value={supportingSectionData.rz || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -458,7 +457,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.radius_of_gyration_ry_cm || 0}
+                value={supportingSectionData.ry || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -469,7 +468,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.elastic_modulus_Zz_cm3 || 0}
+                value={supportingSectionData.Zz || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -480,7 +479,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={section_properties.elastic_modulus_Zy_cm3 || 0}
+                value={supportingSectionData.Zy || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -506,7 +505,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={advanced_properties.plastic_modulus_Zpz_cm3 || 0}
+                value={supportingSectionData.Zpz || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -518,7 +517,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={advanced_properties.plastic_modulus_Zpy_cm3 || 0}
+                value={supportingSectionData.Zpy || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -530,7 +529,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={advanced_properties.torsion_constant_It_cm4 || 0}
+                value={supportingSectionData.It || 0}
                 style={readOnlyFontStyle}
               />
             </div>
@@ -542,7 +541,7 @@ const ColumnSectionModal = ({
                 name="depth"
                 className="input-design-pref"
                 // value={supportingSectionData.R2 || 0}
-                value={advanced_properties.warping_constant_Iw_cm6 || 0}
+                value={supportingSectionData.Iw || 0}
                 style={readOnlyFontStyle}
               />
             </div>

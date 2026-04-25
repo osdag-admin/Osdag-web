@@ -12,9 +12,9 @@ from osdag_core.design_type.connection.beam_beam_end_plate_splice import BeamBea
 from osdag_core.design_type.connection.beam_column_end_plate import BeamColumnEndPlate
 from osdag_core.design_type.connection.column_cover_plate import ColumnCoverPlate
 from osdag_core.design_type.connection.column_end_plate import ColumnEndPlate
-from osdag_core.design_type.compression_member.compression_welded import Compression_welded
-from osdag_core.design_type.compression_member.compression_bolted import Compression_bolted
-from osdag_core.design_type.compression_member.compression_column import ColumnDesign
+from osdag_core.design_type.compression_member.compression_welded_welded import Compression_welded
+from osdag_core.design_type.compression_member.compression_welded_bolted import Compression_bolted
+from osdag_core.design_type.compression_member.compression_welded_column import ColumnDesign
 from osdag_core.design_type.main import Main
 from osdag_core.Common import TYPE_TEXTBOX, TYPE_OUT_BUTTON
 from osdag_core.Common import (

@@ -21,7 +21,7 @@ class Project(models.Model):
     
     module = models.CharField(max_length=200, blank=True, null=True)
     submodule = models.CharField(max_length=200, blank=True, null=True)
-    # Canonical inputs persisted as JSON
+    # Design inputs persisted as JSON
     inputs_json = models.JSONField(blank=True, null=True)
     # Design outputs persisted as JSON
     outputs_json = models.JSONField(blank=True, null=True)

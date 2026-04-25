@@ -18,7 +18,7 @@ from OCC.Core.IGESControl import IGESControl_Writer
 from OCC.Core.TopoDS import TopoDS_Compound
 from OCC.Core.BRep import BRep_Builder
 from osdag_core.cad.common_logic import CommonDesignLogic
-from osdag_core.design_type.compression_member.compression_bolted import Compression_bolted
+from osdag_core.design_type.compression_member.compression_welded_bolted import Compression_bolted
 import sys
 import os
 import typing

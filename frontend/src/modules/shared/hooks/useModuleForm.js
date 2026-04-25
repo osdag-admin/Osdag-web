@@ -94,6 +94,7 @@ export const useModuleForm = (moduleConfig, moduleData) => {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [displaySaveInputPopup, setDisplaySaveInputPopup] = useState(false);
   const [saveInputFileName, setSaveInputFileName] = useState("");
+  const [designPrefOverrides, setDesignPrefOverrides] = useState({});
 
   // Prefill inputs from sessionStorage if available
   useEffect(() => {
@@ -278,6 +279,7 @@ export const useModuleForm = (moduleConfig, moduleData) => {
     setConfirmationModal(false);
     setDisplaySaveInputPopup(false);
     setSaveInputFileName("");
+    setDesignPrefOverrides({});
   };
 
   return {
@@ -303,6 +305,8 @@ export const useModuleForm = (moduleConfig, moduleData) => {
     setDisplaySaveInputPopup,
     saveInputFileName,
     setSaveInputFileName,
+    designPrefOverrides,
+    setDesignPrefOverrides,
     updateModalState,
     updateSelectionState,
     updateSelectedItems,

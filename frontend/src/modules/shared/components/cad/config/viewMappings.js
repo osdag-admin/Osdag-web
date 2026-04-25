@@ -16,7 +16,7 @@ export const DEFAULT_VIEW_MAPPINGS = {
   "EndPlate": ["EndPlate"],
   "Member": ["Member"],
   "CoverPlate": ["CoverPlate", "Cover Plate"],
-  // Simple connections (desktop parity): Plate 1, Plate 2, Cover Plate, Bolts, Welds
+  // Simple connections: Plate 1, Plate 2, Cover Plate, Bolts, Welds
   "Plate 1": ["Plate 1"],
   "Plate 2": ["Plate 2"],
   "Cover Plate": ["Cover Plate"],

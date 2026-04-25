@@ -89,12 +89,12 @@ class CADGeneration(View):
                 "CCEndPlate": "Column-to-Column-End-Plate-Connection",
                 # simple slugs already mapped above
             }
-            canonical_module_id = module_aliases.get(module_id, module_id)
+            resolved_module_id = module_aliases.get(module_id, module_id)
 
             # Get module API
-            module_api = get_module_api(canonical_module_id)
+            module_api = get_module_api(resolved_module_id)
             
-            # Determine session type from canonical_module_id
+            # Determine session type from resolved module id
             module_type_mapping = {
                 "FinPlateConnection": "FinPlateConnection",
                 "CleatAngleConnection": "CleatAngle", 
@@ -115,8 +115,8 @@ class CADGeneration(View):
                 "LapJointBolted": "LapJointBolted",
             }
             print("module_type_mapping: ", module_type_mapping)
-            print("canonical_module_id: ", canonical_module_id)
-            session_type = module_type_mapping.get(canonical_module_id)
+            print("resolved_module_id: ", resolved_module_id)
+            session_type = module_type_mapping.get(resolved_module_id)
             if not session_type:
                 return JsonResponse({"status": "error", "message": f"Unknown module type: {module_id}"}, status=400)
                 

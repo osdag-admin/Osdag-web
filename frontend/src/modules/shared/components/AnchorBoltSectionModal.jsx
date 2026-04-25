@@ -18,6 +18,7 @@ const AnchorBoltSectionModal = ({
   setDesignPrefInputs,
   isInputLocked,
   materialList: materialsFromParent,
+  suppressInitialMaterialDispatch = false,
 }) => {
   const {
     manageDesignPreferences,
@@ -27,6 +28,7 @@ const AnchorBoltSectionModal = ({
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    if (suppressInitialMaterialDispatch) return;
     const material = materials.filter(
       (value) => value.Grade === designPrefInputs.supporting_material
     );
@@ -36,7 +38,7 @@ const AnchorBoltSectionModal = ({
         materialData: material[0],
       });
     }
-  }, []);
+  }, [suppressInitialMaterialDispatch]);
 
   const handleDownload = () => {
     const fileName = "Columns_Details.xlsx";

@@ -86,6 +86,72 @@ export async function addCustomMaterial(materialData) {
 /**
  * Get design preferences for connections.
  */
+/**
+ * Server-resolved design-preference sync.
+ * @param {object} body - { module_session_name, inputs, operation, design_pref_draft? }
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<{ success: boolean, data?: object, error?: string }>}
+ */
+export async function fetchDesignPrefSync(body, signal) {
+  try {
+    const res = await apiClient(DESIGN_PREFERENCES.sync, {
+      method: "POST",
+      body: JSON.stringify(body),
+      signal,
+    });
+    const data = await res.json();
+    if (!data.success) {
+      return { success: false, error: data.error || "Preference sync failed" };
+    }
+    return {
+      success: true,
+      data: {
+        ...data,
+        resolved_inputs: data.resolved_inputs || {},
+        section_details: data.section_details || { supporting: {}, supported: {} },
+      },
+    };
+  } catch (err) {
+    if (err?.name === "AbortError") {
+      return { success: false, error: "aborted", aborted: true };
+    }
+    return { success: false, error: err.message || String(err) };
+  }
+}
+
+/**
+ * Resolve Additional Inputs defaults for a module + dock state.
+ * @param {object} body - { module_session_name, inputs }
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<{ success: boolean, data?: object, error?: string }>}
+ */
+export async function fetchDesignPrefDefaults(body, signal) {
+  try {
+    const res = await apiClient(DESIGN_PREFERENCES.defaults, {
+      method: "POST",
+      body: JSON.stringify(body),
+      signal,
+    });
+    const data = await res.json();
+    if (!data.success) {
+      return { success: false, error: data.error || "Preference defaults failed" };
+    }
+    return {
+      success: true,
+      data: {
+        ...data,
+        default_pref_inputs: data.default_pref_inputs || {},
+        section_details: data.section_details || { supporting: {}, supported: {} },
+      },
+    };
+  } catch (err) {
+    if (err?.name === "AbortError") {
+      return { success: false, error: "aborted", aborted: true };
+    }
+    return { success: false, error: err.message || String(err) };
+  }
+}
+
 export async function fetchDesignPreferences(params = {}) {
   let url = DESIGN_PREFERENCES.list;
   const { supported_section, supporting_section, connectivity } = params;

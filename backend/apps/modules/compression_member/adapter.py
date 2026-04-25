@@ -7,7 +7,7 @@ from apps.core.utils import (
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 )
-from osdag_core.design_type.compression_member.compression import Compression
+from osdag_core.design_type.compression_member.compression_welded import Compression_welded
 from osdag_core.custom_logger import CustomLogger
 import sys
 import os
@@ -75,14 +75,14 @@ def validate_input(input_values: Dict[str, Any]) -> None:
         raise InvalidInputTypeError("Member.Designation", "str or List[str]")
 
 
-def create_module() -> Compression:
+def create_module() -> Compression_welded:
     """Create an instance of the Compression module design class and set it up for use"""
-    module = Compression()
+    module = Compression_welded()
     module.set_osdaglogger(None, id="web")
     return module
 
 
-def create_from_input(input_values: Dict[str, Any]) -> Compression:
+def create_from_input(input_values: Dict[str, Any]) -> Compression_welded:
     """Create an instance of the Compression module design class from input values."""
     module = None
     try:
