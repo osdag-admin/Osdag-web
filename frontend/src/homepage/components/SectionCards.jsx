@@ -44,9 +44,11 @@ const SectionCards = ({ section, onModuleClick }) => {
     <div
       key={section.label}
       className="flex-1 min-w-0 sm:min-w-[380px] w-full border-2 border-osdag-border rounded-xl mb-8 px-4 py-4 shadow-card dark:text-white"
+      className="flex-1 min-w-0 sm:min-w-[380px] w-full border-2 border-osdag-border rounded-xl mb-8 px-4 py-4 shadow-card dark:text-white"
     >
       <div
         data-module-grid
+        className="flex flex-col items-stretch justify-center md:flex-row md:items-center gap-6"
         className="flex flex-col items-stretch justify-center md:flex-row md:items-center gap-6"
       >
         {section.options.map((opt, idx) => {
@@ -80,6 +82,31 @@ const SectionCards = ({ section, onModuleClick }) => {
               <div className={`font-semibold mb-2 ${isDev ? "text-gray-400 dark:text-gray-500" : "text-black dark:text-white group-hover:text-white"}`}>
                 {opt.label}
               </div>
+        {section.options.map((opt, idx) => (
+          <button
+            key={opt.key}
+            type="button"
+            data-module-card="true"
+            aria-label={`Open ${opt.label}`}
+            onClick={() => onModuleClick(opt.key, section.label)}
+            onFocus={() => setFocusedIndex(idx)}
+            onKeyDown={(event) => handleCardKeyDown(event, idx, opt)}
+            ref={(element) => {
+              cardRefs.current[idx] = element;
+            }}
+            tabIndex={focusedIndex === idx ? 0 : -1}
+            className="cursor-pointer group flex-1 h-40 min-w-[120px] w-full md:max-w-[280px] flex flex-col items-center justify-between 
+               border rounded-lg shadow-card transition-all duration-200 bg-white dark:bg-osdag-dark-color/90
+               hover:bg-osdag-green dark:hover:hover:bg-osdag-green relative focus:outline-none
+               focus:ring-2 focus:ring-osdag-green focus:ring-offset-2 dark:focus:ring-offset-osdag-dark-color"
+          >
+            <div
+              style={{ backgroundImage: `url(/images/${opt.img})` }}
+              className="h-32 w-full max-w-[160px] md:h-40 mt-5 mb-2 bg-contain bg-center bg-no-repeat"
+            ></div>
+            <div className="font-semibold mb-2 text-black dark:text-white group-hover:text-white">
+              {opt.label}
+            </div>
 
               {!isDev && (
                 <div

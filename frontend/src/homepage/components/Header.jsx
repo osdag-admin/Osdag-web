@@ -57,6 +57,7 @@ const Header = ({ setshowSideBar, active }) => {
     const id = window.setTimeout(() => setShowThemeTooltip(false), 2000);
     return () => window.clearTimeout(id);
   }, [showThemeTooltip]);
+  const [showPluginsTooltip, setShowPluginsTooltip] = useState(false);
 
   // Check if user is a guest
   const isGuest = isGuestUser();
@@ -390,6 +391,8 @@ const Header = ({ setshowSideBar, active }) => {
       {/* Main Header */}
       <div className="px-4 sm:px-8 md:px-12 pb-8 md:pb-2 relative z-30">
         <div className="flex items-center justify-between py-4 md:py-0 min-h-[80px]">
+      <div className="px-4 sm:px-8 md:px-12 pb-8 md:pb-2">
+        <div className="flex items-center justify-between py-4 md:py-0">
           {/* Hamburger Menu Icon (Mobile/Tablet Only) */}
           <div className="w-11 lg:hidden flex-shrink-0 z-10">
             <button
@@ -410,17 +413,28 @@ const Header = ({ setshowSideBar, active }) => {
             <div className="flex flex-col items-center lg:items-start">
               {/* Osdag Label - Light mode */}
               <img src="/images/Osdag_label.svg" alt="Osdag Logo" className="h-14 md:h-16 mt-2 dark:hidden" />
+              <img src="/images/Osdag_label.svg" alt="Osdag Logo" className="h-14 md:h-16 mt-2 dark:hidden" />
               {/* Osdag Label - Dark mode */}
+              <img src="/images/Osdag_label_dark.svg" alt="Osdag Logo" className="h-14 md:h-16 mt-2 hidden dark:block" />
               <img src="/images/Osdag_label_dark.svg" alt="Osdag Logo" className="h-14 md:h-16 mt-2 hidden dark:block" />
               {/* Osdag Tagline - Light mode */}
               <img src="/images/Osdag_tagline.svg" alt="Osdag Tagline" className="h-6 md:h-6 dark:hidden" />
+              <img src="/images/Osdag_tagline.svg" alt="Osdag Tagline" className="h-6 md:h-6 dark:hidden" />
               {/* Osdag Tagline - Dark mode */}
+              <img src="/images/Osdag_tagline_dark.svg" alt="Osdag Tagline" className="h-6 md:h-6 hidden dark:block" />
               <img src="/images/Osdag_tagline_dark.svg" alt="Osdag Tagline" className="h-6 md:h-6 hidden dark:block" />
 
             </div>
             {/* Icons (Mobile/Tablet: below logo, Desktop: right side) */}
             <div className="relative flex md:hidden mt-4 space-x-1 sm:space-x-2">
+            <div className="relative flex md:hidden mt-4 space-x-1 sm:space-x-2">
               {/* Info Button */}
+              <div className="about-dropdown group">
+                <button
+                  onClick={() => setShowAboutDropdown(!showAboutDropdown)}
+                  className={`p-2 sm:p-3 transition-all duration-300 rounded-xl ${showAboutDropdown ? 'bg-osdag-green text-white' : 'text-osdag-text-muted hover:text-white dark:text-gray-400 dark:hover:text-white hover:bg-osdag-green'
+                    }`}
+                >
               <div className="about-dropdown group">
                 <button
                   onClick={() => setShowAboutDropdown(!showAboutDropdown)}
@@ -455,12 +469,44 @@ const Header = ({ setshowSideBar, active }) => {
                     </div>
                   </div>
                 )}
+                </button>
+                {(showAboutDropdown || false) && (
+                  <div className="absolute left-0 mt-2 bg-white dark:bg-gray-800 border border-osdag-border dark:border-gray-700 rounded-xl shadow-lg z-20 min-w-48 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="py-2 text-osdag-text-primary dark:text-white">
+                      <button
+                        onClick={() => {
+                          setShowAbout(true);
+                          setShowAboutDropdown(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors"
+                      >
+                        About Osdag
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowAskQuestion(true);
+                          setShowAboutDropdown(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors"
+                      >
+                        Ask us a question
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
               {/* Settings Button */}
               <div className="relative group">
                 <button
                   onClick={() => {
                     setShowPluginsTooltip(true);
+                  }}
+                  className="p-2 sm:p-3 text-osdag-text-muted hover:text-white dark:text-gray-400 dark:hover:text-white transition-all duration-300 hover:bg-osdag-green rounded-xl"
+                >
+                <button
+                  onClick={() => {
+                    setShowPluginsTooltip(true);
+                    setTimeout(() => setShowPluginsTooltip(false), 2000);
                   }}
                   className="p-2 sm:p-3 text-osdag-text-muted hover:text-white dark:text-gray-400 dark:hover:text-white transition-all duration-300 hover:bg-osdag-green rounded-xl"
                 >
@@ -474,11 +520,18 @@ const Header = ({ setshowSideBar, active }) => {
                     Under Development
                   </div>
                 )}
+                {showPluginsTooltip && (
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-white dark:bg-gray-800 text-black dark:text-white text-xs px-2 py-1 border border-gray-300 dark:border-gray-700 shadow-md rounded whitespace-nowrap z-30">
+                    Under Development
+                  </div>
+                )}
               </div>
               {/* Resources Button */}
               <div className="resources-dropdown group">
+              <div className="resources-dropdown group">
                 <button
                   onClick={() => setShowResourcesDropdown(!showResourcesDropdown)}
+                  className={`p-2 sm:p-3 transition-all duration-300 rounded-xl ${showResourcesDropdown ? 'bg-osdag-green text-white' : 'text-osdag-text-muted hover:text-white hover:bg-osdag-green'
                   className={`p-2 sm:p-3 transition-all duration-300 rounded-xl ${showResourcesDropdown ? 'bg-osdag-green text-white' : 'text-osdag-text-muted hover:text-white hover:bg-osdag-green'
                     }`}
                 >
@@ -610,12 +663,136 @@ const Header = ({ setshowSideBar, active }) => {
                           </div>
                         )}
                       </div>
+                  <div className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 border border-osdag-border dark:border-gray-700 rounded-xl shadow-lg z-20 min-w-[280px] max-w-[90vw] animate-in fade-in slide-in-from-top-2 duration-200 text-sm">
+                    <div className="py-2 text-osdag-text-primary dark:text-white">
+                      <div className="px-4 py-2 hover:bg-osdag-green hover:text-white cursor-pointer text-left">
+                        Design Examples
+                      </div>
+                      
+                      {/* Databases IS 808:2021 */}
+                      <div className="border-t border-gray-100 dark:border-gray-700">
+                        <button
+                          onClick={() => setActiveSubmenu(activeSubmenu === "database" ? null : "database")}
+                          className="w-full px-4 py-2 flex justify-between items-center hover:bg-osdag-green hover:text-white transition-colors text-left"
+                        >
+                          <span>Databases (IS 808:2021)</span>
+                          <span className={`transform transition-transform duration-200 ${activeSubmenu === "database" ? "rotate-90" : ""}`}>›</span>
+                        </button>
+                        {activeSubmenu === "database" && (
+                          <div className="bg-gray-50 dark:bg-gray-900/50 pl-4 py-1">
+                            {["Column", "Beam", "Channel", "Angle"].map(item => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  handleDownload(item);
+                                  setShowResourcesDropdown(false);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors rounded-md"
+                              >
+                                {item}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Databases IS 4923:2017 */}
+                      <div className="border-t border-gray-100 dark:border-gray-700">
+                        <button
+                          onClick={() => setActiveSubmenu(activeSubmenu === "is4923" ? null : "is4923")}
+                          className="w-full px-4 py-2 flex justify-between items-center hover:bg-osdag-green hover:text-white transition-colors text-left"
+                        >
+                          <span>Databases (IS 4923:2017)</span>
+                          <span className={`transform transition-transform duration-200 ${activeSubmenu === "is4923" ? "rotate-90" : ""}`}>›</span>
+                        </button>
+                        {activeSubmenu === "is4923" && (
+                          <div className="bg-gray-50 dark:bg-gray-900/50 pl-4 py-1">
+                            {["SHS", "RHS"].map(item => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  handleDownload(item);
+                                  setShowResourcesDropdown(false);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors rounded-md"
+                              >
+                                {item}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Databases IS 1161:2014 */}
+                      <div className="border-t border-gray-100 dark:border-gray-700">
+                        <button
+                          onClick={() => setActiveSubmenu(activeSubmenu === "is1161" ? null : "is1161")}
+                          className="w-full px-4 py-2 flex justify-between items-center hover:bg-osdag-green hover:text-white transition-colors text-left"
+                        >
+                          <span>Databases (IS 1161:2014)</span>
+                          <span className={`transform transition-transform duration-200 ${activeSubmenu === "is1161" ? "rotate-90" : ""}`}>›</span>
+                        </button>
+                        {activeSubmenu === "is1161" && (
+                          <div className="bg-gray-50 dark:bg-gray-900/50 pl-4 py-1">
+                            {["CHS"].map(item => (
+                              <button
+                                key={item}
+                                onClick={() => {
+                                  handleDownload(item);
+                                  setShowResourcesDropdown(false);
+                                }}
+                                className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors rounded-md"
+                              >
+                                {item}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Custom Database */}
+                      <div className="border-t border-gray-100 dark:border-gray-700">
+                        <button
+                          onClick={() => setActiveSubmenu(activeSubmenu === "customdb" ? null : "customdb")}
+                          className="w-full px-4 py-2 flex justify-between items-center hover:bg-osdag-green hover:text-white transition-colors text-left"
+                        >
+                          <span>Custom Database</span>
+                          <span className={`transform transition-transform duration-200 ${activeSubmenu === "customdb" ? "rotate-90" : ""}`}>›</span>
+                        </button>
+                        {activeSubmenu === "customdb" && (
+                          <div className="bg-gray-50 dark:bg-gray-900/50 pl-4 py-1">
+                            <button
+                              onClick={() => {
+                                handleDownload("Download xlsx");
+                                setShowResourcesDropdown(false);
+                              }}
+                              className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors rounded-md"
+                            >
+                              Download xlsx
+                            </button>
+                            <XlsxImportTrigger>
+                              {({ trigger }) => (
+                                <button
+                                  onClick={() => {
+                                    trigger();
+                                    setShowResourcesDropdown(false);
+                                  }}
+                                  className="w-full px-4 py-2 text-left hover:bg-osdag-green hover:text-white transition-colors rounded-md"
+                                >
+                                  Import xlsx
+                                </button>
+                              )}
+                            </XlsxImportTrigger>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
               {/* Documents Button */}
               <div className="relative group">
+                <button className="p-2 sm:p-3 text-osdag-text-muted hover:text-white dark:text-gray-400 dark:hover:text-white transition-all duration-300 hover:bg-osdag-green rounded-xl" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
                 <button className="p-2 sm:p-3 text-osdag-text-muted hover:text-white dark:text-gray-400 dark:hover:text-white transition-all duration-300 hover:bg-osdag-green rounded-xl" onClick={() => fileInputRef.current && fileInputRef.current.click()}>
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -632,6 +809,8 @@ const Header = ({ setshowSideBar, active }) => {
                 <button
                   disabled
                   className="p-2 sm:p-3 text-osdag-text-muted dark:text-gray-400 opacity-40 pointer-events-none"
+                  onClick={toggleTheme}
+                  className="p-2 sm:p-3 text-osdag-text-muted hover:text-white dark:text-gray-400 dark:hover:text-white transition-all duration-300 hover:bg-osdag-green rounded-xl"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -724,6 +903,7 @@ const Header = ({ setshowSideBar, active }) => {
 
           {/* Desktop Icons */}
           <div className="hidden md:flex items-center space-x-1 mb-6 md:mb-1 border-black p-2 dark:bg-osdag-dark-color justify-center z-10" >
+          <div className="hidden md:flex items-center space-x-1 mb-6 md:mb-1 border-black p-2 dark:bg-osdag-dark-color justify-center" >
             <div className="relative about-dropdown group ">
               <button
                 onClick={() => setShowAboutDropdown(!showAboutDropdown)}
@@ -1019,6 +1199,7 @@ const Header = ({ setshowSideBar, active }) => {
           </div>
           {/* user details, logout */}
           <div className="relative profile-dropdown group hidden md:flex items-center space-x-1 mb-6 md:mb-1 border-black p-2 rounded-lg justify-center">
+          <div className="relative profile-dropdown group hidden md:flex items-center space-x-1 mb-6 md:mb-1 border-black p-2 rounded-lg justify-center">
             {/* Avatar Button */}
             <div className="flex items-center justify-center">
               <button
@@ -1098,7 +1279,10 @@ const Header = ({ setshowSideBar, active }) => {
       </div>
       {/* Search Section */}
       {!active && <div className="px-4 sm:px-8 md:px-12 pb-8 md:pb-8 dark:bg-osdag-dark-color">
+      {!active && <div className="px-4 sm:px-8 md:px-12 pb-8 md:pb-8 dark:bg-osdag-dark-color">
         <div className="flex items-center justify-center">
+          <div className="relative w-full max-w-[600px] search-container">
+            <div className="absolute inset-y-0 left-5 flex items-center space-x-3 hidden md:flex">
           <div className="relative w-full max-w-[600px] search-container">
             <div className="absolute inset-y-0 left-5 flex items-center space-x-3 hidden md:flex">
               <div className="flex items-center space-x-1 bg-gray-100 dark:bg-gray-700 rounded-md px-2 py-1">
@@ -1113,6 +1297,7 @@ const Header = ({ setshowSideBar, active }) => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search modules or projects..."
+              className={`w-full pl-6 md:pl-24 pr-20 py-4 bg-gray-50 dark:bg-gray-800 border border-osdag-border dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-osdag-green focus:border-transparent text-osdag-text-primary dark:text-white placeholder-osdag-text-muted text-base shadow-search transition-all ${isSearchFocused ? 'ring-2 ring-osdag-green' : ''
               className={`w-full pl-6 md:pl-24 pr-20 py-4 bg-gray-50 dark:bg-gray-800 border border-osdag-border dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-osdag-green focus:border-transparent text-osdag-text-primary dark:text-white placeholder-osdag-text-muted text-base shadow-search transition-all ${isSearchFocused ? 'ring-2 ring-osdag-green' : ''
                 }`}
               onFocus={() => {
@@ -1291,6 +1476,12 @@ const Header = ({ setshowSideBar, active }) => {
             </div>
           </div>
         </div>
+      )}
+      {showAbout && (
+        <AboutOsdag onClose={() => setShowAbout(false)} />
+      )}
+      {showAskQuestion && (
+        <AskQuestion onClose={() => setShowAskQuestion(false)} />
       )}
     </div>
   );
