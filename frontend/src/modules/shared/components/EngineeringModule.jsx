@@ -951,7 +951,7 @@ export const EngineeringModule = ({
           {/* Input Dock Button */}
           <button
             onClick={toggleInputDock}
-            className={`w-9 h-9 flex items-center justify-center transition hidden md:flex`}
+            className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white hidden xl:flex`}
             title={`${docks.input ? 'Hide' : 'Show'} input dock`}
             type="button"
           >
@@ -969,7 +969,10 @@ export const EngineeringModule = ({
           <button
             onClick={toggleLogs}
             disabled={!output && (!logs || logs.length === 0)}
-            className={`w-9 h-9 flex items-center justify-center transition hidden md:flex`}
+            className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hidden xl:flex ${(output || (logs && logs.length > 0))
+              ? 'hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white'
+              : 'opacity-40 cursor-not-allowed'
+              }`}
             title={(output || (logs && logs.length > 0))
               ? `${docks.logs ? 'Hide' : 'Show'} logs`
               : 'Run a design to view logs'}
@@ -1011,7 +1014,6 @@ export const EngineeringModule = ({
               )}
             </svg>
           </button>
-
           {/* CAD Toggle Button - Mobile Only */}
           <button
             onClick={toggleCad}
@@ -1038,16 +1040,15 @@ export const EngineeringModule = ({
               <line x1="12" y1="22.08" x2="12" y2="12" />
             </svg>
           </button>
-
           {/* Output Dock Button */}
           <button
             onClick={toggleOutputDock}
             disabled={!output}
             title={output ? `${docks.output ? 'Hide' : 'Show'} output dock` : 'Run a design to view outputs'}
             type="button"
-            className={`p-2 md:p-2 min-w-[44px] min-h-[44px] rounded-md transition-colors hidden md:flex ${output
-              ? (docks.output ? 'bg-osdag-green text-white dark:bg-osdag-dark-green' : 'hover:bg-black/10 dark:hover:bg-black/40')
-              : "opacity-40 cursor-not-allowed"
+            className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hidden xl:flex ${output
+              ? 'hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white'
+              : 'opacity-40 cursor-not-allowed'
               }`}
           >
             <svg viewBox="0 0 100 100" className="w-5 h-5">
@@ -1063,7 +1064,7 @@ export const EngineeringModule = ({
             onClick={() => navigate('/home')}
             title="Home"
             type="button"
-            className="p-2 md:p-2 min-w-[44px] min-h-[44px] rounded-md transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
@@ -1073,44 +1074,42 @@ export const EngineeringModule = ({
           <button
             onClick={toggleTheme}
             disabled
-            className="p-2 md:p-2 min-w-[44px] min-h-[44px] text-black transition-colors dark:text-white opacity-50 cursor-not-allowed hidden md:flex"
+            title="Dark mode is under development"
+            className="w-10 h-10 flex items-center justify-center rounded-md transition-colors text-black dark:text-white opacity-40 cursor-not-allowed flex"
           >
-            {isDark ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="currentColor"
-              >
-                <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M21.64 13.64a1 1 0 00-1.05-.24 8 8 0 01-10-10 1 1 0 00-.24-1.05A1 1 0 008.73 2 10 10 0 1022 15.27a1 1 0 00-.36-1.63z" />
-              </svg>
-            )}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor"
+              className="w-5 h-5"
+            >
+              <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z" />
+            </svg>
           </button>
 
-        </div>
+        </div >
 
         {/* Initial theme detection, run once per mount */}
-        {React.useEffect(() => {
-          const saved = localStorage.getItem('osdag-theme');
-          if (saved === 'dark') {
-            document.body.classList.add('dark');
-          } else if (saved === 'light') {
-            document.body.classList.remove('dark');
-          }
-        }, [])}
-      </div>
+        {
+          React.useEffect(() => {
+            const saved = localStorage.getItem('osdag-theme');
+            if (saved === 'dark') {
+              document.body.classList.add('dark');
+            } else if (saved === 'light') {
+              document.body.classList.remove('dark');
+            }
+          }, [])
+        }
+      </div >
 
       <div className="relative flex flex-row flex-1 overflow-hidden w-full">
         {/* Input Dock Toggle Button - Fixed to left, shows when dock is closed (Desktop only) */}
         {!docks.input && !isMobile && (
           <button
             onClick={toggleInputDock}
-            className="hidden md:flex absolute left-0 top-0 h-full w-10 bg-white dark:bg-osdag-dark-color border-r border-gray-300 dark:border-osdag-border items-center justify-center z-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+            className="hidden xl:flex absolute left-0 top-0 h-full w-10 bg-white dark:bg-osdag-dark-color border-r border-gray-300 dark:border-osdag-border items-center justify-center z-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
             title="Open Input Dock"
             type="button"
           >
@@ -1121,7 +1120,7 @@ export const EngineeringModule = ({
         {!docks.output && output && !isMobile && (
           <button
             onClick={toggleOutputDock}
-            className="hidden md:flex absolute right-0 top-0 h-full w-10 bg-white dark:bg-osdag-dark-color border-l border-gray-300 dark:border-gray-700 items-center justify-center z-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+            className="hidden xl:flex absolute right-0 top-0 h-full w-10 bg-white dark:bg-osdag-dark-color border-l border-gray-300 dark:border-gray-700 items-center justify-center z-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
             title="Open Output Dock"
             type="button"
           >
@@ -1159,7 +1158,7 @@ export const EngineeringModule = ({
             isOpen={docks.input}
           />
         ) : (
-          <div className="fixed left-0 top-[52px] h-[calc(100vh-52px)] w-[40px] flex flex-col items-center justify-center font-bold z-[50] bg-white dark:bg-osdag-dark-color border-r border-gray-300 dark:border-gray-700">
+          <div className="fixed left-0 top-[50%] -translate-y-1/2 h-fit w-[40px] hidden xl:flex flex-col items-center justify-center font-bold z-[1000]">
             <div className="relative flex flex-col items-center w-[30px] py-[10px] gap-[14px]">
               <span className="inline-block rotate-[270deg]"><b>T</b></span>
               <span className="inline-block rotate-[270deg]"><b>U</b></span>
@@ -1174,7 +1173,7 @@ export const EngineeringModule = ({
 
         {/* EDGE BAR (always visible) */}
         <div
-          className={`absolute top-0 h-screen w-[40px] z-[1000] hidden md:block ${docks.input ? "left-[400px]" : "left-[30px]"
+          className={`absolute top-0 h-screen w-[40px] z-[1000] hidden xl:block ${docks.input ? "left-[400px]" : "left-[30px]"
             }`}
         >
           {/* GREEN LINE */}
@@ -1203,6 +1202,7 @@ export const EngineeringModule = ({
         <div className={`
           flex-1 flex flex-col relative min-w-0
           ${isMobile && (docks.input || docks.output) ? 'hidden' : 'flex'}
+          ${!isMobile && !(docks.output && outputConfig && status.step !== DESIGN_STATUS.ERROR) ? 'xl:pr-[40px]' : ''}
         `}>
           {/* Options Container - Show after design is complete. On desktop, show even when docks are open. On mobile, only show when CAD is visible */}
           {showOptionsContainer && output && (isMobile ? docks.cad : true) && (
@@ -1317,9 +1317,9 @@ export const EngineeringModule = ({
                 : 'h-[40%]'
               }
               ${isMobile && !docks.cad ? 'bg-white dark:bg-osdag-dark-color' : ''}
-              ${!isMobile ? (docks.input ? 'pl-0' : 'pl-[40px]') : ''}
-              ${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
-            `}>
+${!isMobile ? (docks.input ? 'pl-0' : 'pl-[40px]') : ''}
+${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
+             `}>
               <Logs logs={logs} />
             </div>
           )}
@@ -1330,8 +1330,8 @@ export const EngineeringModule = ({
           <div
             className={`
               fixed inset-0 z-50 h-full pt-[80px] pb-14
-              sm:relative sm:inset-auto sm:z-auto sm:h-auto sm:pt-0 sm:pb-0
-              w-full sm:w-[320px] md:w-[350px] lg:w-[400px]
+              xl:relative xl:inset-auto xl:z-auto xl:h-auto xl:pt-0 xl:pb-0
+              w-full xl:w-[400px]
               flex flex-col bg-white dark:bg-osdag-dark-color
             `}
           >
@@ -1380,10 +1380,9 @@ export const EngineeringModule = ({
           /* COLLAPSED STRIP */
           <div
             className="
-    fixed right-0 top-0 h-screen w-[40px]
-    z-10 bg-white hidden md:block
-  "
-          >
+            fixed right-0 top-0 h-screen w-[40px]
+            z-10 bg-white hidden xl:block
+            ">
             {/* GREEN LINE */}
             <div className="absolute left-0 top-0 w-[8px] h-full bg-[#84bd00]">
 

@@ -1,7 +1,6 @@
 services:
   db:
-    image: mirror.gcr.io/library/postgres:14-alpine
-    platform: linux/amd64
+    image: postgres:14-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DATABASE_USER:-osdagdeveloper}
@@ -18,8 +17,7 @@ services:
       retries: 5
 
   redis:
-    image: mirror.gcr.io/library/redis:7-alpine
-    platform: linux/amd64
+    image: redis:7-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -205,6 +203,3 @@ services:
 
 volumes:
   postgres_data_dev:
-  influxdb_data:
-  influxdb_config:
-  grafana_data:
