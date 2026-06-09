@@ -1014,32 +1014,7 @@ export const EngineeringModule = ({
               )}
             </svg>
           </button>
-          {/* CAD Toggle Button - Mobile Only */}
-          <button
-            onClick={toggleCad}
-            className={`md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md transition-colors ${docks.cad
-              ? 'bg-osdag-green text-white dark:bg-osdag-dark-green'
-              : 'hover:bg-black/10 dark:hover:bg-black/40'
-              }`}
-            title={`${docks.cad ? 'Hide' : 'Show'} CAD`}
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              {/* 3D Cube Icon */}
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-              <line x1="12" y1="22.08" x2="12" y2="12" />
-            </svg>
-          </button>
+
           {/* Output Dock Button */}
           <button
             onClick={toggleOutputDock}
@@ -1313,7 +1288,7 @@ export const EngineeringModule = ({
           {docks.logs && (output || (logs && logs.length > 0)) && (
             <div className={`
               ${isMobile
-                ? (docks.cad ? 'h-[30%]' : 'fixed inset-0 z-50 h-full pt-[80px]')
+                ? (docks.cad ? 'h-[30%]' : 'fixed inset-0 z-50 h-full pt-[52px]')
                 : 'h-[40%]'
               }
               ${isMobile && !docks.cad ? 'bg-white dark:bg-osdag-dark-color' : ''}
@@ -1329,7 +1304,7 @@ ${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
         {docks.output && outputConfig && status.step !== DESIGN_STATUS.ERROR ? (
           <div
             className={`
-              fixed inset-0 z-50 h-full pt-[80px] pb-14
+              fixed inset-0 z-50 h-full pt-[52px] pb-14
               xl:relative xl:inset-auto xl:z-auto xl:h-auto xl:pt-0 xl:pb-0
               w-full xl:w-[400px]
               flex flex-col bg-white dark:bg-osdag-dark-color
