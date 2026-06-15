@@ -61,6 +61,7 @@ export const EngineeringModule = ({
     footingGradeList = [],
     weldTypeList = [],
     anchorTypeList = [],
+    loadingOptions, // Added loadingOptions
 
     // State
     inputs,
@@ -1135,6 +1136,7 @@ export const EngineeringModule = ({
             setModalDynamicSrc={setModalDynamicSrc}
             onRefetchModuleOptions={refetchModuleOptions}
             isOpen={docks.input}
+            loadingOptions={loadingOptions}
           />
         ) : (
           <div className="fixed left-0 top-[50%] -translate-y-1/2 h-fit w-[40px] hidden xl:flex flex-col items-center justify-center font-bold z-[1000]">
