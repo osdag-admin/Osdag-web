@@ -1163,14 +1163,33 @@
   transform: translateY(-2px);
 } */
 
-.ant-modal {
-  top: 3rem !important;
-  height: 500px !important;
+.ant-modal-wrap {
+  overflow: hidden !important;
 }
 
-.ant-modal-content {
+.ant-modal:not(.loading-modal) {
+  top: 3rem !important;
+  max-height: calc(100vh - 6rem) !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 0 !important;
+}
+
+.ant-modal:not(.loading-modal) .ant-modal-content {
   padding: 5px 10px !important;
   background-color: #f1f1f1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.ant-modal:not(.loading-modal) .ant-modal-body {
+  overflow-y: auto !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding-bottom: 10px;
 }
 
 .ant-modal-close {

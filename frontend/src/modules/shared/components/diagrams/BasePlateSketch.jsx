@@ -168,11 +168,11 @@ const BasePlateSketch = ({
   return (
     <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} className={`h-auto w-full ${className}`} role="img">
       <defs>
-        <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
-          <path d="M 10 5 L 0 1.5 L 0 8.5 Z" fill="#000" />
+        <marker id="baseplate-arrow-start" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+          <path d="M 12 6 L 0 0 L 0 12 Z" fill="#000" />
         </marker>
-        <marker id="arrow-end" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
-          <path d="M 10 5 L 0 1.5 L 0 8.5 Z" fill="#000" />
+        <marker id="baseplate-arrow-end" markerWidth="12" markerHeight="12" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 12 6 L 0 0 L 0 12 Z" fill="#000" />
         </marker>
       </defs>
 
@@ -306,13 +306,13 @@ const BasePlateSketch = ({
 
       {/* Dimensions & Labels */}
       {/* Horizontal length of plate */}
-      <line x1={bpX} y1={bpY + bpH + 30} x2={bpX + bpW} y2={bpY + bpH + 30} stroke="#000" strokeWidth="1" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
+      <line x1={bpX} y1={bpY + bpH + 30} x2={bpX + bpW} y2={bpY + bpH + 30} stroke="#000" strokeWidth="1" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
       <line x1={bpX} y1={bpY + bpH + 5} x2={bpX} y2={bpY + bpH + 35} stroke="#000" strokeWidth="0.8" />
       <line x1={bpX + bpW} y1={bpY + bpH + 5} x2={bpX + bpW} y2={bpY + bpH + 35} stroke="#000" strokeWidth="0.8" />
       <DimensionText x={bpX + bpW / 2} y={bpY + bpH + 44} text={`${params.pL.toFixed(0)} mm`} />
 
       {/* Vertical width of plate */}
-      <line x1={bpX - 30} y1={bpY} x2={bpX - 30} y2={bpY + bpH} stroke="#000" strokeWidth="1" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
+      <line x1={bpX - 30} y1={bpY} x2={bpX - 30} y2={bpY + bpH} stroke="#000" strokeWidth="1" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
       <line x1={bpX - 35} y1={bpY} x2={bpX + 5} y2={bpY} stroke="#000" strokeWidth="0.8" />
       <line x1={bpX - 35} y1={bpY + bpH} x2={bpX + 5} y2={bpY + bpH} stroke="#000" strokeWidth="0.8" />
       <DimensionText x={bpX - 38} y={bpY + bpH / 2 + 4} text={`${params.pW.toFixed(0)} mm`} anchor="end" />
@@ -321,12 +321,12 @@ const BasePlateSketch = ({
       {ocfBolts.length > 0 && (
         <g>
           {/* End distance vertical label */}
-          <line x1={bpX + bpW + 15} y1={bpY} x2={bpX + bpW + 15} y2={bpY + endOcf * scale} stroke="#000" strokeWidth="0.8" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
+          <line x1={bpX + bpW + 15} y1={bpY} x2={bpX + bpW + 15} y2={bpY + endOcf * scale} stroke="#000" strokeWidth="0.8" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
           <line x1={bpX + bpW + 10} y1={bpY + endOcf * scale} x2={bpX + bpW + 20} y2={bpY + endOcf * scale} stroke="#000" strokeWidth="0.8" />
           <DimensionText x={bpX + bpW + 24} y={bpY + (endOcf * scale) / 2 + 4} text={`${toNumber(endOcf).toFixed(0)}`} anchor="start" />
 
           {/* Edge distance horizontal label */}
-          <line x1={bpX} y1={bpY - 15} x2={bpX + edgeOcf * scale} y2={bpY - 15} stroke="#000" strokeWidth="0.8" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
+          <line x1={bpX} y1={bpY - 15} x2={bpX + edgeOcf * scale} y2={bpY - 15} stroke="#000" strokeWidth="0.8" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
           <line x1={bpX + edgeOcf * scale} y1={bpY - 20} x2={bpX + edgeOcf * scale} y2={bpY - 10} stroke="#000" strokeWidth="0.8" />
           <DimensionText x={bpX + (edgeOcf * scale) / 2} y={bpY - 22} text={`${toNumber(edgeOcf).toFixed(0)}`} />
         </g>

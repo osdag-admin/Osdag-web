@@ -58,7 +58,7 @@ export const BaseInputDock = React.memo(({
         flex
         fixed xl:relative inset-0 xl:inset-auto xl:left-auto xl:right-auto xl:top-auto xl:bottom-auto z-50 xl:z-auto
         w-full xl:w-[400px] h-full
-        pt-[62px] xl:pt-0 pb-14 xl:pb-0
+        pt-[100px] xl:pt-0 pb-14 xl:pb-0
         bg-white dark:bg-osdag-dark-color
         flex-col
         transform transition-transform duration-300 ease-in-out

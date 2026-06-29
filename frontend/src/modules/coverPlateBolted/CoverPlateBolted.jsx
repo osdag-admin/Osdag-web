@@ -8,7 +8,7 @@ function CoverPlateBolted() {
     <EngineeringModule
       moduleConfig={coverPlateBoltedConfig}
       outputConfig={coverPlateBoltedOutputConfig}
-      title="Cover Plate Bolted Connection"
+      title="Cover Plate — Bolted"
     />
   );
 }

@@ -8,7 +8,7 @@ function LapJointWelded() {
         <EngineeringModule
             moduleConfig={lapJointWeldedConfig}
             outputConfig={lapJointWeldedOutputConfig}
-            title="Lap Joint Welded"
+            title="Lap Joint — Welded"
         />
     );
 }

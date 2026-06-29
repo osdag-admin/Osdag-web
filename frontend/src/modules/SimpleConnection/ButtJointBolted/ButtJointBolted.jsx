@@ -8,7 +8,7 @@ function ButtJointBolted() {
         <EngineeringModule
             moduleConfig={buttJointBoltedConfig}
             outputConfig={buttJointBoltedOutputConfig}
-            title="Butt Joint Bolted"
+            title="Butt Joint — Bolted"
         />
     );
 }

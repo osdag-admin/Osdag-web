@@ -145,19 +145,19 @@ const MATERIAL_FIELDS = [
 const getSectionFields = (tableName) => {
   const config = SECTION_CONFIGS[tableName];
   if (!config) return [];
-
+  
   const fields = [];
-
+  
   // Designation
   fields.push({ label: "Designation", key: "Designation", type: "text", category: "General" });
-
+  
   // Dimensions
   if (config.dimensions) {
     config.dimensions.forEach(d => {
       fields.push({ label: d.label, key: d.key, type: "number", category: "Dimensions", unit: d.unit });
     });
   }
-
+  
   // Properties (middle and right)
   if (config.properties) {
     if (config.properties.middle) {
@@ -171,11 +171,11 @@ const getSectionFields = (tableName) => {
       });
     }
   }
-
+  
   // Source and Type
   fields.push({ label: "Source", key: "Source", type: "text", category: "General" });
   fields.push({ label: "Type", key: "Type", type: "text", category: "General" });
-
+  
   return fields;
 };
 
@@ -193,6 +193,14 @@ const MyDataPage = () => {
   // Search & Filter state
   const [activeTab, setActiveTab] = useState("projects");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Rename Modal State
+  const [renameModal, setRenameModal] = useState({
+    isOpen: false,
+    projectId: null,
+    currentName: "",
+    newName: "",
+  });
 
   // Modal State
   const [deleteModal, setDeleteModal] = useState({
@@ -298,6 +306,50 @@ const MyDataPage = () => {
     }
   };
 
+  const handleOpenRename = (project) => {
+    setRenameModal({
+      isOpen: true,
+      projectId: project.id,
+      currentName: project.name,
+      newName: project.name,
+    });
+  };
+
+  const handleConfirmRename = async () => {
+    const { projectId, newName, currentName } = renameModal;
+    if (!newName.trim()) {
+      toast.error("Project name cannot be empty");
+      return;
+    }
+    if (newName.trim() === currentName) {
+      setRenameModal({ isOpen: false, projectId: null, currentName: "", newName: "" });
+      return;
+    }
+
+    try {
+      const url = PROJECTS.detail(projectId);
+      const response = await apiClient(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName.trim() }),
+      });
+      
+      const data = await response.json().catch(() => ({}));
+      if (response.ok || data.success) {
+        toast.success(`Project renamed successfully`);
+        setProjects((prev) =>
+          prev.map((p) => (p.id === projectId ? { ...p, name: newName.trim() } : p))
+        );
+        setRenameModal({ isOpen: false, projectId: null, currentName: "", newName: "" });
+      } else {
+        toast.error(data.error || data.message || "Failed to rename project");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred during renaming");
+    }
+  };
+
   // Route to design page to open project
   const handleOpenProject = (project) => {
     const route = MODULE_ROUTES[project.routeKey] || getModuleRoute(project.submodule);
@@ -397,13 +449,13 @@ const MyDataPage = () => {
 
   const handleSaveEdit = async () => {
     const { itemType, itemData, formData } = editModal;
-
+    
     if (itemType === "material") {
       if (!formData.Grade?.trim()) {
         toast.error("Grade Name is required");
         return;
       }
-
+      
       const numericFields = [
         "Yield_Stress_less_than_20",
         "Yield_Stress_between_20_and_neg40",
@@ -411,14 +463,14 @@ const MyDataPage = () => {
         "Ultimate_Tensile_Stress",
         "Elongation",
       ];
-
+      
       for (const field of numericFields) {
         if (formData[field] === undefined || formData[field] === "" || isNaN(Number(formData[field]))) {
           toast.error(`Please enter a valid number for ${field.replace(/_/g, " ")}`);
           return;
         }
       }
-
+      
       const payload = {
         Grade: formData.Grade,
         Yield_Stress_less_than_20: Number(formData.Yield_Stress_less_than_20),
@@ -454,10 +506,10 @@ const MyDataPage = () => {
         toast.error("Designation is required");
         return;
       }
-
+      
       const fields = getSectionFields(itemData.table);
       const payload = { id: itemData.id };
-
+      
       for (const field of fields) {
         if (field.type === "number") {
           const val = formData[field.key];
@@ -598,28 +650,31 @@ const MyDataPage = () => {
                   <div className="flex border-b border-transparent">
                     <button
                       onClick={() => { setActiveTab("projects"); setSearchQuery(""); }}
-                      className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all ${activeTab === "projects"
+                      className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all ${
+                        activeTab === "projects"
                           ? "border-osdag-green text-osdag-green dark:text-osdag-green"
                           : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-                        }`}
+                      }`}
                     >
                       Saved Projects ({projects.length})
                     </button>
                     <button
                       onClick={() => { setActiveTab("materials"); setSearchQuery(""); }}
-                      className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all ${activeTab === "materials"
+                      className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all ${
+                        activeTab === "materials"
                           ? "border-osdag-green text-osdag-green dark:text-osdag-green"
                           : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-                        }`}
+                      }`}
                     >
                       Custom Materials ({materials.length})
                     </button>
                     <button
                       onClick={() => { setActiveTab("sections"); setSearchQuery(""); }}
-                      className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all ${activeTab === "sections"
+                      className={`px-4 py-2 text-sm font-semibold border-b-2 transition-all ${
+                        activeTab === "sections"
                           ? "border-osdag-green text-osdag-green dark:text-osdag-green"
                           : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-                        }`}
+                      }`}
                     >
                       Custom Sections ({sections.length})
                     </button>
@@ -699,6 +754,12 @@ const MyDataPage = () => {
                                       className="px-3 py-1.5 text-xs font-semibold border border-gray-300 hover:border-osdag-green dark:border-gray-700 text-gray-700 dark:text-gray-300 dark:hover:text-white rounded-lg transition-all"
                                     >
                                       OSI
+                                    </button>
+                                    <button
+                                      onClick={() => handleOpenRename(project)}
+                                      className="px-3 py-1.5 text-xs font-semibold border border-gray-300 hover:border-blue-500 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 rounded-lg transition-all"
+                                    >
+                                      Rename
                                     </button>
                                     <button
                                       onClick={() => triggerDeleteConfirm("project", project.id, project.name)}
@@ -877,240 +938,290 @@ const MyDataPage = () => {
         </div>
       </div>
 
-      {/* Styled Confirmation Warning Modal */}
-      <DebugErrorBoundary section="Delete Confirm Modal">
-        {deleteModal.isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-            <div className="relative w-full max-w-md bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden transform scale-100 transition-all duration-300">
-              {/* Warning indicator */}
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-950/40 rounded-full flex items-center justify-center text-red-600 dark:text-red-400 mb-4 mx-auto">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-
-              <h3 className="text-lg font-bold text-center text-gray-900 dark:text-white mb-2">
-                Delete {deleteModal.itemType === "section" ? "Custom Section" : deleteModal.itemType === "material" ? "Custom Material" : "Project"}?
-              </h3>
-
-              <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-6 px-2">
-                Are you sure you want to permanently delete <strong className="text-gray-900 dark:text-white font-semibold">"{deleteModal.itemLabel}"</strong>? This action cannot be undone and the item will be deleted permanently.
-              </p>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setDeleteModal({ isOpen: false, itemType: "", itemId: null, itemLabel: "", extraData: null })}
-                  className="flex-1 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900/50 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleConfirmDelete}
-                  className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95"
-                >
-                  Permanently Delete
-                </button>
+      {/* Rename Project Modal */}
+      <DebugErrorBoundary section="Rename Project Modal">
+      {renameModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+          <div className="relative w-full max-w-md bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden transform scale-100 transition-all duration-300">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Rename Project
+            </h3>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 block">
+                  Project Name
+                </label>
+                <input
+                  type="text"
+                  value={renameModal.newName}
+                  onChange={(e) => setRenameModal(prev => ({ ...prev, newName: e.target.value }))}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleConfirmRename();
+                    }
+                  }}
+                  autoFocus
+                  className="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-750 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-osdag-green text-gray-900 dark:text-white transition-all"
+                  placeholder="Enter new project name"
+                />
               </div>
             </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setRenameModal({ isOpen: false, projectId: null, currentName: "", newName: "" })}
+                className="flex-1 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900/50 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmRename}
+                className="flex-1 py-2.5 bg-osdag-green hover:bg-osdag-green/90 text-white rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95"
+              >
+                Save
+              </button>
+            </div>
           </div>
-        )}
+        </div>
+      )}
+      </DebugErrorBoundary>
+
+      {/* Styled Confirmation Warning Modal */}
+      <DebugErrorBoundary section="Delete Confirm Modal">
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+          <div className="relative w-full max-w-md bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden transform scale-100 transition-all duration-300">
+            {/* Warning indicator */}
+            <div className="w-12 h-12 bg-red-100 dark:bg-red-950/40 rounded-full flex items-center justify-center text-red-600 dark:text-red-400 mb-4 mx-auto">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+
+            <h3 className="text-lg font-bold text-center text-gray-900 dark:text-white mb-2">
+              Delete {deleteModal.itemType === "section" ? "Custom Section" : deleteModal.itemType === "material" ? "Custom Material" : "Project"}?
+            </h3>
+            
+            <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-6 px-2">
+              Are you sure you want to permanently delete <strong className="text-gray-900 dark:text-white font-semibold">"{deleteModal.itemLabel}"</strong>? This action cannot be undone and the item will be deleted permanently.
+            </p>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteModal({ isOpen: false, itemType: "", itemId: null, itemLabel: "", extraData: null })}
+                className="flex-1 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900/50 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95"
+              >
+                Permanently Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </DebugErrorBoundary>
 
       {/* View Details Modal */}
       <DebugErrorBoundary section="View Details Modal">
-        {viewModal.isOpen && viewModal.itemData && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-            <div className="relative w-full max-w-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-              <div className="flex items-center justify-between pb-4 border-b border-gray-150 dark:border-gray-800 mb-4">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {viewModal.itemType === "material" ? "Custom Material Details" : `Custom ${viewModal.itemData.table.slice(0, -1)} Details`}
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setViewModal({ isOpen: false, itemType: "", itemData: null })}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto pr-2 space-y-4">
-                {viewModal.itemType === "material" ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {MATERIAL_FIELDS.map((field) => (
-                      <div key={field.key} className="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-100 dark:border-gray-800/40">
-                        <div className="text-xs text-gray-400 font-semibold uppercase">{field.label}</div>
-                        <div className="text-base font-bold text-gray-800 dark:text-gray-200 mt-1">
-                          {viewModal.itemData[field.key]}
-                          <span className="text-sm font-medium text-gray-400 dark:text-gray-500 ml-0.5">{field.suffix || ""}</span>
+      {viewModal.isOpen && viewModal.itemData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+          <div className="relative w-full max-w-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-150 dark:border-gray-800 mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                {viewModal.itemType === "material" ? "Custom Material Details" : `Custom ${viewModal.itemData.table.slice(0, -1)} Details`}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setViewModal({ isOpen: false, itemType: "", itemData: null })}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+              {viewModal.itemType === "material" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {MATERIAL_FIELDS.map((field) => (
+                    <div key={field.key} className="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-100 dark:border-gray-800/40">
+                      <div className="text-xs text-gray-400 font-semibold uppercase">{field.label}</div>
+                      <div className="text-base font-bold text-gray-800 dark:text-gray-200 mt-1">
+                        {viewModal.itemData[field.key]}
+                        <span className="text-sm font-medium text-gray-400 dark:text-gray-500 ml-0.5">{field.suffix || ""}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Group fields by category */}
+                  {["General", "Dimensions", "Properties"].map((category) => {
+                    const fields = getSectionFields(viewModal.itemData.table).filter(f => f.category === category);
+                    if (fields.length === 0) return null;
+                    return (
+                      <div key={category} className="space-y-2">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-osdag-green dark:text-osdag-green/90 px-1">
+                          {category}
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {fields.map((field) => (
+                            <div key={field.key} className="bg-gray-50/50 dark:bg-gray-900/40 p-3 rounded-xl border border-gray-100 dark:border-gray-800/40">
+                              <div className="text-xs text-gray-400 font-medium truncate" title={field.label}>
+                                {field.label}
+                              </div>
+                              <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5">
+                                {viewModal.itemData[field.key] !== null && viewModal.itemData[field.key] !== undefined
+                                  ? String(viewModal.itemData[field.key])
+                                  : "N/A"}
+                                <span className="text-xs font-normal text-gray-400 dark:text-gray-500 ml-0.5">
+                                  {field.unit ? ` ${field.unit}` : ""}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Group fields by category */}
-                    {["General", "Dimensions", "Properties"].map((category) => {
-                      const fields = getSectionFields(viewModal.itemData.table).filter(f => f.category === category);
-                      if (fields.length === 0) return null;
-                      return (
-                        <div key={category} className="space-y-2">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-osdag-green dark:text-osdag-green/90 px-1">
-                            {category}
-                          </h4>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            {fields.map((field) => (
-                              <div key={field.key} className="bg-gray-50/50 dark:bg-gray-900/40 p-3 rounded-xl border border-gray-100 dark:border-gray-800/40">
-                                <div className="text-xs text-gray-400 font-medium truncate" title={field.label}>
-                                  {field.label}
-                                </div>
-                                <div className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5">
-                                  {viewModal.itemData[field.key] !== null && viewModal.itemData[field.key] !== undefined
-                                    ? String(viewModal.itemData[field.key])
-                                    : "N/A"}
-                                  <span className="text-xs font-normal text-gray-400 dark:text-gray-500 ml-0.5">
-                                    {field.unit ? ` ${field.unit}` : ""}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
-              <div className="flex items-center justify-end pt-4 border-t border-gray-150 dark:border-gray-800 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setViewModal({ isOpen: false, itemType: "", itemData: null })}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-850 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
-                >
-                  Close
-                </button>
-              </div>
+            <div className="flex items-center justify-end pt-4 border-t border-gray-150 dark:border-gray-800 mt-4">
+              <button
+                type="button"
+                onClick={() => setViewModal({ isOpen: false, itemType: "", itemData: null })}
+                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-850 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
+              >
+                Close
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
       </DebugErrorBoundary>
 
       {/* Edit Properties Modal */}
       <DebugErrorBoundary section="Edit Properties Modal">
-        {editModal.isOpen && editModal.itemData && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
-            <div className="relative w-full max-w-3xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-              <div className="flex items-center justify-between pb-4 border-b border-gray-150 dark:border-gray-800 mb-4">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {editModal.itemType === "material" ? "Edit Custom Material" : `Edit Custom ${editModal.itemData.table.slice(0, -1)}`}
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setEditModal({ isOpen: false, itemType: "", itemData: null, formData: {} })}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto pr-2 space-y-5">
-                {editModal.itemType === "material" ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {MATERIAL_FIELDS.map((field) => (
-                      <div key={field.key} className="space-y-1">
-                        <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          {field.label} {field.suffix ? `(${field.suffix.trim()})` : ""}
-                        </label>
-                        <input
-                          type={field.type}
-                          value={editModal.formData[field.key] ?? ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setEditModal(prev => ({
-                              ...prev,
-                              formData: {
-                                ...prev.formData,
-                                [field.key]: val
-                              }
-                            }));
-                          }}
-                          className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-750 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-osdag-green text-gray-900 dark:text-white transition-all"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Group fields by category */}
-                    {["General", "Dimensions", "Properties"].map((category) => {
-                      const fields = getSectionFields(editModal.itemData.table).filter(f => f.category === category);
-                      if (fields.length === 0) return null;
-                      return (
-                        <div key={category} className="space-y-3">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-osdag-green dark:text-osdag-green/90 px-1">
-                            {category}
-                          </h4>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                            {fields.map((field) => (
-                              <div key={field.key} className="space-y-1">
-                                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-wide truncate block" title={field.label}>
-                                  {field.label} {field.unit ? `(${field.unit})` : ""}
-                                </label>
-                                <input
-                                  type={field.type}
-                                  value={editModal.formData[field.key] ?? ""}
-                                  onChange={(e) => {
-                                    const val = e.target.value;
-                                    setEditModal(prev => ({
-                                      ...prev,
-                                      formData: {
-                                        ...prev.formData,
-                                        [field.key]: val
-                                      }
-                                    }));
-                                  }}
-                                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-750 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-osdag-green text-gray-900 dark:text-white transition-all"
-                                />
-                              </div>
-                            ))}
-                          </div>
+      {editModal.isOpen && editModal.itemData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+          <div className="relative w-full max-w-3xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-150 dark:border-gray-800 mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                {editModal.itemType === "material" ? "Edit Custom Material" : `Edit Custom ${editModal.itemData.table.slice(0, -1)}`}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEditModal({ isOpen: false, itemType: "", itemData: null, formData: {} })}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto pr-2 space-y-5">
+              {editModal.itemType === "material" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {MATERIAL_FIELDS.map((field) => (
+                    <div key={field.key} className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        {field.label} {field.suffix ? `(${field.suffix.trim()})` : ""}
+                      </label>
+                      <input
+                        type={field.type}
+                        value={editModal.formData[field.key] ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEditModal(prev => ({
+                            ...prev,
+                            formData: {
+                              ...prev.formData,
+                              [field.key]: val
+                            }
+                          }));
+                        }}
+                        className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-750 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-osdag-green text-gray-900 dark:text-white transition-all"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Group fields by category */}
+                  {["General", "Dimensions", "Properties"].map((category) => {
+                    const fields = getSectionFields(editModal.itemData.table).filter(f => f.category === category);
+                    if (fields.length === 0) return null;
+                    return (
+                      <div key={category} className="space-y-3">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-osdag-green dark:text-osdag-green/90 px-1">
+                          {category}
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {fields.map((field) => (
+                            <div key={field.key} className="space-y-1">
+                              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-wide truncate block" title={field.label}>
+                                {field.label} {field.unit ? `(${field.unit})` : ""}
+                              </label>
+                              <input
+                                type={field.type}
+                                value={editModal.formData[field.key] ?? ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditModal(prev => ({
+                                    ...prev,
+                                    formData: {
+                                      ...prev.formData,
+                                      [field.key]: val
+                                    }
+                                  }));
+                                }}
+                                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-750 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-osdag-green text-gray-900 dark:text-white transition-all"
+                              />
+                            </div>
+                          ))}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-150 dark:border-gray-800 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setEditModal({ isOpen: false, itemType: "", itemData: null, formData: {} })}
-                  className="px-5 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900/50 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveEdit}
-                  className="px-5 py-2.5 bg-osdag-green hover:bg-osdag-green/90 dark:bg-osdag-dark-green text-white rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95"
-                >
-                  Save Changes
-                </button>
-              </div>
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-150 dark:border-gray-800 mt-4">
+              <button
+                type="button"
+                onClick={() => setEditModal({ isOpen: false, itemType: "", itemData: null, formData: {} })}
+                className="px-5 py-2.5 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900/50 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveEdit}
+                className="px-5 py-2.5 bg-osdag-green hover:bg-osdag-green/90 dark:bg-osdag-dark-green text-white rounded-xl text-sm font-semibold transition-all shadow-md active:scale-95"
+              >
+                Save Changes
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
       </DebugErrorBoundary>
     </div>
   );
 };
 
 export default MyDataPage;
-

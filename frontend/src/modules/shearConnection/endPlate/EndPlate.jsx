@@ -8,7 +8,7 @@ function EndPlate() {
     <EngineeringModule
       moduleConfig={endPlateConfig}
       outputConfig={endPlateOutputConfig}
-      title={UI_STRINGS.END_PLATE}
+      title={UI_STRINGS.HEADER_PLATE}
     />
   );
 }

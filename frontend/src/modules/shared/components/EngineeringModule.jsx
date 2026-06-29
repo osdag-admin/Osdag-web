@@ -195,7 +195,7 @@ export const EngineeringModule = ({
   useEffect(() => {
     if (normalizedCadModelPaths) {
       const keys = Object.keys(normalizedCadModelPaths || {});
-      }
+    }
   }, [normalizedCadModelPaths, selectedSection]);
 
 
@@ -525,7 +525,7 @@ export const EngineeringModule = ({
 
     try {
       const inputsForSave = expandAllSelectedInputs(inputs, allSelected, contextData);
-      
+
       let flatInputs = {};
       if (moduleConfig && typeof moduleConfig.buildSubmissionParams === "function") {
         try {
@@ -706,7 +706,7 @@ export const EngineeringModule = ({
       ...staticFallbacks,
       ...(ctxHoverDict || {}),
     };
-    
+
     return final;
   }, [ctxHoverDict]);
 
@@ -883,170 +883,199 @@ export const EngineeringModule = ({
     toggleTheme,
   });
 
+  const getCategoryPrefix = () => {
+    const path = location.pathname.toLowerCase();
+    if (path.includes('tension')) return 'Tension Members - ';
+    if (path.includes('compression') || path.includes('struts') || path.includes('axially')) return 'Compression Members - ';
+    if (path.includes('flexure') || path.includes('simply_supported_beam') || path.includes('cantilever') || path.includes('purlin')) return 'Flexural Members - ';
+    if (path.includes('column-beam') || path.includes('beam-column')) return 'Beam-Column - ';
+    if (path.includes('connections') || path.includes('shear') || path.includes('simple') || path.includes('splice') || path.includes('base_plate')) return 'Connection Members - ';
+    return '';
+  };
+  const displayTitle = title ? getCategoryPrefix() + title : '';
+
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden">
       {/* Navigation */}
-      <div className="sticky top-0 z-[60] h-[52px] flex flex-row justify-between items-center bg-[#d2d4d2] w-full text-sm flex-shrink-0 px-4">
-        <div className="flex flex-row items-center gap-x-4">
-          {menuItems.map((item, index) => (
-            <UnifiedDropdownMenu
-              key={index}
-              label={item.label}
-              dropdown={item.dropdown}
-              setDesignPrefModalStatus={setDesignPrefModalStatus}
-              inputs={inputs}
-              setInputs={setInputs}
-              allSelected={allSelected}
-              setAllSelected={setAllSelected}
-              setDesignPrefOverrides={setDesignPrefOverrides}
-              setExtraState={setExtraState}
-              setSelectionStates={setSelectionStates}
-              setSelectedItems={setSelectedItems}
-              logs={logs}
-              setCreateDesignReportBool={setCreateDesignReportBool}
-              triggerScreenshotCapture={triggerScreenshotCapture}
-              selectedOption={extraState.selectedOption}
-              setSelectedOption={(value) =>
-                setExtraState({ ...extraState, selectedOption: value })
-              }
-              cadModelPaths={cadModelPaths}
-              contextData={contextData}
-              selectionStates={selectionStates}
-              hasOutput={!!output}
-              onMenuClick={handleNavbarMenuClick}
-              onCreateProject={handleCreateProject}
-              isExistingProject={!!projectIdFromUrl}
-              moduleConfig={moduleConfig}
-              extraState={extraState}
-            />
-          ))}
+      <div className="sticky top-0 z-[60] w-full flex flex-col flex-shrink-0 text-sm">
 
-          {displaySaveInputPopup && (
-            <span id="save-input-style" style={{ marginTop: "18px" }}>
-              <strong>Saved input file as "{saveInputFileName}"</strong>
-            </span>
-          )}
-        </div>
+        {/* Top Bar: Light gray on desktop and mobile */}
+        <div className="h-[52px] flex flex-row justify-between items-center bg-[#d2d4d2] w-full px-4 relative xl:border-none">
 
-        <div className="flex flex-row justify-center items-center gap-2 text-black dark:text-white pr-4">
+          {/* Left Side: Menus */}
+          <div className="flex flex-row items-center gap-x-4">
+            {menuItems.map((item, index) => (
+              <UnifiedDropdownMenu
+                key={index}
+                label={item.label}
+                dropdown={item.dropdown}
+                setDesignPrefModalStatus={setDesignPrefModalStatus}
+                inputs={inputs}
+                setInputs={setInputs}
+                allSelected={allSelected}
+                setAllSelected={setAllSelected}
+                setDesignPrefOverrides={setDesignPrefOverrides}
+                setExtraState={setExtraState}
+                setSelectionStates={setSelectionStates}
+                setSelectedItems={setSelectedItems}
+                logs={logs}
+                setCreateDesignReportBool={setCreateDesignReportBool}
+                triggerScreenshotCapture={triggerScreenshotCapture}
+                selectedOption={extraState.selectedOption}
+                setSelectedOption={(value) =>
+                  setExtraState({ ...extraState, selectedOption: value })
+                }
+                cadModelPaths={cadModelPaths}
+                contextData={contextData}
+                selectionStates={selectionStates}
+                hasOutput={!!output}
+                onMenuClick={handleNavbarMenuClick}
+                onCreateProject={handleCreateProject}
+                isExistingProject={!!projectIdFromUrl}
+                moduleConfig={moduleConfig}
+                extraState={extraState}
+              />
+            ))}
 
-          {/* Input Dock Button */}
-          <button
-            onClick={toggleInputDock}
-            className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white hidden xl:flex`}
-            title={`${docks.input ? 'Hide' : 'Show'} input dock`}
-            type="button"
-          >
-            <svg viewBox="0 0 100 100" className="w-5 h-5">
-              <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="6" />
-              <line x1="40" y1="10" x2="40" y2="90" stroke="currentColor" strokeWidth="6" />
-              {docks.input && (
-                <rect x="10" y="10" width="30" height="80" fill="currentColor" />
-              )}
-            </svg>
+            {displaySaveInputPopup && (
+              <span id="save-input-style" className="hidden md:block" style={{ marginTop: "18px" }}>
+                <strong>Saved input file as "{saveInputFileName}"</strong>
+              </span>
+            )}
+          </div>
 
-          </button>
+          {/* Center Title for Desktop */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden xl:block text-black font-bold text-[15px] whitespace-nowrap">
+            {displayTitle}
+          </div>
 
-          {/* Logs Button */}
-          <button
-            onClick={toggleLogs}
-            disabled={!output && (!logs || logs.length === 0)}
-            className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hidden xl:flex ${(output || (logs && logs.length > 0))
-              ? 'hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white'
-              : 'opacity-40 cursor-not-allowed'
-              }`}
-            title={(output || (logs && logs.length > 0))
-              ? `${docks.logs ? 'Hide' : 'Show'} logs`
-              : 'Run a design to view logs'}
-            type="button"
-          >
-            <svg
-              viewBox="0 0 100 100"
-              className="w-5 h-5"
-              fill="none"
+          {/* Right Side: Icons */}
+          <div className="flex flex-row justify-center items-center gap-2 text-black dark:text-white">
+
+            {/* Input Dock Button */}
+            <button
+              onClick={toggleInputDock}
+              className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white hidden xl:flex`}
+              title={`${docks.input ? 'Hide' : 'Show'} input dock`}
+              type="button"
             >
-              <rect
-                x="10"
-                y="10"
-                width="80"
-                height="80"
-                stroke="currentColor"
-                strokeWidth="6"
+              <svg viewBox="0 0 100 100" className="w-5 h-5">
+                <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="6" />
+                <line x1="40" y1="10" x2="40" y2="90" stroke="currentColor" strokeWidth="6" />
+                {docks.input && (
+                  <rect x="10" y="10" width="30" height="80" fill="currentColor" />
+                )}
+              </svg>
+
+            </button>
+
+            {/* Logs Button */}
+            <button
+              onClick={toggleLogs}
+              disabled={!output && (!logs || logs.length === 0)}
+              className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hidden xl:flex ${(output || (logs && logs.length > 0))
+                ? 'hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white'
+                : 'opacity-40 cursor-not-allowed'
+                }`}
+              title={(output || (logs && logs.length > 0))
+                ? `${docks.logs ? 'Hide' : 'Show'} logs`
+                : 'Run a design to view logs'}
+              type="button"
+            >
+              <svg
+                viewBox="0 0 100 100"
+                className="w-5 h-5"
                 fill="none"
-              />
-
-              <line
-                x1="10"
-                y1="60"
-                x2="90"
-                y2="60"
-                stroke="currentColor"
-                strokeWidth="6"
-              />
-
-              {docks.logs && (
+              >
                 <rect
                   x="10"
-                  y="60"
+                  y="10"
                   width="80"
-                  height="30"
-                  fill="currentColor"
-                  stroke="none"
+                  height="80"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  fill="none"
                 />
-              )}
-            </svg>
-          </button>
 
-          {/* Output Dock Button */}
-          <button
-            onClick={toggleOutputDock}
-            disabled={!output}
-            title={output ? `${docks.output ? 'Hide' : 'Show'} output dock` : 'Run a design to view outputs'}
-            type="button"
-            className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hidden xl:flex ${output
-              ? 'hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white'
-              : 'opacity-40 cursor-not-allowed'
-              }`}
-          >
-            <svg viewBox="0 0 100 100" className="w-5 h-5">
-              <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="6" />
-              <line x1="60" y1="10" x2="60" y2="90" stroke="currentColor" strokeWidth="6" />
-              {docks.output && (
-                <rect x="60" y="10" width="30" height="80" fill="currentColor" />
-              )}
-            </svg>
-          </button>
-          {/* home */}
-          <button
-            onClick={() => navigate('/home')}
-            title="Home"
-            type="button"
-            className="w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-            </svg>
-          </button>
-          {/* theme mode */}
-          <button
-            onClick={toggleTheme}
-            disabled
-            title="Dark mode is under development"
-            className="w-10 h-10 flex items-center justify-center rounded-md transition-colors text-black dark:text-white opacity-40 cursor-not-allowed flex"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="currentColor"
-              className="w-5 h-5"
+                <line
+                  x1="10"
+                  y1="60"
+                  x2="90"
+                  y2="60"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                />
+
+                {docks.logs && (
+                  <rect
+                    x="10"
+                    y="60"
+                    width="80"
+                    height="30"
+                    fill="currentColor"
+                    stroke="none"
+                  />
+                )}
+              </svg>
+            </button>
+
+            {/* Output Dock Button */}
+            <button
+              onClick={toggleOutputDock}
+              disabled={!output}
+              title={output ? `${docks.output ? 'Hide' : 'Show'} output dock` : 'Run a design to view outputs'}
+              type="button"
+              className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hidden xl:flex ${output
+                ? 'hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white'
+                : 'opacity-40 cursor-not-allowed'
+                }`}
             >
-              <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z" />
-            </svg>
-          </button>
+              <svg viewBox="0 0 100 100" className="w-5 h-5">
+                <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="6" />
+                <line x1="60" y1="10" x2="60" y2="90" stroke="currentColor" strokeWidth="6" />
+                {docks.output && (
+                  <rect x="60" y="10" width="30" height="80" fill="currentColor" />
+                )}
+              </svg>
+            </button>
+            {/* home */}
+            <button
+              onClick={() => navigate('/home')}
+              title="Home"
+              type="button"
+              className="w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:bg-black/10 dark:hover:bg-white/10 text-black dark:text-white"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+            </button>
+            {/* theme mode */}
+            <button
+              onClick={toggleTheme}
+              disabled
+              title="Dark mode is under development"
+              className="w-10 h-10 flex items-center justify-center rounded-md transition-colors text-black dark:text-white opacity-40 cursor-not-allowed flex"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z" />
+              </svg>
+            </button>
 
-        </div >
+          </div>
+        </div>
+
+        {/* Mobile Centered Title (Below the menu row) */}
+        <div className="xl:hidden w-full flex justify-center items-center py-2 bg-white text-black font-semibold text-[14px] border-b border-gray-200">
+          {displayTitle}
+        </div>
+
 
         {/* Initial theme detection, run once per mount */}
         {
@@ -1271,7 +1300,7 @@ export const EngineeringModule = ({
           {docks.logs && (output || (logs && logs.length > 0)) && (
             <div className={`
               ${isMobile
-                ? (docks.cad ? 'h-[30%]' : 'fixed inset-0 z-50 h-full pt-[52px]')
+                ? (docks.cad ? 'h-[30%]' : 'fixed inset-0 z-50 h-full pt-[100px]')
                 : 'h-[40%]'
               }
               ${isMobile && !docks.cad ? 'bg-white dark:bg-osdag-dark-color' : ''}
@@ -1287,7 +1316,7 @@ ${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
         {docks.output && outputConfig && status.step !== DESIGN_STATUS.ERROR ? (
           <div
             className={`
-              fixed inset-0 z-50 h-full pt-[52px] pb-14
+              fixed inset-0 z-50 h-full pt-[100px] pb-14
               xl:relative xl:inset-auto xl:z-auto xl:h-auto xl:pt-0 xl:pb-0
               w-full xl:w-[400px]
               flex flex-col bg-white dark:bg-osdag-dark-color
@@ -1314,7 +1343,7 @@ ${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
             <div className="absolute top-0 left-0 h-full w-[40px] z-[50]">
               {/* GREEN LINE */}
               <div className="absolute left-0 top-0 w-[8px] h-full bg-[#84bd00]">
-                
+
                 {/* TOGGLE HANDLE */}
                 <div
                   onClick={() => toggleOutputDock(!!output)}

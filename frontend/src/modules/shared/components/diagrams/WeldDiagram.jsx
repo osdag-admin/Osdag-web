@@ -80,7 +80,7 @@ const WeldDiagram = ({
     const mid = (x1 + x2) / 2;
     return (
       <g>
-        <line x1={x1} y1={y} x2={x2} y2={y} stroke={dimColor} strokeWidth="1" markerStart="url(#arr-s)" markerEnd="url(#arr-e)" />
+        <line x1={x1} y1={y} x2={x2} y2={y} stroke={dimColor} strokeWidth="1" markerStart="url(#weld-arr-s)" markerEnd="url(#weld-arr-e)" />
         <line x1={x1} y1={y - 5} x2={x1} y2={y + 5} stroke={dimColor} strokeWidth="1" />
         <line x1={x2} y1={y - 5} x2={x2} y2={y + 5} stroke={dimColor} strokeWidth="1" />
         <text x={mid} y={y - 6} textAnchor="middle" style={labelStyle}>{label}</text>
@@ -108,10 +108,10 @@ const WeldDiagram = ({
       aria-label="Weld layout diagram"
     >
       <defs>
-        <marker id="arr-s" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto-start-reverse">
+        <marker id="weld-arr-s" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto-start-reverse">
           <path d="M6 3 L0 0 L0 6Z" fill={dimColor} />
         </marker>
-        <marker id="arr-e" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
+        <marker id="weld-arr-e" markerWidth="6" markerHeight="6" refX="0" refY="3" orient="auto">
           <path d="M0 3 L6 0 L6 6Z" fill={dimColor} />
         </marker>
       </defs>

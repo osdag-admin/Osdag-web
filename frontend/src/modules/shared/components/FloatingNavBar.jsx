@@ -14,7 +14,7 @@ import frame3dIcon from '../../../assets/homepage/3d_frame.svg';
 const FloatingNavBar = () => {
     const navigate = useNavigate();
     const { moduleName } = useParams();
-    const [isHovered, setIsHovered] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const navigationItems = [
         { name: 'Home', icon: homeIcon, link: '/home' },
@@ -28,13 +28,20 @@ const FloatingNavBar = () => {
         { name: '3D Frame', icon: frame3dIcon, link: '/3DFrame', comingSoon: true },
     ];
 
+    const toggleOpen = (e) => {
+        // Only toggle if we didn't click on a button inside
+        if (e.target.closest('button')) return;
+        setIsOpen(prev => !prev);
+    };
+
     return (
         <div 
-            className={`fixed left-0 top-1/2 -translate-y-1/2 z-[2000] flex items-center transition-all duration-300 ease-in-out ${
-                isHovered ? 'translate-x-0' : '-translate-x-[calc(100%-12px)]'
+            className={`fixed left-0 top-1/2 -translate-y-1/2 z-[2000] flex items-center transition-all duration-300 ease-in-out cursor-pointer ${
+                isOpen ? 'translate-x-0' : '-translate-x-[calc(100%-12px)]'
             }`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={() => window.innerWidth >= 1024 && setIsOpen(true)}
+            onMouseLeave={() => window.innerWidth >= 1024 && setIsOpen(false)}
+            onClick={toggleOpen}
         >
             <div className="bg-white dark:bg-osdag-dark-color border border-osdag-border dark:border-gray-700 rounded-r-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] py-4 px-2 flex flex-col gap-3 items-center min-w-[56px] backdrop-blur-sm bg-opacity-90">
                 <div className="w-8 h-1 bg-osdag-green/20 rounded-full mb-2"></div>
@@ -61,7 +68,7 @@ const FloatingNavBar = () => {
                                 <img 
                                     src={item.icon} 
                                     alt={item.name} 
-                                    className={`w-6 h-6 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'brightness-0 invert' : 'dark:invert group-hover:brightness-0 group-hover:invert-0'}`}
+                                    className="w-6 h-6 transition-transform duration-300 group-hover:scale-110"
                                 />
                                 {isActive && (
                                     <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-4 bg-osdag-green rounded-full shadow-[0_0_8px_rgba(145,176,20,0.6)]"></div>
@@ -74,7 +81,7 @@ const FloatingNavBar = () => {
             </div>
             
             {/* Hover Handle indicator */}
-            <div className={`w-3 h-32 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+            <div className={`w-3 h-32 flex items-center justify-center transition-opacity duration-300 ${isOpen ? 'opacity-0' : 'opacity-100'}`}>
                 <div className="w-1.5 h-16 bg-osdag-green rounded-full shadow-[0_0_10px_rgba(145,176,20,0.5)] animate-pulse"></div>
             </div>
         </div>

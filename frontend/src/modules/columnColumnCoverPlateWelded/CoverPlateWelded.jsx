@@ -7,7 +7,7 @@ const CoverPlateWelded = () => {
     <EngineeringModule
       moduleConfig={coverPlateWeldedConfig}
       outputConfig={coverPlateWeldedOutputConfig}
-      title="Column-to-Column Cover Plate Welded Connection"
+      title="Cover Plate — Welded"
     />
   );
 };

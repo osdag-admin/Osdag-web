@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../constants/UIStrings';
 import { EngineeringModule } from '../shared/components/EngineeringModule';
 import { columnColumnEndPlateConfig } from './configs/columnColumnEndPlateConfig';
 import { columnColumnEndPlateOutputConfig } from './configs/columnColumnEndPlateOutputConfig';
@@ -7,7 +8,7 @@ function ColumnColumnEndPlate() {
     <EngineeringModule
       moduleConfig={columnColumnEndPlateConfig}
       outputConfig={columnColumnEndPlateOutputConfig}
-      title="Column Column End Plate Connection"
+      title={UI_STRINGS.END_PLATE}
     />
   );
 }

@@ -118,6 +118,11 @@ const DimensionText = ({ x, y, text, anchor = "middle" }) => (
     textAnchor={anchor}
     fill="#000"
     fontFamily="Arial, sans-serif"
+    paintOrder="stroke"
+    stroke="#fff"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
     {text}
   </text>
@@ -146,112 +151,36 @@ const renderDetailedDimensions = (
     const lastBoltX = boltColsPositions[boltColsPositions.length - 1];
     const dimY = offsetY - hOffset;
 
-    // Edge distances (only show if multiple columns)
-    if (boltColsPositions.length > 1) {
-      if (origin === "left") {
-        // Left edge distance
-        const edgeStart = offsetX;
-        const edgeEnd = offsetX + firstBoltX * scale;
-        
-        // Extension lines
-        elements.push(
-          <line
-            key="h-edge-start-ext1"
-            x1={edgeStart}
-            y1={offsetY - 5}
-            x2={edgeStart}
-            y2={dimY + extLength}
-            stroke={dimColor}
-            strokeWidth="1"
-          />
-        );
-        elements.push(
-          <line
-            key="h-edge-start-ext2"
-            x1={edgeEnd}
-            y1={offsetY - 5}
-            x2={edgeEnd}
-            y2={dimY + extLength}
-            stroke={dimColor}
-            strokeWidth="1"
-          />
-        );
-        
-        // Dimension line with arrows
-        elements.push(
-          <line
-            key="h-edge-start"
-            x1={edgeStart}
-            y1={dimY}
-            x2={edgeEnd}
-            y2={dimY}
-            stroke={dimColor}
-            strokeWidth="1"
-            markerEnd="url(#arrow-end)"
-            markerStart="url(#arrow-start)"
-          />
-        );
-        
-        elements.push(
-          <DimensionText
-            key="h-edge-start-text"
-            x={(edgeStart + edgeEnd) / 2}
-            y={dimY - textOffset}
-            text={`${(params.edgeDist || 0).toFixed(0)}`}
-          />
-        );
-      } else {
-        // Right edge distance
-        const edgeStart = offsetX + lastBoltX * scale;
-        const edgeEnd = offsetX + params.width * scale;
-        
-        elements.push(
-          <line
-            key="h-edge-end-ext1"
-            x1={edgeStart}
-            y1={offsetY - 5}
-            x2={edgeStart}
-            y2={dimY + extLength}
-            stroke={dimColor}
-            strokeWidth="1"
-          />
-        );
-        elements.push(
-          <line
-            key="h-edge-end-ext2"
-            x1={edgeEnd}
-            y1={offsetY - 5}
-            x2={edgeEnd}
-            y2={dimY + extLength}
-            stroke={dimColor}
-            strokeWidth="1"
-          />
-        );
-        
-        elements.push(
-          <line
-            key="h-edge-end"
-            x1={edgeStart}
-            y1={dimY}
-            x2={edgeEnd}
-            y2={dimY}
-            stroke={dimColor}
-            strokeWidth="1"
-            markerEnd="url(#arrow-end)"
-            markerStart="url(#arrow-start)"
-          />
-        );
-        
-        elements.push(
-          <DimensionText
-            key="h-edge-end-text"
-            x={(edgeStart + edgeEnd) / 2}
-            y={dimY - textOffset}
-            text={`${(params.edgeDist || 0).toFixed(0)}`}
-          />
-        );
-      }
-    }
+    // Edge distances
+    const leftEdgeStart = offsetX;
+    const leftEdgeEnd = offsetX + firstBoltX * scale;
+    elements.push(
+      <line key="h-edge-left-ext1" x1={leftEdgeStart} y1={offsetY - 5} x2={leftEdgeStart} y2={dimY + extLength} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="h-edge-left-ext2" x1={leftEdgeEnd} y1={offsetY - 5} x2={leftEdgeEnd} y2={dimY + extLength} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="h-edge-left" x1={leftEdgeStart} y1={dimY} x2={leftEdgeEnd} y2={dimY} stroke={dimColor} strokeWidth="1" markerEnd="url(#spacing-arrow-end)" markerStart="url(#spacing-arrow-start)" />
+    );
+    elements.push(
+      <DimensionText key="h-edge-left-text" x={(leftEdgeStart + leftEdgeEnd) / 2} y={dimY - textOffset} text={`${(params.edgeDist || 0).toFixed(0)}`} />
+    );
+
+    const rightEdgeStart = offsetX + lastBoltX * scale;
+    const rightEdgeEnd = offsetX + params.width * scale;
+    elements.push(
+      <line key="h-edge-right-ext1" x1={rightEdgeStart} y1={offsetY - 5} x2={rightEdgeStart} y2={dimY + extLength} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="h-edge-right-ext2" x1={rightEdgeEnd} y1={offsetY - 5} x2={rightEdgeEnd} y2={dimY + extLength} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="h-edge-right" x1={rightEdgeStart} y1={dimY} x2={rightEdgeEnd} y2={dimY} stroke={dimColor} strokeWidth="1" markerEnd="url(#spacing-arrow-end)" markerStart="url(#spacing-arrow-start)" />
+    );
+    elements.push(
+      <DimensionText key="h-edge-right-text" x={(rightEdgeStart + rightEdgeEnd) / 2} y={dimY - textOffset} text={`${(params.edgeDist || 0).toFixed(0)}`} />
+    );
 
     // Gauge distances between bolts (only if multiple columns)
     for (let i = 0; i < boltColsPositions.length - 1; i += 1) {
@@ -292,8 +221,8 @@ const renderDetailedDimensions = (
           y2={dimY}
           stroke={dimColor}
           strokeWidth="1"
-          markerEnd="url(#arrow-end)"
-          markerStart="url(#arrow-start)"
+          markerEnd="url(#spacing-arrow-end)"
+          markerStart="url(#spacing-arrow-start)"
         />
       );
       
@@ -342,8 +271,8 @@ const renderDetailedDimensions = (
         y2={widthDimY}
         stroke={dimColor}
         strokeWidth="1"
-        markerEnd="url(#arrow-end)"
-        markerStart="url(#arrow-start)"
+        markerEnd="url(#spacing-arrow-end)"
+        markerStart="url(#spacing-arrow-start)"
       />
     );
     
@@ -363,58 +292,22 @@ const renderDetailedDimensions = (
     const lastBoltY = boltRowsPositions[boltRowsPositions.length - 1];
     const dimX = offsetX + params.width * scale + vOffset;
 
-    // Top end distance (only if multiple rows)
-    if (boltRowsPositions.length > 1) {
-      const topY = offsetY;
-      const boltY = offsetY + firstBoltY * scale;
-      
-      elements.push(
-        <line
-          key="v-end-top-ext1"
-          x1={offsetX + params.width * scale + 5}
-          y1={topY}
-          x2={dimX - extLength}
-          y2={topY}
-          stroke={dimColor}
-          strokeWidth="1"
-        />
-      );
-      elements.push(
-        <line
-          key="v-end-top-ext2"
-          x1={offsetX + params.width * scale + 5}
-          y1={boltY}
-          x2={dimX - extLength}
-          y2={boltY}
-          stroke={dimColor}
-          strokeWidth="1"
-        />
-      );
-      
-      elements.push(
-        <line
-          key="v-end-top"
-          x1={dimX}
-          y1={topY}
-          x2={dimX}
-          y2={boltY}
-          stroke={dimColor}
-          strokeWidth="1"
-          markerEnd="url(#arrow-end)"
-          markerStart="url(#arrow-start)"
-        />
-      );
-      
-      elements.push(
-        <DimensionText
-          key="v-end-top-text"
-          x={dimX + textOffset + 4}
-          y={(topY + boltY) / 2 + 5}
-          text={`${(params.endDist || 0).toFixed(0)}`}
-          anchor="start"
-        />
-      );
-    }
+    // Top end distance
+    const topY = offsetY;
+    const topBoltY = offsetY + firstBoltY * scale;
+    
+    elements.push(
+      <line key="v-end-top-ext1" x1={offsetX + params.width * scale + 5} y1={topY} x2={dimX - extLength} y2={topY} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="v-end-top-ext2" x1={offsetX + params.width * scale + 5} y1={topBoltY} x2={dimX - extLength} y2={topBoltY} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="v-end-top" x1={dimX} y1={topY} x2={dimX} y2={topBoltY} stroke={dimColor} strokeWidth="1" markerEnd="url(#spacing-arrow-end)" markerStart="url(#spacing-arrow-start)" />
+    );
+    elements.push(
+      <DimensionText key="v-end-top-text" x={dimX + textOffset + 4} y={(topY + topBoltY) / 2 + 5} text={`${(params.endDist || 0).toFixed(0)}`} anchor="start" />
+    );
 
     // Pitch distances between bolt rows (only if multiple rows)
     for (let i = 0; i < boltRowsPositions.length - 1; i += 1) {
@@ -454,8 +347,8 @@ const renderDetailedDimensions = (
           y2={y2}
           stroke={dimColor}
           strokeWidth="1"
-          markerEnd="url(#arrow-end)"
-          markerStart="url(#arrow-start)"
+          markerEnd="url(#spacing-arrow-end)"
+          markerStart="url(#spacing-arrow-start)"
         />
       );
       
@@ -470,58 +363,22 @@ const renderDetailedDimensions = (
       );
     }
 
-    // Bottom end distance (only if multiple rows)
-    if (boltRowsPositions.length > 1) {
-      const boltY = offsetY + lastBoltY * scale;
-      const bottomY = offsetY + params.height * scale;
-      
-      elements.push(
-        <line
-          key="v-end-bottom-ext1"
-          x1={offsetX + params.width * scale + 5}
-          y1={boltY}
-          x2={dimX - extLength}
-          y2={boltY}
-          stroke={dimColor}
-          strokeWidth="1"
-        />
-      );
-      elements.push(
-        <line
-          key="v-end-bottom-ext2"
-          x1={offsetX + params.width * scale + 5}
-          y1={bottomY}
-          x2={dimX - extLength}
-          y2={bottomY}
-          stroke={dimColor}
-          strokeWidth="1"
-        />
-      );
-      
-      elements.push(
-        <line
-          key="v-end-bottom"
-          x1={dimX}
-          y1={boltY}
-          x2={dimX}
-          y2={bottomY}
-          stroke={dimColor}
-          strokeWidth="1"
-          markerEnd="url(#arrow-end)"
-          markerStart="url(#arrow-start)"
-        />
-      );
-      
-      elements.push(
-        <DimensionText
-          key="v-end-bottom-text"
-          x={dimX + textOffset + 4}
-          y={(boltY + bottomY) / 2 + 5}
-          text={`${(params.endDist || 0).toFixed(0)}`}
-          anchor="start"
-        />
-      );
-    }
+    // Bottom end distance
+    const bottomBoltY = offsetY + lastBoltY * scale;
+    const bottomY = offsetY + params.height * scale;
+    
+    elements.push(
+      <line key="v-end-bottom-ext1" x1={offsetX + params.width * scale + 5} y1={bottomBoltY} x2={dimX - extLength} y2={bottomBoltY} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="v-end-bottom-ext2" x1={offsetX + params.width * scale + 5} y1={bottomY} x2={dimX - extLength} y2={bottomY} stroke={dimColor} strokeWidth="1" />
+    );
+    elements.push(
+      <line key="v-end-bottom" x1={dimX} y1={bottomBoltY} x2={dimX} y2={bottomY} stroke={dimColor} strokeWidth="1" markerEnd="url(#spacing-arrow-end)" markerStart="url(#spacing-arrow-start)" />
+    );
+    elements.push(
+      <DimensionText key="v-end-bottom-text" x={dimX + textOffset + 4} y={(bottomBoltY + bottomY) / 2 + 5} text={`${(params.endDist || 0).toFixed(0)}`} anchor="start" />
+    );
 
     // Overall height dimension (left side)
     const heightDimX = offsetX - vOffset;
@@ -558,8 +415,8 @@ const renderDetailedDimensions = (
         y2={offsetY + params.height * scale}
         stroke={dimColor}
         strokeWidth="1"
-        markerEnd="url(#arrow-end)"
-        markerStart="url(#arrow-start)"
+        markerEnd="url(#spacing-arrow-end)"
+        markerStart="url(#spacing-arrow-start)"
       />
     );
     
@@ -748,18 +605,18 @@ const SpacingDiagram = ({
     >
       <defs>
         <marker
-          id="arrow-start"
+          id="spacing-arrow-start"
           markerWidth="12"
           markerHeight="12"
-          refX="12"
+          refX="0"
           refY="6"
-          orient="auto-start-reverse"
+          orient="auto"
           markerUnits="userSpaceOnUse"
         >
-          <path d="M 12 6 L 0 0 L 0 12 Z" fill="#000" />
+          <path d="M 12 0 L 0 6 L 12 12 Z" fill="#000" />
         </marker>
         <marker
-          id="arrow-end"
+          id="spacing-arrow-end"
           markerWidth="12"
           markerHeight="12"
           refX="12"
@@ -767,7 +624,7 @@ const SpacingDiagram = ({
           orient="auto"
           markerUnits="userSpaceOnUse"
         >
-          <path d="M 12 6 L 0 0 L 0 12 Z" fill="#000" />
+          <path d="M 0 0 L 12 6 L 0 12 Z" fill="#000" />
         </marker>
       </defs>
       

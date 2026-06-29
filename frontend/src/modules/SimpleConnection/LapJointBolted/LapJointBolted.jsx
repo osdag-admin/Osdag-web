@@ -8,7 +8,7 @@ function LapJointBolted() {
         <EngineeringModule
             moduleConfig={lapJointBoltedConfig}
             outputConfig={lapJointBoltedOutputConfig}
-            title="Lap Joint Bolted"
+            title="Lap Joint — Bolted"
         />
     );
 }

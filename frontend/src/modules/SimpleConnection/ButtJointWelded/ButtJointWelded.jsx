@@ -8,7 +8,7 @@ function ButtJointWelded() {
         <EngineeringModule
             moduleConfig={buttJointWeldedConfig}
             outputConfig={buttJointWeldedOutputConfig}
-            title="Butt Joint Welded"
+            title="Butt Joint — Welded"
         />
     );
 }

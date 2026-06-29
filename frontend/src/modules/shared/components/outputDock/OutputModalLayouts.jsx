@@ -1,13 +1,13 @@
 /* eslint-disable react-refresh/only-export-components, react/prop-types */
 import { Fragment } from "react";
-import SpacingDiagram from "../SpacingDiagram";
-import BasePlateSketch from "../BasePlateSketch";
-import CapacityDiagram from "../CapacityDiagram";
-import WeldDiagram from "../WeldDiagram";
-import CleatBoltCapacityDiagram from "../CleatBoltCapacityDiagram";
-import CleatSectionCapacityDiagram from "../CleatSectionCapacityDiagram";
-import SeatedSectionCapacityDiagram from "../SeatedSectionCapacityDiagram";
-import B2BEndPlateDetailingDiagram from "../B2BEndPlateDetailingDiagram";
+import SpacingDiagram from "../diagrams/SpacingDiagram";
+import BasePlateSketch from "../diagrams/BasePlateSketch";
+import CapacityDiagram from "../diagrams/CapacityDiagram";
+import WeldDiagram from "../diagrams/WeldDiagram";
+import CleatBoltCapacityDiagram from "../diagrams/CleatBoltCapacityDiagram";
+import CleatSectionCapacityDiagram from "../diagrams/CleatSectionCapacityDiagram";
+import SeatedSectionCapacityDiagram from "../diagrams/SeatedSectionCapacityDiagram";
+import B2BEndPlateDetailingDiagram from "../diagrams/B2BEndPlateDetailingDiagram";
 
 function TwoColumnLayout({ config, fields, output, getOutputValue, ValueBox, getImage }) {
   const imageType = config.imageType || "spacing";
@@ -165,8 +165,8 @@ function SingleColumnLayout({ fields, output, getOutputValue, ValueBox }) {
                     {section}
                   </h3>
                 )}
-                <div className="details-main-body-align">
-                  <h4 dangerouslySetInnerHTML={{ __html: label }} />
+                <div className="flex w-full justify-between items-center mb-3 px-2">
+                  <h4 className="w-[55%] text-sm font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
                   <ValueBox value={getOutputValue(key, output)} />
                 </div>
               </Fragment>

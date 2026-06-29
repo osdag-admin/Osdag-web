@@ -11,7 +11,7 @@ export default function BasePlate() {
     <EngineeringModule
       moduleConfig={basePlateConfig}
       outputConfig={basePlateOutputConfig}
-      title={UI_STRINGS.CONNECTING_MEMBERS}
+      title={UI_STRINGS.SLAB_AND_GUSSETED_BASES}
     />
   );
 }
