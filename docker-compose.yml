@@ -203,3 +203,6 @@ services:
 
 volumes:
   postgres_data_dev:
+  grafana_data:
+  influxdb_data:
+  influxdb_config:

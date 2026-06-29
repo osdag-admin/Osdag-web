@@ -1,16 +1,54 @@
 /* eslint-disable react/prop-types */
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { message, Modal, Radio, Button } from "antd";
+import { BaseInputDock } from "./BaseInputDock";
+import { BaseOutputDock } from "./BaseOutputDock";
+import { CadViewer } from "./CadViewer";
+import Logs from "./Logs";
+import FloatingNavBar from "./FloatingNavBar";
+import { DesignReportModal } from "./DesignReportModal";
+import { CustomizationModal } from "./CustomizationModal";
+import DesignPrefSections from "./DesignPrefSections";
+import { DesignStatusModal } from "./DesignStatusModal";
+import HelpLinkModal from "./help/HelpLinkModal";
+import AboutOsdagModal from "./help/AboutOsdagModal";
+import XlsxImportTrigger from "./XlsxImportTrigger";
+import { DESIGN_STATUS } from "../hooks/useDesignSubmission";
+import { UI_STRINGS } from "../../../constants/UIStrings";
+import { DESIGN_EXAMPLES_URL, ASK_QUESTION_LINK } from "./help/helpContent";
+import { useViewport } from "../hooks/useViewport";
+import { useEngineeringShortcuts } from "../hooks/useEngineeringShortcuts";
+import { useEngineeringModule } from "../hooks/useEngineeringModule";
+import { useProjectCreation } from "../hooks/useProjectCreation";
+import { useProjectLoader } from "../hooks/useProjectLoader";
+import { useDockPanels } from "../hooks/useDockPanels";
+import { useHover } from "../hooks/useHover";
+import UnifiedDropdownMenu from "../utils/UnifiedDropdownMenu";
+import { menuItems } from "../utils/moduleUtils";
+import { downloadGroupedOutputsCsv, downloadGroupedInputsCsv } from "../utils/groupedCsvExport";
+import { expandAllSelectedInputs } from "../utils/osiInputSerializer";
+import { loadStateFromOsi } from "../utils/osiLoader";
+import { getModuleConfig as getDesignPrefModuleConfig } from "../utils/moduleConfig";
+import { canOpenAdditionalInputs } from "../utils/designPrefOpenGuard";
+import { downloadCachedModelByFormat, downloadExportCadResponse } from "../utils/cadExport";
+import { MODULE_KEY_SEAT_ANGLE, MODULE_KEY_FIN_PLATE, MODULE_KEY_CLEAT_ANGLE, MODULE_KEY_END_PLATE, MODULE_KEY_BEAM_COLUMN_END_PLATE } from "../../../constants/DesignKeys";
+import { deleteAllCustomSections } from "../../../datasources/sectionsDataSource";
+import { openOsiFile } from "../../../datasources/osiDataSource";
+import { useViewCamera } from "./cad";
 import { EngineeringProvider } from "../context/EngineeringContext";
 import { EngineeringHeader } from "./EngineeringHeader";
 import { EngineeringLayout } from "./EngineeringLayout";
 import { EngineeringModals } from "./EngineeringModals";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { isGuestUser } from "../../../utils/auth";
 
 export const EngineeringModule = ({
   moduleConfig,
   outputConfig,
   title,
 }) => {
-  const isGuest = isGuestUser;
+  const isGuest = isGuestUser();
   const navigate = useNavigate();
   const cameraRef = useRef();
   const lockBtnRef = useRef(null);
@@ -37,101 +75,40 @@ export const EngineeringModule = ({
   const [showSave3dTypeModal, setShowSave3dTypeModal] = useState(false);
   const [selectedSave3dType, setSelectedSave3dType] = useState("Export STL");
 
+  const coreState = useEngineeringModule(moduleConfig);
+  const { moduleData, form, uiContext, designStatus, actions } = coreState;
+
   const {
-    // Module data
-    beamList,
-    columnList,
-    connectivityList,
-    materialList,
-    boltDiameterList,
-    thicknessList,
-    propertyClassList,
-    angleList,
-    boltTypeList,
-    sectionProfileList,
-    channelList,
-    sectionDesignation,
-    cadModelPaths,
-    hoverDict: ctxHoverDict,
-    coverPlateList,
-    weldSizeList,
-    profileList = [],
-    anchorDiameterList = [],
-    anchorGradeList = [],
-    footingGradeList = [],
-    weldTypeList = [],
-    anchorTypeList = [],
-    loadingOptions, // Added loadingOptions
+    beamList, columnList, connectivityList, materialList, boltDiameterList, thicknessList,
+    propertyClassList, angleList, boltTypeList, sectionProfileList, channelList, sectionDesignation,
+    coverPlateList, weldSizeList, profileList = [],
+    anchorDiameterList = [], anchorGradeList = [], footingGradeList = [], weldTypeList = [],
+    anchorTypeList = [], loadingOptions, contextData
+  } = moduleData;
 
-    // State
-    inputs,
-    setInputs,
-    output,
-    logs,
-    loading,
-    renderBoolean,
-    modelKey,
-    modalStates,
-    selectionStates,
-    setSelectionStates,
-    allSelected,
-    setAllSelected,
-    selectedItems,
-    setSelectedItems,
-    saveOutput,
-    createDesignReportBool,
-    setCreateDesignReportBool,
-    designReportInputs,
-    setDesignReportInputs,
-    designPrefModalStatus,
-    setDesignPrefModalStatus,
-    confirmationModal,
-    setConfirmationModal,
-    displaySaveInputPopup,
-    saveInputFileName,
-    designPrefOverrides,
-    setDesignPrefOverrides,
-    screenshotTrigger,
-    setScreenshotTrigger,
-    extraState,
-    setExtraState,
-    modalDynamicSrc,
-    setModalDynamicSrc,
+  const {
+    output, logs, loading, renderBoolean, modelKey, status, setStatus,
+    screenshotTrigger, setScreenshotTrigger, cadModelPaths, hoverDict: ctxHoverDict
+  } = designStatus;
 
-    // Navigation and Reset states
-    showResetConfirmation,
-    setShowResetConfirmation,
-    confirmationType,
-    setConfirmationType,
-    status,
-    setStatus,
+  const {
+    inputs, setInputs, extraState, setExtraState, selectionStates, setSelectionStates, allSelected, setAllSelected,
+    selectedItems, setSelectedItems, displaySaveInputPopup, saveInputFileName,
+    designPrefOverrides, setDesignPrefOverrides, modalDynamicSrc, setModalDynamicSrc, resetFormState
+  } = form;
 
-    // Actions
-    updateModalState,
-    updateSelectionState,
-    updateSelectedItems,
-    toggleAllSelected,
-    handleSubmit,
-    handleReset,
-    handleHomeClick,
-    handleQuitClick,
-    performReset,
+  const {
+    modalStates, updateModalState, updateSelectionState, updateSelectedItems, toggleAllSelected,
+    designPrefModalStatus, setDesignPrefModalStatus, confirmationModal, setConfirmationModal,
+    showResetConfirmation, setShowResetConfirmation, confirmationType, setConfirmationType,
+    createDesignReportBool, setCreateDesignReportBool, designReportInputs, setDesignReportInputs
+  } = uiContext;
 
-    // Report
-    handleCreateDesignReport,
-    handleCancelDesignReport,
-    clearDesignResults,
-    loadSavedOutputs,
-    loadOutputs,
-    resetDesignState,
-    service,
-
-    // Direct access to module context reset
-    resetFormState,
-    resetModuleState,
-    contextData,
-    refetchModuleOptions,
-  } = useEngineeringModule(moduleConfig);
+  const {
+    handleSubmit, performReset, saveOutput, clearDesignResults, loadSavedOutputs, service,
+    resetModuleState, refetchModuleOptions, handleCreateDesignReport, handleCancelDesignReport,
+    handleQuitClick
+  } = actions;
 
   const { handleCreateProject, projectCreationModal } = useProjectCreation({
     inputs,

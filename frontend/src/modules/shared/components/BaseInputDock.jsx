@@ -232,12 +232,12 @@ export const BaseInputDock = React.memo(({
           onClick={handleSaveInputs}
           className="flex flex-1 items-center gap-x-2 bg-osdag-green text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-opacity-90 transition-opacity"
           disabled={!inputs || Object.keys(inputs).length === 0}
-          title={isGuest() ? "Download OSI file (guest users cannot save to database)" : "Save current inputs to OSI file"}
+          title={isGuest ? "Download OSI file (guest users cannot save to database)" : "Save current inputs to OSI file"}
         >
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
             <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z" />
           </svg>
-          {isGuest() ? "Download OSI" : "Save Inputs"}
+          {isGuest ? "Download OSI" : "Save Inputs"}
         </button>
 
         {/* Design Button */}

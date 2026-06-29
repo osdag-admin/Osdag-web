@@ -259,6 +259,7 @@ export const useEngineeringModule = (moduleConfig) => {
       createDesignReportBool: report.createDesignReportBool,
       designReportInputs: report.designReportInputs,
       setDesignReportInputs: report.setDesignReportInputs,
+      setCreateDesignReportBool: report.open,
     },
 
     designStatus: {

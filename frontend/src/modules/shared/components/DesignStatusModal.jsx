@@ -35,7 +35,7 @@ export const DesignStatusModal = ({ status, isMobile, onClose }) => {
       case DESIGN_STATUS.VALIDATING:
         return {
           icon: (
-            <div className="spinner" style={{ borderColor: '#1890ff', borderTopColor: 'transparent' }}></div>
+            <div className="spinner" style={{ borderRightColor: '#1890ff', borderBottomColor: '#1890ff', borderLeftColor: '#1890ff', borderTopColor: 'transparent' }}></div>
           ),
           title: 'OSDAG Design Processing',
           message: status.message || 'Validating inputs...',
@@ -45,7 +45,7 @@ export const DesignStatusModal = ({ status, isMobile, onClose }) => {
       case DESIGN_STATUS.CALCULATING:
         return {
           icon: (
-            <div className="spinner" style={{ borderColor: '#1890ff', borderTopColor: 'transparent' }}></div>
+            <div className="spinner" style={{ borderRightColor: '#1890ff', borderBottomColor: '#1890ff', borderLeftColor: '#1890ff', borderTopColor: 'transparent' }}></div>
           ),
           title: 'OSDAG Design Processing',
           message: status.message || 'Running design calculations...',
@@ -55,7 +55,7 @@ export const DesignStatusModal = ({ status, isMobile, onClose }) => {
       case DESIGN_STATUS.CAD_GENERATING:
         return {
           icon: (
-            <div className="spinner" style={{ borderColor: '#52c41a', borderTopColor: 'transparent' }}></div>
+            <div className="spinner" style={{ borderRightColor: '#52c41a', borderBottomColor: '#52c41a', borderLeftColor: '#52c41a', borderTopColor: 'transparent' }}></div>
           ),
           title: 'OSDAG Design Processing',
           message: status.message || 'Building 3D model...',

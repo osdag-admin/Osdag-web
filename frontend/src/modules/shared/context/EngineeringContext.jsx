@@ -88,7 +88,7 @@ const EngineeringShortcutsRunner = () => {
 };
 
 export const EngineeringProvider = ({ moduleConfig, outputConfig, title, children }) => {
-  const isGuest = isGuestUser;
+  const isGuest = isGuestUser();
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
