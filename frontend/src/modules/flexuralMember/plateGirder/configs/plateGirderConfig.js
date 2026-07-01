@@ -262,14 +262,6 @@ export const plateGirderConfig = {
     // Member length is in mm and sent to backend as-is (matches desktop KEY_LENGTH contract).
     const memberLength = inputs.member_length ? String(parseFloat(inputs.member_length)) : "5000";
 
-    console.log('[buildSubmissionParams] Raw inputs:', {
-      web_thickness: inputs.web_thickness,
-      top_flange_thickness: inputs.top_flange_thickness,
-      bottom_flange_thickness: inputs.bottom_flange_thickness,
-      design_type: inputs.design_type,
-      allSelected: allSelected
-    });
-
     // For Customized design with number inputs, use the direct value
     // For Optimized design with customizable inputs, use getArrayParam
     let webThicknessList, topFlangeThicknessList, bottomFlangeThicknessList;
@@ -305,41 +297,6 @@ export const plateGirderConfig = {
     const webThickness = webThicknessList.length > 0 ? webThicknessList : ["6"];
     const topFlangeThickness = topFlangeThicknessList.length > 0 ? topFlangeThicknessList : ["6"];
     const bottomFlangeThickness = bottomFlangeThicknessList.length > 0 ? bottomFlangeThicknessList : ["6"];
-    
-    console.log('[buildSubmissionParams] Final thickness arrays:', {
-      webThickness,
-      topFlangeThickness,
-      bottomFlangeThickness
-    });
-
-    // Build base params - using exact backend key strings
-    // const params = {
-    //   "Module": "Plate-Girder",
-    //   "Material": String(inputs.material || "E 250 (Fe 410 W)A"),
-    //   "Member.Length": memberLengthM,
-    //   "Loading.Condition": String(inputs.loading_condition || "Normal"),
-    //   "Load.Shear": String(inputs.shear_force || "0"),
-    //   "Load.Moment": String(inputs.bending_moment || "0"),
-    //   "Total.Design_Type": String(inputs.design_type || "Customized"),
-    //   "Web.Thickness": webThicknessList.length > 0 ? webThicknessList : ["6"],
-    //   "TopFlange.Thickness": topFlangeThicknessList.length > 0 ? topFlangeThicknessList : ["6"],
-    //   "BottomFlange.Thickness": bottomFlangeThicknessList.length > 0 ? bottomFlangeThicknessList : ["6"],
-    //   "Design.Design_Type_Flexure": String(inputs.support_type || "Major Laterally Supported"),
-    //   "Loading.Bending_Moment_Shape": String(inputs.bending_moment_shape || "Uniform Loading with pinned-pinned support"),
-    //   "Design.Torsional_Restraint": String(inputs.torsional_restraint || "Fully Restrained"),
-    //   "Design.Warping_Restraint": String(inputs.warping_restraint || "Both flanges fully restrained"),
-    //   "Design.Max_Deflection": String(inputs.max_deflection || "L/250"),
-    //   "Design.Allow_Class": String(inputs.allowable_class || "Plastic"),
-    //   "Design.Web_Philosophy": String(inputs.web_philosophy || "Thick Web without ITS"),
-    //   "Design.Support_Width": String(inputs.support_width || "100"),
-    //   "Design.IntermediateStiffener.Spacing": String(inputs.intermediate_stiffener_spacing || "NA"),
-    //   "Design.IntermediateStiffener.Thickness": String(inputs.intermediate_stiffener_thickness || "Standard"),
-    //   "Design.LongitudnalStiffener": String(inputs.longitudinal_stiffener || "No"),
-    //   "Design.LongitudnalStiffener.Thickness": String(inputs.longitudinal_stiffener_thickness || "Standard"),
-    //   "Design.Design_Method": String(inputs.design_method || "Limit State Design"),
-    //   "Design.Effective_Area_Parameter": String(inputs.effective_area_parameter || "1.0"),
-    //   "Design.Length_Overwrite": String(inputs.length_overwrite || "NA"),
-    // };
 
     const params = {
         // --- Basic Module Info ---

@@ -754,7 +754,7 @@ def build_plate_girder_cad(module, section: str, session: str) -> str:
         B_fb=B_fb,
         stiffener_spacing=stiffener_spacing,
         T_is=T_is,
-        include_intermediate_stiffeners=True,
+        include_intermediate_stiffeners=include_intermediate,
     )
     if not isinstance(result, dict):
         result = {"model": result}
