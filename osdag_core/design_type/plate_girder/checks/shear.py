@@ -612,21 +612,21 @@ def check_longitudinal_stiffener_required(d, tw, c, epsilon, debug=False):
     
     if debug:
         print(f"[DEBUG] Longitudinal Stiffener Check: d/tw={d_tw_ratio:.2f}, c/d={c_d_ratio:.2f}")
-        print(f"[DEBUG] First limit (250-340εw): {first_limit:.2f}, Second limit (400εw): {second_limit:.2f}")
+        print(f"[DEBUG] First limit (250-340ew): {first_limit:.2f}, Second limit (400ew): {second_limit:.2f}")
     
     # Check if first stiffener is required
     if d_tw_ratio > first_limit:
         num_required = 1
         x1_pos = round(0.2 * d, 2)  # 1/5 distance from compression flange per Cl. 8.7.13
-        reason = f"d/tw ({d_tw_ratio:.1f}) > {first_limit:.1f}εw - First stiffener at 0.2d from compression flange"
+        reason = f"d/tw ({d_tw_ratio:.1f}) > {first_limit:.1f}ew - First stiffener at 0.2d from compression flange"
         
         # Check if second stiffener is also required
         if d_tw_ratio > second_limit:
             num_required = 2
             x2_pos = round(0.5 * d, 2)  # At neutral axis per Cl. 8.7.13
-            reason += f"; d/tw > {second_limit:.1f}εw - Second stiffener at neutral axis (0.5d)"
+            reason += f"; d/tw > {second_limit:.1f}ew - Second stiffener at neutral axis (0.5d)"
     else:
-        reason = f"d/tw ({d_tw_ratio:.1f}) <= {first_limit:.1f}εw - No longitudinal stiffener required"
+        reason = f"d/tw ({d_tw_ratio:.1f}) <= {first_limit:.1f}ew - No longitudinal stiffener required"
     
     if debug:
         print(f"[DEBUG] Result: {num_required} stiffener(s) required. x1={x1_pos}, x2={x2_pos}")
@@ -757,4 +757,3 @@ def design_longitudinal_stiffener(d, tw, c, num_stiffeners, thickness_list, web_
             continue
 
     return False, selected_thickness, selected_width, x1, x2, I_req_1, I_provided_1, I_req_2, I_provided_2
-

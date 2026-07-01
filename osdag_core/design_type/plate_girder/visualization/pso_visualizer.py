@@ -23,16 +23,35 @@ import matplotlib
 
 matplotlib.use('QtAgg')
 
-from PySide6.QtCore import Qt, Signal, QTimer
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QApplication, QFrame,
-    QSizePolicy, QFileDialog, QDialog
-)
-from osdag_gui.ui.components.dialogs.custom_titlebar import CustomTitleBar
-from PySide6.QtGui import QFont
+# PySide6 is only available in the desktop GUI application.
+# Guard imports so backend/web usage can still safely import this module.
+try:
+    from PySide6.QtCore import Qt, Signal, QTimer
+    from PySide6.QtWidgets import (
+        QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+        QPushButton, QApplication, QFrame, QSlider,
+        QSizePolicy, QFileDialog, QRadioButton
+    )
+    from PySide6.QtGui import QFont
+except ImportError:
+    Qt = None
+    Signal = None
+    QTimer = None
+    QWidget = None
+    QVBoxLayout = None
+    QHBoxLayout = None
+    QLabel = None
+    QPushButton = None
+    QApplication = None
+    QFrame = None
+    QSlider = None
+    QSizePolicy = None
+    QFileDialog = None
+    QRadioButton = None
+    QFont = None
 
 # Import safe_processEvents for thread-safe UI updates during CAD operations
+
 try:
     from osdag_gui.OS_safety_protocols import safe_processEvents
 except ImportError:

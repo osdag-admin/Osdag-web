@@ -11,8 +11,18 @@ previously scattered in template_page.py for better maintainability.
 from typing import TYPE_CHECKING, Optional, Callable
 import time
 
-from PySide6.QtWidgets import QApplication, QComboBox, QWidget
-from PySide6.QtCore import QTimer
+# PySide6 is only available in the desktop GUI application.
+# Guard imports so that backend/web usage (where PySide6 is not installed)
+# can still import this module without failing. The actual UI features
+# depending on these classes simply won't be usable there.
+try:
+    from PySide6.QtWidgets import QApplication, QComboBox, QWidget
+    from PySide6.QtCore import QTimer
+except ImportError:
+    QApplication = None
+    QComboBox = None
+    QWidget = None
+    QTimer = None
 
 # Import safe_processEvents for thread-safe UI updates during CAD operations
 try:
