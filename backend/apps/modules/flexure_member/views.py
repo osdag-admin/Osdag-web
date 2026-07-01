@@ -25,6 +25,7 @@ FLEXURE_REPORT_MODULE_ID_MAP = {
     "simply-supported-beam": "Simply-Supported-Beam",
     "purlin": "Purlin",
     "on-cantilever": "On-Cantilever-Beam",
+    "plate-girder": "Plate-Girder",
 }
 
 
@@ -158,6 +159,16 @@ class FlexureMemberViewSet(viewsets.ViewSet):
                     merge_user_sections_into_options(request, data),
                     status=status.HTTP_200_OK,
                 )
+            if slug == 'plate-girder':
+                # Delegate to the plate girder service which provides
+                # material list + plate/stiffener thickness lists for PSO.
+                ServiceClass = FlexureMemberRegistry.get_service_by_slug(slug)
+                if ServiceClass and hasattr(ServiceClass, 'get_options'):
+                    data = ServiceClass.get_options(request)
+                    return Response(
+                        merge_user_sections_into_options(request, data),
+                        status=status.HTTP_200_OK,
+                    )
             return Response(
                 {'error': f'Sub-module {slug} not found'},
                 status=status.HTTP_404_NOT_FOUND

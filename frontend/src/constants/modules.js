@@ -27,6 +27,7 @@ import {
     MODULE_KEY_BEAM_TO_BEAM_COVER_PLATE_BOLTED,
     MODULE_KEY_BEAM_TO_BEAM_COVER_PLATE_WELDED,
     MODULE_KEY_PURLIN,
+    MODULE_KEY_PLATE_GIRDER,
     MODULE_KEY_BASE_PLATE,
 } from "./DesignKeys";
 import { UI_STRINGS } from "./UIStrings";
@@ -132,7 +133,7 @@ export const GENERIC_SUBMODULE_CONTENT = {
             options: [
                 { key: MODULE_KEY_SIMPLY_SUPPORTED_BEAM, label: "Simply Supported Beam", img: "ss_beam_flexural_mem.png" },
                 { key: "OnCantilever", label: "Cantilever Beam", img: "cantilever_beam_flexural_mem.png" },
-                { key: "PlateGirder", label: "Plate Girder", img: "plate_girder_flexural_mem.png", status: "development" },
+                { key: MODULE_KEY_PLATE_GIRDER, label: "Plate Girder", img: "plate_girder_flexural_mem.png" },
             ],
         },
     ],
@@ -158,6 +159,8 @@ export const MODULE_ROUTES = {
     [MODULE_KEY_SIMPLY_SUPPORTED_BEAM]: "/design/flexure_member/simply_supported_beam",
     OnCantilever: "/design/flexure/on_cantilever",
     Purlin: "/design/flexure/purlin",
+    [MODULE_KEY_PLATE_GIRDER]: "/design/flexure/plate_girder",
+    PlateGirder: "/design/flexure/plate_girder",
     [MODULE_KEY_TENSION_BOLTED]: "/design/tension-member/bolted_to_end_gusset",
     [MODULE_KEY_TENSION_WELDED]: "/design/tension-member/welded_to_end_gusset",
     [MODULE_KEY_BOLTED_TO_END_GUSSET]: "/design/tension-member/bolted_to_end_gusset",
@@ -224,6 +227,9 @@ export const MODULE_NAME_TO_KEY = {
     "Cantilever Beam": "OnCantilever",
     "Flexural Members - Purlins": "Purlin",
     "Purlin": "Purlin",
+    "Plate Girder": MODULE_KEY_PLATE_GIRDER,
+    "Plate Girder Design": MODULE_KEY_PLATE_GIRDER,
+    "Plate-Girder": MODULE_KEY_PLATE_GIRDER,
 
     // PEB / Member Splices / Moment Connections
     // Beam to Column
@@ -286,6 +292,7 @@ export function normalizeModuleKey(id) {
         'simply-supported-beam': MODULE_KEY_SIMPLY_SUPPORTED_BEAM,
         'on-cantilever': 'OnCantilever',
         'purlin': MODULE_KEY_PURLIN,
+        'plate-girder': MODULE_KEY_PLATE_GIRDER,
         'lap-joint-welded': MODULE_KEY_LAP_JOINT_WELDED,
         'lap-joint-bolted': MODULE_KEY_LAP_JOINT_BOLTED,
         'butt-joint-welded': MODULE_KEY_BUTT_JOINT_WELDED,

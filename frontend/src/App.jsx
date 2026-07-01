@@ -47,6 +47,7 @@ import AxiallyLoadedColumn from "./modules/compressionMember/AxiallyLoadedColumn
 import SimplySupportedBeam from "./modules/flexuralMember/simplySupportedBeam";
 import OnCantilever from "./modules/flexuralMember/onCantilever";
 import Purlin from "./modules/flexuralMember/purlin";
+import PlateGirder from "./modules/flexuralMember/plateGirder";
 import ColumnColumnEndPlate from "./modules/columnColumnEndPlate/ColumnColumnEndPlate";
 import BeamBeamEndPlate from "./modules/beamBeamEndPlate/BeamBeamEndPlate";
 
@@ -101,6 +102,7 @@ function App() {
           <Route path="/design/:designType/simply_supported_beam/:projectId?" element={<SimplySupportedBeam />} />
           <Route path="/design/:designType/on_cantilever/:projectId?" element={<OnCantilever />} />
           <Route path="/design/:designType/purlin/:projectId?" element={<Purlin />} />
+          <Route path="/design/:designType/plate_girder/:projectId?" element={<PlateGirder />} />
           <Route path="/design/:designType/bolted_to_end_gusset/:projectId?" element={<BoltedToEnd />} />
           <Route path="/design/:designType/welded_to_end_gusset/:projectId?" element={<WeldedToEnd />} />
           <Route path="/design/:designType/tension-member/bolted_to_end_gusset/:projectId?" element={<BoltedToEnd />} />

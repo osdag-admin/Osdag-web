@@ -31,6 +31,7 @@ import {
   MODULE_KEY_AXIALLY_LOADED_COLUMN,
   MODULE_KEY_PURLIN,
   MODULE_KEY_ON_CANTILEVER_BEAM,
+  MODULE_KEY_PLATE_GIRDER,
 } from "./DesignKeys";
 
 // Centralized API route mappings for engineering modules.
@@ -71,6 +72,7 @@ export const MODULE_SLUGS = {
   [MODULE_KEY_SIMPLY_SUPPORTED_BEAM]: 'flexure-member/simply-supported-beam',
   [MODULE_KEY_PURLIN]: 'flexure-member/purlin',
   [MODULE_KEY_ON_CANTILEVER_BEAM]: 'flexure-member/on-cantilever',
+  [MODULE_KEY_PLATE_GIRDER]: 'flexure-member/plate-girder',
   // Compression
   [MODULE_KEY_STRUTS_BOLTED]: 'compression-member/struts_bolted',
   [MODULE_KEY_STRUTS_WELDED]: 'compression-member/struts_welded',
