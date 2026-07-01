@@ -346,6 +346,7 @@ export const axiallyLoadedColumnConfig = {
           label: "Axial Force (kN)*",
           type: "number",
           validation: "positive_number",
+          required: true,
         },
       ],
     },

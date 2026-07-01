@@ -342,7 +342,7 @@ export const strutsBoltedConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "axial_force", label: "Axial Force (kN)*", type: "number" }
+        { key: "axial_force", label: "Axial Force (kN)*", type: "number", required: true }
       ]
     },
     {

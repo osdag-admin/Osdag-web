@@ -146,7 +146,7 @@ export const beamToColumnEndPlateConfig = {
       fields: [
         { key: "load_shear", label: "Shear Force(kN)", type: "number" },
         { key: "load_moment", label: "Bending Moment (kNm)", type: "number" },
-        { key: "load_axial", label: "Axial Force(kN)", type: "number" }
+        { key: "load_axial", label: "Axial Force(kN)*", type: "number", required: true }
       ]
     },
     {

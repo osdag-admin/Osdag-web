@@ -103,7 +103,7 @@ export const coverPlateWeldedConfig = {
       fields: [
         { key: "load_shear", label: "Shear Force(kN)", type: "number" },
         { key: "load_moment", label: "Moment Force(kN)", type: "number" },
-        { key: "load_axial", label: "Axial Force(kN)", type: "number" }
+        { key: "load_axial", label: "Axial Force(kN)*", type: "number", required: true }
       ]
     },
     {
