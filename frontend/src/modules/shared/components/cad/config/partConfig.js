@@ -35,6 +35,12 @@ export const DEFAULT_PART_COLORS = {
   // Fallback
   Model: "#999999",
 
+  // Plate Girder parts
+  Web: "#60a5fa",
+  "Top Flange": "#3b82f6",
+  "Bottom Flange": "#3b82f6",
+  Stiffeners: "#93c5fd",
+
   // Base Plate
   Concrete: "#e0e0e0",
   Grout: "#9e9e9e",
@@ -86,6 +92,10 @@ export const VALID_PART_KEYS = new Set([
   "Cover Plate",
   "CoverPlate",
   "Model",
+  "Web",
+  "Top Flange",
+  "Bottom Flange",
+  "Stiffeners",
   "Concrete",
   "Grout",
 ]);

@@ -112,7 +112,7 @@ export const plateGirderConfig = {
   routePath: "/design/flexure/plate_girder",
   designType: "Plate-Girder",
   cameraKey: "FlexuralMember",
-  cadOptions: ["Model", "Girder"],
+  cadOptions: ["Model", "Web", "Top Flange", "Bottom Flange", "Stiffeners"],
 
   defaultInputs: {
     module: "Plate-Girder",
@@ -124,8 +124,8 @@ export const plateGirderConfig = {
     top_flange_thickness: ["40"], // List
     bottom_flange_width: "350", // Required for Customized
     bottom_flange_thickness: ["40"], // List
-    // Member Properties (from PDF notes: 20.0 m = 20000 mm)
-    member_length: "20000", // in mm (backend expects m, but we'll convert)
+    // Member Properties (length in mm, matching desktop KEY_DISP_LENGTH = 'Length (mm) *')
+    member_length: "20000", // in mm, sent to backend as-is (no conversion)
     // Loads (from PDF notes)
     bending_moment: "4275",
     shear_force: "877.5",
@@ -259,8 +259,8 @@ export const plateGirderConfig = {
       return [selectedList].filter(item => item !== "All" && item !== "Select Section");
     };
 
-    // Convert member_length from mm to m (backend expects m)
-    const memberLengthM = inputs.member_length ? (parseFloat(inputs.member_length) / 1000).toString() : "5";
+    // Member length is in mm and sent to backend as-is (matches desktop KEY_LENGTH contract).
+    const memberLength = inputs.member_length ? String(parseFloat(inputs.member_length)) : "5000";
 
     console.log('[buildSubmissionParams] Raw inputs:', {
       web_thickness: inputs.web_thickness,
@@ -345,7 +345,7 @@ export const plateGirderConfig = {
         // --- Basic Module Info ---
         "Module": "Plate-Girder",
         "Material": String(inputs.material || "E 250 (Fe 410 W)A"),
-        "Member.Length": memberLengthM,
+        "Member.Length": memberLength,
         
         // --- Loads ---
         "Loading.Condition": String(inputs.loading_condition || "Normal"),
@@ -493,6 +493,7 @@ export const plateGirderConfig = {
           selectionKey: "webThicknessSelect",
           modalKey: "webThickness",
           options: "thicknessList",
+          dataSource: "thicknessList",
           defaultValue: "20",
           placeholder: "Enter web thickness",
           // For Customized design: show as number input (single value)
@@ -501,7 +502,7 @@ export const plateGirderConfig = {
         },
         {
           key: "top_flange_width",
-          label: "Top Flange Width (mm)*",
+          label: "Width of Top Flange (mm)*",
           type: "optimized_number",
           validation: "positive_number",
           placeholder: "Enter top flange width"
@@ -513,13 +514,14 @@ export const plateGirderConfig = {
           selectionKey: "topFlangeThicknessSelect",
           modalKey: "topFlangeThickness",
           options: "thicknessList",
+          dataSource: "thicknessList",
           defaultValue: "40",
           placeholder: "Enter top flange thickness",
           conditionalType: (inputs) => inputs.design_type === "Optimized" ? "customizable" : "number"
         },
         {
           key: "bottom_flange_width",
-          label: "Bottom Flange Width (mm)*",
+          label: "Width of Bottom Flange (mm)*",
           type: "optimized_number",
           validation: "positive_number",
           placeholder: "Enter bottom flange width"
@@ -531,18 +533,18 @@ export const plateGirderConfig = {
           selectionKey: "bottomFlangeThicknessSelect",
           modalKey: "bottomFlangeThickness",
           options: "thicknessList",
+          dataSource: "thicknessList",
           defaultValue: "40",
           placeholder: "Enter bottom flange thickness",
           conditionalType: (inputs) => inputs.design_type === "Optimized" ? "customizable" : "number"
         },
         {
           key: "member_length",
-          label: "Length (m)*",
+          label: "Length (mm)*",
           type: "number",
           validation: "positive_number",
-          placeholder: "Enter span length in meters",
-          // Note: Frontend accepts mm but converts to m for backend
-          // Conversion happens in buildSubmissionParams: memberLengthM = inputs.member_length / 1000
+          placeholder: "Enter member length in mm",
+          // Length is in mm and sent to the backend as-is (matches desktop 'Length (mm) *').
         }
       ]
     },

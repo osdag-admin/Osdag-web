@@ -27,6 +27,10 @@ export const DEFAULT_VIEW_MAPPINGS = {
   "Conc": ["Conc", "Concrete"],
   "Grout": ["Grout"],
   "Stiffeners": ["Stiffeners", "Stiffener"],
+  // Plate Girder parts
+  "Web": ["Web"],
+  "Top Flange": ["Top Flange"],
+  "Bottom Flange": ["Bottom Flange"],
 };
 
 /**

@@ -84,6 +84,8 @@ export const useEngineeringModule = (moduleConfig) => {
     screenshotTrigger,
     setScreenshotTrigger,
     loadSavedOutputs,
+    loadOutputs,
+    loadCadModel,
   } = useDesignSubmission(service, moduleConfig);
 
   const {
@@ -281,6 +283,8 @@ export const useEngineeringModule = (moduleConfig) => {
       saveOutput,
       clearDesignResults,
       loadSavedOutputs,
+      loadOutputs,
+      loadCadModel,
       service,
       resetModuleState,
       refetchModuleOptions,

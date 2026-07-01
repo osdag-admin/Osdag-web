@@ -14,6 +14,7 @@ export const useWebSocketOptimization = (onUpdate, onComplete, onError) => {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const reconnectTimeoutRef = useRef(null);
   const reconnectAttemptsRef = useRef(0);
+  const pendingStartRef = useRef(null);
   const MAX_RECONNECT_ATTEMPTS = 3;
 
   // Get WebSocket URL from environment or default
@@ -26,8 +27,12 @@ export const useWebSocketOptimization = (onUpdate, onComplete, onError) => {
 
   // Connect to WebSocket
   const connect = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      console.log('[WebSocket] Already connected');
+    // A socket that is already open or in the process of opening must not be
+    // replaced — doing so spawns a second connection (and a second consumer).
+    if (
+      wsRef.current?.readyState === WebSocket.OPEN ||
+      wsRef.current?.readyState === WebSocket.CONNECTING
+    ) {
       return;
     }
 
@@ -41,6 +46,18 @@ export const useWebSocketOptimization = (onUpdate, onComplete, onError) => {
         console.log('[WebSocket] Connected successfully');
         setIsConnected(true);
         reconnectAttemptsRef.current = 0;
+        // If a start was requested before the socket was ready, send it now.
+        if (pendingStartRef.current) {
+          const payload = pendingStartRef.current;
+          pendingStartRef.current = null;
+          try {
+            ws.send(JSON.stringify({ type: 'start_optimization', data: payload }));
+            setIsOptimizing(true);
+          } catch (err) {
+            console.error('[WebSocket] Error sending queued start_optimization:', err);
+            if (onError) onError('Failed to start optimization');
+          }
+        }
       };
 
       ws.onmessage = (event) => {
@@ -138,37 +155,27 @@ export const useWebSocketOptimization = (onUpdate, onComplete, onError) => {
     setIsOptimizing(false);
   }, []);
 
-  // Start optimization
+  // Start optimization (connects if needed and sends once the socket is open)
   const startOptimization = useCallback((inputData) => {
-    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.error('[WebSocket] Not connected. Connecting now...');
-      connect();
-      // Wait for connection and retry
-      setTimeout(() => {
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-          startOptimization(inputData);
-        } else {
-          if (onError) {
-            onError('Failed to connect to optimization server');
-          }
-        }
-      }, 1000);
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('[WebSocket] Starting optimization with data:', inputData);
+      try {
+        wsRef.current.send(JSON.stringify({
+          type: 'start_optimization',
+          data: inputData,
+        }));
+        setIsOptimizing(true);
+      } catch (err) {
+        console.error('[WebSocket] Error sending message:', err);
+        if (onError) onError('Failed to start optimization');
+      }
       return;
     }
 
-    console.log('[WebSocket] Starting optimization with data:', inputData);
-    
-    try {
-      wsRef.current.send(JSON.stringify({
-        type: 'start_optimization',
-        data: inputData
-      }));
-    } catch (err) {
-      console.error('[WebSocket] Error sending message:', err);
-      if (onError) {
-        onError('Failed to start optimization');
-      }
-    }
+    // Not open yet: queue the payload; connect() will send it in onopen.
+    console.log('[WebSocket] Socket not open — queueing start_optimization');
+    pendingStartRef.current = inputData;
+    connect();
   }, [connect, onError]);
 
   // Cleanup on unmount

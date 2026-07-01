@@ -51,12 +51,20 @@ export const SceneManager = forwardRef(({
           (key, idx) => allKeys.findIndex(k => k.toLowerCase() === key.toLowerCase()) === idx
         );
 
+        // "Model" is a composite; skip it ONLY when real named parts exist
+        // (e.g. connections send Beam/Column/Bolt). Modules like Plate Girder
+        // send "Model" + "Girder" where "Girder" is not a named part — in that
+        // case we must keep "Model" or nothing would render.
+        const hasNamedParts = uniqueKeys.some(
+          (k) => k.toLowerCase() !== 'model' && VALID_PART_KEYS.has(k)
+        );
+
         Object.entries(modelPaths).forEach(([key, dataUrl]) => {
           if (!dataUrl) return;
           
           if (!uniqueKeys.includes(key)) return;
 
-          if (key === 'Model' && uniqueKeys.length > 1) return;
+          if (key === 'Model' && uniqueKeys.length > 1 && hasNamedParts) return;
 
           try {
             // STL Handling

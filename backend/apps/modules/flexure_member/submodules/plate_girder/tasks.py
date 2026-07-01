@@ -28,7 +28,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from osdag_core.design_type.plate_girder.visualization.pso_visualizer import DataProcessor, get_pso_plot_base64
+from osdag_core.design_type.plate_girder.visualization.pso_visualizer import DataProcessor
 
 # ---------------------------------------------------------------------------
 # Local imports
@@ -183,7 +183,7 @@ def run_pso_optimization(self, channel_name: str, input_data: Dict[str, Any]):
 
         # Log input summary
         logger.info("INPUT SUMMARY:")
-        logger.info(f"  Span Length: {input_data.get('Member.Length', 'N/A')} m")
+        logger.info(f"  Member Length: {input_data.get('Member.Length', 'N/A')} mm")
         logger.info(f"  Load - Moment: {input_data.get('Load.Moment', 'N/A')} kNm")
         logger.info(f"  Load - Shear: {input_data.get('Load.Shear', 'N/A')} kN")
         logger.info(f"  Material: {input_data.get('Material', 'N/A')}")
@@ -349,6 +349,34 @@ def run_pso_optimization(self, channel_name: str, input_data: Dict[str, Any]):
         for key in list(output.keys())[:5]:  # Log first 5 output keys
             logger.info(f"    - {key}: {output[key].get('val', 'N/A')}")
 
+        # Generate CAD for the optimized section (the module now holds the
+        # optimized dimensions). Best-effort: never fail the run over CAD.
+        # The frontend renders a base64 STL data URI (same as the /cad flow),
+        # so read the generated STL and encode it — not the raw file path.
+        cad_paths = {}
+        try:
+            import base64 as _b64
+            from apps.modules.flexure_member.submodules.plate_girder.adapter import (
+                build_plate_girder_cad,
+            )
+            cad_session = f"pso_{getattr(self.request, 'id', 'local')}"
+            for cad_section in ("Model", "Web", "Top Flange", "Bottom Flange", "Stiffeners"):
+                try:
+                    rel_path = build_plate_girder_cad(module, cad_section, cad_session)
+                    if not rel_path:
+                        continue
+                    abs_path = os.path.join(os.getcwd(), rel_path)
+                    stl_path = abs_path.replace(".brep", ".stl")
+                    src = stl_path if os.path.exists(stl_path) else abs_path
+                    with open(src, "rb") as fh:
+                        b64 = _b64.b64encode(fh.read()).decode("ascii")
+                    cad_paths[cad_section] = f"data:application/octet-stream;base64,{b64}"
+                except Exception as cad_e:
+                    logger.warning(f"CAD generation for '{cad_section}' failed: {cad_e}")
+            logger.info(f"Optimized CAD sections generated: {list(cad_paths.keys())}")
+        except Exception as cad_outer:
+            logger.warning(f"CAD generation skipped: {cad_outer}")
+
         # Final completion message
         seq += 1
         async_to_sync(channel_layer.send)(
@@ -357,6 +385,7 @@ def run_pso_optimization(self, channel_name: str, input_data: Dict[str, Any]):
                 "type": "pso_complete",
                 "data": {
                     "sequence": seq,
+                    "cad_paths": cad_paths,
                     "result": _sanitize_for_channels(
                         {
                             "design": output,

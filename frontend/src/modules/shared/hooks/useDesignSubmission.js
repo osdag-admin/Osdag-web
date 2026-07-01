@@ -405,6 +405,29 @@ export const useDesignSubmission = (service, moduleConfig) => {
     setDisplayOutput(true);
   };
 
+  // Inject a pre-generated CAD model (e.g. from the PSO optimization result)
+  // and flip the render flags so the CadViewer picks it up — mirrors the CAD
+  // handling in the synchronous submitDesign flow.
+  const loadCadModel = (files, hover) => {
+    if (!files || Object.keys(files).length === 0) return;
+    const normalizedFiles = {};
+    Object.entries(files).forEach(([key, value]) => {
+      if (!key) return;
+      const normKey = key.trim();
+      const mapped =
+        normKey === 'beam' ? 'Beam' :
+          normKey === 'column' ? 'Column' :
+            normKey === 'plate' ? 'Plate' :
+              normKey;
+      normalizedFiles[mapped] = value;
+    });
+    setCadModelPaths(normalizedFiles);
+    setHoverDict(hover || {});
+    setRenderCadModel(true);
+    setRenderBoolean(true);
+    setModelKey((prev) => prev + 1);
+  };
+
   return {
     // submission
     submitDesign,
@@ -438,6 +461,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
     clearDesignResults,
     loadSavedOutputs,
     loadOutputs,
+    loadCadModel,
   };
 };
 

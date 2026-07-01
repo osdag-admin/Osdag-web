@@ -40,7 +40,7 @@ SECTION_MAPPINGS = {
         'simply-supported-beam': ['Model', 'Beam'],
         'on-cantilever': ['Model', 'Beam'],
         'purlin': ['Model'],
-        'plate-girder': ['Model', 'Girder'],
+        'plate-girder': ['Model', 'Web', 'Top Flange', 'Bottom Flange', 'Stiffeners'],
     },
     'base-plate': {
         'base-plate': ['Model', 'Column', 'Plate', 'Welds', 'Bolts', 'Concrete', 'Grout'],

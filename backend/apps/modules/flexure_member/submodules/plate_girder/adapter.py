@@ -13,7 +13,7 @@ When WebSocket sends optimization request, input_data should contain:
 Required fields:
 - "Total.Design_Type": "Optimized" (must be "Optimized")
 - "Material": Material grade (e.g., "E 250 (Fe 410 W)A")
-- "Member.Length": Span length in meters as string (e.g., "5" for 5m)
+- "Member.Length": Member length in millimetres (mm) as string (e.g., "5000" for 5 m); passed to KEY_LENGTH as-is (matches desktop 'Length (mm) *')
 - "Load.Shear": Shear force in kN as string (e.g., "150")
 - "Load.Moment": Bending moment in kNm as string (e.g., "500")
 - "Design.Web_Philosophy": "Thick Web without ITS" or "Thin Web with ITS"
@@ -521,7 +521,7 @@ def create_optimization_input(input_values: Dict[str, Any]) -> Dict[str, Any]:
     Expected input_values keys (same as normal design + optimization flag):
         - "Total.Design_Type": "Optimized" (required)
         - "Material": Material grade string
-        - "Member.Length": Span length in meters (as string)
+        - "Member.Length": Member length in millimetres (mm) (as string)
         - "Load.Shear": Shear force in kN (as string)
         - "Load.Moment": Bending moment in kNm (as string)
         - "Design.Web_Philosophy": "Thick Web without ITS" or "Thin Web with ITS"
@@ -703,9 +703,110 @@ def determine_optimization_flags(input_values: Dict[str, Any]) -> Tuple[bool, bo
     return is_thick_web, is_symmetric
 
 
+def build_plate_girder_cad(module, section: str, session: str) -> str:
+    """
+    Build a 3D CAD model of the (designed) plate girder from a module instance
+    whose section dimensions are already populated, write BREP + STL to
+    file_storage/cad_models, and return the relative BREP path.
+
+    `section` selects which component to export, matching the desktop parts:
+      "Model" (full girder), "Web", "Top Flange", "Bottom Flange", "Stiffeners".
+
+    Works for both Customized (dims set via set_input_values) and Optimized
+    (dims set after optimized_method) modules.
+    """
+    from osdag_core.cad.FlexuralMember.plate_girder import create_plate_girder
+    from OCC.Core.BRepTools import breptools_Write
+    from apps.core.utils import write_stl
+
+    def _num(value, fallback):
+        try:
+            n = float(value)
+            return n if n > 0 else fallback
+        except (TypeError, ValueError):
+            return fallback
+
+    D = _num(getattr(module, "total_depth", None), 0)
+    tw = _num(getattr(module, "web_thickness", None), 0)
+    length = _num(getattr(module, "length", None), 0)
+    T_ft = _num(getattr(module, "top_flange_thickness", None), 0)
+    T_fb = _num(getattr(module, "bottom_flange_thickness", None), T_ft)
+    B_ft = _num(getattr(module, "top_flange_width", None), 0)
+    B_fb = _num(getattr(module, "bottom_flange_width", None), B_ft)
+
+    # A non-designed (Optimized-but-not-run) module leaves depth/width at 1 -> skip.
+    if D <= 2 or tw <= 0 or B_ft <= 2 or length <= 0:
+        raise RuntimeError(
+            f"Plate girder section not designed (D={D}, tw={tw}, B_ft={B_ft}, length={length})"
+        )
+
+    include_intermediate = str(getattr(module, "intermediate_stiffener", "Yes")).strip().lower() in ("yes", "y", "true")
+    T_is = _num(getattr(module, "intermediate_stiffener_thickness_provided", None), 15)
+    stiffener_spacing = _num(getattr(module, "stiffener_spacing", None), max(500.0, min(length / 4.0, 1500.0)))
+
+    result = create_plate_girder(
+        D=D,
+        tw=tw,
+        length=length,
+        T_ft=T_ft,
+        T_fb=T_fb,
+        B_ft=B_ft,
+        B_fb=B_fb,
+        stiffener_spacing=stiffener_spacing,
+        T_is=T_is,
+        include_intermediate_stiffeners=True,
+    )
+    if not isinstance(result, dict):
+        result = {"model": result}
+
+    # Map the requested display section to a component shape from create_plate_girder.
+    section_key = str(section).strip().lower()
+    component_map = {
+        "model": "model",
+        "web": "web_plate",
+        "top flange": "top_flange",
+        "bottom flange": "bottom_flange",
+        "stiffeners": "stiffener_plates",
+        "stiffener": "stiffener_plates",
+        "girder": "model",
+    }
+    comp = component_map.get(section_key, "model")
+    model = result.get(comp) or result.get("model")
+    if model is None:
+        raise RuntimeError(f"create_plate_girder returned no shape for section '{section}'")
+
+    cad_models_path = os.path.join(os.getcwd(), "file_storage", "cad_models")
+    os.makedirs(cad_models_path, exist_ok=True)
+
+    file_name = f"{session}_{section}.brep"
+    file_path = os.path.join("file_storage", "cad_models", file_name)
+    full_path = os.path.join(os.getcwd(), file_path)
+
+    breptools_Write(model, full_path)
+
+    try:
+        write_stl(model, full_path.replace(".brep", ".stl"))
+    except Exception as stle:  # STL is best-effort
+        print("STL write warning:", stle)
+
+    return file_path
+
+
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
-    """Generate the CAD model from input values as a BREP file. Return file path."""
-    # For now, returning empty string as CAD generation might need specific implementation
-    # TODO: Implement CAD model generation if needed
-    return ""
+    """Generate a plate girder CAD part as a BREP file. Returns the relative path."""
+    valid = ("Model", "Web", "Top Flange", "Bottom Flange", "Stiffeners", "Girder")
+    if section not in valid:
+        raise InvalidInputTypeError("section", f"one of {valid}")
+
+    try:
+        module = create_from_input(input_values)
+    except Exception:
+        traceback.print_exc()
+        return ""
+
+    try:
+        return build_plate_girder_cad(module, section, session)
+    except Exception:
+        traceback.print_exc()
+        return ""
 

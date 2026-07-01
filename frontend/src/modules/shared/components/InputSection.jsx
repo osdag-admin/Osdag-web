@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useContext } from 'react';
 import Select, { components } from 'react-select';
+import { Modal } from 'antd';
 import { getOptionsForField, getListForInputKey } from '../utils/fieldOptionUtils';
 import { ModuleContext } from "../../../context/ModuleState";
 import CustomMaterialModal from "./CustomMaterialModal";
@@ -61,6 +62,8 @@ export const InputSection = ({
   const [imageSource, setImageSource] = useState("");
   const [showCustomMaterialModal, setShowCustomMaterialModal] = useState(false);
   const [customMaterialType, setCustomMaterialType] = useState("connector");
+  // Field whose optimization bounds modal is open (for optimized_number fields)
+  const [boundsModalField, setBoundsModalField] = useState(null);
   const { materialList: contextMaterialList = [] } = useContext(ModuleContext);
   const safeContextData = {
     ...(contextData || {}),
@@ -286,10 +289,66 @@ export const InputSection = ({
     }
   };
 
+  const renderNumericInput = (field, isNumeric) => (
+    <div className="w-[60%]">
+      <input
+        type="text"
+        inputMode={isNumeric ? 'decimal' : 'text'}
+        value={safeInputs[field.key] ?? ""}
+        onChange={(e) => {
+          let val = e.target.value;
+          if (isNumeric) {
+            val = val.replace(/[^0-9.-]/g, '');
+            const decimalCount = (val.match(/\./g) || []).length;
+            if (decimalCount > 1) {
+              const firstDecimalIdx = val.indexOf('.');
+              val = val.slice(0, firstDecimalIdx + 1) + val.slice(firstDecimalIdx + 1).replace(/\./g, '');
+            }
+            if (val.includes('-')) {
+              const isNegative = val.startsWith('-');
+              val = val.replace(/-/g, '');
+              if (isNegative) {
+                val = '-' + val;
+              }
+            }
+          }
+          setInputs({ ...safeInputs, [field.key]: val });
+        }}
+        onKeyDown={(e) => {
+          if (isNumeric) {
+            const allowedKeys = [
+              'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+              'Home', 'End', 'ArrowLeft', 'ArrowRight', '.', '-'
+            ];
+            const isShortcut = (e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase());
+
+            if (e.key === ' ') {
+              e.preventDefault();
+              return;
+            }
+
+            if (!allowedKeys.includes(e.key) && !isShortcut && isNaN(Number(e.key))) {
+              e.preventDefault();
+            }
+          }
+        }}
+        placeholder={field.placeholder || `ex. ${field.label}`}
+        disabled={field.disabled || isInputLocked}
+        className="w-full h-9 border border-gray-400 rounded-md px-3 text-sm focus:border-osdag-green focus:ring-2 focus:ring-osdag-green/20 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
+      />
+    </div>
+  );
+
   const renderField = (field) => {
     if (field.conditionalDisplay && !field.conditionalDisplay(extraState, safeInputs)) return null;
 
-    switch (field.type) {
+    // Resolve a dynamic field type (e.g. plate girder switches between number and
+    // customizable based on Customized vs Optimized design type).
+    const effectiveType = typeof field.conditionalType === 'function'
+      ? field.conditionalType(safeInputs)
+      : field.type;
+
+    switch (effectiveType) {
       case 'select': {
         const isCustomizable = Boolean(field.selectionKey) && !(field.key.includes("plate1") || field.key.includes("plate2"));
         const rawList = getOptionsForField(field, safeContextData, safeInputs);
@@ -492,57 +551,35 @@ export const InputSection = ({
               style={{ width: field.width || '100px', height: field.height || '100px', objectFit: 'contain' }}
             /></div>}</>);
 
-      case 'number':
-      default:
+      case 'optimized_number': {
+        // Customized → plain number input; Optimized → "Set Bounds" button
+        // that captures lower/upper/increment optimization bounds.
+        const isOptimized = safeInputs.design_type === 'Optimized';
+        if (!isOptimized) {
+          return renderNumericInput(field, true);
+        }
+        const lb = safeInputs[`${field.key}_lb`];
+        const ub = safeInputs[`${field.key}_ub`];
+        const boundsSet = lb !== undefined && lb !== '' && ub !== undefined && ub !== '';
         return (
           <div className="w-[60%]">
-            <input
-              type="text"
-              inputMode={field.type === 'number' ? 'decimal' : 'text'}
-              value={safeInputs[field.key] ?? ""}
-              onChange={(e) => {
-                let val = e.target.value;
-                if (field.type === 'number') {
-                  val = val.replace(/[^0-9.-]/g, '');
-                  const decimalCount = (val.match(/\./g) || []).length;
-                  if (decimalCount > 1) {
-                    const firstDecimalIdx = val.indexOf('.');
-                    val = val.slice(0, firstDecimalIdx + 1) + val.slice(firstDecimalIdx + 1).replace(/\./g, '');
-                  }
-                  if (val.includes('-')) {
-                    const isNegative = val.startsWith('-');
-                    val = val.replace(/-/g, '');
-                    if (isNegative) {
-                      val = '-' + val;
-                    }
-                  }
-                }
-                setInputs({ ...safeInputs, [field.key]: val });
-              }}
-              onKeyDown={(e) => {
-                if (field.type === 'number') {
-                  const allowedKeys = [
-                    'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
-                    'Home', 'End', 'ArrowLeft', 'ArrowRight', '.', '-'
-                  ];
-                  const isShortcut = (e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase());
-
-                  if (e.key === ' ') {
-                    e.preventDefault();
-                    return;
-                  }
-
-                  if (!allowedKeys.includes(e.key) && !isShortcut && isNaN(Number(e.key))) {
-                    e.preventDefault();
-                  }
-                }
-              }}
-              placeholder={field.placeholder || `ex. ${field.label}`}
-              disabled={field.disabled || isInputLocked}
-              className="w-full h-9 border border-gray-400 rounded-md px-3 text-sm focus:border-osdag-green focus:ring-2 focus:ring-osdag-green/20 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
-            />
+            <button
+              type="button"
+              disabled={isInputLocked}
+              onClick={() => setBoundsModalField(field)}
+              className="w-full h-9 border border-gray-400 rounded-md px-3 text-sm bg-white hover:border-osdag-green hover:text-osdag-green transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {boundsSet ? `Bounds: ${lb} - ${ub}` : 'Set Bounds'}
+            </button>
           </div>
         );
+      }
+
+      case 'number':
+        return renderNumericInput(field, true);
+
+      default:
+        return renderNumericInput(field, field.type === 'number');
     }
   };
 
@@ -586,6 +623,43 @@ export const InputSection = ({
           materialList={safeContextData.materialList || []}
           onRefetchModuleOptions={onRefetchModuleOptions}
         />
+      )}
+      {boundsModalField && (
+        <Modal
+          open={!!boundsModalField}
+          title={`Set Optimization Bounds - ${boundsModalField.label?.replace('*', '').trim()}`}
+          onCancel={() => setBoundsModalField(null)}
+          onOk={() => setBoundsModalField(null)}
+          okText="Done"
+          width={420}
+          className="[&_.ant-modal-header]:bg-transparent [&_.ant-modal-close]:right-4"
+        >
+          <div className="flex flex-col gap-3 py-2">
+            {[
+              { suffix: 'lb', label: 'Lower Bound (mm)' },
+              { suffix: 'ub', label: 'Upper Bound (mm)' },
+              { suffix: 'inc', label: 'Increment (mm)' },
+            ].map(({ suffix, label }) => {
+              const boundKey = `${boundsModalField.key}_${suffix}`;
+              return (
+                <div key={suffix} className="flex items-center justify-between">
+                  <span className="text-sm w-1/2">{label}</span>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={safeInputs[boundKey] ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9.]/g, '');
+                      setInputs({ ...safeInputs, [boundKey]: val });
+                    }}
+                    placeholder={label}
+                    className="w-[45%] h-9 border border-gray-400 rounded-md px-3 text-sm focus:border-osdag-green focus:ring-2 focus:ring-osdag-green/20 outline-none"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </Modal>
       )}
     </div>
   );

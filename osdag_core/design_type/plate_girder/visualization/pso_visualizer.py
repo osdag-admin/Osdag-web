@@ -12,16 +12,24 @@ import numpy as np
 from collections import deque
 from threading import RLock
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle, FancyBboxPatch, FancyArrowPatch, Arc
 from matplotlib.collections import PatchCollection
 from matplotlib.colors import Normalize
 from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 import matplotlib
 
-matplotlib.use('QtAgg')
+# The desktop GUI uses the interactive Qt backend, but web/Celery workers run
+# headless where Qt is unavailable. Try the Qt backend/canvas and fall back to
+# the non-interactive 'Agg' backend so this module imports cleanly on the server.
+try:
+    matplotlib.use('QtAgg')
+    from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+except Exception:
+    matplotlib.use('Agg')
+    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+import matplotlib.pyplot as plt
 
 # PySide6 is only available in the desktop GUI application.
 # Guard imports so backend/web usage can still safely import this module.
@@ -30,12 +38,14 @@ try:
     from PySide6.QtWidgets import (
         QWidget, QVBoxLayout, QHBoxLayout, QLabel,
         QPushButton, QApplication, QFrame, QSlider,
-        QSizePolicy, QFileDialog, QRadioButton
+        QSizePolicy, QFileDialog, QRadioButton, QDialog
     )
     from PySide6.QtGui import QFont
 except ImportError:
     Qt = None
-    Signal = None
+    # Dummy callable so class-level `x = Signal()` declarations don't crash on import.
+    def Signal(*args, **kwargs):
+        return None
     QTimer = None
     QWidget = None
     QVBoxLayout = None
@@ -49,6 +59,8 @@ except ImportError:
     QFileDialog = None
     QRadioButton = None
     QFont = None
+    # Fallback base so `class PSOVisualizerWidget(QDialog)` still defines headless.
+    QDialog = object
 
 # Import safe_processEvents for thread-safe UI updates during CAD operations
 
