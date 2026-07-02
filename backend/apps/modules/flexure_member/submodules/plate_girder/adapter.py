@@ -1,65 +1,8 @@
 """
 Plate Girder Adapter
-Implements the business logic for plate girder module
-
-This adapter handles both:
-1. Normal (Customized) design: User provides all dimensions, backend validates and calculates
-2. Optimized design: User provides loads/constraints, backend runs PSO to find optimal dimensions
-
-Optimization Input Payload Format:
------------------------------------
-When WebSocket sends optimization request, input_data should contain:
-
-Required fields:
-- "Total.Design_Type": "Optimized" (must be "Optimized")
-- "Material": Material grade (e.g., "E 250 (Fe 410 W)A")
-- "Member.Length": Member length in millimetres (mm) as string (e.g., "5000" for 5 m); passed to KEY_LENGTH as-is (matches desktop 'Length (mm) *')
-- "Load.Shear": Shear force in kN as string (e.g., "150")
-- "Load.Moment": Bending moment in kNm as string (e.g., "500")
-- "Design.Web_Philosophy": "Thick Web without ITS" or "Thin Web with ITS"
-- "Web.Thickness": List of available thicknesses (e.g., ["6", "8", "10", "12", "16", "20", "25", "32", "40"])
-- "TopFlange.Thickness": List of available thicknesses
-- "BottomFlange.Thickness": List of available thicknesses
-- "Design.Design_Type_Flexure": Support type (e.g., "Major Laterally Supported")
-- "Loading.Bending_Moment_Shape": Loading shape (e.g., "Uniform Loading with pinned-pinned support")
-- "Design.Torsional_Restraint": Torsional restraint (e.g., "Fully Restrained")
-- "Design.Warping_Restraint": Warping restraint (e.g., "Both flanges fully restrained")
-- "Design.Max_Deflection": Deflection limit (e.g., "L/250")
-- "Design.Allow_Class": Section class (e.g., "Plastic")
-- "Design.Support_Width": Support width in mm as string (e.g., "100")
-- "Design.IntermediateStiffener.Spacing": Spacing in mm or "NA"
-- "Design.IntermediateStiffener.Thickness": "Standard" or "Customized"
-- "Design.LongitudnalStiffener": "No", "Yes and 1 stiffener", or "Yes and 2 stiffeners"
-- "Design.LongitudnalStiffener.Thickness": "Standard" or "Customized"
-
-Optional fields:
-- "Symmetry": "Symmetrical" (default) or "Unsymmetrical"
-- "Loading.Condition": "Normal" (default) or other loading conditions
-- "Module": "Plate-Girder" (default)
-
-NOT required for optimization (will be optimized by PSO):
-- "Total.Depth" - Will be optimized (bounds: 200-2000 mm, step: 25 mm)
-- "Topflange.Width" - Will be optimized (bounds: 100-1000 mm, step: 10 mm)
-- "Bottomflange.Width" - Will be optimized (bounds: 100-1000 mm, step: 10 mm)
-
-Usage in Celery Task:
----------------------
-In tasks.py, use these functions:
-
-```python
-from .adapter import create_optimization_input, determine_optimization_flags
-
-# Convert WebSocket input_data to design_dictionary
-design_dict = create_optimization_input(input_data)
-
-# Determine optimization flags
-is_thick_web, is_symmetric = determine_optimization_flags(input_data)
-
-# Create module and run optimization
-module = create_module()
-module.set_input_values(design_dict)
-module.optimized_method(design_dict, is_thick_web, is_symmetric, viz_callback=...)
-```
+Implements the business logic for the Plate Girder module: Customized design
+(user provides all dimensions) and Optimized design (PSO finds optimal
+dimensions from loads/constraints).
 """
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
@@ -326,38 +269,27 @@ def create_from_input(input_values: Dict[str, Any]):
         design_dict[KEY_TOP_Bflange_PG] = '1'
         design_dict[KEY_BOTTOM_Bflange_PG] = '1'
     
-    # Import VALUES_STIFFENER_THICKNESS and PlateGirderWelded for exact desktop replica
     from osdag_core.design_type.plate_girder.core.plate_girder import VALUES_STIFFENER_THICKNESS, PlateGirderWelded
-    
-    # Exact replica of desktop behavior: populate class variables from input_values (web UI),
-    # then use them exactly like desktop set_input_values() does (lines 778-788)
-    
-    # For intermediate stiffener: populate class variable if customized values provided
+
+    # Intermediate stiffener: populate the class-level customized list if provided,
+    # matching set_input_values()'s handling of the "Customized" thickness option.
     if design_dict[KEY_IntermediateStiffener_thickness] == 'Customized':
-        # Get customized values from input_values (web UI equivalent of PopupDialog selection)
         custom_values = input_values.get('Design.IntermediateStiffener.Thickness_Values', None)
         if custom_values and isinstance(custom_values, list) and len(custom_values) > 0:
-            # Populate class variable (exact replica of desktop: PlateGirderWelded.int_thicklist = selected_items)
             PlateGirderWelded.int_thicklist = [str(v) for v in custom_values]
-        # Use class variable exactly like desktop set_input_values() does (line 779)
         design_dict[KEY_IntermediateStiffener_thickness_val] = PlateGirderWelded.int_thicklist
     else:
-        # Standard mode: use all standard values (exact replica of desktop line 781)
         design_dict[KEY_IntermediateStiffener_thickness_val] = VALUES_STIFFENER_THICKNESS
-    
-    # For longitudinal stiffener: populate class variable if customized values provided
+
+    # Longitudinal stiffener: same customized-list handling as above.
     if design_dict[KEY_LongitudnalStiffener_thickness] == 'Customized':
-        # Get customized values from input_values (web UI equivalent of PopupDialog selection)
         custom_values = input_values.get('Design.LongitudnalStiffener.Thickness_Values', None)
         if custom_values and isinstance(custom_values, list) and len(custom_values) > 0:
-            # Populate class variable (exact replica of desktop: PlateGirderWelded.long_thicklist = selected_items2)
             PlateGirderWelded.long_thicklist = [str(v) for v in custom_values]
-        # Use class variable exactly like desktop set_input_values() does (line 786)
         design_dict[KEY_LongitudnalStiffener_thickness_val] = PlateGirderWelded.long_thicklist
     else:
-        # Standard mode: use all standard values (exact replica of desktop line 788)
         design_dict[KEY_LongitudnalStiffener_thickness_val] = VALUES_STIFFENER_THICKNESS
-    
+
     try:
         if module is None:
             raise RuntimeError('Module instance was not created')
@@ -504,47 +436,17 @@ def get_optimization_bounds(input_values: Dict[str, Any]) -> Dict[str, tuple]:
 
 def create_optimization_input(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Create design dictionary specifically for PSO optimization.
-    
-    This function prepares the input dictionary for PlateGirderWelded.optimized_method().
-    It ensures:
-    - Total.Design_Type is set to "Optimized"
-    - All required fields are present (loads, material, web philosophy, restraints, etc.)
-    - Thickness lists are provided for discrete variable snapping
-    
+    Build the design dictionary for PlateGirderWelded.optimized_method(): forces
+    Total.Design_Type to "Optimized" and ensures thickness lists are present for
+    discrete variable snapping. Total.Depth/Topflange.Width/Bottomflange.Width
+    are not required since PSO determines them.
+
     Args:
         input_values: Dictionary from WebSocket/Celery task with optimization inputs
-        
+
     Returns:
         Design dictionary ready for PlateGirderWelded.optimized_method()
-        
-    Expected input_values keys (same as normal design + optimization flag):
-        - "Total.Design_Type": "Optimized" (required)
-        - "Material": Material grade string
-        - "Member.Length": Member length in millimetres (mm) (as string)
-        - "Load.Shear": Shear force in kN (as string)
-        - "Load.Moment": Bending moment in kNm (as string)
-        - "Design.Web_Philosophy": "Thick Web without ITS" or "Thin Web with ITS"
-        - "Web.Thickness": List of thickness strings (e.g., ["6", "8", "10", ...])
-        - "TopFlange.Thickness": List of thickness strings
-        - "BottomFlange.Thickness": List of thickness strings
-        - "Design.Design_Type_Flexure": Support type
-        - "Loading.Bending_Moment_Shape": Loading shape
-        - "Design.Torsional_Restraint": Torsional restraint type
-        - "Design.Warping_Restraint": Warping restraint type
-        - "Design.Max_Deflection": Deflection limit (e.g., "L/250")
-        - "Design.Allow_Class": Section class (e.g., "Plastic")
-        - "Design.Support_Width": Support width in mm (as string)
-        - "Design.IntermediateStiffener.Spacing": Spacing or "NA"
-        - "Design.IntermediateStiffener.Thickness": "Standard" or "Customized"
-        - "Design.LongitudnalStiffener": "No", "Yes and 1 stiffener", or "Yes and 2 stiffeners"
-        - "Design.LongitudnalStiffener.Thickness": "Standard" or "Customized"
-        - (Optional) "Symmetry": "Symmetrical" or "Unsymmetrical"
-        
-    Note: For optimization, Total.Depth, Topflange.Width, Bottomflange.Width are NOT required
-    as they will be optimized by PSO.
     """
-    # Ensure design type is Optimized
     optimization_input = input_values.copy()
     optimization_input["Total.Design_Type"] = "Optimized"
     
@@ -603,38 +505,25 @@ def create_optimization_input(input_values: Dict[str, Any]) -> Dict[str, Any]:
         VALUES_STIFFENER_THICKNESS = ['6', '8', '10', '12', '14', '16', '18', '20', 
                                       '22', '24', '26', '28', '30', '32', '36', '40']
      
-    # Import VALUES_STIFFENER_THICKNESS and PlateGirderWelded for exact desktop replica
     from osdag_core.design_type.plate_girder.core.plate_girder import VALUES_STIFFENER_THICKNESS, PlateGirderWelded
-    
-    # Exact replica of desktop behavior: populate class variables from optimization_input (web UI),
-    # then use them exactly like desktop set_input_values() does (lines 778-788)
-    
-    # For intermediate stiffener: populate class variable if customized values provided
+
+    # Same customized-list handling as create_from_input(), sourced from optimization_input.
     if design_dict[KEY_IntermediateStiffener_thickness] == 'Customized':
-        # Get customized values from optimization_input (web UI equivalent of PopupDialog selection)
         custom_values = optimization_input.get('Design.IntermediateStiffener.Thickness_Values', None)
         if custom_values and isinstance(custom_values, list) and len(custom_values) > 0:
-            # Populate class variable (exact replica of desktop: PlateGirderWelded.int_thicklist = selected_items)
             PlateGirderWelded.int_thicklist = [str(v) for v in custom_values]
-        # Use class variable exactly like desktop set_input_values() does (line 779)
         design_dict[KEY_IntermediateStiffener_thickness_val] = PlateGirderWelded.int_thicklist
     else:
-        # Standard mode: use all standard values (exact replica of desktop line 781)
         design_dict[KEY_IntermediateStiffener_thickness_val] = VALUES_STIFFENER_THICKNESS
-    
-    # For longitudinal stiffener: populate class variable if customized values provided
+
     if design_dict[KEY_LongitudnalStiffener_thickness] == 'Customized':
-        # Get customized values from optimization_input (web UI equivalent of PopupDialog selection)
         custom_values = optimization_input.get('Design.LongitudnalStiffener.Thickness_Values', None)
         if custom_values and isinstance(custom_values, list) and len(custom_values) > 0:
-            # Populate class variable (exact replica of desktop: PlateGirderWelded.long_thicklist = selected_items2)
             PlateGirderWelded.long_thicklist = [str(v) for v in custom_values]
-        # Use class variable exactly like desktop set_input_values() does (line 786)
         design_dict[KEY_LongitudnalStiffener_thickness_val] = PlateGirderWelded.long_thicklist
     else:
-        # Standard mode: use all standard values (exact replica of desktop line 788)
         design_dict[KEY_LongitudnalStiffener_thickness_val] = VALUES_STIFFENER_THICKNESS
-    
+
     return design_dict
 
 

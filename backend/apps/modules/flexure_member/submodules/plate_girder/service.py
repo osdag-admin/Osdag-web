@@ -24,54 +24,25 @@ class PlateGirderService:
         Returns:
             Dictionary with 'data' (results) and 'logs' (calculation logs)
         """
-        print("=" * 60)
-        print("PlateGirderService.calculate() called")
-        print("=" * 60)
-        print(f"Inputs received: {list(inputs.keys())[:10]}...")  # Print first 10 keys
-        
         try:
-            # Validate inputs
-            print("\n[1/3] Validating inputs...")
             validate_input(inputs)
-            print("✅ Input validation passed")
-            
-            # Generate formatted output (this handles module creation and calculation)
-            print("\n[2/3] Generating output (creates module and runs calculation)...")
             output, logs = generate_output(inputs)
-            print(output)
-            print(f"✅ Output generated: {len(output)} output parameters")
-            print(f"✅ Logs retrieved: {len(logs) if logs else 0} log entries")
-            
-            print("\n[3/3] Preparing response...")
-            result = {
+
+            return {
                 'data': output,
-                'logs': logs or [],  # Ensure logs is always a list
+                'logs': logs or [],
                 'success': True
             }
-            print("✅ Response prepared successfully")
-            print("=" * 60)
-            
-            return result
-            
+
         except Exception as e:
-            print("\n" + "=" * 60)
-            print("❌ ERROR in PlateGirderService.calculate()")
-            print("=" * 60)
-            print(f"Exception type: {type(e).__name__}")
-            print(f"Exception message: {str(e)}")
-            
-            # Safely extract error message
             error_msg = str(e)
             if hasattr(e, 'error') and e.error is not None:
                 error_msg = str(e.error)
             elif hasattr(e, 'args') and len(e.args) > 0:
                 error_msg = str(e.args[0])
-            
-            print(f"Final error message: {error_msg}")
-            print("\nFull traceback:")
+
             traceback.print_exc()
-            print("=" * 60)
-            
+
             return {
                 'data': {},
                 'logs': [],
@@ -106,24 +77,19 @@ class PlateGirderService:
             Dictionary with options data (materials, thickness lists, etc.)
         """
         email = request.query_params.get("email") if request else None
-        
-        # Material list (standard + custom if email provided)
+
         def material_list():
             mats = list(Material.objects.all().values())
             if email:
                 mats += list(CustomMaterials.objects.filter(email=email).values())
             mats.append({"id": -1, "Grade": "Custom"})
             return mats
-        
-        # Standard plate thickness values (from documentation: VALUES_PLATETHK)
-        # For web and flanges: 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40 mm
+
         thickness_list = [
             '3', '4', '5', '6', '8', '10', '12', '14', '16', '18', '20', 
             '22', '24', '26', '28', '30', '32', '36', '40'
         ]
-        
-        # Standard stiffener thickness values (from documentation: VALUES_STIFFENER_THICKNESS)
-        # 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40 mm
+
         stiffener_thickness_list = [
             '6', '8', '10', '12', '14', '16', '18', '20', 
             '22', '24', '26', '28', '30', '32', '36', '40'

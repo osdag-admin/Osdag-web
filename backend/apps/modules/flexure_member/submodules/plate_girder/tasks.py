@@ -2,12 +2,9 @@
 Celery task for Plate Girder PSO optimization.
 
 Runs PlateGirderWelded.optimized_method() inside a Celery worker and streams
-progress updates to a WebSocket channel via Django Channels.
-
-Merged implementation:
-- Celery task execution (works with .delay() + task revocation on disconnect)
-- Sabeena's real-time graph batching (DataProcessor + particle buffer)
-- pr-3's thickness-list override logic for correct PSO setup
+progress updates to a WebSocket channel via Django Channels. Task execution
+supports `.delay()` with revocation on client disconnect; particle updates are
+batched (via DataProcessor) for smooth real-time graph updates on the client.
 """
 import time
 import json
@@ -30,9 +27,6 @@ if project_root not in sys.path:
 
 from osdag_core.design_type.plate_girder.visualization.pso_visualizer import DataProcessor
 
-# ---------------------------------------------------------------------------
-# Local imports
-# ---------------------------------------------------------------------------
 from apps.modules.flexure_member.submodules.plate_girder.adapter import (
     create_optimization_input,
     determine_optimization_flags,
@@ -254,7 +248,7 @@ def run_pso_optimization(self, channel_name: str, input_data: Dict[str, Any]):
                     logger.info(f"  {var}: [{bounds[0]}, {bounds[1]}]" +
                                 (f" step={bounds[2]}" if len(bounds) > 2 else ""))
 
-        # Particle buffer for batch sending (Sabeena's realtime graph batching)
+        # Particle buffer for batched sending (smooths real-time graph updates)
         particle_buffer = []
 
         # Progress callback from optimized_method

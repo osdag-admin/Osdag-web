@@ -124,13 +124,11 @@ export const plateGirderConfig = {
     top_flange_thickness: ["40"], // List
     bottom_flange_width: "350", // Required for Customized
     bottom_flange_thickness: ["40"], // List
-    // Member Properties (length in mm, matching desktop KEY_DISP_LENGTH = 'Length (mm) *')
+    // Length in mm, matching desktop KEY_DISP_LENGTH = 'Length (mm) *'
     member_length: "20000", // in mm, sent to backend as-is (no conversion)
-    // Loads (from PDF notes)
     bending_moment: "4275",
     shear_force: "877.5",
     bending_moment_shape: "Uniform Loading with pinned-pinned support",
-    // Support & Restraints (from PDF notes: "compression flange is restrained", "web is to be made Thick")
     support_type: "Major Laterally Supported",
     support_width: "300",
     web_philosophy: "Thick Web without ITS",

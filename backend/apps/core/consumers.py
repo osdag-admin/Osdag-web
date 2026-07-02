@@ -4,8 +4,9 @@ import time
 import os
 import logging
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 from celery.result import AsyncResult
 
 logger = logging.getLogger(__name__)
@@ -140,3 +141,72 @@ class TaskStatusConsumer(AsyncWebsocketConsumer):
             "result": event.get("result"),
             "error":  event.get("error"),
         }))
+
+
+class PSOOptimizationConsumer(AsyncJsonWebsocketConsumer):
+    """
+    WebSocket consumer for real-time Plate Girder PSO optimization.
+
+    Receives start_optimization requests, dispatches the heavy work to a Celery
+    task, forwards streamed particle/heartbeat/completion updates back to the
+    client, and revokes the running task on disconnect to avoid zombie tasks.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.task_id = None
+
+    async def connect(self):
+        logger.info(f"PSO WebSocket connecting: {self.channel_name}")
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        logger.info(f"PSO WebSocket disconnected: {self.channel_name}, code: {close_code}")
+        if self.task_id:
+            logger.warning(f"Disconnect detected. Revoking task {self.task_id} to prevent zombie task")
+            try:
+                from config.celery import app
+
+                def revoke_task():
+                    app.control.revoke(self.task_id, terminate=True)
+
+                await sync_to_async(revoke_task)()
+            except Exception as e:
+                logger.error(f"Error revoking task {self.task_id}: {e}")
+
+    async def receive_json(self, content):
+        message_type = content.get('type')
+
+        if message_type == 'start_optimization':
+            input_data = content.get('data', {})
+            from apps.modules.flexure_member.submodules.plate_girder.tasks import run_pso_optimization
+            try:
+                task_result = run_pso_optimization.delay(self.channel_name, input_data)
+                self.task_id = task_result.id
+                logger.info(f"PSO Celery task triggered: {self.task_id}")
+                await self.send_json({
+                    'type': 'task_started',
+                    'data': {'task_id': self.task_id, 'channel_name': self.channel_name}
+                })
+            except Exception as e:
+                logger.error(f"Error triggering PSO task: {e}")
+                await self.send_json({
+                    'type': 'error',
+                    'data': {'message': f'Failed to start optimization: {str(e)}'}
+                })
+        else:
+            logger.warning(f"Unknown message type: {message_type}")
+
+    async def pso_update(self, event):
+        await self.send_json({'type': 'pso_update', 'data': event.get('data', {})})
+
+    async def pso_complete(self, event):
+        self.task_id = None
+        await self.send_json({'type': 'pso_complete', 'data': event.get('data', {})})
+
+    async def pso_heartbeat(self, event):
+        await self.send_json({'type': 'pso_heartbeat', 'data': event.get('data', {})})
+
+    async def pso_error(self, event):
+        self.task_id = None
+        await self.send_json({'type': 'pso_error', 'data': event.get('data', {})})

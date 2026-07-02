@@ -8,10 +8,10 @@ const PSO_PARTICLES_PER_TICK = 50;
  * Encapsulates Plate Girder PSO real-time optimization:
  *  - WebSocket streaming (via useWebSocketOptimization)
  *  - Smooth client-side playback of batched particle updates
- *  - Aggregated optimizationData for the PSODashboard / OptimizationGraph
+ *  - Aggregated optimizationData for OptimizationGraph
  *
  * @param {Object} params
- * @param {Function} params.onComplete - called with (formattedOutput, rawLogs) on pso_complete
+ * @param {Function} params.onComplete - called with (formattedOutput, rawLogs, cadPaths) on pso_complete
  * @param {Function} params.onError - called with (message) on pso_error
  */
 export const usePlateGirderOptimization = ({ onComplete, onError } = {}) => {

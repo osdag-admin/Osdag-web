@@ -1,18 +1,3 @@
-"""
-Phase 3: Design Checks Implementation - Import Module
-
-This module centralizes imports of design check modules from osdag_core.
-These will be used in the Celery task (tasks.py) for optimization.
-
-All design check modules already exist in osdag_core, we just import and use them.
-"""
-
-# ==============================================================================
-# 3.1 Design Check Modules
-# ==============================================================================
-# Source: osdag_core/design_type/plate_girder/checks/
-
-# moment.py - Moment capacity check
 try:
     from osdag_core.design_type.plate_girder.checks.moment import (
         corrected_design_bending_strength,
@@ -31,7 +16,6 @@ except ImportError as e:
     bending_check_lat_unsupported = None
     print(f"Warning: Could not import moment checks: {e}")
 
-# shear.py - Shear capacity check (web shear, shear buckling, post-buckling strength)
 try:
     from osdag_core.design_type.plate_girder.checks.shear import (
         calc_K_v,
@@ -56,7 +40,6 @@ except ImportError as e:
     end_panel_stiffener_calc = None
     print(f"Warning: Could not import shear checks: {e}")
 
-# web_buckling.py - Web buckling under concentrated loads (Clause 8.7.3)
 try:
     from osdag_core.design_type.plate_girder.checks.web_buckling import (
         web_buckling_laterally_supported_thick_web
@@ -67,7 +50,6 @@ except ImportError as e:
     web_buckling_laterally_supported_thick_web = None
     print(f"Warning: Could not import web_buckling checks: {e}")
 
-# web_crippling.py - Web crippling check (Clause 8.7.4)
 try:
     from osdag_core.design_type.plate_girder.checks.web_crippling import (
         check_web_crippling
@@ -78,7 +60,6 @@ except ImportError as e:
     check_web_crippling = None
     print(f"Warning: Could not import web_crippling checks: {e}")
 
-# deflection.py - Deflection serviceability check
 try:
     from osdag_core.design_type.plate_girder.checks.deflection import (
         evaluate_deflection_kNm_mm,
@@ -91,7 +72,6 @@ except ImportError as e:
     deflection_from_moment_kNm_mm = None
     print(f"Warning: Could not import deflection checks: {e}")
 
-# welds.py - Weld design
 try:
     from osdag_core.design_type.plate_girder.checks.welds import (
         design_welds_with_strength_web_to_flange,
@@ -106,7 +86,6 @@ except ImportError as e:
     weld_for_end_stiffener = None
     print(f"Warning: Could not import weld checks: {e}")
 
-# web_thickness.py - Web thickness validation
 try:
     from osdag_core.design_type.plate_girder.checks.web_thickness import (
         min_web_thickness_thick_web
@@ -117,7 +96,6 @@ except ImportError as e:
     min_web_thickness_thick_web = None
     print(f"Warning: Could not import web_thickness checks: {e}")
 
-# SKIP_DEFLECTION constant
 try:
     from osdag_core.design_type.plate_girder.checks import SKIP_DEFLECTION
     SKIP_DEFLECTION_AVAILABLE = True
@@ -127,16 +105,7 @@ except ImportError as e:
     print(f"Warning: Could not import SKIP_DEFLECTION: {e}")
 
 
-# ==============================================================================
-# Verification Function
-# ==============================================================================
 def verify_imports():
-    """
-    Verify that all required design check modules can be imported.
-    
-    Returns:
-        dict: Status of each import with availability flags
-    """
     status = {
         'moment_checks': {
             'available': MOMENT_CHECKS_AVAILABLE,
@@ -202,17 +171,12 @@ def verify_imports():
     return status
 
 
-# ==============================================================================
-# Export all imports for use in tasks.py and other modules
-# ==============================================================================
 __all__ = [
-    # Moment checks
     'corrected_design_bending_strength',
     'moment_capacity_laterally_supported',
     'calc_Mdv',
     'calc_Mdv_lat_unsupported',
     'bending_check_lat_unsupported',
-    # Shear checks
     'calc_K_v',
     'shear_capacity_laterally_supported_thick_web',
     'shear_buckling_check_simple_postcritical',
@@ -221,22 +185,15 @@ __all__ = [
     'tension_field_intermediate_stiffener',
     'tension_field_end_stiffener',
     'end_panel_stiffener_calc',
-    # Web buckling
     'web_buckling_laterally_supported_thick_web',
-    # Web crippling
     'check_web_crippling',
-    # Deflection
     'evaluate_deflection_kNm_mm',
     'deflection_from_moment_kNm_mm',
-    # Welds
     'design_welds_with_strength_web_to_flange',
     'weld_leg_from_q_with_cl10',
     'weld_for_end_stiffener',
-    # Web thickness
     'min_web_thickness_thick_web',
-    # Constants
     'SKIP_DEFLECTION',
-    # Availability flags
     'MOMENT_CHECKS_AVAILABLE',
     'SHEAR_CHECKS_AVAILABLE',
     'WEB_BUCKLING_AVAILABLE',
@@ -245,7 +202,5 @@ __all__ = [
     'WELD_CHECKS_AVAILABLE',
     'WEB_THICKNESS_AVAILABLE',
     'SKIP_DEFLECTION_AVAILABLE',
-    # Verification
     'verify_imports'
 ]
-
