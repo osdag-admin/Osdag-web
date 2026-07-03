@@ -101,15 +101,19 @@ export const useDesignSubmission = (service, moduleConfig) => {
             continue;
           }
 
-          if (field.type === 'image') {
+          const effectiveType = typeof field.conditionalType === 'function'
+            ? field.conditionalType(inputs)
+            : field.type;
+
+          if (effectiveType === 'image') {
             continue;
           }
 
           let value = inputs[field.key];
-          if (field.type === 'connectivitySelect' || field.type === 'endPlateSelect') {
+          if (effectiveType === 'connectivitySelect' || effectiveType === 'endPlateSelect') {
             value = extraState?.selectedOption || value;
           }
-          const isCustomizable = field.type === 'customizable';
+          const isCustomizable = effectiveType === 'customizable';
 
           if (isCustomizable) {
             const selectionKey = field.selectionKey;

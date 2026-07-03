@@ -12,6 +12,11 @@ from importlib.resources import files
 from pathlib import Path
 import platform
 
+try:
+    from osdag_latex_env import OsdagLatexEnv
+except ImportError:
+    print("[INFO] osdag_latex_env module not found. LaTeX functionalities may be limited.")
+
 # Helper function to get resource path with fallback
 def _get_resource_path(*path_parts):
     """
@@ -74,27 +79,14 @@ def get_documents_folder():
     return str(docs_path)
 
 def get_latex_executable():
-    osdag_dir = os.path.dirname(os.path.abspath(__file__))
-
-    latex_env =  os.path.join(osdag_dir, "data", "ResourceFiles", "osdag-latex-env")
-    if not os.path.isdir(latex_env):
-        # --- System TeX path resolution (Linux / macOS / Windows) ---
-        system_pdflatex = shutil.which("pdflatex")
-
-        if system_pdflatex:
-            return os.path.abspath(system_pdflatex)
-        else:
-            raise FileNotFoundError("LaTeX environment not found. Please ensure that the osdag-latex-env directory exists or that pdflatex is installed on your system.")  
-    else:
-        if sys.platform.startswith("win"):
-            latex_executable = os.path.join(latex_env, "bin", "windows", "pdflatex.exe")
-            return latex_executable
-        else:   # Linux / Unix / macOS
-            system_pdflatex = shutil.which("pdflatex")
-            if system_pdflatex:
-                return os.path.abspath(system_pdflatex)
-            else:
-                raise FileNotFoundError("pdflatex not found in system PATH. Please install TeXLive.")
+    try:
+        osdag_latex = OsdagLatexEnv()
+        latex_exec = osdag_latex.pdflatex
+        if latex_exec:
+            return str(latex_exec)
+    except NameError:
+        return ""
+    return ""
   
 def configure_latex_runtime_windows():
     if not sys.platform.startswith("win"):

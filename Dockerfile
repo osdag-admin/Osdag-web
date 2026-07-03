@@ -12,18 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglu1-mesa \
     wkhtmltopdf \
-    texlive-latex-base \
-    texlive-latex-recommended \
-    texlive-latex-extra \
-    texlive-fonts-recommended \
-    lmodern \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/requirements.txt
 
 RUN conda config --add channels conda-forge && \
+    conda config --add channels osdag && \
     conda config --set channel_priority strict && \
-    conda create -n osdag_env python=3.11 pythonocc-core cairo -y && \
+    conda create -n osdag_env python=3.12 pythonocc-core cairo osdag_latex_env -y && \
     conda clean -afy
 
 RUN /opt/conda/envs/osdag_env/bin/pip install --no-cache-dir -r requirements.txt

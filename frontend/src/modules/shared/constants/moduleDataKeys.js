@@ -70,4 +70,7 @@ export const INPUT_KEY_TO_LIST = {
   anchor_grade_ocf: 'anchorGradeList',
   anchor_diameter_icf: 'anchorDiameterList',
   anchor_grade_icf: 'anchorGradeList',
+  web_thickness: 'thicknessList',
+  top_flange_thickness: 'thicknessList',
+  bottom_flange_thickness: 'thicknessList',
 };

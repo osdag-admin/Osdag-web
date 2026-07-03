@@ -1,7 +1,9 @@
 import { useRef, useEffect } from 'react';
-import Plot from 'react-plotly.js';
-
+import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js-dist-min';
+
+const Plot = createPlotlyComponent(Plotly);
+
 
 const IBeamSVG = ({ depth = 400, bfTop = 300, bfBot = 300, tw = 8, tfTop = 12, tfBot = 12 }) => {
     const toPositive = (value, fallback) => {

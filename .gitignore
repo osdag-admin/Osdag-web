@@ -89,3 +89,5 @@ pgdata/
 .env
 
 *.osi
+
+.venv

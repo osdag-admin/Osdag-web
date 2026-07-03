@@ -1,4 +1,4 @@
-﻿
+
 import ISECTION from "../../../../assets/ISection.png";
 import ErrorImg from "../../../../assets/notSelected.png";
 import {
@@ -158,15 +158,15 @@ export const plateGirderConfig = {
     supporting_options: "NA",
     max_deflection: "Span/600",
     // Optimization bounds (only used when Optimized)
-    total_depth_lb: "",
-    total_depth_ub: "",
-    total_depth_inc: "",
-    top_flange_width_lb: "",
-    top_flange_width_ub: "",
-    top_flange_width_inc: "",
-    bottom_flange_width_lb: "",
-    bottom_flange_width_ub: "",
-    bottom_flange_width_inc: "",
+    total_depth_lb: "200",
+    total_depth_ub: "2000",
+    total_depth_inc: "25",
+    top_flange_width_lb: "100",
+    top_flange_width_ub: "1000",
+    top_flange_width_inc: "10",
+    bottom_flange_width_lb: "100",
+    bottom_flange_width_ub: "1000",
+    bottom_flange_width_inc: "10",
   },
 
   modalConfig: [
