@@ -190,29 +190,25 @@ export const purlinConfig = {
           label: "Bending Moment (y-y) (kNm)*",
           type: "number",
           validation: "number",
-          placeholder: "Enter Myy"
-        },
+          placeholder: "Enter Myy", required: true },
         {
           key: "bending_moment_zz",
           label: "Bending Moment (z-z) (kNm)*",
           type: "number",
           validation: "number",
-          placeholder: "Enter Mzz"
-        },
+          placeholder: "Enter Mzz", required: true },
         {
           key: "shear_force_yy",
           label: "Shear Force (y-y) (kN)*",
           type: "number",
           validation: "number",
-          placeholder: "Enter Vyy"
-        },
+          placeholder: "Enter Vyy", required: true },
         {
           key: "shear_force_zz",
           label: "Shear Force (z-z) (kN)*",
           type: "number",
           validation: "number",
-          placeholder: "Enter Vzz"
-        }
+          placeholder: "Enter Vzz", required: true }
       ]
     }
   ]

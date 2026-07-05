@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../constants/UIStrings';
 import { EngineeringModule } from '../shared/components/EngineeringModule';
 import { strutsWeldedConfig } from './configs/strutsWeldedConfig';
 import { strutsWeldedOutputConfig } from './configs/strutsWeldedOutputConfig';
@@ -7,7 +8,7 @@ function StrutsWelded() {
         <EngineeringModule
             moduleConfig={strutsWeldedConfig}
             outputConfig={strutsWeldedOutputConfig}
-            title="Struts Welded to End Gusset"
+            title={UI_STRINGS.STRUTS_WELDED_TO_END_GUSSET}
         />
     );
 }

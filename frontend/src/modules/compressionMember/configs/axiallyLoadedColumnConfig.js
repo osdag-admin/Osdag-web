@@ -157,8 +157,7 @@ export const axiallyLoadedColumnConfig = {
       !inputs.end_condition_1 ||
       !inputs.end_condition_2 ||
       !inputs.end_condition_1_y ||
-      !inputs.end_condition_2_y ||
-      !inputs.axial_load
+      !inputs.end_condition_2_y 
     ) {
       return {
         isValid: false,
@@ -343,10 +342,9 @@ export const axiallyLoadedColumnConfig = {
       fields: [
         {
           key: "axial_load",
-          label: "Axial Force (kN)*",
+          label: "Axial Force (kN)",
           type: "number",
           validation: "positive_number",
-          required: true,
         },
       ],
     },

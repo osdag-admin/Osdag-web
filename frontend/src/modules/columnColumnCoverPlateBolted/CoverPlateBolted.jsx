@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../constants/UIStrings';
 import { EngineeringModule } from '../shared/components/EngineeringModule';
 import { coverPlateBoltedConfig } from './configs/coverPlateBoltedConfig';
 import { coverPlateBoltedOutputConfig } from './configs/coverPlateBoltedOutputConfig';
@@ -8,7 +9,7 @@ function CoverPlateBolted() {
     <EngineeringModule
       moduleConfig={coverPlateBoltedConfig}
       outputConfig={coverPlateBoltedOutputConfig}
-      title="Cover Plate — Bolted"
+      title={UI_STRINGS.COVER_PLATE_BOLTED}
     />
   );
 }

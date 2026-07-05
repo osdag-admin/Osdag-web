@@ -82,7 +82,7 @@ export const weldedToEndConfig = {
     validateInputs: (inputs) => {
         if (!inputs.section_designation ||
             !inputs.length ||
-            !inputs.axial_force ||
+            
             inputs.section_designation === "Select Section") {
             return { isValid: false, message: "Please input all the required fields" };
         }
@@ -202,7 +202,7 @@ export const weldedToEndConfig = {
         {
             title: "Factored Loads",
             fields: [
-                { key: "axial_force", label: "Axial Force (kN)*", type: "number", required: true }
+                { key: "axial_force", label: "Axial Force (kN)", type: "number" }
             ]
         },
         {

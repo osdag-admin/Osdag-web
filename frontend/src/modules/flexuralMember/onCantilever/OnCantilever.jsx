@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../../constants/UIStrings';
 import { EngineeringModule } from '../../shared/components/EngineeringModule';
 import { onCantileverConfig } from './configs/onCantileverConfig';
 import { onCantileverOutputConfig } from './configs/onCantileverOutputConfig';
@@ -7,7 +8,7 @@ function OnCantilever() {
     <EngineeringModule
       moduleConfig={onCantileverConfig}
       outputConfig={onCantileverOutputConfig}
-      title="On Cantilever Beam (Flexural Member)"
+      title={UI_STRINGS.ON_CANTILEVER_BEAM}
     />
   );
 }

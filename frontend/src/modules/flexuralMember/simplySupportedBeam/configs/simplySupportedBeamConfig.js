@@ -236,15 +236,13 @@ export const simplySupportedBeamConfig = {
           label: "Bending Moment (kNm)*", 
           type: "number",
           validation: "positive_number",
-          placeholder: "Enter bending moment"
-        },
+          placeholder: "Enter bending moment", required: true },
         {
           key: "shear_force",
           label: "Shear Force (kN)*",
           type: "number",
           validation: "positive_number",
-          placeholder: "Enter shear force"
-        }
+          placeholder: "Enter shear force", required: true }
       ]
     }
   ],

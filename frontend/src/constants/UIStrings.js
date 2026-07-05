@@ -82,4 +82,20 @@ export const UI_STRINGS = {
 
   BOLTED_TO_END_GUSSET: "Bolted to End Gusset",
   WELDED_TO_END_GUSSET: "Welded to End Gusset",
+
+  // Module Titles
+  COVER_PLATE_BOLTED: "Cover Plate — Bolted",
+  COVER_PLATE_WELDED: "Cover Plate — Welded",
+  STRUTS_BOLTED_TO_END_GUSSET: "Struts Bolted to End Gusset",
+  STRUTS_WELDED_TO_END_GUSSET: "Struts Welded to End Gusset",
+  COMPRESSION_MEMBER_STRUTS: "Compression Member (Struts in Trusses)",
+  AXIALLY_LOADED_COLUMN: "Axially Loaded Column",
+  BUTT_JOINT_BOLTED: "Butt Joint — Bolted",
+  BUTT_JOINT_WELDED: "Butt Joint — Welded",
+  LAP_JOINT_BOLTED: "Lap Joint — Bolted",
+  LAP_JOINT_WELDED: "Lap Joint — Welded",
+  ON_CANTILEVER_BEAM: "On Cantilever Beam (Flexural Member)",
+  PURLIN: "Purlin (Flexural Member)",
+  SIMPLY_SUPPORTED_BEAM: "Simply Supported Beam (Flexural Member)",
+
 };

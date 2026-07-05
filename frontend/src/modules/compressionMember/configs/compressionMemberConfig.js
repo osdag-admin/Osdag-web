@@ -42,7 +42,7 @@ export const compressionMemberConfig = {
   validateInputs: (inputs) => {
     if (!inputs.section_designation ||
       !inputs.member_length ||
-      !inputs.axial_load ||
+      
       !inputs.design_method ||
       inputs.section_designation === "Select Section") {
       return { isValid: false, message: "Please input all the required fields" };
@@ -184,7 +184,7 @@ export const compressionMemberConfig = {
       fields: [
         {
           key: "axial_load",
-          label: "Axial Load (kN)*",
+          label: "Axial Load (kN)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter axial load"

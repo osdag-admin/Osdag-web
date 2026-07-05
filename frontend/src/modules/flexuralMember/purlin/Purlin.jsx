@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../../constants/UIStrings';
 import { EngineeringModule } from '../../shared/components/EngineeringModule';
 import { purlinConfig } from './configs/purlinConfig';
 import { purlinOutputConfig } from './configs/purlinOutputConfig';
@@ -7,7 +8,7 @@ function Purlin() {
     <EngineeringModule
       moduleConfig={purlinConfig}
       outputConfig={purlinOutputConfig}
-      title="Purlin (Flexural Member)"
+      title={UI_STRINGS.PURLIN}
     />
   );
 }

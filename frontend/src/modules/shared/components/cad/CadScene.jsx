@@ -68,51 +68,51 @@ function CadScene({
     const handleAction = (e) => {
       const controls = controlsRef.current;
       if (!controls) return;
-  
+
       const camera = controls.object; // Correct
       const target = controls.target.clone();
-  
+
       const distance = camera.position.distanceTo(target);
-  
+
       switch (e.detail) {
         case "zoom-in":
           controls.dollyOut(1.2);
           controls.update();
           break;
-  
+
         case "zoom-out":
           controls.dollyIn(1.2);
           controls.update();
           break;
-  
+
         case "pan-up":
           controls.target.y += 0.05;
           camera.position.y += 0.05;
           controls.update();
           break;
-  
+
         case "pan-down":
           controls.target.y -= 0.05;
           camera.position.y -= 0.05;
           controls.update();
           break;
-  
+
         case "pan-left":
           controls.target.x -= 0.05;
           camera.position.x -= 0.05;
           controls.update();
           break;
-  
+
         case "pan-right":
           controls.target.x += 0.05;
           camera.position.x += 0.05;
           controls.update();
           break;
-  
+
         case "auto-rotate":
           setIsAutoRotate((prev) => !prev);
           break;
-  
+
         // FRONT VIEW
         case "front-view":
           camera.position.set(
@@ -124,7 +124,7 @@ function CadScene({
           camera.lookAt(target);
           controls.update();
           break;
-  
+
         // TOP VIEW
         case "top-view":
           camera.position.set(
@@ -136,7 +136,7 @@ function CadScene({
           camera.lookAt(target);
           controls.update();
           break;
-  
+
         // SIDE VIEW
         case "side-view":
           camera.position.set(
@@ -148,14 +148,14 @@ function CadScene({
           camera.lookAt(target);
           controls.update();
           break;
-  
+
         default:
           break;
       }
     };
-  
+
     document.addEventListener("cad-camera-action", handleAction);
-  
+
     return () => {
       document.removeEventListener("cad-camera-action", handleAction);
     };
@@ -167,7 +167,7 @@ function CadScene({
       <directionalLight position={[10, 10, 10]} intensity={1.0} />
       <directionalLight position={[-10, 10, -10]} intensity={0.4} />
 
-      <ViewCube controlsRef={controlsRef} focusRef={modelRef} placement="top-right" showPan={false} showRotate={false} showZoom={false} showViewCube={false}/>
+      <ViewCube controlsRef={controlsRef} focusRef={modelRef} placement="top-right" showPan={false} showRotate={false} showZoom={false} showViewCube={false} />
 
       <group ref={modelRef}>
         <SceneManager

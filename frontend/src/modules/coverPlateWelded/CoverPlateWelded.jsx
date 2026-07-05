@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../constants/UIStrings';
 import { EngineeringModule } from '../shared/components/EngineeringModule';
 import { coverPlateWeldedConfig } from './configs/coverPlateWeldedConfig';
 import { coverPlateWeldedOutputConfig } from './configs/coverPlateWeldedOutputConfig';
@@ -7,7 +8,7 @@ const CoverPlateWelded = () => {
     <EngineeringModule
       moduleConfig={coverPlateWeldedConfig}
       outputConfig={coverPlateWeldedOutputConfig}
-      title="Cover Plate — Welded"
+      title={UI_STRINGS.COVER_PLATE_WELDED}
     />
   );
 };

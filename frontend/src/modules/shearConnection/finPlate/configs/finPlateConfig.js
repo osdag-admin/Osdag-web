@@ -53,7 +53,7 @@ export const finPlateConfig = {
     const connectivity = extraState?.selectedOption || inputs.connectivity;
 
     // Basic numeric loads must not be empty
-    if (inputs.load_shear === "" || inputs.load_axial === "") {
+    if (inputs.load_shear === "") {
       return { isValid: false, message: UI_STRINGS.PLEASE_INPUT_ALL_FIELDS };
     }
 
@@ -183,8 +183,8 @@ export const finPlateConfig = {
     {
       title: UI_STRINGS.FACTORED_LOADS,
       fields: [
-        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE, type: "number" },
-        { key: "load_axial", label: UI_STRINGS.AXIAL_FORCE + "*", type: "number", required: true }
+        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE + "*", type: "number", required: true },
+        { key: "load_axial", label: UI_STRINGS.AXIAL_FORCE, type: "number" }
       ]
     },
     {

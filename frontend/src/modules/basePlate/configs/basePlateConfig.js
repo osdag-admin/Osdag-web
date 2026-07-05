@@ -119,12 +119,12 @@ export const basePlateConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_axial", label: "Axial Compression (kN) *", type: "number" },
+        { key: "load_axial", label: "Axial Compression (kN)", type: "number" },
         { key: "load_axial_tension", label: "Axial Tension/Uplift (kN)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity === "Moment Base Plate" },
-        { key: "load_shear_major", label: "Shear Force (kN) * - Along major axis (z-z)", type: "number" },
-        { key: "load_shear_minor", label: "Shear Force (kN) * - Along minor axis (y-y)", type: "number" },
-        { key: "load_moment_major", label: "Bending Moment (kNm) * - Major axis (M\u2082-z)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base" },
-        { key: "load_moment_minor", label: "Bending Moment (kNm) * - Minor axis (My-y)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base" },
+        { key: "load_shear_major", label: "Shear Force (kN) * - Along major axis (z-z)", type: "number", required: true },
+        { key: "load_shear_minor", label: "Shear Force (kN) * - Along minor axis (y-y)", type: "number", required: true },
+        { key: "load_moment_major", label: "Bending Moment (kNm) * - Major axis (M\u2082-z)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
+        { key: "load_moment_minor", label: "Bending Moment (kNm) * - Minor axis (My-y)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
       ],
     },
     {

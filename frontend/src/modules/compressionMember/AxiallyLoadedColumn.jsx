@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../constants/UIStrings';
 import { EngineeringModule } from "../shared/components/EngineeringModule";
 import { axiallyLoadedColumnConfig } from "./configs/axiallyLoadedColumnConfig";
 import { axiallyLoadedColumnOutputConfig } from "./configs/axiallyLoadedColumnOutputConfig";
@@ -7,7 +8,7 @@ function AxiallyLoadedColumn() {
     <EngineeringModule
       moduleConfig={axiallyLoadedColumnConfig}
       outputConfig={axiallyLoadedColumnOutputConfig}
-      title="Axially Loaded Column"
+      title={UI_STRINGS.AXIALLY_LOADED_COLUMN}
     />
   );
 }

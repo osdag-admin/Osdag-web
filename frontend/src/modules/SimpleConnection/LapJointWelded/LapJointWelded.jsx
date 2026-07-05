@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../../constants/UIStrings';
 import { EngineeringModule } from '../../shared/components/EngineeringModule';
 import { lapJointWeldedConfig } from './config/lapJointWeldedConfig';
 import { lapJointWeldedOutputConfig } from './config/lapJointWeldedOutputConfig';
@@ -8,7 +9,7 @@ function LapJointWelded() {
         <EngineeringModule
             moduleConfig={lapJointWeldedConfig}
             outputConfig={lapJointWeldedOutputConfig}
-            title="Lap Joint — Welded"
+            title={UI_STRINGS.LAP_JOINT_WELDED}
         />
     );
 }

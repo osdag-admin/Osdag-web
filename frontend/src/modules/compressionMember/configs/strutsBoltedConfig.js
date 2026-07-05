@@ -93,7 +93,7 @@ export const strutsBoltedConfig = {
     if (!inputs.section_profile) {
       return { isValid: false, message: "Please select a Section Profile." };
     }
-    if (!inputs.length || !inputs.axial_force) {
+    if (!inputs.length ) {
       return { isValid: false, message: "Please enter valid Length and Axial Force." };
     }
     return { isValid: true };
@@ -342,7 +342,7 @@ export const strutsBoltedConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "axial_force", label: "Axial Force (kN)*", type: "number", required: true }
+        { key: "axial_force", label: "Axial Force (kN)", type: "number" }
       ]
     },
     {

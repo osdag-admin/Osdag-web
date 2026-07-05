@@ -101,9 +101,9 @@ export const coverPlateWeldedConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)", type: "number" },
-        { key: "load_moment", label: "Moment Force(kN)", type: "number" },
-        { key: "load_axial", label: "Axial Force(kN)*", type: "number", required: true }
+        { key: "load_shear", label: "Shear Force(kN)*", type: "number", required: true },
+        { key: "load_moment", label: "Moment Force(kN)*", type: "number", required: true },
+        { key: "load_axial", label: "Axial Force(kN)", type: "number" }
       ]
     },
     {

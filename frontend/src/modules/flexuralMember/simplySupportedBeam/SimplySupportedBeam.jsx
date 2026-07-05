@@ -1,3 +1,4 @@
+import { UI_STRINGS } from '../../../constants/UIStrings';
 import { EngineeringModule } from '../../shared/components/EngineeringModule';
 import { simplySupportedBeamConfig } from './configs/simplySupportedBeamConfig';
 import { simplySupportedBeamOutputConfig } from './configs/simplySupportedBeamOutputConfig';
@@ -7,7 +8,7 @@ function SimplySupportedBeam() {
     <EngineeringModule
       moduleConfig={simplySupportedBeamConfig}
       outputConfig={simplySupportedBeamOutputConfig}
-      title="Simply Supported Beam(Flexural Member)"
+      title={UI_STRINGS.SIMPLY_SUPPORTED_BEAM}
     />
   );
 }

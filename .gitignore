@@ -90,4 +90,4 @@ pgdata/
 
 *.osi
 
-.venv
+**/.venv
