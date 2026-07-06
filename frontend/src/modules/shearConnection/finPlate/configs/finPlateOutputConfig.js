@@ -57,6 +57,7 @@ export const finPlateOutputConfig = {
           { key: "Bolt.EndDist", label: "End Distance (mm)" },
           { key: "Bolt.Gauge", label: "Gauge Distance (mm)" },
           { key: "Bolt.EdgeDist", label: "Edge Distance (mm)" },
+          { key: "Bolt.Diameter", label: "Hole Distance (mm)" },
         ],
         diagram: {
           origin: "right",

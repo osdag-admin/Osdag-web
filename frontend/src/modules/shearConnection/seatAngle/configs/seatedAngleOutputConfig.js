@@ -7,7 +7,7 @@ export const seatedAngleOutputConfig = {
       { key: "Bolt.number", label: "Number of Bolts" },
       { key: "Bolt.Shear", label: "Shear Capacity (kN)" },
       { key: "Bolt.Bearing", label: "Bearing Capacity (kN)" },
-      { key: "Bolt.Betalg", label: "β<sub>lg</sub>" },
+      { key: "Bolt.Betalg", label: "βlg" },
       { key: "Bolt.Capacity", label: "Bolt Value (kN)" },
       { key: "Bolt.Force (kN)", label: "Bolt Shear Force (kN)" },
     ],
@@ -70,12 +70,13 @@ export const seatedAngleOutputConfig = {
     spacing: {
       SpacingModal_Seated_col: {
         fields: [
-          { key: "Bolt.Rows_seated_col", label: "Rows of Bolts" },
-          { key: "Bolt.Cols_seated_col", label: "Columns of Bolts" },
+          // { key: "Bolt.Rows_seated_col", label: "Rows of Bolts" },
+          // { key: "Bolt.Cols_seated_col", label: "Columns of Bolts" },
           { key: "Bolt.EndDist_seated_col", label: "End Distance (mm)" },
-          { key: "Bolt.GaugeCentral_seated_col", label: "Central Gauge (mm)" },
-          { key: "Bolt.Gauge_seated_col", label: "Gauge Distance (mm)" },
+          // { key: "Bolt.GaugeCentral_seated_col", label: "Central Gauge (mm)" },
+          { key: "Bolt.GaugeCentral_seated_col", label: "Gauge Distance (mm)" },
           { key: "Bolt.EdgeDist_seated_col", label: "Edge Distance (mm)" },
+          { key: "Bolt.Diameter", label: "Hole Distance (mm)" },
         ],
         diagram: {
           origin: "left",
@@ -96,11 +97,12 @@ export const seatedAngleOutputConfig = {
       },
       SpacingModal_Seated_beam: {
         fields: [
-          { key: "Bolt.Rows_seated_beam", label: "Rows of Bolts" },
-          { key: "Bolt.Cols_seated_beam", label: "Columns of Bolts" },
+          // { key: "Bolt.Rows_seated_beam", label: "Rows of Bolts" },
+          // { key: "Bolt.Cols_seated_beam", label: "Columns of Bolts" },
           { key: "Bolt.EndDist_seated_beam", label: "End Distance (mm)" },
           { key: "Bolt.Gauge_seated_beam", label: "Gauge Distance (mm)" },
           { key: "Bolt.EdgeDist_seated_beam", label: "Edge Distance (mm)" },
+          { key: "Bolt.Diameter", label: "Hole Distance (mm)" },
         ],
         diagram: {
           origin: "left",
@@ -121,11 +123,12 @@ export const seatedAngleOutputConfig = {
       },
       SpacingModal_Top_col: {
         fields: [
-          { key: "Bolt.Rows_top_col", label: "Rows of Bolts" },
-          { key: "Bolt.Cols_top_col", label: "Columns of Bolts" },
+          // { key: "Bolt.Rows_top_col", label: "Rows of Bolts" },
+          // { key: "Bolt.Cols_top_col", label: "Columns of Bolts" },
           { key: "Bolt.EndDist_top_col", label: "End Distance (mm)" },
           { key: "Bolt.Gauge_top_col", label: "Gauge Distance (mm)" },
           { key: "Bolt.EdgeDist_top_col", label: "Edge Distance (mm)" },
+          { key: "Bolt.Diameter", label: "Hole Distance (mm)" },
         ],
         diagram: {
           origin: "left",
@@ -146,11 +149,12 @@ export const seatedAngleOutputConfig = {
       },
       SpacingModal_Top_beam: {
         fields: [
-          { key: "Bolt.Rows_top_beam", label: "Rows of Bolts" },
-          { key: "Bolt.Cols_top_beam", label: "Columns of Bolts" },
+          // { key: "Bolt.Rows_top_beam", label: "Rows of Bolts" },
+          // { key: "Bolt.Cols_top_beam", label: "Columns of Bolts" },
           { key: "Bolt.EndDist_top_beam", label: "End Distance (mm)" },
           { key: "Bolt.Gauge_top_beam", label: "Gauge Distance (mm)" },
           { key: "Bolt.EdgeDist_top_beam", label: "Edge Distance (mm)" },
+          { key: "Bolt.Diameter", label: "Hole Distance (mm)" },
         ],
         diagram: {
           origin: "left",

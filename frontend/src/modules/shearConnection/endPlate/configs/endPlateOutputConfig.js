@@ -77,6 +77,10 @@ export const endPlateOutputConfig = {
             key: "Bolt.EdgeDist",
             label: "Edge Distance (mm)",
           },
+          {
+            key: "Bolt.Diameter",
+            label: "Hole Distance (mm)",
+          },
         ],
         diagram: {
           origin: "right",

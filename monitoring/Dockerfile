@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt --break-system-packages
 
 COPY metrics_collector.py .
 
-CMD ["python3", "-u", "metrics_collector.py"]
+# CMD ["python3", "-u", "metrics_collector.py"]

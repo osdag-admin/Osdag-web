@@ -177,29 +177,29 @@ services:
       influxdb:
         condition: service_healthy
 
-  metrics-collector:
-    build:
-      context: ./monitoring
-      dockerfile: Dockerfile
-      network: host
-    platform: linux/amd64
-    restart: unless-stopped
-    pid: "host"          # share PID namespace so psutil reads host CPU/RAM
-    environment:
-      INFLUXDB_URL:        http://influxdb:8086
-      INFLUXDB_TOKEN:      osdag-super-secret-token
-      INFLUXDB_ORG:        osdag
-      INFLUXDB_BUCKET:     osdag_metrics
-      REDIS_URL:           redis://redis:6379/0
-      SAMPLE_INTERVAL_S:   "0.5"
-      HOST_LABEL:          osdag-server
-    volumes:
-      - ./monitoring:/app
-    depends_on:
-      influxdb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+  # metrics-collector:
+  #   build:
+  #     context: ./monitoring
+  #     dockerfile: Dockerfile
+  #     network: host
+  #   platform: linux/amd64
+  #   restart: unless-stopped
+  #   pid: "host"          # share PID namespace so psutil reads host CPU/RAM
+  #   environment:
+  #     INFLUXDB_URL:        http://influxdb:8086
+  #     INFLUXDB_TOKEN:      osdag-super-secret-token
+  #     INFLUXDB_ORG:        osdag
+  #     INFLUXDB_BUCKET:     osdag_metrics
+  #     REDIS_URL:           redis://redis:6379/0
+  #     SAMPLE_INTERVAL_S:   "0.5"
+  #     HOST_LABEL:          osdag-server
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     influxdb:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
 
 volumes:
   postgres_data_dev:

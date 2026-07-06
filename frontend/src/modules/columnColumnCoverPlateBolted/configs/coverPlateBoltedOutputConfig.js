@@ -75,6 +75,18 @@ export const coverPlateBoltedOutputConfig = {
       WebSpacingDetailsModal: {
         fields: [
           {
+            key: "Web_Plate.Height (mm)",
+            label: "Plate Length (mm)",
+          },
+          {
+            key: "Web_Plate.Width",
+            label: "Plate Width (mm)",
+          },
+          {
+            key: "Bolt.Diameter",
+            label: "Bolt Diameter (mm)",
+          },
+          {
             key: "Web_plate.pitch_provided_web_spacing",
             label: "Pitch Distance (mm)",
           },
@@ -89,6 +101,14 @@ export const coverPlateBoltedOutputConfig = {
           {
             key: "Web_plate.edge_dist_provided_web_spacing",
             label: "Edge Distance (mm)",
+          },
+          {
+            key: "Web_plate.Bolt_Line_web_bolt_capacity",
+            label: "Number Of Columns (mm)",
+          },
+          {
+            key: "Web_plate.Bolt_OneLine_web_bolt_capacity",
+            label: "Number Of Rows (mm)",
           },
         ],
         diagram: {
@@ -109,6 +129,18 @@ export const coverPlateBoltedOutputConfig = {
       FlangeSpacingDetailsModal: {
         fields: [
           {
+            key: "Flange_Plate.Width (mm)",
+            label: "Plate Length (mm)",
+          },
+          {
+            key: "flange_plate.Length",
+            label: "Plate Width (mm)",
+          },
+          {
+            key: "Bolt.Diameter",
+            label: "Bolt Diameter (mm)",
+          },
+          {
             key: "Flange_plate.pitch_provided_flange_spacing",
             label: "Pitch Distance (mm)",
           },
@@ -124,14 +156,22 @@ export const coverPlateBoltedOutputConfig = {
             key: "Flange_plate.edge_dist_provided_flange_spacing",
             label: "Edge Distance (mm)",
           },
+          {
+            key: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
+            label: "Number Of Columns (mm)",
+          },
+          {
+            key: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            label: "Number Of Rows (mm)",
+          },
         ],
         diagram: {
           layout: "symmetric",
           props: {
-            plateWidth: "flange_plate.Length",
-            plateHeight: "Flange_Plate.Width (mm)",
-            rows: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
-            cols: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            plateWidth: "Flange_Plate.Width (mm)",
+            plateHeight: "flange_plate.Length",
+            rows: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            cols: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
             end: "Flange_plate.end_dist_provided_flange_spacing",
             pitch: "Flange_plate.pitch_provided_flange_spacing",
             gauge: "Flange_plate.gauge_provided_flange_spacing",
