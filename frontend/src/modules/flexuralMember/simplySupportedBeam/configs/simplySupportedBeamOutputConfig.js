@@ -20,6 +20,16 @@ export const simplySupportedBeamOutputConfig = {
       { key: "Shear.High", label: "High Shear Check" }
     ],
 
+    "Lateral Torsional Buckling Details": [
+      { key: "T.Constant", label: "Torsional Constant (mm⁴)" },
+      { key: "W.Constant", label: "Warping Constant (mm⁶)" },
+      { key: "Imperfection.LTB", label: "Imperfection" },
+      { key: "SR.LTB", label: "Stress Reduction" },
+      { key: "NDESR.LTB", label: "ND Eff. Senderness" },
+      { key: "Design.Strength", label: "Compressive Stress (MPa)" },
+      { key: "Elastic.Moment", label: "Critical Moment (Mcr) (kNm)" }
+    ],
+
     "Web Buckling Details": [
       { key: "ESR", label: "Effective Slenderness Ratio" },
       { key: "MajorBucklingStress", label: "Buckling Stress (MPa)" },
