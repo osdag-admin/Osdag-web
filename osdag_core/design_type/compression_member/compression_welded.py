@@ -2360,79 +2360,115 @@ class Compression_welded(Member):
         """
         Function to calculate weld length, plate length and plate height
         """
+        # Warn if the heel/toe force split yields a non-positive flange weld.
+        def _check_flange_positive(l_heel, l_toe, label):
+            if l_toe <= 0 or l_heel <= 0:
+                self.logger.warning(
+                    ": weld_plate_length — {}: heel/toe weld length is non-positive "
+                    "(heel={:.1f} mm, toe={:.1f} mm). The web weld is consuming more "
+                    "than its share of the effective length.".format(label, l_heel, l_toe)
+                )
+
+        # Single Channel
         if design_dictionary[KEY_SEC_PROFILE] == "Channels":
-            if web == None:
+            if web is None:
                 self.web_weld = self.section_property.depth - 2 * self.weld.size
             else:
                 self.web_weld = 0.0
-            self.flange_weld = round_up(((self.weld.effective - self.web_weld) / 2), 1, 50)
-            self.weld.length = (self.web_weld + 2 * self.flange_weld)
+            equal_flange = round_up((self.weld.effective - self.web_weld) / 2, 1, 10)
+            self.flange_weld_heel = equal_flange
+            self.flange_weld_toe = equal_flange
+            self.flange_weld = equal_flange
+            self.weld.length = self.web_weld + 2 * self.flange_weld
 
+        # Back-to-Back Channels
         elif design_dictionary[KEY_SEC_PROFILE] == 'Back to Back Channels':
-            if web == None:
+            if web is None:
                 self.web_weld = 2 * (self.section_property.depth - 2 * self.weld.size)
             else:
                 self.web_weld = 0.0
-            self.flange_weld = round_up(((self.weld.effective - self.web_weld) / 4), 1, 50)
-            self.weld.length = (self.web_weld + 4 * self.flange_weld)
+            equal_flange = round_up((self.weld.effective - self.web_weld) / 4, 1, 10)
+            self.flange_weld_heel = equal_flange
+            self.flange_weld_toe = equal_flange
+            self.flange_weld = equal_flange
+            self.weld.length = self.web_weld + 4 * self.flange_weld
 
+        # Back-to-Back / Star Angles, Long Leg connected
         elif design_dictionary[KEY_SEC_PROFILE] in ["Star Angles", Profile_name_2, Profile_name_3] and design_dictionary[
             KEY_LOCATION] == "Long Leg":
-            if web == None:
+            if web is None:
                 self.web_weld = 2 * (self.section_property.max_leg - 2 * self.weld.size)
             else:
                 self.web_weld = 0.0
-            length_weld = self.section_property.angle_weld_length(self.weld.strength, self.web_weld/2, self.res_force/2, 
-                                                                  self.section_property.Cy, self.section_property.max_leg)
-            self.flange_weld = round_up((length_weld), 1, 50)
-            self.weld.length = (self.web_weld + 4 * self.flange_weld)
+            l_heel, l_toe = self.section_property.angle_weld_length(
+                self.weld.strength, self.web_weld / 2, self.res_force / 2,
+                self.section_property.Cy, self.section_property.max_leg)
+            _check_flange_positive(l_heel, l_toe, "B2B/Star Angles — Long Leg")
+            self.flange_weld_heel = round_up(l_heel, 1, 10)
+            self.flange_weld_toe = round_up(l_toe, 1, 10)
+            self.flange_weld = self.flange_weld_heel
+            self.weld.length = self.web_weld + 2 * self.flange_weld_heel + 2 * self.flange_weld_toe
 
+        # Back-to-Back / Star Angles, Short Leg connected
         elif design_dictionary[KEY_SEC_PROFILE] in ["Star Angles", Profile_name_2, Profile_name_3] and design_dictionary[
             KEY_LOCATION] == "Short Leg":
-            if web == None:
+            if web is None:
                 self.web_weld = 2 * (self.section_property.min_leg - 2 * self.weld.size)
             else:
                 self.web_weld = 0.0
-            length_weld = self.section_property.angle_weld_length(self.weld.strength, self.web_weld/2, self.res_force/2, 
-                                                                  self.section_property.Cz, self.section_property.min_leg)
-            self.flange_weld = round_up((length_weld), 1, 50)
-            self.weld.length = (self.web_weld + 4 * self.flange_weld)
+            l_heel, l_toe = self.section_property.angle_weld_length(
+                self.weld.strength, self.web_weld / 2, self.res_force / 2,
+                self.section_property.Cz, self.section_property.min_leg)
+            _check_flange_positive(l_heel, l_toe, "B2B/Star Angles — Short Leg")
+            self.flange_weld_heel = round_up(l_heel, 1, 10)
+            self.flange_weld_toe = round_up(l_toe, 1, 10)
+            self.flange_weld = self.flange_weld_heel
+            self.weld.length = self.web_weld + 2 * self.flange_weld_heel + 2 * self.flange_weld_toe
 
+        # Single Angle, Long Leg connected
         elif design_dictionary[KEY_SEC_PROFILE] == Profile_name_1 and design_dictionary[KEY_LOCATION] == "Long Leg":
-            if web == None:
-                self.web_weld = (self.section_property.max_leg - 2 * self.weld.size)
+            if web is None:
+                self.web_weld = self.section_property.max_leg - 2 * self.weld.size
             else:
                 self.web_weld = 0.0
-            length_weld = self.section_property.angle_weld_length(self.weld.strength, self.web_weld, self.res_force, 
-                                                                  self.section_property.Cy, self.section_property.max_leg)
-            self.flange_weld = round_up((length_weld), 1, 50)
-            self.weld.length = (self.web_weld + 2 * self.flange_weld)
+            l_heel, l_toe = self.section_property.angle_weld_length(
+                self.weld.strength, self.web_weld, self.res_force,
+                self.section_property.Cy, self.section_property.max_leg)
+            _check_flange_positive(l_heel, l_toe, "Single Angle — Long Leg")
+            self.flange_weld_heel = round_up(l_heel, 1, 10)
+            self.flange_weld_toe = round_up(l_toe, 1, 10)
+            self.flange_weld = self.flange_weld_heel
+            self.weld.length = self.web_weld + self.flange_weld_heel + self.flange_weld_toe
 
+        # Single Angle, Short Leg connected (catch-all)
         else:
-            if web == None:
-                self.web_weld = (self.section_property.min_leg - 2 * self.weld.size)
+            if web is None:
+                self.web_weld = self.section_property.min_leg - 2 * self.weld.size
             else:
                 self.web_weld = 0.0
-            length_weld = self.section_property.angle_weld_length(self.weld.strength, self.web_weld, self.res_force, 
-                                                                  self.section_property.Cz, self.section_property.min_leg)
-            self.flange_weld = round_up((length_weld), 1, 50)
-            self.weld.length = (self.web_weld + 2 * self.flange_weld)
+            l_heel, l_toe = self.section_property.angle_weld_length(
+                self.weld.strength, self.web_weld, self.res_force,
+                self.section_property.Cz, self.section_property.min_leg)
+            _check_flange_positive(l_heel, l_toe, "Single Angle — Short Leg")
+            self.flange_weld_heel = round_up(l_heel, 1, 10)
+            self.flange_weld_toe = round_up(l_toe, 1, 10)
+            self.flange_weld = self.flange_weld_heel
+            self.weld.length = self.web_weld + self.flange_weld_heel + self.flange_weld_toe
 
-        self.plate.length = self.flange_weld + max((4 * self.weld.size), 30)
+        end_return = max(4 * self.weld.size, 30)
+        self.plate.length = self.flange_weld + end_return
         if design_dictionary[KEY_SEC_PROFILE] == "Star Angles" and design_dictionary[KEY_LOCATION] == "Long Leg":
-            self.plate.height = 2 * self.section_property.max_leg + max((4 * self.weld.size), 30)
+            self.plate.height = 2 * self.section_property.max_leg + end_return
         elif design_dictionary[KEY_SEC_PROFILE] == "Star Angles" and design_dictionary[KEY_LOCATION] == "Short Leg":
-            self.plate.height = 2 * self.section_property.min_leg + max((4 * self.weld.size), 30)
+            self.plate.height = 2 * self.section_property.min_leg + end_return
         elif design_dictionary[KEY_SEC_PROFILE] in [Profile_name_1, Profile_name_2, Profile_name_3] and design_dictionary[KEY_LOCATION] == "Short Leg":
-            self.plate.height = self.section_property.min_leg + max((4 * self.weld.size), 30)
+            self.plate.height = self.section_property.min_leg + end_return
         elif design_dictionary[KEY_SEC_PROFILE] in [Profile_name_1, Profile_name_2, Profile_name_3] and design_dictionary[KEY_LOCATION] == "Long Leg":
-            self.plate.height = self.section_property.max_leg + max((4 * self.weld.size), 30)
+            self.plate.height = self.section_property.max_leg + end_return
         elif design_dictionary[KEY_SEC_PROFILE] in ['Channels', 'Back to Back Channels']:
-            # For Channels, use depth attribute
-            self.plate.height = self.section_property.depth + max((4 * self.weld.size), 30)
+            self.plate.height = self.section_property.depth + end_return
         else:
-            # Default fallback for angles
-            self.plate.height = self.section_property.max_leg + max((4 * self.weld.size), 30)
+            self.plate.height = self.section_property.max_leg + end_return
 
     def get_plate_thickness(self, design_dictionary):
         """
