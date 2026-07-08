@@ -192,7 +192,11 @@ def create_from_input(input_values: Dict[str, Any]) -> Compression_bolted:
         input_values["Member.Designation"] = [
             str(x).strip() for x in md if x is not None and str(x).strip() != ""
         ]
-    
+
+    # End conditions use core keys End_1/End_2 (frontend sends Member.End_1/2).
+    input_values["End_1"] = input_values.get("Member.End_1", "Fixed")
+    input_values["End_2"] = input_values.get("Member.End_2", "Fixed")
+
     module.set_input_values(input_values)
     # Restore the display name for reports (set_input_values overrides self.module with the raw KEY_MODULE value)
     module.module = KEY_DISP_STRUT_BOLTED_END_GUSSET
