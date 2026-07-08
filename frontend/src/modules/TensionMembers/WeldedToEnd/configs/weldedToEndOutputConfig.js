@@ -25,19 +25,20 @@ export const weldedToEndOutputConfig = {
             { key: "Plate.Yield", label: "Tension Yielding Capacity (kN)" },
             { key: "Plate.BlockShear", label: "Block Shear Capacity (kN)" },
             { key: "Plate.Capacity", label: "Tension Capacity (kN)" },
-            { key: "PlateCapacityModal", label: "Capacity" },
+            // { key: "PlateCapacityModal", label: "Capacity" },
 
         ],
-        "Intermittent Connection": [
+        "Intermittent Connection": [],
+        "Connection Details": [
             { key: "Intermittent.Connection", label: "Connection (nos)" },
             { key: "Intermittent.Spacing", label: "Spacing (mm)" },
         ],
 
-        "Intermittent Weld Details": [
+        "Weld Details": [
             { key: "InterWeld.Size", label: "Size (mm)" },
         ],
 
-        "Intermittent Plate Details": [
+        "Plate Details": [
             { key: "Plate.InterHeight", label: "Height (mm)" },
             { key: "Plate.InterLength", label: "Length (mm)" },
         ],
@@ -67,4 +68,4 @@ export const weldedToEndOutputConfig = {
             ]
         }
     }
-}; 
+};
