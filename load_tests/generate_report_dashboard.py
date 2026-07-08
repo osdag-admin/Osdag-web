@@ -99,7 +99,7 @@ html_content = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axially Loaded Column Backend Load Test Dashboard</title>
+    <title>Plate-Girder Backend Load Test Dashboard</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -546,7 +546,7 @@ html_content = """<!DOCTYPE html>
         <div class="header-title-wrapper">
             <div>
                 <h1>Load Test Dashboard</h1>
-                <p>Axially Loaded Column Backend Stress Test Results Analysis</p>
+                <p>Plate-Girder Backend Stress Test Results Analysis</p>
             </div>
             <div class="server-badge">Target Host: http://10.104.135.9:8000</div>
         </div>

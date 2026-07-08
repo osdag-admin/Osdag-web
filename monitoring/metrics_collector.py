@@ -139,6 +139,25 @@ def collect_system_metrics():
         .time(ts, WritePrecision.NS)
     )
 
+    # Temperatures
+    if hasattr(psutil, "sensors_temperatures"):
+        try:
+            temps = psutil.sensors_temperatures()
+            for name, entries in temps.items():
+                for entry in entries:
+                    if entry.label and 'core' in entry.label.lower():
+                        core_label = entry.label.replace(" ", "_").lower()
+                        points.append(
+                            Point("osdag_system")
+                            .tag("host", HOST_LABEL)
+                            .tag("metric_type", "temperature")
+                            .tag("cpu_core", core_label)
+                            .field("temp_celsius", float(entry.current))
+                            .time(ts, WritePrecision.NS)
+                        )
+        except Exception as e:
+            pass
+
     return points
 
 

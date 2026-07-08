@@ -634,6 +634,30 @@
           "refId": "A"
         }
       ]
+    },
+    {
+      "id": 21,
+      "title": "🌡️ CPU Core Temperature (°C)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 45, "w": 24, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": { "lineWidth": 1, "fillOpacity": 5 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "right", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_system\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"temperature\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temp_celsius\")\n  |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)\n  |> yield(name: \"temp\")",
+          "refId": "A"
+        }
+      ]
     }
   ],
   "templating": {
