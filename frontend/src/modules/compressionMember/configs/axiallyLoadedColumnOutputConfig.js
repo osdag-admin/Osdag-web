@@ -27,7 +27,7 @@ export const axiallyLoadedColumnOutputConfig = {
     "Design Results": [
       { key: "MinCompStress", label: "Min. Design Comp.Stress (MPa)" },
       { key: "MaterialStress", label: "fy, γm0" },
-      { key: "Fcd", label: "Design Compressive Stress fcd (MPa)" },
+      { key: "Fcd", label: "fcd" },
       { key: "Design.Strength", label: "Design Capacity (kN)" },
     ],
   },

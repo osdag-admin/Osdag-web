@@ -573,7 +573,7 @@ class ColumnDesign(Member):
               '', True)
         out_list.append(t1)
 
-        t1 = (KEY_MAT_STRESS, KEY_DISP_MAT_STRESS, TYPE_TEXTBOX, round(self.f_cd_2, 2) if flag else '', True)
+        t1 = (KEY_MAT_STRESS, KEY_DISP_MAT_STRESS, TYPE_TEXTBOX, round(self.result_fcd_2, 2) if flag else '', True)
         out_list.append(t1)
 
         t1 = (KEY_FCD, KEY_DISP_FCD, TYPE_TEXTBOX, round(self.result_fcd, 2) if flag else '', True)
