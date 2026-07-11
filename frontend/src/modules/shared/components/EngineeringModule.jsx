@@ -36,6 +36,8 @@ import { MODULE_KEY_SEAT_ANGLE, MODULE_KEY_FIN_PLATE, MODULE_KEY_CLEAT_ANGLE, MO
 import { deleteAllCustomSections } from "../../../datasources/sectionsDataSource";
 import { openOsiFile } from "../../../datasources/osiDataSource";
 import { useViewCamera } from "./cad";
+import { usePlateGirderOptimization } from "../hooks/usePlateGirderOptimization";
+import OptimizationGraph from "./OptimizationGraph";
 import { EngineeringProvider } from "../context/EngineeringContext";
 import { EngineeringHeader } from "./EngineeringHeader";
 import { EngineeringLayout } from "./EngineeringLayout";
@@ -107,7 +109,7 @@ export const EngineeringModule = ({
   const {
     handleSubmit, performReset, saveOutput, clearDesignResults, loadSavedOutputs, service,
     resetModuleState, refetchModuleOptions, handleCreateDesignReport, handleCancelDesignReport,
-    handleQuitClick
+    handleQuitClick, loadOutputs, loadCadModel
   } = actions;
 
   const { handleCreateProject, projectCreationModal } = useProjectCreation({
@@ -383,6 +385,35 @@ export const EngineeringModule = ({
   }, [status.step, output, isRedesigning, isMobile]);
 
 
+  // PSO optimization (plate girder Optimized design type). Idle for other modules.
+  const {
+    optimizationPlotData,
+    optimizationDone,
+    showOptimizationGraph,
+    setShowOptimizationGraph,
+    startPsoOptimization,
+  } = usePlateGirderOptimization({
+    onComplete: (formattedOutput, _rawLogs, cadPaths) => {
+      if (formattedOutput && Object.keys(formattedOutput).length > 0) {
+        loadOutputs(formattedOutput);
+      }
+      if (cadPaths && Object.keys(cadPaths).length > 0) {
+        loadCadModel(cadPaths);
+      }
+      setStatus({ step: DESIGN_STATUS.COMPLETE, message: "Optimization complete!", error: null });
+      setTimeout(() => {
+        setStatus({ step: DESIGN_STATUS.IDLE, message: "", error: null });
+      }, 1200);
+    },
+    onError: (msg) => {
+      const text = msg || "Optimization failed";
+      message.error(text);
+      setStatus({ step: DESIGN_STATUS.ERROR, message: text, error: new Error(text) });
+      setIsInputLocked(false);
+      setIsRedesigning(false);
+    },
+  });
+
   const handleSubmitEnhanced = useCallback(async () => {
     setIsInputLocked(false);
     // If there's already an existing design, completely reset everything
@@ -412,6 +443,20 @@ export const EngineeringModule = ({
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
+    // Optimized (plate girder) → run PSO over WebSocket and show the optimization
+    // graph popup instead of the synchronous design.
+    if (moduleConfig.isOptimized?.(inputs)) {
+      try {
+        const params = moduleConfig.buildSubmissionParams(inputs, allSelected, contextData, extraState);
+        startPsoOptimization(params);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsRedesigning(false);
+      }
+      return;
+    }
+
     // Call the actual submit function
     try {
       await handleSubmit();
@@ -421,7 +466,7 @@ export const EngineeringModule = ({
       // Reset the redesigning state after completion
       setIsRedesigning(false);
     }
-  }, [isDesignComplete, renderBoolean, output, isMobile, clearDesignResults, resetModuleState, handleSubmit, resetDocks]);
+  }, [isDesignComplete, renderBoolean, output, isMobile, clearDesignResults, resetModuleState, handleSubmit, resetDocks, moduleConfig, inputs, allSelected, contextData, extraState, startPsoOptimization]);
 
   // Toggle reset button visibility
   const toggleResetButton = () => {
@@ -1540,6 +1585,23 @@ ${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
           }
         }}
       />
+
+      {/* Optimization graph popup (plate girder Optimized / PSO) */}
+      {showOptimizationGraph && (
+        <div
+          className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/40 p-2 sm:p-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full h-full sm:w-[92vw] sm:h-[88vh] max-w-[1400px] bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-300">
+            <OptimizationGraph
+              data={optimizationPlotData}
+              optimizationDone={optimizationDone}
+              onClose={() => setShowOptimizationGraph(false)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Hover tooltip overlay */}
       {hoverText && (
