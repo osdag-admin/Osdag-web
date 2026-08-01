@@ -3,22 +3,16 @@ On Cantilever Beam Adapter
 Implements the business logic for the On-Cantilever-Beam flexure module.
 Uses Flexure_Cantilever from osdag_core.
 """
-from backend.apps.modules.simple_connection.shared import setup_for_cad
 from osdag_core.Common import KEY_DISP_FLEXURE2
 from apps.core.utils import (
     MissingKeyError, InvalidInputTypeError,
     contains_keys,
 )
-from OCC.Core.BRep import BRep_Builder
-from OCC.Core.TopoDS import TopoDS_Compound
-from OCC.Core.BRepTools import breptools_Write
-from osdag_core.cad.common_logic import CommonDesignLogic
 from osdag_core.design_type.flexural_member.flexure_cantilever import Flexure_Cantilever
-import os
+from apps.modules.flexure_member import shared as fm_shared
 import json
 import traceback
 from typing import Dict, Any, List
-from apps.core.utils import write_stl
 
 
 def get_required_keys() -> List[str]:
@@ -237,6 +231,12 @@ def generate_output(input_values: Dict[str, Any]):
     return output, logs
 
 
+def _get_shapes(cld):
+    """Cantilever beam shape: reuses createSimplySupportedBeam (structurally similar I-section geometry)."""
+    components = cld.createSimplySupportedBeam()
+    return list(components.values()) if components else []
+
+
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
     """
     Generate CAD model for On-Cantilever-Beam.
@@ -252,65 +252,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
         traceback.print_exc()
         return ''
 
-    module.module = KEY_DISP_FLEXURE2
-    module.mainmodule = 'Flexure Member'
-
-    # Initialize CAD logic
-    try:
-        cld = CommonDesignLogic(None, None, '', KEY_DISP_FLEXURE2, module.mainmodule)
-        setup_for_cad(cld, module)
-        cld.module_object = module
-    except Exception:
-        traceback.print_exc()
-        return ''
-
-    # Generate components using the simply-supported beam CAD shape
-    # (cantilever beam shape is structurally similar - same I-section geometry)
-    try:
-        components = cld.createSimplySupportedBeam()
-    except Exception:
-        traceback.print_exc()
-        return ''
-
-    if not components:
-        print("No components returned from createSimplySupportedBeam()")
-        return ''
-
-    # Combine shapes into a single compound
-    try:
-        builder = BRep_Builder()
-        compound = TopoDS_Compound()
-        builder.MakeCompound(compound)
-
-        for shape in components.values():
-            if shape is not None:
-                builder.Add(compound, shape)
-
-        model = compound
-    except Exception:
-        traceback.print_exc()
-        return ''
-
-    # Ensure output directory exists
-    cad_models_path = os.path.join(os.getcwd(), 'file_storage', 'cad_models')
-    os.makedirs(cad_models_path, exist_ok=True)
-
-    file_name = f"{session}_{section}.brep"
-    file_path = os.path.join('file_storage', 'cad_models', file_name)
-    full_path = os.path.join(os.getcwd(), file_path)
-
-    # Write BREP
-    try:
-        breptools_Write(model, full_path)
-    except Exception:
-        traceback.print_exc()
-        return ''
-
-    # Write STL (optional, non-critical)
-    try:
-        stl_path = full_path.replace('.brep', '.stl')
-        write_stl(model, stl_path)
-    except Exception as stle:
-        print("STL write warning:", stle)
-
-    return file_path
+    return fm_shared.create_cad_model(
+        module, KEY_DISP_FLEXURE2, section, session, _get_shapes,
+        no_shapes_message="No components returned from createSimplySupportedBeam()",
+    )

@@ -2,24 +2,18 @@
 Purlin Adapter
 Implements the business logic for the Purlin flexure module.
 """
-from backend.apps.modules.simple_connection.shared import setup_for_cad
 from osdag_core.Common import KEY_DISP_FLEXURE4
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
 )
-from OCC.Core.BRep import BRep_Builder
-from OCC.Core.TopoDS import TopoDS_Compound
-from OCC.Core.BRepTools import breptools_Write
-from osdag_core.cad.common_logic import CommonDesignLogic
 from osdag_core.design_type.flexural_member.flexure_purlin import Flexure_Purlin
+from apps.modules.flexure_member import shared as fm_shared
 import sys
-import os
 from typing import Dict, Any, List
 import json
 import traceback
-from apps.core.utils import write_stl
 
 
 def get_required_keys() -> List[str]:
@@ -409,6 +403,11 @@ def generate_output(input_values: Dict[str, Any]):
     return output, logs
 
 
+def _get_shapes(cld):
+    purlin_shape = cld.createPurlin()
+    return [purlin_shape] if purlin_shape is not None else []
+
+
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
     """
     Generate CAD model for Purlin.
@@ -428,77 +427,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
         traceback.print_exc()
         return ""
 
-    module.module = KEY_DISP_FLEXURE4
-    module.mainmodule = "Flexure Member"
-
-    # ------------------------------------
-    # Initialize CAD logic
-    # ------------------------------------
-    try:
-        cld = CommonDesignLogic(None, None, "", KEY_DISP_FLEXURE4, module.mainmodule)
-        setup_for_cad(cld, module)
-
-        # IMPORTANT: attach module
-        cld.module_object = module
-
-    except Exception:
-        traceback.print_exc()
-        return ""
-
-    # ------------------------------------
-    # Call Purlin CAD
-    # ------------------------------------
-    try:
-        purlin_shape = cld.createPurlin()
-    except Exception:
-        traceback.print_exc()
-        return ""
-
-    if purlin_shape is None:
-        print("No shape returned from createPurlin()")
-        return ""
-
-    # ------------------------------------
-    # Wrap into compound (for consistency)
-    # ------------------------------------
-    try:
-        builder = BRep_Builder()
-        compound = TopoDS_Compound()
-        builder.MakeCompound(compound)
-        builder.Add(compound, purlin_shape)
-
-        model = compound
-
-    except Exception:
-        traceback.print_exc()
-        return ""
-
-    # ------------------------------------
-    # Ensure directory exists
-    # ------------------------------------
-    cad_models_path = os.path.join(os.getcwd(), "file_storage", "cad_models")
-    os.makedirs(cad_models_path, exist_ok=True)
-
-    file_name = f"{session}_{section}.brep"
-    file_path = os.path.join("file_storage", "cad_models", file_name)
-    full_path = os.path.join(os.getcwd(), file_path)
-
-    # ------------------------------------
-    # Write BREP
-    # ------------------------------------
-    try:
-        breptools_Write(model, full_path)
-    except Exception:
-        traceback.print_exc()
-        return ""
-
-    # ------------------------------------
-    # Write STL (optional)
-    # ------------------------------------
-    try:
-        stl_path = full_path.replace(".brep", ".stl")
-        write_stl(model, stl_path)
-    except Exception as stle:
-        print("STL write warning:", stle)
-
-    return file_path
+    return fm_shared.create_cad_model(
+        module, KEY_DISP_FLEXURE4, section, session, _get_shapes,
+        no_shapes_message="No shape returned from createPurlin()",
+    )
