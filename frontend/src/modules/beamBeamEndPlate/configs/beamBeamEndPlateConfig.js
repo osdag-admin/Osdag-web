@@ -1,5 +1,6 @@
 import { MODULE_KEY_BEAM_BEAM_END_PLATE, MODULE_KEY_BEAM_BEAM_END_PLATE_ALT } from "../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../shared/utils/validation';
 export const beamBeamEndPlateConfig = {
   sessionName: "Beam Beam End Plate Connection",
   routePath: "/design/connections/beam-to-beam-splice/end_plate",
@@ -45,7 +46,10 @@ export const beamBeamEndPlateConfig = {
     { key: "thicknessSelect", inputKey: "plate_thickness", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(beamBeamEndPlateConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.supported_designation || 
         inputs.supported_designation === "Select Section" || 
         inputs.load_shear === "") {
@@ -97,7 +101,7 @@ export const beamBeamEndPlateConfig = {
       fields: [
         {
           key: "connectivity",
-          label: "Connectivity *",
+          label: "Connectivity",
           type: "select",
           options: [
             { value: "Coplanar Tension-Compression Flange", label: "Coplanner Tension-Compression Flange" },
@@ -107,12 +111,12 @@ export const beamBeamEndPlateConfig = {
         },
         {
           key: "endPlateType",
-          label: "End Plate Type *",
+          label: "End Plate Type",
           type: "endPlateSelect"
         },
         {
           key: "supported_designation",
-          label: "Beam Section*",
+          label: "Beam Section",
           type: "select",
           options: "beamList",
           required: true
@@ -137,8 +141,8 @@ export const beamBeamEndPlateConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)*", type: "number", required: true },
-        { key: "load_moment", label: "Bending Moment (kNm)*", type: "number", required: true },
+        { key: "load_shear", label: "Shear Force(kN)", type: "number", required: true },
+        { key: "load_moment", label: "Bending Moment (kNm)", type: "number", required: true },
         { key: "load_axial", label: "Axial Force(kN)", type: "number" }
       ]
     },

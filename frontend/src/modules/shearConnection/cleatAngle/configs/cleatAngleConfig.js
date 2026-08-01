@@ -1,6 +1,7 @@
 import { UI_STRINGS } from '../../../../constants/UIStrings';
 import { MODULE_KEY_CLEAT_ANGLE, MODULE_DISPLAY_CLEAT_ANGLE } from '../../../../constants/DesignKeys';
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const cleatAngleConfig = {
   sessionName: MODULE_DISPLAY_CLEAT_ANGLE,
   routePath: "/design/connections/shear/cleatAngle",
@@ -49,7 +50,10 @@ export const cleatAngleConfig = {
     { key: "cleatSectionSelect", inputKey: "cleat_section", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs, contextData = {}, selectionStates = {}) => {
+  validateInputs: (inputs, contextData = {}, selectionStates = {}, realSelectionStates = {}) => {
+    const requiredCheck = validateRequiredFields(cleatAngleConfig.inputSections, inputs, contextData, realSelectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     const allSelected = selectionStates?.cleatSectionSelect === 'All';
     const optionsList = (contextData && contextData.angleList) || [];
     const selectedList = Array.isArray(inputs.cleat_section) ? inputs.cleat_section : [];
@@ -183,7 +187,7 @@ export const cleatAngleConfig = {
     {
       title: UI_STRINGS.FACTORED_LOADS,
       fields: [
-        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE + "*", type: "number", required: true }
+        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE, type: "number", required: true }
       ]
     },
     {

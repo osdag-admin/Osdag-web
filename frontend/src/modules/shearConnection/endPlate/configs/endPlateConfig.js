@@ -1,5 +1,6 @@
 import { MODULE_KEY_END_PLATE, MODULE_DISPLAY_END_PLATE } from "../../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const endPlateConfig = {
   sessionName: MODULE_DISPLAY_END_PLATE,
   routePath: "/design/connections/shear/end_plate",
@@ -53,7 +54,10 @@ export const endPlateConfig = {
     { key: "thicknessSelect", inputKey: "plate_thickness", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs, extraState) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(endPlateConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     const connectivity = extraState?.selectedOption || inputs.connectivity;
     // IMPROVEMENT: Simplified validation logic for conciseness.
     if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
@@ -114,10 +118,10 @@ export const endPlateConfig = {
       title: "Connecting Members",
       fields: [
         { key: "connectivity", label: "Connectivity", type: "connectivitySelect", options: "connectivityList" },
-        { key: "primary_beam", label: "Primary Beam*", type: "select", options: "beamList", conditionalDisplay: (extraState) => extraState?.selectedOption === "Beam-Beam" },
-        { key: "secondary_beam", label: "Secondary Beam*", type: "select", options: "beamList", conditionalDisplay: (extraState) => extraState?.selectedOption === "Beam-Beam" },
-        { key: "column_section", label: "Column Section*", type: "select", options: "columnList", conditionalDisplay: (extraState) => ["Column Flange-Beam-Web", "Column Web-Beam-Web"].includes(extraState?.selectedOption) },
-        { key: "beam_section", label: "Beam Section*", type: "select", options: "beamList", conditionalDisplay: (extraState) => ["Column Flange-Beam-Web", "Column Web-Beam-Web"].includes(extraState?.selectedOption) },
+        { key: "primary_beam", label: "Primary Beam", type: "select", options: "beamList", conditionalDisplay: (extraState) => extraState?.selectedOption === "Beam-Beam" },
+        { key: "secondary_beam", label: "Secondary Beam", type: "select", options: "beamList", conditionalDisplay: (extraState) => extraState?.selectedOption === "Beam-Beam" },
+        { key: "column_section", label: "Column Section", type: "select", options: "columnList", conditionalDisplay: (extraState) => ["Column Flange-Beam-Web", "Column Web-Beam-Web"].includes(extraState?.selectedOption) },
+        { key: "beam_section", label: "Beam Section", type: "select", options: "beamList", conditionalDisplay: (extraState) => ["Column Flange-Beam-Web", "Column Web-Beam-Web"].includes(extraState?.selectedOption) },
         {
           key: "connector_material", label: "Material", type: "select", options: "materialList",
           onChange: (value, inputs, setInputs, materialList, setShowModal) => {
@@ -136,7 +140,7 @@ export const endPlateConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force (kN)*", type: "number", required: true },
+        { key: "load_shear", label: "Shear Force (kN)", type: "number", required: true },
         { key: "load_axial", label: "Axial Force (kN)", type: "number" },
       ],
     },

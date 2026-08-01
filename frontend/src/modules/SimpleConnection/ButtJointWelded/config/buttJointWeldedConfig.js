@@ -8,6 +8,7 @@ import {
 } from "../../../../constants/DesignKeys";
 import { validateSimpleConnectionInputs } from "../../shared/validation";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const buttJointWeldedConfig = {
     sessionName: "Butt Joint Welded",
     routePath: "/design/connections/simple/butt_joint_welded",
@@ -40,7 +41,10 @@ export const buttJointWeldedConfig = {
 
     ],
 
-    validateInputs: (inputs) => {
+    validateInputs: (inputs, extraState, _lists, selectionStates) => {
+      const requiredCheck = validateRequiredFields(buttJointWeldedConfig.inputSections, inputs, extraState, selectionStates);
+      if (!requiredCheck.isValid) return requiredCheck;
+
         // Validate inputs before API call - return early if invalid
         return validateSimpleConnectionInputs(inputs, { 
             moduleType: 'welded'
@@ -113,7 +117,7 @@ export const buttJointWeldedConfig = {
 
                 {
                     key: "material",
-                    label: "Material *",
+                    label: "Material",
                     type: "select",
                     options: "materialList",
                     onChange: (value, inputs, setInputs, materialList) => {

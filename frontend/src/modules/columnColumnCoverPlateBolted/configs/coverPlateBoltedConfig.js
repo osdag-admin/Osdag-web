@@ -1,3 +1,5 @@
+import { validateRequiredFields } from '../../shared/utils/validation';
+
 export const coverPlateBoltedConfig = {
   sessionName: "Column Cover Plate Bolted Connection",
   routePath: "/design/connections/column-to-column-splice/cover_plate_bolted",
@@ -71,7 +73,10 @@ export const coverPlateBoltedConfig = {
     },
   ],
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(coverPlateBoltedConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (
       !inputs.member_designation ||
       inputs.member_designation === "Select Section" ||
@@ -123,7 +128,7 @@ export const coverPlateBoltedConfig = {
       fields: [
         {
           key: "member_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "select",
           options: "columnList",
           required: true,
@@ -148,8 +153,8 @@ export const coverPlateBoltedConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)*", type: "number", required: true },
-        { key: "load_moment", label: "Moment Force(kN)*", type: "number", required: true },
+        { key: "load_shear", label: "Shear Force(kN)", type: "number", required: true },
+        { key: "load_moment", label: "Moment Force(kN)", type: "number", required: true },
         { key: "load_axial", label: "Axial Force(kN)", type: "number" },
       ],
     },

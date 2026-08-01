@@ -8,6 +8,7 @@ import {
 } from "../../../../constants/DesignKeys";
 import { validateSimpleConnectionInputs } from "../../shared/validation";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const lapJointWeldedConfig = {
     sessionName: "Lap Joint Welded",
     routePath: "/design/connections/simple/lap_joint_welded",
@@ -38,7 +39,10 @@ export const lapJointWeldedConfig = {
 
     ],
 
-    validateInputs: (inputs) => {
+    validateInputs: (inputs, extraState, _lists, selectionStates) => {
+      const requiredCheck = validateRequiredFields(lapJointWeldedConfig.inputSections, inputs, extraState, selectionStates);
+      if (!requiredCheck.isValid) return requiredCheck;
+
         // Validate inputs before API call - return early if invalid
         return validateSimpleConnectionInputs(inputs, { 
             moduleType: 'welded'
@@ -108,7 +112,7 @@ export const lapJointWeldedConfig = {
                 },
                 {
                     key: "material",
-                    label: "Material *",
+                    label: "Material",
                     type: "select",
                     options: "materialList",
                     onChange: (value, inputs, setInputs, materialList) => {

@@ -10,6 +10,7 @@ import img_5_RRRF from "../../../assets/CompressionMember/5.RRRF.PNG";
 import img_5_RRRF_rotated from "../../../assets/CompressionMember/5.RRRF_rotated.PNG";
 import img_6_RRRR from "../../../assets/CompressionMember/6.RRRR.PNG";
 
+import { validateRequiredFields } from '../../shared/utils/validation';
 export const axiallyLoadedColumnConfig = {
   sessionName: "Axially Loaded Column",
   routePath: "/design/compression-member/axially_loaded_column",
@@ -147,7 +148,10 @@ export const axiallyLoadedColumnConfig = {
     };
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(axiallyLoadedColumnConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (
       !inputs.section_profile ||
       !inputs.section_designation ||
@@ -187,13 +191,13 @@ export const axiallyLoadedColumnConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "select",
           options: "sectionProfileList",
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -227,7 +231,7 @@ export const axiallyLoadedColumnConfig = {
         },
         {
           key: "material",
-          label: "Material*",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -245,13 +249,13 @@ export const axiallyLoadedColumnConfig = {
       fields: [
         {
           key: "actual_length_zz",
-          label: "Actual Length (z-z), mm*",
+          label: "Actual Length (z-z), mm",
           type: "number",
           validation: "positive_number",
         },
         {
           key: "actual_length_yy",
-          label: "Actual Length (y-y), mm*",
+          label: "Actual Length (y-y), mm",
           type: "number",
           validation: "positive_number",
         },
@@ -262,7 +266,7 @@ export const axiallyLoadedColumnConfig = {
       fields: [
         {
           key: "end_condition_1",
-          label: "End 1*",
+          label: "End 1",
           type: "select",
           options: "endConditionList",
           onChange: (value, inputs, setInputs) => {
@@ -277,7 +281,7 @@ export const axiallyLoadedColumnConfig = {
         },
         {
           key: "end_condition_2",
-          label: "End 2*",
+          label: "End 2",
           type: "dynamicSelect",
           getOptions: (inputs) =>
             axiallyLoadedColumnConfig.getEnd2Options(inputs.end_condition_1),
@@ -302,7 +306,7 @@ export const axiallyLoadedColumnConfig = {
       fields: [
         {
           key: "end_condition_1_y",
-          label: "End 1 (y-y)*",
+          label: "End 1 (y-y)",
           type: "select",
           options: "endConditionList",
           onChange: (value, inputs, setInputs) => {
@@ -317,7 +321,7 @@ export const axiallyLoadedColumnConfig = {
         },
         {
           key: "end_condition_2_y",
-          label: "End 2 (y-y)*",
+          label: "End 2 (y-y)",
           type: "dynamicSelect",
           getOptions: (inputs) =>
             axiallyLoadedColumnConfig.getEnd2Options(inputs.end_condition_1_y),

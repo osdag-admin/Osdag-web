@@ -1,5 +1,6 @@
 import { MODULE_KEY_BEAM_COLUMN_END_PLATE, MODULE_KEY_BEAM_COLUMN_END_PLATE_ALT } from "../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../shared/utils/validation';
 export const beamToColumnEndPlateConfig = {
   sessionName: "Beam to Column End Plate Connection",
   routePath: "/design/connections/column-beam/end_plate",
@@ -46,7 +47,10 @@ export const beamToColumnEndPlateConfig = {
     { key: "propertyClassSelect", inputKey: "bolt_grade", defaultValue: "All" },
     { key: "thicknessSelect", inputKey: "plate_thickness", defaultValue: "All" },
   ],
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(beamToColumnEndPlateConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.beam_section || 
         inputs.beam_section === "Select Section" || 
         inputs.load_shear === "") {
@@ -97,7 +101,7 @@ export const beamToColumnEndPlateConfig = {
       fields: [
         {
           key: "connectivity",
-          label: "Connectivity *",
+          label: "Connectivity",
           type: "select",
           options: [
             { value: "Column-Flange-Beam-Web", label: "Column-Flange-Beam-Web" },
@@ -106,19 +110,19 @@ export const beamToColumnEndPlateConfig = {
         },
         {
           key: "endPlateType",
-          label: "End Plate Type *",
+          label: "End Plate Type",
           type: "endPlateSelect"
         },
         {
           key: "column_section",
-          label: "Column Section*",
+          label: "Column Section",
           type: "select",
           options: "columnList",
           required: true
         },
         {
           key: "beam_section",
-          label: "Beam Section*",
+          label: "Beam Section",
           type: "select",
           options: "beamList",
           required: true
@@ -144,8 +148,8 @@ export const beamToColumnEndPlateConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)*", type: "number", required: true },
-        { key: "load_moment", label: "Bending Moment (kNm)*", type: "number", required: true },
+        { key: "load_shear", label: "Shear Force(kN)", type: "number", required: true },
+        { key: "load_moment", label: "Bending Moment (kNm)", type: "number", required: true },
         { key: "load_axial", label: "Axial Force(kN)", type: "number" }
       ]
     },

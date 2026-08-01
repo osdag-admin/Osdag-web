@@ -1,5 +1,6 @@
 import { UI_STRINGS } from '../../../constants/UIStrings';
 
+import { validateRequiredFields } from '../../shared/utils/validation';
 export const basePlateConfig = {
   sessionName: "Base Plate",
   routePath: "/design/connections/base_plate",
@@ -29,6 +30,9 @@ export const basePlateConfig = {
   },
 
   validateInputs: (inputs, _extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(basePlateConfig.inputSections, inputs, _extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.connectivity || !inputs.material) {
       return { isValid: false, message: UI_STRINGS.PLEASE_INPUT_ALL_FIELDS };
     }
@@ -110,10 +114,10 @@ export const basePlateConfig = {
     {
       title: "Connecting Members",
       fields: [
-        { key: "connectivity", label: "Connectivity *", type: "select", options: "connectivityList" },
+        { key: "connectivity", label: "Connectivity", type: "select", options: "connectivityList" },
         { key: "end_condition", label: "End Condition (Major Axis z-z axis)", type: "text", disabled: true },
-        { key: "member_designation", label: "Column Section *", type: "select", options: "sectionDesignation" },
-        { key: "material", label: "Material *", type: "select", options: "materialList" },
+        { key: "member_designation", label: "Column Section", type: "select", options: "sectionDesignation" },
+        { key: "material", label: "Material", type: "select", options: "materialList" },
       ],
     },
     {
@@ -121,37 +125,37 @@ export const basePlateConfig = {
       fields: [
         { key: "load_axial", label: "Axial Compression (kN)", type: "number" },
         { key: "load_axial_tension", label: "Axial Tension/Uplift (kN)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity === "Moment Base Plate" },
-        { key: "load_shear_major", label: "Shear Force (kN) * - Along major axis (z-z)", type: "number", required: true },
-        { key: "load_shear_minor", label: "Shear Force (kN) * - Along minor axis (y-y)", type: "number", required: true },
-        { key: "load_moment_major", label: "Bending Moment (kNm) * - Major axis (M\u2082-z)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
-        { key: "load_moment_minor", label: "Bending Moment (kNm) * - Minor axis (My-y)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
+        { key: "load_shear_major", label: "Shear Force (kN) - Along major axis (z-z)", type: "number", required: true },
+        { key: "load_shear_minor", label: "Shear Force (kN) - Along minor axis (y-y)", type: "number", required: true },
+        { key: "load_moment_major", label: "Bending Moment (kNm) - Major axis (M\u2082-z)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
+        { key: "load_moment_minor", label: "Bending Moment (kNm) - Minor axis (My-y)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
       ],
     },
     {
       title: "Anchor Bolt Outside Column Flange",
       fields: [
-        { key: "anchor_diameter_ocf", label: "Diameter (mm) *", type: "customizable", selectionKey: "anchorDiameterOcfSelect", modalKey: "anchorDiameterOcf", dataSource: "anchorDiameterList" },
-        { key: "anchor_grade_ocf", label: "Property Class *", type: "customizable", selectionKey: "anchorGradeOcfSelect", modalKey: "anchorGradeOcf", dataSource: "anchorGradeList" },
+        { key: "anchor_diameter_ocf", label: "Diameter (mm)", type: "customizable", selectionKey: "anchorDiameterOcfSelect", modalKey: "anchorDiameterOcf", dataSource: "anchorDiameterList" },
+        { key: "anchor_grade_ocf", label: "Property Class", type: "customizable", selectionKey: "anchorGradeOcfSelect", modalKey: "anchorGradeOcf", dataSource: "anchorGradeList" },
       ],
     },
     {
       title: "Anchor Bolt Inside Column Flange",
       fields: [
-        { key: "anchor_diameter_icf", label: "Diameter (mm) *", type: "customizable", selectionKey: "anchorDiameterIcfSelect", modalKey: "anchorDiameterIcf", dataSource: "anchorDiameterList" },
-        { key: "anchor_grade_icf", label: "Property Class *", type: "customizable", selectionKey: "anchorGradeIcfSelect", modalKey: "anchorGradeIcf", dataSource: "anchorGradeList" },
-        { key: "anchor_type", label: "Anchor Type *", type: "select", options: "anchorTypeList" },
+        { key: "anchor_diameter_icf", label: "Diameter (mm)", type: "customizable", selectionKey: "anchorDiameterIcfSelect", modalKey: "anchorDiameterIcf", dataSource: "anchorDiameterList" },
+        { key: "anchor_grade_icf", label: "Property Class", type: "customizable", selectionKey: "anchorGradeIcfSelect", modalKey: "anchorGradeIcf", dataSource: "anchorGradeList" },
+        { key: "anchor_type", label: "Anchor Type", type: "select", options: "anchorTypeList" },
       ],
     },
     {
       title: "Pedestal/Footing",
       fields: [
-        { key: "footing_grade", label: "Grade*", type: "select", options: "footingGradeList" },
+        { key: "footing_grade", label: "Grade", type: "select", options: "footingGradeList" },
       ],
     },
     {
       title: "Weld",
       fields: [
-        { key: "weld_type", label: "Type *", type: "select", options: "weldTypeList" },
+        { key: "weld_type", label: "Type", type: "select", options: "weldTypeList" },
       ],
     },
   ],

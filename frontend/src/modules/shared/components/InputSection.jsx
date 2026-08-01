@@ -596,7 +596,7 @@ export const InputSection = ({
             <div key={index}>
               <div className="flex w-full justify-between items-center mb-3">
                 <h4 className="w-[40%] text-sm font-medium text-osdag-text-primary dark:text-white">
-                  {field.label}
+                  {field.label}{field.required !== false && field.type !== 'image' ? ' *' : ''}
                 </h4>
                 {renderField(field)}
               </div>

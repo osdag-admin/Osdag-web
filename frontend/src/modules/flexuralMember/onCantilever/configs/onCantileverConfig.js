@@ -1,3 +1,5 @@
+import { validateRequiredFields } from '../../../shared/utils/validation';
+
 
 export const onCantileverConfig = {
   sessionName: "On Cantilever Beam Design",
@@ -52,7 +54,10 @@ export const onCantileverConfig = {
     return [];
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(onCantileverConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (
       !inputs.section_designation ||
       inputs.section_designation.length === 0 ||
@@ -127,7 +132,7 @@ export const onCantileverConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "select",
           options: "sectionProfileList",
           defaultValue: "Beams and Columns",
@@ -141,7 +146,7 @@ export const onCantileverConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -156,7 +161,7 @@ export const onCantileverConfig = {
         },
         {
           key: "material",
-          label: "Material*",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -176,7 +181,7 @@ export const onCantileverConfig = {
       fields: [
         {
           key: "support_type",
-          label: "Support Type*",
+          label: "Support Type",
           type: "select",
           options: [
             {
@@ -195,7 +200,7 @@ export const onCantileverConfig = {
         },
         {
           key: "support_restraint",
-          label: "Support Restraint*",
+          label: "Support Restraint",
           type: "select",
           options: [
             {
@@ -218,7 +223,7 @@ export const onCantileverConfig = {
         },
         {
           key: "top_restraint",
-          label: "Top Restraint*",
+          label: "Top Restraint",
           type: "select",
           options: [
             { value: "Free", label: "Free" },
@@ -238,7 +243,7 @@ export const onCantileverConfig = {
         },
         {
           key: "member_length",
-          label: "Effective Span (mm)*",
+          label: "Effective Span (mm)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter member length",
@@ -251,13 +256,13 @@ export const onCantileverConfig = {
       fields: [
         {
           key: "bending_moment",
-          label: "Bending Moment (kNm)*",
+          label: "Bending Moment (kNm)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter bending moment", required: true },
         {
           key: "shear_force",
-          label: "Shear Force (kN)*",
+          label: "Shear Force (kN)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter shear force", required: true },

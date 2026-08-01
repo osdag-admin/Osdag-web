@@ -8,6 +8,7 @@ import FIXED_FIXED from "../../../assets/CompressionMember/RRRRstrut.png";
 import FIXED_HINGED from "../../../assets/CompressionMember/RFRFstrut.png";
 import HINGED_FIXED from "../../../assets/CompressionMember/RRRFstrut.png";
 
+import { validateRequiredFields } from '../../shared/utils/validation';
 export const strutsWeldedConfig = {
   sessionName: "Struts Welded to End Gusset",
   routePath: "/design/compression-member/struts_welded_to_end_gusset",
@@ -73,7 +74,10 @@ export const strutsWeldedConfig = {
     return FIXED_FIXED;
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(strutsWeldedConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.section_profile) {
       return { isValid: false, message: "Please select a Section Profile." };
     }
@@ -171,7 +175,7 @@ export const strutsWeldedConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "sectionProfileList",
           onChange: (value, setInputs, setExtraState) => {
             const imageSource = strutsWeldedConfig.getSectionImage(value);
@@ -199,7 +203,7 @@ export const strutsWeldedConfig = {
         },
         {
           key: "location",
-          label: "Conn_Location *",
+          label: "Conn_Location",
           type: "dynamicSelect",
           getOptions: (inputs) => {
             return strutsWeldedConfig.getLocationOptions(inputs.section_profile);
@@ -207,7 +211,7 @@ export const strutsWeldedConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -221,7 +225,7 @@ export const strutsWeldedConfig = {
         },
         {
           key: "material",
-          label: "Material *",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -235,7 +239,7 @@ export const strutsWeldedConfig = {
         },
         {
           key: "length",
-          label: "Length (mm) *",
+          label: "Length (mm)",
           type: "number"
         }
       ]
@@ -309,7 +313,7 @@ export const strutsWeldedConfig = {
       fields: [
         {
           key: "plate_thickness",
-          label: "Thickness (mm) *",
+          label: "Thickness (mm)",
           type: "customizable",
           selectionKey: "thicknessSelect",
           modalKey: "plateThickness",

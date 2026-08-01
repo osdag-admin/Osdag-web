@@ -8,6 +8,7 @@ import {
 } from "../../../../constants/DesignKeys";
 import { validateSimpleConnectionInputs } from "../../shared/validation";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const buttJointBoltedConfig = {
     sessionName: "Butt Joint Bolted",
     routePath: "/design/connections/simple/butt_joint_bolted",
@@ -44,7 +45,10 @@ export const buttJointBoltedConfig = {
 
     ],
 
-    validateInputs: (inputs) => {
+    validateInputs: (inputs, extraState, _lists, selectionStates) => {
+      const requiredCheck = validateRequiredFields(buttJointBoltedConfig.inputSections, inputs, extraState, selectionStates);
+      if (!requiredCheck.isValid) return requiredCheck;
+
         return validateSimpleConnectionInputs(inputs, { 
             moduleType: 'bolted'
         });
@@ -86,7 +90,7 @@ export const buttJointBoltedConfig = {
             fields: [
                 {
                     key: "material",
-                    label: "Material *",
+                    label: "Material",
                     type: "select",
                     options: "materialList",
                     onChange: (value, inputs, setInputs, materialList) => {
@@ -153,7 +157,7 @@ export const buttJointBoltedConfig = {
             fields: [
                 {
                     key: "bolt_diameter",
-                    label: "Diameter (mm) *",
+                    label: "Diameter (mm)",
                     type: "customizable",
                     selectionKey: "boltDiameterSelect",
                     modalKey: "boltDiameter",
@@ -161,7 +165,7 @@ export const buttJointBoltedConfig = {
                 },
                 {
                     key: "bolt_type",
-                    label: "Type *",
+                    label: "Type",
                     type: "select",
                     options: [
                         { value: "Bearing Bolt", label: "Bearing Bolt" },
@@ -170,7 +174,7 @@ export const buttJointBoltedConfig = {
                 },
                 {
                     key: "bolt_grade",
-                    label: "Property Class *",
+                    label: "Property Class",
                     type: "customizable",
                     selectionKey: "propertyClassSelect",
                     modalKey: "propertyClass",

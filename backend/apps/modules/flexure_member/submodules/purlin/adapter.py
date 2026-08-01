@@ -53,7 +53,10 @@ def validate_input(input_values: Dict[str, Any]) -> None:
     Validate presence and type of required inputs for Purlin module.
     Accepts frontend-style keys directly.
     """
-    pass
+    required_keys = get_required_keys()
+    missing_keys = contains_keys(input_values, required_keys)
+    if missing_keys is not None:
+        raise MissingKeyError(missing_keys[0])
 
 
 def _create_purlin_module() -> Flexure_Purlin:

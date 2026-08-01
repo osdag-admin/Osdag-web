@@ -10,6 +10,7 @@ import {
     KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL
 } from "../../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const weldedToEndConfig = {
     sessionName: "Tension Member Welded Design",
     routePath: "/design/tension-member/welded_to_end_gusset",
@@ -79,7 +80,10 @@ export const weldedToEndConfig = {
         return channelList || [];
     },
 
-    validateInputs: (inputs) => {
+    validateInputs: (inputs, extraState, _lists, selectionStates) => {
+      const requiredCheck = validateRequiredFields(weldedToEndConfig.inputSections, inputs, extraState, selectionStates);
+      if (!requiredCheck.isValid) return requiredCheck;
+
         if (!inputs.section_designation ||
             !inputs.length ||
             
@@ -130,7 +134,7 @@ export const weldedToEndConfig = {
             fields: [
                 {
                     key: "section_profile",
-                    label: "Section Profile*",
+                    label: "Section Profile",
                     type: "sectionProfileList",
                     onChange: (value, inputs, setInputs, _contextData, _extraState, setExtraState) => {
                         const imageSource = weldedToEndConfig.getSectionImage(value);
@@ -158,7 +162,7 @@ export const weldedToEndConfig = {
                 },
                 {
                     key: "location",
-                    label: "Conn_Location *",
+                    label: "Conn_Location",
                     type: "dynamicSelect",
                     getOptions: (inputs) => {
                         return weldedToEndConfig.getLocationOptions(inputs.section_profile);
@@ -166,7 +170,7 @@ export const weldedToEndConfig = {
                 },
                 {
                     key: "section_designation",
-                    label: "Section Designation*",
+                    label: "Section Designation",
                     type: "customizable",
                     selectionKey: "sectionDesignationSelect",
                     modalKey: "sectionDesignation",
@@ -180,7 +184,7 @@ export const weldedToEndConfig = {
                 },
                 {
                     key: "material",
-                    label: "Material *",
+                    label: "Material",
                     type: "select",
                     options: "materialList",
                     onChange: (value, inputs, setInputs, materialList) => {
@@ -194,7 +198,7 @@ export const weldedToEndConfig = {
                 },
                 {
                     key: "length",
-                    label: "Length (mm) *",
+                    label: "Length (mm)",
                     type: "number"
                 }
             ]

@@ -10,6 +10,7 @@ import {
   KEY_LENGTH, KEY_SUPPORT, KEY_TORSIONAL_RES, KEY_WARPING_RES
 } from "../../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const simplySupportedBeamConfig = {
   sessionName: "Simply Supported Beam Design",
   routePath: "/design/flexure/simply_supported_beam",
@@ -68,7 +69,10 @@ export const simplySupportedBeamConfig = {
     return [];
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(simplySupportedBeamConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.section_designation ||
       !inputs.member_length ||
       !inputs.shear_force ||
@@ -133,7 +137,7 @@ export const simplySupportedBeamConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "select",
           options: "sectionProfileList",
           defaultValue: "Beams and Columns", // Default to the only available option
@@ -153,7 +157,7 @@ export const simplySupportedBeamConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -168,7 +172,7 @@ export const simplySupportedBeamConfig = {
         },
         {
           key: "material",
-          label: "Material*",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -187,7 +191,7 @@ export const simplySupportedBeamConfig = {
       fields: [
         {
           key: "beam_support_type",
-          label: "Support Type*",
+          label: "Support Type",
           type: "select",
           options: [
             // From VALUES_SUPP_TYPE_temp in Common.py
@@ -198,7 +202,7 @@ export const simplySupportedBeamConfig = {
         },
         {
           key: "torsional_restraint",
-          label: "Torsional Restraint*",
+          label: "Torsional Restraint",
           type: "select", 
           options: [
             // From Torsion_Restraint_list in Common.py
@@ -209,7 +213,7 @@ export const simplySupportedBeamConfig = {
         },
         {
           key: "warping_restraint",
-          label: "Warping Restraint*",
+          label: "Warping Restraint",
           type: "select",
           options: [
             // From Warping_Restraint_list in Common.py
@@ -221,7 +225,7 @@ export const simplySupportedBeamConfig = {
         },
         {
           key: "member_length", 
-          label: "Effective Span (m)*",
+          label: "Effective Span (m)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter member length"
@@ -233,13 +237,13 @@ export const simplySupportedBeamConfig = {
       fields: [
         {
           key: "bending_moment",
-          label: "Bending Moment (kNm)*", 
+          label: "Bending Moment (kNm)", 
           type: "number",
           validation: "positive_number",
           placeholder: "Enter bending moment", required: true },
         {
           key: "shear_force",
-          label: "Shear Force (kN)*",
+          label: "Shear Force (kN)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter shear force", required: true }

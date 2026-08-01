@@ -1,3 +1,5 @@
+import { validateRequiredFields } from '../../shared/utils/validation';
+
 export const coverPlateWeldedConfig = {
   sessionName: "Column Cover Plate Welded Connection",
   routePath: "/design/connections/column-to-column-splice/cover_plate_welded",
@@ -36,7 +38,10 @@ export const coverPlateWeldedConfig = {
     { key: "webThicknessSelect", inputKey: "web_plate_thickness", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(coverPlateWeldedConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.member_designation || 
         inputs.member_designation === "Select Section" || 
         inputs.load_shear === "") {
@@ -76,7 +81,7 @@ export const coverPlateWeldedConfig = {
       fields: [
         {
           key: "member_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "select",
           options: "columnList",
           required: true
@@ -101,8 +106,8 @@ export const coverPlateWeldedConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)*", type: "number", required: true },
-        { key: "load_moment", label: "Moment Force(kN)*", type: "number", required: true },
+        { key: "load_shear", label: "Shear Force(kN)", type: "number", required: true },
+        { key: "load_moment", label: "Moment Force(kN)", type: "number", required: true },
         { key: "load_axial", label: "Axial Force(kN)", type: "number" }
       ]
     },
@@ -146,7 +151,7 @@ export const coverPlateWeldedConfig = {
       fields: [
         {
           key: "weld_type",
-          label: "Type *",
+          label: "Type",
           type: "select",
           options: [
             { value: "Fillet Weld", label: "Fillet Weld" }

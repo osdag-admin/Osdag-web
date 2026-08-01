@@ -1,3 +1,5 @@
+import { validateRequiredFields } from '../../shared/utils/validation';
+
 export const columnColumnEndPlateConfig = {
   sessionName: "Column Column End Plate Connection",
   routePath: "/design/connections/column-to-column-splice/end_plate",
@@ -43,7 +45,10 @@ export const columnColumnEndPlateConfig = {
     { key: "thicknessSelect", inputKey: "plate_thickness", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(columnColumnEndPlateConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.supported_designation || 
         inputs.supported_designation === "Select Section" || 
         inputs.load_shear === "") {
@@ -91,7 +96,7 @@ export const columnColumnEndPlateConfig = {
       fields: [
         {
           key: "connectivity",
-          label: "Connectivity *",
+          label: "Connectivity",
           type: "select",
           options: [
             { value: "Flush End Plate", label: "Flush End Plate" },
@@ -100,7 +105,7 @@ export const columnColumnEndPlateConfig = {
         },
         {
           key: "supported_designation",
-          label: "Column Section*",
+          label: "Column Section",
           type: "select",
           options: "columnList",
           required: true
@@ -125,8 +130,8 @@ export const columnColumnEndPlateConfig = {
     {
       title: "Factored Loads",
       fields: [
-        { key: "load_shear", label: "Shear Force(kN)*", type: "number", required: true },
-        { key: "load_moment", label: "Bending Moment (kNm)*", type: "number", required: true },
+        { key: "load_shear", label: "Shear Force(kN)", type: "number", required: true },
+        { key: "load_moment", label: "Bending Moment (kNm)", type: "number", required: true },
         { key: "load_axial", label: "Axial Force(kN)", type: "number" }
       ]
     },

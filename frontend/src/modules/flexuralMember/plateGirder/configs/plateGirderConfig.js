@@ -7,6 +7,7 @@ import {
   KEY_LENGTH_OVERWRITE, KEY_DP_DESIGN_METHOD
 } from "../../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 // Plate Girder uses backend key strings directly (matching backend Common.py)
 
 /**
@@ -203,7 +204,10 @@ export const plateGirderConfig = {
     return ISECTION;
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(plateGirderConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     // Basic validation
     if (!inputs.material || !inputs.member_length || !inputs.shear_force || 
         !inputs.bending_moment || !inputs.design_type) {
@@ -398,14 +402,14 @@ export const plateGirderConfig = {
       fields: [
         {
           key: "module",
-          label: "Module*",
+          label: "Module",
           type: "text",
           defaultValue: "Plate-Girder",
           disabled: true
         },
         {
           key: "material",
-          label: "Material*",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -420,7 +424,7 @@ export const plateGirderConfig = {
         },
         {
           key: "design_type",
-          label: "Design Type*",
+          label: "Design Type",
           type: "select",
           options: [
             { value: "Customized", label: "Customized" },
@@ -436,14 +440,14 @@ export const plateGirderConfig = {
         },
         {
           key: "total_depth",
-          label: "Total Depth (mm)*",
+          label: "Total Depth (mm)",
           type: "optimized_number",
           validation: "positive_number",
           placeholder: "Enter total depth"
         },
         {
           key: "web_thickness",
-          label: "Web Thickness (mm)*",
+          label: "Web Thickness (mm)",
           type: "number", // Will be overridden by conditionalType
           selectionKey: "webThicknessSelect",
           modalKey: "webThickness",
@@ -457,14 +461,14 @@ export const plateGirderConfig = {
         },
         {
           key: "top_flange_width",
-          label: "Width of Top Flange (mm)*",
+          label: "Width of Top Flange (mm)",
           type: "optimized_number",
           validation: "positive_number",
           placeholder: "Enter top flange width"
         },
         {
           key: "top_flange_thickness",
-          label: "Top Flange Thickness (mm)*",
+          label: "Top Flange Thickness (mm)",
           type: "number",
           selectionKey: "topFlangeThicknessSelect",
           modalKey: "topFlangeThickness",
@@ -476,14 +480,14 @@ export const plateGirderConfig = {
         },
         {
           key: "bottom_flange_width",
-          label: "Width of Bottom Flange (mm)*",
+          label: "Width of Bottom Flange (mm)",
           type: "optimized_number",
           validation: "positive_number",
           placeholder: "Enter bottom flange width"
         },
         {
           key: "bottom_flange_thickness",
-          label: "Bottom Flange Thickness (mm)*",
+          label: "Bottom Flange Thickness (mm)",
           type: "number",
           selectionKey: "bottomFlangeThicknessSelect",
           modalKey: "bottomFlangeThickness",
@@ -495,7 +499,7 @@ export const plateGirderConfig = {
         },
         {
           key: "member_length",
-          label: "Length (mm)*",
+          label: "Length (mm)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter member length in mm",
@@ -508,7 +512,7 @@ export const plateGirderConfig = {
       fields: [
         {
           key: "support_type",
-          label: "Support Type*",
+          label: "Support Type",
           type: "select",
           options: [
             { value: "Major Laterally Supported", label: "Major Laterally Supported" },
@@ -518,14 +522,14 @@ export const plateGirderConfig = {
         },
         {
           key: "support_width",
-          label: "Support Width (mm)*",
+          label: "Support Width (mm)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter support width"
         },
         {
           key: "web_philosophy",
-          label: "Web Philosophy*",
+          label: "Web Philosophy",
           type: "select",
           options: [
             { value: "Thick Web without ITS", label: "Thick Web without ITS" },
@@ -535,7 +539,7 @@ export const plateGirderConfig = {
         },
         {
           key: "torsional_restraint",
-          label: "Torsional Restraint*",
+          label: "Torsional Restraint",
           type: "select",
           options: [
             { value: "Fully Restrained", label: "Fully Restrained" },
@@ -546,7 +550,7 @@ export const plateGirderConfig = {
         },
         {
           key: "warping_restraint",
-          label: "Warping Restraint*",
+          label: "Warping Restraint",
           type: "select",
           options: [
             { value: "Both flanges fully restrained", label: "Both flanges fully restrained" },
@@ -563,21 +567,21 @@ export const plateGirderConfig = {
       fields: [
         {
           key: "bending_moment",
-          label: "Moment (kNm)*",
+          label: "Moment (kNm)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter bending moment"
         },
         {
           key: "shear_force",
-          label: "Shear (kN)*",
+          label: "Shear (kN)",
           type: "number",
           validation: "number",
           placeholder: "Enter shear force"
         },
         {
           key: "bending_moment_shape",
-          label: "Bending Moment Shape*",
+          label: "Bending Moment Shape",
           type: "select",
           options: [
             { value: "Uniform Loading with pinned-pinned support", label: "Uniform Loading with pinned-pinned support" },

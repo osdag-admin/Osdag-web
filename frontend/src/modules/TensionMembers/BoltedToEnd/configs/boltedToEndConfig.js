@@ -11,6 +11,7 @@ import {
   KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL
 } from "../../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const boltedToEndConfig = {
   sessionName: "Tension Member Bolted Design",
   routePath: "/design/tension-member/bolted_to_end_gusset",
@@ -89,7 +90,10 @@ export const boltedToEndConfig = {
     return channelList || [];
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(boltedToEndConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.section_designation ||
       !inputs.length ||
       
@@ -151,7 +155,7 @@ export const boltedToEndConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "sectionProfileList",
           onChange: (value, setInputs, _contextData, setExtraState) => {
             // Update image and reset section designation when profile changes
@@ -180,7 +184,7 @@ export const boltedToEndConfig = {
         },
         {
           key: "location",
-          label: "Conn_Location *",
+          label: "Conn_Location",
           type: "dynamicSelect",
           getOptions: (inputs) => {
             return boltedToEndConfig.getLocationOptions(inputs.section_profile);
@@ -188,7 +192,7 @@ export const boltedToEndConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -202,7 +206,7 @@ export const boltedToEndConfig = {
         },
         {
           key: "material",
-          label: "Material *",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -216,7 +220,7 @@ export const boltedToEndConfig = {
         },
         {
           key: "length",
-          label: "Length (mm) *",
+          label: "Length (mm)",
           type: "number"
         }
       ]
@@ -240,7 +244,7 @@ export const boltedToEndConfig = {
         },
         {
           key: "bolt_type",
-          label: "Type *",
+          label: "Type",
           type: "select",
           options: [
             { value: "Bearing Bolt", label: "Bearing Bolt" },
@@ -249,7 +253,7 @@ export const boltedToEndConfig = {
         },
         {
           key: "bolt_grade",
-          label: "Property Class *",
+          label: "Property Class",
           type: "customizable",
           selectionKey: "propertyClassSelect",
           modalKey: "propertyClass",

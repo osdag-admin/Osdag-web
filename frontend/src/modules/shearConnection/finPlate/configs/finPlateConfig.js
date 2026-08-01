@@ -1,6 +1,7 @@
 import { UI_STRINGS } from '../../../../constants/UIStrings';
 import { MODULE_KEY_FIN_PLATE, MODULE_DISPLAY_FIN_PLATE } from '../../../../constants/DesignKeys';
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const finPlateConfig = {
   sessionName: MODULE_DISPLAY_FIN_PLATE,
   routePath: "/design/connections/shear/fin_plate",
@@ -49,7 +50,10 @@ export const finPlateConfig = {
     { key: "thicknessSelect", inputKey: "plate_thickness", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs, extraState) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(finPlateConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     const connectivity = extraState?.selectedOption || inputs.connectivity;
 
     // Basic numeric loads must not be empty
@@ -183,7 +187,7 @@ export const finPlateConfig = {
     {
       title: UI_STRINGS.FACTORED_LOADS,
       fields: [
-        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE + "*", type: "number", required: true },
+        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE, type: "number", required: true },
         { key: "load_axial", label: UI_STRINGS.AXIAL_FORCE, type: "number" }
       ]
     },

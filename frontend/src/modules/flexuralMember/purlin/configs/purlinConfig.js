@@ -10,6 +10,7 @@ import {
   KEY_WARPING_RES,
 } from "../../../../constants/DesignKeys";
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const purlinConfig = {
   sessionName: "Purlin Design",
   routePath: "/design/flexure/purlin",
@@ -54,7 +55,10 @@ export const purlinConfig = {
   },
 
   // ------------------ VALIDATION ------------------
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(purlinConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (
       !inputs.section_designation ||
       !inputs.effective_span ||
@@ -114,7 +118,7 @@ export const purlinConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "select",
           options: [
             { value: "Channels", label: "Channels" }
@@ -123,7 +127,7 @@ export const purlinConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -134,7 +138,7 @@ export const purlinConfig = {
         },
         {
           key: "material",
-          label: "Material*",
+          label: "Material",
           type: "select",
           options: "materialList"
         }
@@ -145,7 +149,7 @@ export const purlinConfig = {
       fields: [
         {
           key: "cladding_type",
-          label: "Cladding (For Deflection)*",
+          label: "Cladding (For Deflection)",
           type: "select",
           options: [
             { value: "Brittle Cladding", label: "Brittle Cladding" },
@@ -154,7 +158,7 @@ export const purlinConfig = {
         },
         {
           key: "torsional_restraint",
-          label: "Torsional Restraint*",
+          label: "Torsional Restraint",
           type: "select",
           options: [
             { value: "Fully Restrained", label: "Fully Restrained" },
@@ -164,7 +168,7 @@ export const purlinConfig = {
         },
         {
           key: "warping_restraint",
-          label: "Warping Restraint*",
+          label: "Warping Restraint",
           type: "select",
           options: [
             { value: "Both flanges fully restrained", label: "Both flanges fully restrained" },
@@ -175,7 +179,7 @@ export const purlinConfig = {
         },
         {
           key: "effective_span",
-          label: "Effective Span (m)*",
+          label: "Effective Span (m)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter effective span"
@@ -187,25 +191,25 @@ export const purlinConfig = {
       fields: [
         {
           key: "bending_moment_yy",
-          label: "Bending Moment (y-y) (kNm)*",
+          label: "Bending Moment (y-y) (kNm)",
           type: "number",
           validation: "number",
           placeholder: "Enter Myy", required: true },
         {
           key: "bending_moment_zz",
-          label: "Bending Moment (z-z) (kNm)*",
+          label: "Bending Moment (z-z) (kNm)",
           type: "number",
           validation: "number",
           placeholder: "Enter Mzz", required: true },
         {
           key: "shear_force_yy",
-          label: "Shear Force (y-y) (kN)*",
+          label: "Shear Force (y-y) (kN)",
           type: "number",
           validation: "number",
           placeholder: "Enter Vyy", required: true },
         {
           key: "shear_force_zz",
-          label: "Shear Force (z-z) (kN)*",
+          label: "Shear Force (z-z) (kN)",
           type: "number",
           validation: "number",
           placeholder: "Enter Vzz", required: true }

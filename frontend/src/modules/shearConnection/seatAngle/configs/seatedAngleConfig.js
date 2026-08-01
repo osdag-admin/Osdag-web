@@ -1,6 +1,7 @@
 import { UI_STRINGS } from '../../../../constants/UIStrings';
 import { MODULE_KEY_SEAT_ANGLE, MODULE_DISPLAY_SEAT_ANGLE } from '../../../../constants/DesignKeys';
 
+import { validateRequiredFields } from '../../../shared/utils/validation';
 export const seatedAngleConfig = {
   sessionName: MODULE_DISPLAY_SEAT_ANGLE,
   routePath: "/design/connections/shear/seatAngle",
@@ -51,7 +52,10 @@ export const seatedAngleConfig = {
     { key: "secondaryBeamSelect", inputKey: "secondary_beam", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(seatedAngleConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     const connectivity = inputs.connectivity;
     
     if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
@@ -202,7 +206,7 @@ export const seatedAngleConfig = {
     {
       title: UI_STRINGS.FACTORED_LOADS,
       fields: [
-        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE + "*", type: "number", required: true },
+        { key: "load_shear", label: UI_STRINGS.SHEAR_FORCE, type: "number", required: true },
         // { key: "load_axial", label: UI_STRINGS.AXIAL_FORCE, type: "number" }
       ]
     },

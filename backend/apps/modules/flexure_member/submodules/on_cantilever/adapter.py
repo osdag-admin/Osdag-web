@@ -40,13 +40,7 @@ def get_required_keys() -> List[str]:
 
 def validate_input(input_values: Dict[str, Any]) -> None:
     """Validate presence of required keys."""
-    required_keys = [
-        "Module",
-        "Member.Designation",
-        "Member.Length",
-        "Load.Shear",
-        "Load.Moment",
-    ]
+    required_keys = get_required_keys()
     missing_keys = contains_keys(input_values, required_keys)
     if missing_keys is not None:
         raise MissingKeyError(missing_keys[0])

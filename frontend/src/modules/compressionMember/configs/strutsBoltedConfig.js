@@ -8,6 +8,7 @@ import FIXED_FIXED from "../../../assets/CompressionMember/RRRRstrut.png";
 import FIXED_HINGED from "../../../assets/CompressionMember/RFRFstrut.png";
 import HINGED_FIXED from "../../../assets/CompressionMember/RRRFstrut.png";
 
+import { validateRequiredFields } from '../../shared/utils/validation';
 export const strutsBoltedConfig = {
   sessionName: "Struts Bolted to End Gusset",
   routePath: "/design/compression-member/struts_bolted_to_end_gusset",
@@ -89,7 +90,10 @@ export const strutsBoltedConfig = {
     return FIXED_FIXED;
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(strutsBoltedConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.section_profile) {
       return { isValid: false, message: "Please select a Section Profile." };
     }
@@ -203,7 +207,7 @@ export const strutsBoltedConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "sectionProfileList",
           onChange: (value, setInputs,setExtraState) => {
             const imageSource = strutsBoltedConfig.getSectionImage(value);
@@ -231,7 +235,7 @@ export const strutsBoltedConfig = {
         },
         {
           key: "location",
-          label: "Conn_Location *",
+          label: "Conn_Location",
           type: "dynamicSelect",
           getOptions: (inputs) => {
             return strutsBoltedConfig.getLocationOptions(inputs.section_profile);
@@ -248,7 +252,7 @@ export const strutsBoltedConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -262,7 +266,7 @@ export const strutsBoltedConfig = {
         },
         {
           key: "material",
-          label: "Material *",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -276,7 +280,7 @@ export const strutsBoltedConfig = {
         },
         {
           key: "length",
-          label: "Length (mm) *",
+          label: "Length (mm)",
           type: "number"
         }
       ]
@@ -350,7 +354,7 @@ export const strutsBoltedConfig = {
       fields: [
         {
           key: "bolt_diameter",
-          label: "Diameter (mm) *",
+          label: "Diameter (mm)",
           type: "customizable",
           selectionKey: "boltDiameterSelect",
           modalKey: "boltDiameter",
@@ -358,7 +362,7 @@ export const strutsBoltedConfig = {
         },
         {
           key: "bolt_type",
-          label: "Type *",
+          label: "Type",
           type: "select",
           options: [
             { value: "Bearing Bolt", label: "Bearing Bolt" },
@@ -367,7 +371,7 @@ export const strutsBoltedConfig = {
         },
         {
           key: "bolt_grade",
-          label: "Property Class *",
+          label: "Property Class",
           type: "customizable",
           selectionKey: "propertyClassSelect",
           modalKey: "propertyClass",
@@ -380,7 +384,7 @@ export const strutsBoltedConfig = {
       fields: [
         {
           key: "plate_thickness",
-          label: "Thickness (mm) *",
+          label: "Thickness (mm)",
           type: "customizable",
           selectionKey: "thicknessSelect",
           modalKey: "plateThickness",

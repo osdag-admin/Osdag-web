@@ -17,10 +17,14 @@ def validate_list_type(iterable: Iterable, data_type: Any) -> bool:
 
 
 def contains_keys(data: dict, keys: List[str]) -> Optional[Tuple[str]]:
-    """Check whether dictionary contains all given keys."""
+    """Check whether dictionary contains all given keys with a non-empty value.
+
+    A key that is present but maps to "", None, or [] is treated as missing,
+    since an empty required value is exactly as unusable as an absent one.
+    """
     missing = []
     for key in keys:
-        if key not in data.keys():
+        if key not in data.keys() or data[key] in ("", None, []):
             missing.append(key)
     if missing != []:
         return tuple(missing)

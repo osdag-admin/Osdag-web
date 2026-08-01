@@ -1,3 +1,5 @@
+import { validateRequiredFields } from '../../shared/utils/validation';
+
 export const compressionMemberConfig = {
   sessionName: "Compression Member Design",
   routePath: "/design/compression-member/struts_in_trusses",
@@ -39,7 +41,10 @@ export const compressionMemberConfig = {
     }
   },
 
-  validateInputs: (inputs) => {
+  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+    const requiredCheck = validateRequiredFields(compressionMemberConfig.inputSections, inputs, extraState, selectionStates);
+    if (!requiredCheck.isValid) return requiredCheck;
+
     if (!inputs.section_designation ||
       !inputs.member_length ||
       
@@ -91,7 +96,7 @@ export const compressionMemberConfig = {
       fields: [
         {
           key: "section_profile",
-          label: "Section Profile*",
+          label: "Section Profile",
           type: "sectionProfileSelect",
           options: [
             { value: "Angles", label: "Angles" },
@@ -109,7 +114,7 @@ export const compressionMemberConfig = {
         },
         {
           key: "location",
-          label: "Location*",
+          label: "Location",
           type: "select",
           options: [
             { value: "Long Leg", label: "Long Leg" },
@@ -119,7 +124,7 @@ export const compressionMemberConfig = {
         },
         {
           key: "section_designation",
-          label: "Section Designation*",
+          label: "Section Designation",
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
@@ -133,7 +138,7 @@ export const compressionMemberConfig = {
         },
         {
           key: "material",
-          label: "Material*",
+          label: "Material",
           type: "select",
           options: "materialList",
           onChange: (value, inputs, setInputs, materialList) => {
@@ -152,14 +157,14 @@ export const compressionMemberConfig = {
       fields: [
         {
           key: "member_length", 
-          label: "Member Length (mm)*",
+          label: "Member Length (mm)",
           type: "number",
           validation: "positive_number",
           placeholder: "Enter member length"
         },
         {
           key: "end_condition_1",
-          label: "End Condition 1*",
+          label: "End Condition 1",
           type: "select",
           options: [
             { value: "Fixed", label: "Fixed" },
@@ -169,7 +174,7 @@ export const compressionMemberConfig = {
         },
         {
           key: "end_condition_2",
-          label: "End Condition 2*",
+          label: "End Condition 2",
           type: "select",
           options: [
             { value: "Fixed", label: "Fixed" },
