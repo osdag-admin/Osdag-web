@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DATABASE_USER:-osdagdeveloper}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       POSTGRES_DB: ${DATABASE_NAME:-osdagdeveloper}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -33,11 +33,11 @@ services:
     environment:
       PYTHONPATH: /app
       DEBUG: "False"
-      SECRET_KEY: ${SECRET_KEY:-changeme}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,frontend}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0
@@ -74,10 +74,10 @@ services:
     environment:
       PYTHONPATH: /app
       DEBUG: "False"
-      SECRET_KEY: ${SECRET_KEY:-changeme}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0
@@ -99,10 +99,10 @@ services:
     environment:
       PYTHONPATH: /app
       DEBUG: "False"
-      SECRET_KEY: ${SECRET_KEY:-changeme}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0
@@ -128,10 +128,10 @@ services:
     environment:
       PYTHONPATH: /app
       DEBUG: "False"
-      SECRET_KEY: ${SECRET_KEY:-changeme}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0
@@ -157,10 +157,10 @@ services:
     environment:
       PYTHONPATH: /app
       DEBUG: "False"
-      SECRET_KEY: ${SECRET_KEY:-changeme}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0

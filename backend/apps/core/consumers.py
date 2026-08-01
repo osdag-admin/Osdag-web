@@ -43,8 +43,11 @@ def _check_task_status_sync(task_id: str):
 def _write_ws_point_sync(event: str, task_id: str, channel_name: str,
                           active_count: int, close_code: int = 0):
     """Synchronous InfluxDB write — runs in a daemon thread."""
-    url   = os.getenv("INFLUXDB_URL",   "http://influxdb:8086")
-    token = os.getenv("INFLUXDB_TOKEN", "osdag-super-secret-token")
+    from django.conf import settings
+    url   = os.getenv("INFLUXDB_URL", "http://influxdb:8086")
+    token = settings.INFLUXDB_TOKEN
+    if not token:
+        return
     try:
         from influxdb_client import InfluxDBClient, Point, WritePrecision
         from influxdb_client.client.write_api import SYNCHRONOUS

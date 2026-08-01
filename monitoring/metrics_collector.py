@@ -44,7 +44,7 @@ log = logging.getLogger("metrics_collector")
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 INFLUXDB_URL    = os.getenv("INFLUXDB_URL",    "http://influxdb:8086")
-INFLUXDB_TOKEN  = os.getenv("INFLUXDB_TOKEN",  "osdag-super-secret-token")
+INFLUXDB_TOKEN  = os.environ["INFLUXDB_TOKEN"]
 INFLUXDB_ORG    = os.getenv("INFLUXDB_ORG",    "osdag")
 INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET", "osdag_metrics")
 REDIS_URL       = os.getenv("REDIS_URL",       "redis://redis:6379/0")

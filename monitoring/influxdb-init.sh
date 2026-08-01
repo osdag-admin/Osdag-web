@@ -10,7 +10,8 @@ set -e
 
 INFLUX_ORG="${DOCKER_INFLUXDB_INIT_ORG:-osdag}"
 INFLUX_BUCKET="${DOCKER_INFLUXDB_INIT_BUCKET:-osdag_metrics}"
-INFLUX_TOKEN="${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:-osdag-super-secret-token}"
+: "${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:?DOCKER_INFLUXDB_INIT_ADMIN_TOKEN must be set}"
+INFLUX_TOKEN="$DOCKER_INFLUXDB_INIT_ADMIN_TOKEN"
 
 echo "[influxdb-init] Organisation : $INFLUX_ORG"
 echo "[influxdb-init] Bucket       : $INFLUX_BUCKET"

@@ -29,12 +29,12 @@ if str(BASE_DIR) not in sys.path:
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', get_secret_key())
+SECRET_KEY = get_secret_key()
 DATABASE_NAME = get_database_name()
-USER = get_username()
-PASSWORD = get_password()
-PORT = get_port()
-HOST = get_host()
+DATABASE_USER = get_username()
+DATABASE_PASSWORD = get_password()
+DATABASE_PORT = get_port()
+DATABASE_HOST = get_host()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
@@ -151,11 +151,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME', DATABASE_NAME or 'postgres_Intg_osdag'),
-        'USER': os.getenv('DATABASE_USER', USER or 'osdagdeveloper'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', PASSWORD or 'password'),
-        'HOST': os.getenv('DATABASE_HOST', HOST or 'localhost'),
-        'PORT': os.getenv('DATABASE_PORT', PORT or '5432'),
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': DATABASE_PORT,
     }
 }
 
@@ -281,7 +281,7 @@ FILE_STORAGE_ROOT = BASE_DIR / 'file_storage'
 # All values come from environment variables so the dev compose and production
 # configs can differ. They default to values used in docker-compose.yml.
 INFLUXDB_URL    = os.getenv('INFLUXDB_URL',    'http://influxdb:8086')
-INFLUXDB_TOKEN  = os.getenv('INFLUXDB_TOKEN',  'osdag-super-secret-token')
+INFLUXDB_TOKEN  = os.getenv('INFLUXDB_TOKEN')
 INFLUXDB_ORG    = os.getenv('INFLUXDB_ORG',    'osdag')
 INFLUXDB_BUCKET = os.getenv('INFLUXDB_BUCKET', 'osdag_metrics')
 

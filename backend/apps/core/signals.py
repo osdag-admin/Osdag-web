@@ -36,8 +36,12 @@ def _get_write_api():
     with _influx_lock:
         if _influx_write_api is not None:
             return _influx_write_api
-        url   = os.getenv("INFLUXDB_URL",   "http://influxdb:8086")
-        token = os.getenv("INFLUXDB_TOKEN", "osdag-super-secret-token")
+        from django.conf import settings
+        url   = os.getenv("INFLUXDB_URL", "http://influxdb:8086")
+        token = settings.INFLUXDB_TOKEN
+        if not token:
+            _influx_write_api = None
+            return _influx_write_api
         try:
             from influxdb_client import InfluxDBClient
             from influxdb_client.client.write_api import ASYNCHRONOUS

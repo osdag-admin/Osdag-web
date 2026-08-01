@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DATABASE_USER:-osdagdeveloper}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-password}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       POSTGRES_DB: ${DATABASE_NAME:-postgres_Intg_osdag}
     ports:
       - "${DB_HOST_PORT:-5433}:5432"
@@ -41,11 +41,11 @@ services:
       PYTHONPATH: /app:/app/backend
       HOME: /tmp
       DEBUG: ${DEBUG:-True}
-      SECRET_KEY: ${SECRET_KEY:-dev-secret-key}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
       DATABASE_NAME: ${DATABASE_NAME:-postgres_Intg_osdag}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0
@@ -53,7 +53,7 @@ services:
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       USE_REDIS_CACHE: ${USE_REDIS_CACHE:-false}
       INFLUXDB_URL:    http://influxdb:8086
-      INFLUXDB_TOKEN:  osdag-super-secret-token
+      INFLUXDB_TOKEN:  ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
       INFLUXDB_ORG:    osdag
       INFLUXDB_BUCKET: osdag_metrics
     depends_on:
@@ -90,10 +90,10 @@ services:
       PYTHONPATH: /app:/app/backend
       HOME: /tmp
       DEBUG: ${DEBUG:-True}
-      SECRET_KEY: ${SECRET_KEY:-dev-secret-key}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-postgres_Intg_osdag}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
       REDIS_URL: redis://redis:6379/0
@@ -101,7 +101,7 @@ services:
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       USE_REDIS_CACHE: ${USE_REDIS_CACHE:-false}
       INFLUXDB_URL:    http://influxdb:8086
-      INFLUXDB_TOKEN:  osdag-super-secret-token
+      INFLUXDB_TOKEN:  ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
       INFLUXDB_ORG:    osdag
       INFLUXDB_BUCKET: osdag_metrics
     depends_on:
@@ -146,7 +146,7 @@ services:
       DOCKER_INFLUXDB_INIT_PASSWORD:     osdag_password_123
       DOCKER_INFLUXDB_INIT_ORG:          osdag
       DOCKER_INFLUXDB_INIT_BUCKET:       osdag_metrics
-      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:  osdag-super-secret-token
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:  ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
       DOCKER_INFLUXDB_INIT_RETENTION:    0   # 0 = keep forever
     volumes:
       - influxdb_data:/var/lib/influxdb2
@@ -187,7 +187,7 @@ services:
   #   pid: "host"          # share PID namespace so psutil reads host CPU/RAM
   #   environment:
   #     INFLUXDB_URL:        http://influxdb:8086
-  #     INFLUXDB_TOKEN:      osdag-super-secret-token
+  #     INFLUXDB_TOKEN:      ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
   #     INFLUXDB_ORG:        osdag
   #     INFLUXDB_BUCKET:     osdag_metrics
   #     REDIS_URL:           redis://redis:6379/0
