@@ -178,15 +178,23 @@ export const InputSection = ({
       const nextInputs = { ...prev };
 
       section.fields.forEach((field) => {
-        if (field.type !== 'select') return;
+        if (field.type !== 'select' && field.type !== 'connectivitySelect' && field.type !== 'endPlateSelect') return;
 
-        const rawList = getOptionsForField(field, safeContextData, prev);
+        let rawList = getOptionsForField(field, safeContextData, prev);
+        if (!rawList || rawList.length === 0) {
+          if (field.type === 'connectivitySelect') {
+            rawList = safeContextData.connectivityList || [];
+          } else if (field.type === 'endPlateSelect') {
+            rawList = safeContextData.endPlateList || [];
+          }
+        }
+
         if (!rawList || rawList.length === 0) return;
 
         const isCustomizable = Boolean(field.selectionKey);
         if (isCustomizable) return;
 
-        // Determine first option value
+        // Determine first option value (1st element in array)
         const first = rawList[0];
         const firstValue = typeof first === 'object' && first !== null && 'value' in first ? first.value
           : (typeof first === 'object' && first !== null && 'Grade' in first ? first.Grade : first);
@@ -207,22 +215,31 @@ export const InputSection = ({
       return isChanged ? nextInputs : prev;
     });
 
-    // Set default for connectivity / endplate dropdowns
+    // Set default for connectivity / endplate dropdowns in extraState
     const connectivityField = section.fields.find(
       (f) => f.type === 'connectivitySelect' || f.type === 'endPlateSelect'
     );
-    const list = connectivityField?.type === 'connectivitySelect'
-      ? (safeContextData.connectivityList || [])
-      : [
-        'Flushed - Reversible Moment',
-        'Extended One Way - Irreversible Moment',
-        'Extended Both Ways - Reversible Moment',
-      ];
-    if (connectivityField && !extraState.selectedOption && list && list.length > 0) {
+    let list = [];
+    if (connectivityField) {
+      list = getOptionsForField(connectivityField, safeContextData, safeInputs);
+      if (!list || list.length === 0) {
+        list = connectivityField.type === 'connectivitySelect'
+          ? (safeContextData.connectivityList || [])
+          : (safeContextData.endPlateList || []);
+      }
+    }
+    if (connectivityField && list && list.length > 0) {
       const first = list[0];
       const firstValue = typeof first === 'object' && first !== null && 'value' in first ? first.value
         : (typeof first === 'object' && first !== null && 'Grade' in first ? first.Grade : first);
-      setExtraState((prev) => ({ ...prev, selectedOption: firstValue }));
+
+      const currentOpt = extraState.selectedOption;
+      const opts = toSelectOptions(list);
+      const optExists = opts.some(opt => String(opt.value).trim().toLowerCase() === String(currentOpt).trim().toLowerCase());
+
+      if (!currentOpt || !optExists) {
+        setExtraState((prev) => ({ ...prev, selectedOption: firstValue }));
+      }
     }
 
     // Set default for section profile dropdowns
@@ -433,11 +450,14 @@ export const InputSection = ({
 
       case 'connectivitySelect':
       case 'endPlateSelect': {
-        const list = field.type === 'connectivitySelect' ? (safeContextData.connectivityList || []) : Object.keys({
-          "Flushed - Reversible Moment": "", "Extended One Way - Irreversible Moment": "", "Extended Both Ways - Reversible Moment": ""
-        });
+        let list = getOptionsForField(field, safeContextData, safeInputs);
+        if (!list || list.length === 0) {
+          list = field.type === 'connectivitySelect'
+            ? (safeContextData.connectivityList || [])
+            : (safeContextData.endPlateList || []);
+        }
         const options = toSelectOptions(list);
-        const value = options.find(opt => String(opt.value) === String(extraState.selectedOption));
+        const value = options.find(opt => String(opt.value) === String(extraState.selectedOption || safeInputs[field.key])) || options[0] || null;
         return (
           <Select
             options={options}
