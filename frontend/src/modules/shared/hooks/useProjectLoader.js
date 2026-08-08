@@ -29,6 +29,23 @@ export const useProjectLoader = ({
   const lastLoadedProjectIdRef = useRef(undefined);
   const { user, loading } = useAuth();
 
+  // Snapshot whether an OSI prefill key exists at render time, before any
+  // effect (including useModuleForm's prefill-consuming effect) has run.
+  // Reading sessionStorage live inside the effect below races with
+  // useModuleForm, which deletes the key as soon as it applies the prefill —
+  // by the time this effect's async auth check resolves, the key can already
+  // be gone, causing resetFormState() to wipe out the prefilled inputs.
+  const moduleKeyForPrefillRef = useRef(undefined);
+  const hadPrefillAtMountRef = useRef(false);
+  {
+    const activeConfig = moduleConfig || {};
+    const moduleKeyNow = activeConfig.designType || activeConfig.moduleKey || activeConfig.cameraKey;
+    if (moduleKeyForPrefillRef.current !== moduleKeyNow) {
+      moduleKeyForPrefillRef.current = moduleKeyNow;
+      hadPrefillAtMountRef.current = !!(moduleKeyNow && sessionStorage.getItem(`prefill:${moduleKeyNow}`));
+    }
+  }
+
   const callbacksRef = useRef({
     setInputs,
     setDesignPrefOverrides,
@@ -100,10 +117,8 @@ export const useProjectLoader = ({
     lastLoadedProjectIdRef.current = projectId;
 
     if (!projectId) {
-      const activeConfig = callbacksRef.current.moduleConfig || {};
-      const moduleKey = activeConfig.designType || activeConfig.moduleKey || activeConfig.cameraKey;
-      const hasPrefill = moduleKey && sessionStorage.getItem(`prefill:${moduleKey}`);
-      
+      const hasPrefill = hadPrefillAtMountRef.current;
+
       if (hasPrefill) {
         console.info('[EngineeringModule] OSI prefill detected: skipping default reset');
         return;
