@@ -91,3 +91,7 @@ pgdata/
 *.osi
 
 **/.venv
+
+# Test/debug artifacts that shouldn't be tracked
+**/tmp_cad/
+load_tests/*.html
