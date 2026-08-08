@@ -26,6 +26,10 @@ TENSION_REPORT_MODULE_ID_MAP = {
     "welded": "Tension-Member-Welded-Design",
 }
 
+# design/cad accept any registry-resolvable slug unless restricted — reuse the
+# same allowlist options() already serves data for.
+TENSION_MEMBER_ALLOWED_SLUGS = frozenset(TENSION_REPORT_MODULE_ID_MAP.keys())
+
 
 class TensionMemberViewSet(viewsets.ViewSet):
     """
@@ -58,7 +62,7 @@ class TensionMemberViewSet(viewsets.ViewSet):
         Asynchronously runs calculation task.
         """
         normalized_slug = self._normalize_slug(submodule_slug)
-        ServiceClass = TensionMemberRegistry.get_service_by_slug(normalized_slug)
+        ServiceClass = TensionMemberRegistry.get_service_by_slug_or_404(normalized_slug, TENSION_MEMBER_ALLOWED_SLUGS)
         return trigger_async_design('tension-member', normalized_slug, ServiceClass, request)
 
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
@@ -158,5 +162,5 @@ class TensionMemberViewSet(viewsets.ViewSet):
         Asynchronously runs CAD generation task.
         """
         normalized_slug = self._normalize_slug(submodule_slug)
-        ServiceClass = TensionMemberRegistry.get_service_by_slug(normalized_slug)
+        ServiceClass = TensionMemberRegistry.get_service_by_slug_or_404(normalized_slug, TENSION_MEMBER_ALLOWED_SLUGS)
         return trigger_async_cad('tension-member', normalized_slug, ServiceClass, request)

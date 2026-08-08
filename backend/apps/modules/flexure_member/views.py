@@ -28,6 +28,14 @@ FLEXURE_REPORT_MODULE_ID_MAP = {
     "plate-girder": "Plate-Girder",
 }
 
+# design/cad accept any registry-resolvable slug unless restricted — reuse the
+# same allowlist options() already serves data for. FlexureMemberViewSet's
+# registered slugs already matched its options() allowlist exactly (the
+# positive counter-example the finding names), so this doesn't change
+# behavior here — it's applied for consistency with the other 5 ViewSets and
+# as a guard against future drift.
+FLEXURE_MEMBER_ALLOWED_SLUGS = frozenset(FLEXURE_REPORT_MODULE_ID_MAP.keys())
+
 
 class FlexureMemberViewSet(viewsets.ViewSet):
     """
@@ -42,7 +50,7 @@ class FlexureMemberViewSet(viewsets.ViewSet):
         POST /api/modules/flexure-member/{submodule_slug}/design/
         Asynchronously runs calculation task.
         """
-        ServiceClass = FlexureMemberRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = FlexureMemberRegistry.get_service_by_slug_or_404(submodule_slug, FLEXURE_MEMBER_ALLOWED_SLUGS)
         return trigger_async_design('flexure-member', submodule_slug, ServiceClass, request)
     
     @action(detail=False, methods=['get'], url_path='(?P<submodule_slug>[^/.]+)/options')
@@ -186,7 +194,7 @@ class FlexureMemberViewSet(viewsets.ViewSet):
         POST /api/modules/flexure-member/{submodule_slug}/cad/
         Asynchronously runs CAD generation task.
         """
-        ServiceClass = FlexureMemberRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = FlexureMemberRegistry.get_service_by_slug_or_404(submodule_slug, FLEXURE_MEMBER_ALLOWED_SLUGS)
         return trigger_async_cad('flexure-member', submodule_slug, ServiceClass, request)
 
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')

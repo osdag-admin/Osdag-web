@@ -35,7 +35,23 @@ class BaseModuleRegistry:
     def get_service_by_slug(cls, slug: str):
         """Get service class by URL slug (e.g., 'fin-plate')"""
         return cls._registry.get(slug)
-    
+
+    @classmethod
+    def get_service_by_slug_or_404(cls, slug: str, allowed_slugs):
+        """Get service class by URL slug, but only if slug is in the caller's
+        public allowlist (the same slugs its options() endpoint serves).
+
+        Unlike get_service_by_slug(), this doesn't trust the full registry —
+        auto_discover() registers every folder under submodules/, so a
+        submodule that exists on disk but was never wired into options()
+        (dead, orphaned, or simply not ready) would otherwise still be
+        reachable via design/cad. Returns None if slug isn't allowed, whether
+        or not it happens to be registered.
+        """
+        if slug not in allowed_slugs:
+            return None
+        return cls.get_service_by_slug(slug)
+
     @classmethod
     def get_service_by_module_id(cls, module_id: str):
         """Get service class by MODULE_ID (e.g., 'FinPlateConnection')"""

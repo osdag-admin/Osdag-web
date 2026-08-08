@@ -32,6 +32,11 @@ MOMENT_REPORT_MODULE_ID_MAP = {
     "column-column-end-plate": "Column-to-Column-End-Plate-Connection",
 }
 
+# design/cad accept any registry-resolvable slug unless restricted — reuse the
+# same allowlist options() already serves data for (see shear_connection for
+# the same pattern and why it matters).
+MOMENT_CONNECTION_ALLOWED_SLUGS = frozenset(MOMENT_REPORT_MODULE_ID_MAP.keys())
+
 
 class MomentConnectionViewSet(viewsets.ViewSet):
     """
@@ -46,7 +51,7 @@ class MomentConnectionViewSet(viewsets.ViewSet):
         POST /api/modules/moment-connection/{submodule_slug}/design/
         Asynchronously runs calculation task.
         """
-        ServiceClass = MomentConnectionRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = MomentConnectionRegistry.get_service_by_slug_or_404(submodule_slug, MOMENT_CONNECTION_ALLOWED_SLUGS)
         return trigger_async_design('moment-connection', submodule_slug, ServiceClass, request)
 
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
@@ -210,5 +215,5 @@ class MomentConnectionViewSet(viewsets.ViewSet):
         POST /api/modules/moment-connection/{submodule_slug}/cad/
         Asynchronously runs CAD generation task.
         """
-        ServiceClass = MomentConnectionRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = MomentConnectionRegistry.get_service_by_slug_or_404(submodule_slug, MOMENT_CONNECTION_ALLOWED_SLUGS)
         return trigger_async_cad('moment-connection', submodule_slug, ServiceClass, request)

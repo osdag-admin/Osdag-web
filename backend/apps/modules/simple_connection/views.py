@@ -31,6 +31,10 @@ SIMPLE_CONNECTION_REPORT_MODULE_ID_MAP = {
     "lap-joint-welded": "LapJointWelded",
 }
 
+# design/cad accept any registry-resolvable slug unless restricted — reuse the
+# same allowlist options() already serves data for.
+SIMPLE_CONNECTION_ALLOWED_SLUGS = frozenset(SIMPLE_CONNECTION_REPORT_MODULE_ID_MAP.keys())
+
 
 class SimpleConnectionViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
@@ -41,7 +45,7 @@ class SimpleConnectionViewSet(viewsets.ViewSet):
         POST /api/modules/simple-connection/{slug}/design/
         Asynchronously runs calculation task.
         """
-        ServiceClass = SimpleConnectionRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = SimpleConnectionRegistry.get_service_by_slug_or_404(submodule_slug, SIMPLE_CONNECTION_ALLOWED_SLUGS)
         return trigger_async_design('simple-connection', submodule_slug, ServiceClass, request)
 
     @action(detail=False, methods=['get'], url_path='(?P<submodule_slug>[^/.]+)/options')
@@ -140,7 +144,7 @@ class SimpleConnectionViewSet(viewsets.ViewSet):
         POST /api/modules/simple-connection/{submodule_slug}/cad/
         Asynchronously runs CAD generation task.
         """
-        ServiceClass = SimpleConnectionRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = SimpleConnectionRegistry.get_service_by_slug_or_404(submodule_slug, SIMPLE_CONNECTION_ALLOWED_SLUGS)
         return trigger_async_cad('simple-connection', submodule_slug, ServiceClass, request)
 
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')

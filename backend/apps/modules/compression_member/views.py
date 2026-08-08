@@ -28,6 +28,10 @@ COMPRESSION_REPORT_MODULE_ID_MAP = {
     "struts-welded": "Struts-Welded-Design",
 }
 
+# design/cad accept any registry-resolvable slug unless restricted — reuse the
+# same allowlist options() already serves data for.
+COMPRESSION_MEMBER_ALLOWED_SLUGS = frozenset(COMPRESSION_REPORT_MODULE_ID_MAP.keys())
+
 
 class CompressionMemberViewSet(viewsets.ViewSet):
     """
@@ -65,7 +69,7 @@ class CompressionMemberViewSet(viewsets.ViewSet):
         Asynchronously runs calculation task.
         """
         normalized_slug = self._normalize_slug(submodule_slug)
-        ServiceClass = CompressionMemberRegistry.get_service_by_slug(normalized_slug)
+        ServiceClass = CompressionMemberRegistry.get_service_by_slug_or_404(normalized_slug, COMPRESSION_MEMBER_ALLOWED_SLUGS)
         return trigger_async_design('compression-member', normalized_slug, ServiceClass, request)
 
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
@@ -210,8 +214,8 @@ class CompressionMemberViewSet(viewsets.ViewSet):
         Asynchronously runs CAD generation task.
         """
         normalized_slug = self._normalize_slug(submodule_slug)
-        ServiceClass = CompressionMemberRegistry.get_service_by_slug(normalized_slug)
-        
+        ServiceClass = CompressionMemberRegistry.get_service_by_slug_or_404(normalized_slug, COMPRESSION_MEMBER_ALLOWED_SLUGS)
+
         if not ServiceClass:
             return Response(
                 {'error': f'Sub-module {normalized_slug} not found'},

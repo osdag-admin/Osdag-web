@@ -30,6 +30,12 @@ SHEAR_REPORT_MODULE_ID_MAP = {
     "seated-angle": "Seated-Angle-Connection",
 }
 
+# design/cad accept any registry-resolvable slug unless restricted — this is the
+# same set of slugs options() actually serves data for, reused here so a
+# submodule folder that exists on disk but was never wired into options()
+# can't be reached through design/cad either.
+SHEAR_CONNECTION_ALLOWED_SLUGS = frozenset(SHEAR_REPORT_MODULE_ID_MAP.keys())
+
 
 class ShearConnectionViewSet(viewsets.ViewSet):
     """
@@ -44,7 +50,7 @@ class ShearConnectionViewSet(viewsets.ViewSet):
         POST /api/modules/shear-connection/{submodule_slug}/design/
         Asynchronously runs calculation task.
         """
-        ServiceClass = ShearConnectionRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = ShearConnectionRegistry.get_service_by_slug_or_404(submodule_slug, SHEAR_CONNECTION_ALLOWED_SLUGS)
         return trigger_async_design('shear-connection', submodule_slug, ServiceClass, request)
 
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
@@ -115,7 +121,6 @@ class ShearConnectionViewSet(viewsets.ViewSet):
                     status=status.HTTP_200_OK,
                 )
 
-            # if slug == 'end-plate':
             if slug == 'header-plate':
                 data = {
                     'connectivityList': connectivity_common,
@@ -160,5 +165,5 @@ class ShearConnectionViewSet(viewsets.ViewSet):
         POST /api/modules/shear-connection/{submodule_slug}/cad/
         Asynchronously runs CAD generation task.
         """
-        ServiceClass = ShearConnectionRegistry.get_service_by_slug(submodule_slug)
+        ServiceClass = ShearConnectionRegistry.get_service_by_slug_or_404(submodule_slug, SHEAR_CONNECTION_ALLOWED_SLUGS)
         return trigger_async_cad('shear-connection', submodule_slug, ServiceClass, request)
