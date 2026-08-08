@@ -71,18 +71,13 @@ export const ScreenshotCapture = ({
 
   useEffect(() => {
     const runScreenshot = async () => {
-      if (selectedView !== "Model") {
-        alert("Switch to 'Model' view first.");
-        setScreenshotTrigger(false);
-        return;
-      }
       invalidate();
       await new Promise((resolve) => requestAnimationFrame(resolve));
       await saveImageWithDialog(gl.domElement);
       setScreenshotTrigger(false);
     };
     if (screenshotTrigger) runScreenshot();
-  }, [screenshotTrigger, gl, selectedView, setScreenshotTrigger, invalidate]);
+  }, [screenshotTrigger, gl, setScreenshotTrigger, invalidate]);
 
   return null;
 };
