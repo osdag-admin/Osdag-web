@@ -68,6 +68,7 @@ pdfkit==0.6.1
 PyLaTeX
 
 # --- Graphics / rendering helpers ---
+matplotlib
 CairoSVG==2.4.2
 pillow==11.3.0
 cairocffi==1.1.0
