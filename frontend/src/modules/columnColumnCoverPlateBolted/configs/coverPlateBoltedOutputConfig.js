@@ -157,11 +157,11 @@ export const coverPlateBoltedOutputConfig = {
             label: "Edge Distance (mm)",
           },
           {
-            key: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
+            key: "Flange_plate.Bolt_Line_flange_bolt_capacity",
             label: "Number Of Columns (mm)",
           },
           {
-            key: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            key: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
             label: "Number Of Rows (mm)",
           },
         ],
@@ -170,8 +170,8 @@ export const coverPlateBoltedOutputConfig = {
           props: {
             plateWidth: "Flange_Plate.Width (mm)",
             plateHeight: "flange_plate.Length",
-            rows: "Flange_plate.Bolt_Line_flange_bolt_capacity",
-            cols: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
+            rows: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
+            cols: "Flange_plate.Bolt_Line_flange_bolt_capacity",
             end: "Flange_plate.end_dist_provided_flange_spacing",
             pitch: "Flange_plate.pitch_provided_flange_spacing",
             gauge: "Flange_plate.gauge_provided_flange_spacing",
