@@ -82,6 +82,7 @@ export function getModuleKeyMap(moduleConfig) {
     "Detailing.Corrosive_Influences": "detailing_corr_status",
     "Detailing.Edge_type": "detailing_edge_type",
     "Detailing.Gap": "detailing_gap",
+    "Design.For": "design_for",
     "Load.Axial": "load_axial",
     "Load.Axial.Force": "axial_force",
     "Load.Shear.Force": "shear_force",

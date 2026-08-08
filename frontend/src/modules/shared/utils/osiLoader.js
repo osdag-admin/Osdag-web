@@ -111,9 +111,39 @@ export function loadStateFromOsi(payload, {
         }
       }
 
+      if (inputKey === "material" && safeModuleData.materialList) {
+        const matList = safeModuleData.materialList;
+        const matched = matList.find(m => {
+          const g = String(m.Grade || m.value || m).trim();
+          return g === finalVal.trim() || finalVal.trim().startsWith(g) || g.startsWith(finalVal.trim());
+        });
+        if (matched) {
+          finalVal = String(matched.Grade || matched.value || matched);
+        }
+      }
+
       normalized[inputKey] = finalVal;
     }
   });
+
+  if (normalized.load_axial !== undefined && normalized.axial_force === undefined) {
+    normalized.axial_force = normalized.load_axial;
+  }
+  if (normalized.axial_force !== undefined && normalized.load_axial === undefined) {
+    normalized.load_axial = normalized.axial_force;
+  }
+  if (normalized.load_shear !== undefined && normalized.shear_force === undefined) {
+    normalized.shear_force = normalized.load_shear;
+  }
+  if (normalized.shear_force !== undefined && normalized.load_shear === undefined) {
+    normalized.load_shear = normalized.shear_force;
+  }
+  if (normalized.load_moment !== undefined && normalized.moment === undefined) {
+    normalized.moment = normalized.load_moment;
+  }
+  if (normalized.moment !== undefined && normalized.load_moment === undefined) {
+    normalized.load_moment = normalized.moment;
+  }
 
   if (setInputs) {
     setInputs(normalized);
