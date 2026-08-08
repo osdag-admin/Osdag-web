@@ -1,16 +1,6 @@
 // Utility functions for module operations
 import { getMenuShortcutLabel } from "../../../constants/shortcuts";
 
-export const convertToCSV = (data) => {
-  const keys = Object.keys(data);
-  const values = Object.values(data);
-  const csvData = keys.map((key, index) => {
-    const escapedValue = values[index].toString().replace(/"/g, "'");
-    return `"${key}","${escapedValue}"`;
-  });
-  return csvData.join("\n");
-};
-
 export const menuItems = [
   {
     label: "File",

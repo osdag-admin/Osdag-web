@@ -275,128 +275,6 @@ export const ModuleProvider = ({ children }) => {
     }
   }, []);
 
-  // ===================================================================
-  // 4. REPORTS - Generate and Download Reports
-  // ===================================================================
-
-  /**
-   * Convert design output data to CSV format
-   * Handles nested objects by flattening them with dot notation
-   * @param {Object} data - Design output data
-   * @returns {string} CSV formatted string
-   */
-  const convertToCSV = useCallback((data) => {
-    if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
-      return '';
-    }
-
-    // Flatten nested objects (e.g., {a: {b: 1}} becomes {"a.b": 1})
-    const flattenObject = (obj, prefix = '') => {
-      const flattened = {};
-      for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          const newKey = prefix ? `${prefix}.${key}` : key;
-          const value = obj[key];
-
-          if (value === null || value === undefined) {
-            flattened[newKey] = '';
-          } else if (typeof value === 'object' && !Array.isArray(value)) {
-            // Recursively flatten nested objects
-            Object.assign(flattened, flattenObject(value, newKey));
-          } else if (Array.isArray(value)) {
-            // Convert arrays to comma-separated string
-            flattened[newKey] = value.map(v =>
-              typeof v === 'object' ? JSON.stringify(v) : String(v)
-            ).join('; ');
-          } else {
-            flattened[newKey] = value;
-          }
-        }
-      }
-      return flattened;
-    };
-
-    const flatData = flattenObject(data);
-    const keys = Object.keys(flatData);
-    const values = Object.values(flatData);
-
-    if (keys.length === 0) {
-      return '';
-    }
-
-    // Escape CSV values (handle quotes and commas)
-    const escapeCSV = (value) => {
-      const str = String(value);
-      // If value contains comma, quote, or newline, wrap in quotes and escape internal quotes
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return `"${str.replace(/"/g, '""')}"`;
-      }
-      return str;
-    };
-
-    // CSV header row
-    const header = keys.map(escapeCSV).join(',');
-
-    // CSV data row
-    const row = values.map(escapeCSV).join(',');
-
-    return [header, row].join('\n');
-  }, []);
-
-  /**
-   * Generate reports (PDF, CSV, etc.) with unified interface
-   * @param {string} type - Report type ('pdf', 'csv')
-   * @param {Object} params - Report parameters (for CSV: can pass outputData, otherwise uses state.designData)
-   */
-  const generateReport = useCallback(async (type, params = {}) => {
-    try {
-
-      switch (type.toLowerCase()) {
-        case 'pdf': {
-          return { success: false, error: 'Legacy PDF endpoint removed. Use the in-app report modal (generate-initial → parse-sections → customize).' };
-        }
-
-        case 'csv': {
-          // Get output data from params or state
-          const outputData = params.outputData || state.designData;
-
-          if (!outputData || typeof outputData !== 'object' || Object.keys(outputData).length === 0) {
-            return { success: false, error: 'No output data available. Please run design calculation first.' };
-          }
-
-          // Convert to CSV
-          const csvContent = convertToCSV(outputData);
-
-          if (!csvContent) {
-            return { success: false, error: 'Failed to generate CSV. Output data is empty.' };
-          }
-
-          // Create blob and trigger download
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-          link.download = `design_output_${timestamp}.csv`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-
-          return { success: true, message: 'CSV downloaded successfully' };
-        }
-
-        case 'design_report': {
-          return { success: false, error: 'Legacy design-report flow removed. Use the in-app report modal.' };
-        }
-
-        default:
-          throw new Error(`Unsupported report type: ${type}`);
-      }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, [state.designData, convertToCSV]);
   const syncDesignPrefMaterialsFromBase = (
     baseMaterialGrade,
     materialList,
@@ -520,10 +398,6 @@ export const ModuleProvider = ({ children }) => {
     dispatch({ type: "INVALIDATE_DESIGN_OUTPUTS" });
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   // Initialize with FinPlate module for backward compatibility
-  //   populateModule(MODULE_KEY_FIN_PLATE, dispatch);
-  // }, []);
   return (
     <ModuleContext.Provider
       value={{
@@ -595,9 +469,6 @@ export const ModuleProvider = ({ children }) => {
         // 3. CAD (2 functions)
         createCADModel,             // Generate 3D model
         downloadCADModel,           // Download CAD file
-
-        // 4. REPORTS (1 function)
-        generateReport,             // Generate PDF/CSV/design reports
 
         // 5. PREFERENCES (1 function)
         manageDesignPreferences,    // Design settings and material properties
