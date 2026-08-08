@@ -471,26 +471,6 @@ const DESIGN_PREF_CONFIG = {
       design_method: "Limited State Design",
     }),
   },
-  // "SeatedAngleConnection":{
-  //   tabIds: [0, 1, 4, 5, 7, 8],
-  //   initialTabIndex: 0,
-  //   getInitialPrefs: (inputs) => ({
-  //     weld_fab: inputs.weld_fab ?? "Shop weld",
-  //     weld_material_grade: inputs.weld_material_grade ?? "0",
-  //     detailing_edge_type: inputs.detailing_edge_type ?? "Sheared or hand flame cut",
-  //     detailing_packing_plate: inputs.detailing_packing_plate,
-  //     design_for: inputs.design_for ?? "Tension",
-  //   }),
-  //   getDefaultPrefs: (inputs) => {
-  //     const defs = {
-  //       weld_fab: "Shop weld",
-  //       weld_material_grade: inputs.weld_material_grade ?? "0",
-  //       detailing_edge_type: "Sheared or hand flame cut",
-  //       design_for: "Tension",
-  //     };
-  //     return defs;
-  //   },
-  // },
   "SeatedAngleConnection": {
     tabIds: [0, 1, 5, 6, 11, 13],
     initialTabIndex: 0,

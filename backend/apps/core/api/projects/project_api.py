@@ -18,9 +18,6 @@ class ProjectAPI(APIView):
     def get(self, request):
         """Get user-specific projects (for recent projects list)"""
         try:
-            # if not request.user or not request.user.is_authenticated:
-            #     return JsonResponse({'success': False, 'error': 'Authentication required'}, safe=False, status=401)
-
             # Disallow guest users from listing projects (guests don't send authentication tokens)
             if not (hasattr(request, 'user') and request.user.is_authenticated):
                 return JsonResponse({'success': False, 'error': 'Guest users cannot access projects'}, safe=False, status=403)
