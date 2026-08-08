@@ -41,7 +41,7 @@ class AxiallyLoadedColumnService:
 
             # 2) Generate output (creates ColumnDesign instance and runs calculation)
             print("\n[2/3] Generating output from ColumnDesign...")
-            output, logs = generate_output(inputs)
+            output, logs, raw_csv = generate_output(inputs)
             print(f"Output generated: {len(output)} parameters")
             print(f"Logs count: {len(logs) if logs else 0}")
 
@@ -51,6 +51,7 @@ class AxiallyLoadedColumnService:
                 "data": output,
                 "logs": logs or [],
                 "success": True,
+                "raw_csv": raw_csv or {},
             }
             print("AxiallyLoadedColumnService.calculate() completed successfully")
             print("=" * 60)

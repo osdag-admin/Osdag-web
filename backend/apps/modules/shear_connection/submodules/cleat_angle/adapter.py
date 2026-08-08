@@ -1,7 +1,8 @@
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
+    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
+    build_raw_output_dict
 )
 from apps.modules.shear_connection import shared as scc
 from OCC.Core import BRepTools
@@ -270,12 +271,12 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
 
     if module is None:
         print('CleatAngle - Module creation failed, returning empty output')
-        return {}, []
+        return {}, [], {}
 
     # Check if module has required attributes
     if not hasattr(module, 'output_values'):
         print('CleatAngle - Module does not have output_values method')
-        return {}, []
+        return {}, [], {}
 
     print('CleatAngle - About to call module output methods')
     
@@ -300,8 +301,8 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
                 logs = list(reversed(logs))
             except Exception:
                 pass
-            return {}, logs
-            
+            return {}, logs, {}
+
         # Generate output values in unformatted form.
         raw_output_text = module.output_values(True)
         print('CleatAngle - raw_output_text:', raw_output_text)
@@ -310,6 +311,8 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         print('CleatAngle - Error calling output_values:', e)
         traceback.print_exc()
         raw_output_text = []
+
+    raw_csv = build_raw_output_dict(raw_output_text)
         
     try:
         raw_output_spacing_supported = module.spacing(True)  # Generate output val (supported side)
@@ -484,7 +487,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 #we do not have plate in just like in finplate case, we have cleatAngle which is combination of angle & nutbolts
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
@@ -499,7 +502,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     
     # First check if we have valid output before attempting CAD generation
     try:
-        output, logs = generate_output(input_values)
+        output, logs, _ = generate_output(input_values)
         if not output or len(output) == 0:
             print('CleatAngle CAD - No valid output found. Cannot generate CAD model.')
             raise ValueError("Cannot generate CAD model: No valid design output found. Please ensure the design calculation completed successfully.")

@@ -9,7 +9,7 @@ from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
-    write_stl
+    write_stl, build_raw_output_dict
 )
 from OCC.Core import BRepTools
 from OCC.Core.Message import Message_ProgressRange
@@ -193,6 +193,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = getattr(module, "logs", []) or []
 
     raw_output = raw_output_spacing + raw_output_text
+    raw_csv = build_raw_output_dict(raw_output)
     for param in raw_output:
         if param[2] == "TextBox":
             key = param[0]
@@ -207,7 +208,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def setup_for_cad(cld, module):

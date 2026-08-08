@@ -13,7 +13,7 @@ from OCC.Core.Message import Message_ProgressRange
 from apps.core.utils import (
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
-    write_stl,
+    write_stl, build_raw_output_dict,
 )
 
 
@@ -228,9 +228,16 @@ def generate_cover_plate_bolted_output(module_class, input_values):
 
     raw_output_text = module.output_values(True)
     raw_member_capacity = module.member_capacityoutput(True)
+    flange_bolt_capacity_raw = module.flange_bolt_capacity(True)
+    web_bolt_capacity_raw = module.web_bolt_capacity(True)
+    flange_capacity_raw = module.flangecapacity(True)
+    web_capacity_raw = module.webcapacity(True)
+    flange_spacing_raw = module.flangespacing(True)
+    web_spacing_raw = module.webspacing(True)
+
     raw_flange_bolt_capacity = [
         (f"{key}_flange_bolt_capacity", label, typ, value, visible if len(item) == 5 else True)
-        for item in module.flange_bolt_capacity(True)
+        for item in flange_bolt_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
         for visible in [rest[0] if rest else True]
@@ -238,7 +245,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
 
     raw_web_bolt_capacity = [
         (f"{key}_web_bolt_capacity", label, typ, value, visible if len(item) == 5 else True)
-        for item in module.web_bolt_capacity(True)
+        for item in web_bolt_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
         for visible in [rest[0] if rest else True]
@@ -246,7 +253,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
 
     raw_flange_capacity = [
         (f"{key}_flange_capacity", label, typ, value, visible if len(item) == 5 else True)
-        for item in module.flangecapacity(True)
+        for item in flange_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
         for visible in [rest[0] if rest else True]
@@ -254,7 +261,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
 
     raw_web_capacity = [
         (f"{key}_web_capacity", label, typ, value, visible if len(item) == 5 else True)
-        for item in module.webcapacity(True)
+        for item in web_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
         for visible in [rest[0] if rest else True]
@@ -262,7 +269,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
 
     raw_flange_spacing = [
         (f"{key}_flange_spacing", label, typ, value, visible if len(item) == 5 else True)
-        for item in module.flangespacing(True)
+        for item in flange_spacing_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
         for visible in [rest[0] if rest else True]
@@ -270,11 +277,17 @@ def generate_cover_plate_bolted_output(module_class, input_values):
 
     raw_web_spacing = [
         (f"{key}_web_spacing", label, typ, value, visible if len(item) == 5 else True)
-        for item in module.webspacing(True)
+        for item in web_spacing_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
         for visible in [rest[0] if rest else True]
     ]
+
+    raw_csv = build_raw_output_dict(
+        raw_output_text + raw_member_capacity + flange_bolt_capacity_raw +
+        web_bolt_capacity_raw + flange_capacity_raw + web_capacity_raw +
+        flange_spacing_raw + web_spacing_raw
+    )
 
     from osdag_core.custom_logger import CustomLogger
     if hasattr(module, "logger") and isinstance(module.logger, CustomLogger):
@@ -305,7 +318,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def write_cover_plate_cad_output(model, section, session, part_names, part_files, export_formats=None):

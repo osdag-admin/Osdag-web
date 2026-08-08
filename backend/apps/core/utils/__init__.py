@@ -9,6 +9,7 @@ from .validation import (
 )
 from .mesh_export import write_stl
 from .cad_export import export_step, export_iges
+from .raw_output_export import build_raw_output_dict
 
 __all__ = [
     # Errors
@@ -21,5 +22,7 @@ __all__ = [
     'write_stl',
     # CAD export
     'export_step', 'export_iges',
+    # Raw output CSV export
+    'build_raw_output_dict',
 ]
 

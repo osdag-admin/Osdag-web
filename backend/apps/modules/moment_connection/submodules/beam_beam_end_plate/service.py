@@ -18,11 +18,12 @@ class BeamBeamEndPlateService:
         if hasattr(model, "set_osdaglogger"):
             model.set_osdaglogger(None, id="web")
         model.set_input_values(inputs)
-        output, logs = generate_output(inputs)
+        output, logs, raw_csv = generate_output(inputs)
         return {
             'data': output,
             'logs': logs,
-            'success': True
+            'success': True,
+            'raw_csv': raw_csv or {},
         }
     
     @staticmethod

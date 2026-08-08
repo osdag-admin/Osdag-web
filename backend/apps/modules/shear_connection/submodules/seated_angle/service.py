@@ -12,11 +12,12 @@ class SeatedAngleService:
     def calculate(inputs: dict, request=None, project_id=None, user_email=None) -> dict:
         """Run design calculation and return results"""
         validate_input(inputs)
-        output, logs = generate_output(inputs)
+        output, logs, raw_csv = generate_output(inputs)
         return {
             'data': output,
             'logs': logs,
-            'success': True
+            'success': True,
+            'raw_csv': raw_csv or {},
         }
     
     @staticmethod

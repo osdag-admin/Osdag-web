@@ -36,7 +36,7 @@ class OnCantileverService:
 
             # Generate formatted output
             print("\n[2/3] Generating output...")
-            output, logs = generate_output(inputs)
+            output, logs, raw_csv = generate_output(inputs)
             print(f"Output generated: {len(output)} output parameters")
             print(f"Logs retrieved: {len(logs) if logs else 0} log entries")
 
@@ -44,7 +44,8 @@ class OnCantileverService:
             result = {
                 'data': output,
                 'logs': logs or [],
-                'success': True
+                'success': True,
+                'raw_csv': raw_csv or {},
             }
             print("Response prepared successfully")
             print("=" * 60)

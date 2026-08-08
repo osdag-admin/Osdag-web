@@ -6,7 +6,7 @@ Uses Flexure_Cantilever from osdag_core.
 from osdag_core.Common import KEY_DISP_FLEXURE2
 from apps.core.utils import (
     MissingKeyError, InvalidInputTypeError,
-    contains_keys,
+    contains_keys, build_raw_output_dict,
 )
 from osdag_core.design_type.flexural_member.flexure_cantilever import Flexure_Cantilever
 from apps.modules.flexure_member import shared as fm_shared
@@ -179,6 +179,7 @@ def generate_output(input_values: Dict[str, Any]):
 
     output = {}
     logs = []
+    raw_csv = {}
 
     try:
         module = create_from_input(input_values)
@@ -190,6 +191,8 @@ def generate_output(input_values: Dict[str, Any]):
                 result = getattr(module, method_name)(True)
                 if result:
                     raw_output += result
+
+        raw_csv = build_raw_output_dict(raw_output)
 
         # Collect logs
         if hasattr(module, 'logger') and isinstance(module.logger, CustomLogger):
@@ -228,7 +231,7 @@ def generate_output(input_values: Dict[str, Any]):
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def _get_shapes(cld):

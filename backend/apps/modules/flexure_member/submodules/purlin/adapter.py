@@ -6,7 +6,8 @@ from osdag_core.Common import KEY_DISP_FLEXURE4
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
+    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
+    build_raw_output_dict
 )
 from osdag_core.design_type.flexural_member.flexure_purlin import Flexure_Purlin
 from apps.modules.flexure_member import shared as fm_shared
@@ -338,6 +339,7 @@ def generate_output(input_values: Dict[str, Any]):
 
     output = {}
     logs = []
+    raw_csv = {}
 
     try:
         # -----------------------------
@@ -359,6 +361,8 @@ def generate_output(input_values: Dict[str, Any]):
                 result = method(True)
                 if result:
                     raw_output += result
+
+        raw_csv = build_raw_output_dict(raw_output)
 
         # -----------------------------
         # Collect Logs
@@ -400,7 +404,7 @@ def generate_output(input_values: Dict[str, Any]):
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def _get_shapes(cld):

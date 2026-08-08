@@ -2,7 +2,7 @@ from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
-    write_stl
+    write_stl, build_raw_output_dict
 )
 from ...shared import setup_for_cad  # Use moment_connection shared utilities
 from osdag_core.cad.common_logic import CommonDesignLogic
@@ -262,6 +262,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("Generating output for Column-to-Column End Plate")
     output = {}
     logs = []  # Initialize logs
+    raw_csv = {}
 
     module = create_from_input(input_values)
 
@@ -284,6 +285,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         raw_output_text +
         raw_output_flange + raw_output_web
     )
+    raw_csv = build_raw_output_dict(raw_output)
 
     # Format output
     for param in raw_output:
@@ -308,7 +310,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 

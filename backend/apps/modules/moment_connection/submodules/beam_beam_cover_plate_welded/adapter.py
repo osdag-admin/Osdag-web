@@ -21,7 +21,7 @@ from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
-    write_stl,
+    write_stl, build_raw_output_dict,
 )
 
 from ...shared import setup_for_cad  # Use moment_connection shared utilities
@@ -153,6 +153,7 @@ def create_from_input(input_values: Dict[str, Any]) -> BeamCoverPlateWeld:
 def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """Generate, format and return formatted output"""
     output = {}
+    raw_csv = {}
     module = create_from_input(input_values)
 
     # Get raw output data
@@ -163,6 +164,11 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     web_capacity = module.webcapacity(True)
     flange_capacity = module.flangecapacity(True)
     web_block_shear_pattern = module.web_pattern(True)
+
+    raw_csv = build_raw_output_dict(
+        raw_output_text + raw_member_capacity + flange_weld_details + web_weld_details +
+        web_capacity + flange_capacity + web_block_shear_pattern
+    )
 
     from osdag_core.custom_logger import CustomLogger
     logs = []
@@ -213,7 +219,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:

@@ -26,7 +26,7 @@ import { useDockPanels } from "../hooks/useDockPanels";
 import { useHover } from "../hooks/useHover";
 import UnifiedDropdownMenu from "../utils/UnifiedDropdownMenu";
 import { menuItems } from "../utils/moduleUtils";
-import { downloadGroupedOutputsCsv, downloadGroupedInputsCsv } from "../utils/groupedCsvExport";
+import { downloadGroupedInputsCsv, downloadRawOutputsCsv } from "../utils/groupedCsvExport";
 import { expandAllSelectedInputs } from "../utils/osiInputSerializer";
 import { loadStateFromOsi } from "../utils/osiLoader";
 import { getModuleConfig as getDesignPrefModuleConfig } from "../utils/moduleConfig";
@@ -89,7 +89,7 @@ export const EngineeringModule = ({
   } = moduleData;
 
   const {
-    output, logs, loading, renderBoolean, modelKey, status, setStatus,
+    output, logs, rawCsvData, loading, renderBoolean, modelKey, status, setStatus,
     screenshotTrigger, setScreenshotTrigger, cadModelPaths, hoverDict: ctxHoverDict
   } = designStatus;
 
@@ -866,11 +866,11 @@ export const EngineeringModule = ({
     }
     if (name === "Download Outputs CSV" || name === "Save Outputs (.csv)") {
       const moduleId = moduleConfig?.designType || inputs?.module || moduleConfig?.cameraKey || MODULE_KEY_SEAT_ANGLE;
-      return downloadGroupedOutputsCsv({
-        output,
-        outputConfig,
-        logs,
-        filename: `${moduleId}_outputs.csv`,
+      const inputsDict = moduleConfig.buildSubmissionParams(inputs, allSelected, contextData || {}, extraState || {});
+      return downloadRawOutputsCsv({
+        inputsDict,
+        rawCsvData,
+        filename: `${moduleId}_Outputs.csv`,
       });
     }
     if (name === "Download Inputs OSI" || name === "Save Inputs (.osi)" || name === "Download Osi") {

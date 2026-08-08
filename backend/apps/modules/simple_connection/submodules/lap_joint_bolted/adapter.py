@@ -18,7 +18,8 @@ from osdag_core.Common import KEY_DISP_LAPJOINTBOLTED
 from osdag_core.custom_logger import CustomLogger
 from apps.core.utils import (
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, validate_list_type, write_stl
+    contains_keys, custom_list_validation, float_able, int_able, validate_list_type, write_stl,
+    build_raw_output_dict
 )
 from ...shared import setup_for_cad
 from ...shared_validation import create_bolted_validator
@@ -50,6 +51,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """Generate output from input values"""
     output = {}
     logs = []
+    raw_csv = {}
     try:
         module = LapJointBolted()
         module.set_osdaglogger(None, id="web")
@@ -125,7 +127,9 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
                 mapped_output[target_key] = {"key": target_key, "label": display_label, "val": val}
 
         if hasattr(module, "output_values"):
-            map_tuple_list(module.output_values(True))
+            out_list = module.output_values(True)
+            map_tuple_list(out_list)
+            raw_csv = build_raw_output_dict(out_list)
         if hasattr(module, "spacing") and callable(getattr(module, "spacing", None)):
             map_tuple_list(module.spacing(True))
 
@@ -159,7 +163,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
@@ -174,6 +178,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     print(f"[LapJointBolted CAD] Initializing logger")
     module.set_osdaglogger(None, id="web")
     print(f"[LapJointBolted CAD] Setting input values")
+    validate_input(input_values)
     module.set_input_values(input_values)
     print(f"[LapJointBolted CAD] Input values set successfully")
     if getattr(module, "module", None) != KEY_DISP_LAPJOINTBOLTED:

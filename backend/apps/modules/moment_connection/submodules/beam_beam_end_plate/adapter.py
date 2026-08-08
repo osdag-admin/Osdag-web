@@ -2,7 +2,7 @@ from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
-    write_stl,
+    write_stl, build_raw_output_dict,
 )
 from ...shared import setup_for_cad  # Use moment_connection shared utilities
 from OCC.Core import BRepTools
@@ -253,6 +253,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """
     print("************")
     output = {}  # Dictionary for formatted values
+    raw_csv = {}
     module = create_from_input(input_values)  # Create module from input.
     print('module : ******' , module)
     print('type of module : ******** ' , type(module))
@@ -266,7 +267,8 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     else:
         logs = getattr(module, "logs", []) or []
     raw_output = raw_output_text + stiffener_output
-    
+    raw_csv = build_raw_output_dict(raw_output)
+
     # os.system("clear")
     # Loop over all the text values and add them to ouptut dict.
     for param in raw_output:
@@ -303,7 +305,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:

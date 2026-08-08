@@ -32,6 +32,7 @@ from apps.core.utils import (
     int_able,
     validate_list_type,
     custom_list_validation,
+    build_raw_output_dict,
 )
 from osdag_core.design_type.compression_member.compression_column import ColumnDesign
 from osdag_core.custom_logger import CustomLogger
@@ -226,7 +227,7 @@ def create_from_input(input_values: Dict[str, Any]) -> ColumnDesign:
 
 def generate_output(
     input_values: Dict[str, Any]
-) -> Tuple[Dict[str, Any], List[str]]:
+) -> Tuple[Dict[str, Any], List[str], Dict[str, Any]]:
     """
     Run the ColumnDesign calculation and flatten its outputs.
 
@@ -262,9 +263,10 @@ def generate_output(
             logs = list(reversed(logs))
         except Exception:
             pass
-        return {}, logs
+        return {}, logs, {}
 
     raw_output = module.output_values(True)
+    raw_csv = build_raw_output_dict(raw_output)
 
     for param in raw_output:
         if not isinstance(param, (list, tuple)) or len(param) < 4:
@@ -287,7 +289,7 @@ def generate_output(
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def create_cad_model(

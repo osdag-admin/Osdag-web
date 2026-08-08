@@ -1,4 +1,5 @@
 import { useState, useContext, useCallback } from "react";
+import { message } from "antd";
 import { useDesignPrefSync } from "./useDesignPrefSync";
 import { useNavigate } from "react-router-dom";
 import { ModuleContext } from "../../../context/ModuleState";
@@ -74,6 +75,7 @@ export const useEngineeringModule = (moduleConfig) => {
     cadData,
     output,
     logs,
+    rawCsvData,
     loading,
     renderBoolean,
     modelKey,
@@ -195,7 +197,7 @@ export const useEngineeringModule = (moduleConfig) => {
   const saveOutput = async () => {
     const validationResult = moduleConfig.validateInputs(inputs, extraState);
     if (!validationResult.isValid) {
-      alert(validationResult.message);
+      message.error(validationResult.message);
       return;
     }
 
@@ -208,7 +210,7 @@ export const useEngineeringModule = (moduleConfig) => {
 
     const csvResult = await service.exportToCSV(data);
     if (!csvResult.success) {
-      alert(csvResult.error || "Failed to export CSV");
+      message.error(csvResult.error || "Failed to export CSV");
     }
   };
 
@@ -265,6 +267,7 @@ export const useEngineeringModule = (moduleConfig) => {
     designStatus: {
       output,
       logs,
+      rawCsvData,
       loading,
       status,
       setStatus,

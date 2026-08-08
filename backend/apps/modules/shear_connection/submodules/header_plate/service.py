@@ -30,14 +30,15 @@ class EndPlateService:
         try:
             validate_input(inputs)
             print("[EndPlateService.calculate] validate_input passed")
-            output, logs = generate_output(inputs)
+            output, logs, raw_csv = generate_output(inputs)
             print(f"[EndPlateService.calculate] output_count={len(output) if isinstance(output, dict) else 'NA'}")
             print(f"[EndPlateService.calculate] logs_count={len(logs) if isinstance(logs, list) else 'NA'}")
             print("=" * 80 + "\n")
             return {
                 'data': output,
                 'logs': logs,
-                'success': True
+                'success': True,
+                'raw_csv': raw_csv or {},
             }
         except Exception as e:
             print("[EndPlateService.calculate] ERROR")

@@ -17,7 +17,8 @@ from osdag_core.Common import KEY_DISP_BUTTJOINTBOLTED
 from osdag_core.custom_logger import CustomLogger
 from apps.core.utils import (
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, validate_list_type, write_stl
+    contains_keys, custom_list_validation, float_able, int_able, validate_list_type, write_stl,
+    build_raw_output_dict
 )
 from ...shared import setup_for_cad
 from ...shared_validation import create_bolted_validator
@@ -50,7 +51,8 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """Generate output from input values"""
     output = {}
     logs = []
-    
+    raw_csv = {}
+
     try:
         module = ButtJointBolted()
         module.set_osdaglogger(None, id="web")
@@ -120,7 +122,9 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
                 mapped_output[target_key] = {"key": target_key, "label": display_label, "val": val}
 
         if hasattr(module, "output_values"):
-            map_tuple_list(module.output_values(True))
+            out_list = module.output_values(True)
+            map_tuple_list(out_list)
+            raw_csv = build_raw_output_dict(out_list)
 
         # Spacing diagram expects PlateWidth; module has self.width from input
         if "PlateWidth" not in mapped_output:
@@ -166,7 +170,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path.

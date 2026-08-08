@@ -7,6 +7,7 @@ from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
+    build_raw_output_dict,
 )
 from apps.modules.tension_member import shared as tbm
 from osdag_core.design_type.tension_member.tension_bolted import Tension_bolted
@@ -160,6 +161,7 @@ def create_from_input(input_values: Dict[str, Any]) -> Tension_bolted:
 def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     """Generate, format and return the output values from the given input values."""
     output = {}
+    raw_csv = {}
     module = create_from_input(input_values)
 
     # Get raw output data
@@ -174,6 +176,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = getattr(module, "logs", []) or []
 
     raw_output = raw_output_spacing + raw_output_text
+    raw_csv = build_raw_output_dict(raw_output)
 
     for param in raw_output:
         if param[2] == "TextBox":
@@ -189,7 +192,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def _get_connector_shape(t_obj):

@@ -106,7 +106,7 @@ export function downloadGroupedInputsCsv({
 }
 
 /**
- * Build grouped outputs CSV with logs matching Desktop Osdag format.
+ * Build grouped outputs CSV with logs (readable, section-grouped format).
  */
 export function downloadGroupedOutputsCsv({
   output,
@@ -159,6 +159,37 @@ export function downloadGroupedOutputsCsv({
       const msg = extractLogMessage(line);
       if (msg) rows.push([msg]);
     }
+  }
+
+  downloadCsvString(rowsToCsv(rows), filename);
+  return { success: true };
+}
+
+function stringifyRawCsvValue(value) {
+  if (Array.isArray(value)) return value.join(", ");
+  if (value === null || value === undefined) return "";
+  return value;
+}
+
+/**
+ * Build a combined inputs+outputs CSV: one file, no header row, raw
+ * internal key names (not display labels), positionally paired
+ * input/output rows (blank-padded when counts differ).
+ */
+export function downloadRawOutputsCsv({
+  inputsDict,
+  rawCsvData,
+  filename = "Outputs.csv",
+}) {
+  const inputEntries = Object.entries(inputsDict || {});
+  const outputEntries = Object.entries(rawCsvData || {});
+  const rowCount = Math.max(inputEntries.length, outputEntries.length);
+
+  const rows = [];
+  for (let i = 0; i < rowCount; i++) {
+    const [inKey, inVal] = inputEntries[i] || ["", ""];
+    const [outKey, outVal] = outputEntries[i] || ["", ""];
+    rows.push([inKey, stringifyRawCsvValue(inVal), outKey, stringifyRawCsvValue(outVal)]);
   }
 
   downloadCsvString(rowsToCsv(rows), filename);

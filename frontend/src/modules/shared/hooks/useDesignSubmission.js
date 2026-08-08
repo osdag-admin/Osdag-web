@@ -44,6 +44,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
 
   const [output, setOutput] = useState(null);
   const [logs, setLogs] = useState(null);
+  const [rawCsvData, setRawCsvData] = useState({});
   const [displayOutput, setDisplayOutput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [renderBoolean, setRenderBoolean] = useState(false);
@@ -182,7 +183,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
         message: 'Error preparing submission parameters',
         error: err
       });
-      alert("Error preparing submission parameters. See console for details.");
+      message.error("Error preparing submission parameters. See console for details.");
       if (import.meta.env.DEV) {
         console.error("buildSubmissionParams threw:", err);
       }
@@ -213,7 +214,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
           error: new Error(errorMessage)
         });
         setLoading(false);
-        alert(errorMessage);
+        message.error(errorMessage);
         return;
       }
 
@@ -230,6 +231,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
       setDesignLogs(nextLogs);
       setLogs(nextLogs);
       setOutput(formattedOutput);
+      setRawCsvData(designBody.raw_csv || {});
       outputWasSet = true;
       setDisplayOutput(true);
 
@@ -357,6 +359,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
     setModelKey(0);
     setOutput(null);
     setLogs(null);
+    setRawCsvData({});
     setDisplayOutput(false);
     setLoading(false);
     setStatus({
@@ -370,6 +373,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
     setDisplayOutput(false);
     setOutput(null);
     setLogs(null);
+    setRawCsvData({});
     setRenderBoolean(false);
     setModelKey((prev) => prev + 1);
     setLoading(false);
@@ -448,6 +452,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
     // derived/output
     output,
     logs,
+    rawCsvData,
     displayOutput,
     setDisplayOutput,
     // ui/flags

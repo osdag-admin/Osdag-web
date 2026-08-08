@@ -1,7 +1,8 @@
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
+    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
+    build_raw_output_dict
 )
 from apps.modules.shear_connection import shared as scc
 from OCC.Core import BRepTools
@@ -247,6 +248,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
 
     # Generate output values in unformatted form.
     raw_output_text = module.output_values(True)
+    raw_csv = build_raw_output_dict(raw_output_text)
     raw_output_capacities = module.capacities(True)
     raw_output_seated_spacing_beam = module.seated_spacing_beam(True)
     raw_output_seated_spacing_col = module.seated_spacing_col(True)
@@ -313,7 +315,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:

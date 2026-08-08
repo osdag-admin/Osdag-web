@@ -6,7 +6,7 @@ from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
     contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
-    write_stl,
+    write_stl, build_raw_output_dict,
 )
 from osdag_core.design_type.connection.base_plate_connection import BasePlateConnection
 from osdag_core.custom_logger import CustomLogger
@@ -322,9 +322,11 @@ def generate_output(input_values: Dict[str, Any]):
     output = {}
     module = create_from_input(input_values)
     logs = []
+    raw_csv = {}
 
     try:
         raw_output = module.output_values(True)
+        raw_csv = build_raw_output_dict(raw_output)
         if hasattr(module, "logger") and isinstance(module.logger, CustomLogger):
             logs = module.logger.get_logs()
 
@@ -368,7 +370,7 @@ def generate_output(input_values: Dict[str, Any]):
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 BASE_PLATE_CAD_SECTIONS = ("Model", "Column", "Plate", "Welds", "Bolts", "Concrete", "Grout")

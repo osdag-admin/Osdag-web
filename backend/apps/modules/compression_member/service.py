@@ -36,15 +36,16 @@ class CompressionMemberService:
             
             # Generate formatted output (this handles module creation and calculation)
             print("\n[2/3] Generating output (creates module and runs calculation)...")
-            output, logs = generate_output(inputs)
+            output, logs, raw_csv = generate_output(inputs)
             print(f"Output generated: {len(output)} output parameters")
             print(f"Logs retrieved: {len(logs) if logs else 0} log entries")
-            
+
             print("\n[3/3] Preparing response...")
             result = {
                 'data': output,
                 'logs': logs or [],  # Ensure logs is always a list
-                'success': True
+                'success': True,
+                'raw_csv': raw_csv or {},
             }
             print("Response prepared successfully")
             print("=" * 60)

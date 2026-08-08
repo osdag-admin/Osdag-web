@@ -5,7 +5,8 @@ Implements the business logic directly (not re-exporting from osdag_api)
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
+    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
+    build_raw_output_dict
 )
 from osdag_core.design_type.compression_member.compression_welded import Compression_welded
 from osdag_core.custom_logger import CustomLogger
@@ -141,16 +142,18 @@ def generate_output(input_values: Dict[str, Any]):
     output = {}
     module = create_from_input(input_values)
     logs = []
-    
+    raw_csv = {}
+
     try:
         # Generate output values
         raw_output_text = module.output_values(True)
-        
+
         # Get logs from the custom logger
         if hasattr(module, 'logger') and isinstance(module.logger, CustomLogger):
             logs = module.logger.get_logs()
-        
+
         raw_output = raw_output_text
+        raw_csv = build_raw_output_dict(raw_output)
 
         # Process each parameter
         for i, param in enumerate(raw_output):
@@ -179,7 +182,7 @@ def generate_output(input_values: Dict[str, Any]):
         logs = list(reversed(logs))
     except Exception:
         pass
-    return output, logs
+    return output, logs, raw_csv
 
 
 def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:

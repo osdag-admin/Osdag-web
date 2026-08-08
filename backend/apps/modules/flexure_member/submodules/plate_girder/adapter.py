@@ -7,7 +7,8 @@ dimensions from loads/constraints).
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
-    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type
+    contains_keys, custom_list_validation, float_able, int_able, is_yes_or_no, validate_list_type,
+    build_raw_output_dict
 )
 # PlateGirderWelded will be imported when needed in create_module()
 from osdag_core.custom_logger import CustomLogger
@@ -309,16 +310,18 @@ def generate_output(input_values: Dict[str, Any]):
     output = {}
     module = create_from_input(input_values)
     logs = []
-    
+    raw_csv = {}
+
     try:
         # Generate output values
         raw_output_text = module.output_values(True)
-        
+
         # Get logs from the custom logger
         if hasattr(module, 'logger') and isinstance(module.logger, CustomLogger):
             logs = module.logger.get_logs()
-        
+
         raw_output = raw_output_text
+        raw_csv = build_raw_output_dict(raw_output)
 
         # Get design preferences for conditional outputs
         web_philosophy = input_values.get('Design.Web_Philosophy', 'Thick Web without ITS')
@@ -375,8 +378,8 @@ def generate_output(input_values: Dict[str, Any]):
         traceback.print_exc()
         # Re-raise exception so service layer can handle it properly
         raise
-    
-    return output, logs
+
+    return output, logs, raw_csv
 
 
 def get_optimization_bounds(input_values: Dict[str, Any]) -> Dict[str, tuple]:
