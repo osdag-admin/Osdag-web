@@ -10,6 +10,9 @@ const SECTION_TABLE_OPTIONS = [
   { value: "Beams",    label: "Beams    (IS 808:2021)" },
   { value: "Angles",   label: "Angles   (IS 808:2021)" },
   { value: "Channels", label: "Channels (IS 808:2021)" },
+  { value: "SHS",      label: "SHS      (IS 4923:2017)" },
+  { value: "RHS",      label: "RHS      (IS 4923:2017)" },
+  { value: "CHS",      label: "CHS      (IS 1161:2014)" },
 ];
 
 /**

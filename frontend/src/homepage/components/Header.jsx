@@ -5,7 +5,7 @@ import { MODULE_ROUTES, MODULE_NAME_TO_KEY, CONNECTIONS_TAB_CONTENT, GENERIC_SUB
 import { isGuestUser } from '../../utils/auth';
 import { useAuth } from '../../context/AuthContext';
 import { searchProjects } from '../../datasources/projectsDataSource';
-import { downloadSectionCatalog, importSectionXlsx } from '../../datasources/sectionsDataSource';
+import { downloadSectionCatalog, downloadSectionTemplate, importSectionXlsx } from '../../datasources/sectionsDataSource';
 import { apiClient } from '../../utils/apiClient';
 import { AUTH } from '../../datasources/endpoints';
 import ProjectActionButtons from './ProjectActionButtons';
@@ -24,6 +24,7 @@ import AskQuestion from "./AskQuestion";
 import { useShortcutLayer } from '../../utils/shortcuts/ShortcutProvider';
 import { SHORTCUT_ACTION_BY_ID } from '../../constants/shortcuts';
 import XlsxImportTrigger from '../../modules/shared/components/XlsxImportTrigger';
+import XlsxDownloadModal from './XlsxDownloadModal';
 
 const Header = ({ setshowSideBar, active }) => {
   const [isDark, setIsDark] = useState(false);
@@ -45,6 +46,7 @@ const Header = ({ setshowSideBar, active }) => {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   useEffect(() => {
     if (!showPluginsTooltip) return;
@@ -274,7 +276,11 @@ const Header = ({ setshowSideBar, active }) => {
   };
 
   const handleDownload = async (item) => {
-    const tableName = fileMap[item];
+    if (item === "Download xlsx") {
+      setShowDownloadModal(true);
+      return;
+    }
+    const tableName = fileMap[item] || item;
     if (!tableName) {
       console.error('Unknown table:', item);
       return;
@@ -1292,6 +1298,12 @@ const Header = ({ setshowSideBar, active }) => {
           </div>
         </div>
       )}
+
+      {/* Download Section XLSX Modal */}
+      <XlsxDownloadModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+      />
     </div>
   );
 };
