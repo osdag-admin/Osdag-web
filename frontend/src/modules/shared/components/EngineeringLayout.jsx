@@ -7,6 +7,7 @@ import { DESIGN_STATUS } from "../hooks/useDesignSubmission";
 import { UI_STRINGS } from "../../../constants/UIStrings";
 import { useEngineeringContext } from "../context/EngineeringContext";
 import OptimizationGraph from "./OptimizationGraph";
+import { EngineeringModals } from "./EngineeringModals";
 
 export const EngineeringLayout = () => {
   const {
@@ -399,6 +400,7 @@ export const EngineeringLayout = () => {
           dangerouslySetInnerHTML={{ __html: hoverText }}
         />
       )}
+      <EngineeringModals />
     </div>
   );
 };
