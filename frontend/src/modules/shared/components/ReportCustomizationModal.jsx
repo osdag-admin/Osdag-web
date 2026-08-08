@@ -148,15 +148,14 @@ export const ReportCustomizationModal = ({
         <p className="mb-2 text-sm text-gray-500">
           Select which sections to include in your customized report:
         </p>
-        <div className="mb-3">
+        <div className="flex items-center gap-2 mb-3">
           <Button 
-            className="mr-2 text-sm font-medium text-white bg-osdag-green rounded-lg hover:bg-osdag-dark-green transition-colors"
             onClick={handleSelectAll} 
+            className="text-sm font-medium text-white bg-osdag-green rounded-lg hover:bg-osdag-dark-green transition-colors"
           >
             Select All
           </Button>
           <Button 
-            size="small" 
             onClick={handleSelectNone}
             className="text-sm font-medium text-black bg-white rounded-lg border border-black hover:bg-osdag-dark-green transition-colors"
           >
@@ -192,45 +191,21 @@ export const ReportCustomizationModal = ({
         </p>
       </div>
 
-      {/* Action Buttons - Matching Desktop Layout */}
-      <div className="flex justify-between items-center mt-5 pt-4 border-t border-gray-200">
+      {/* Action Buttons */}
+      <div className="flex justify-end items-center gap-3 mt-5 pt-4 border-t border-gray-200">
         <Button 
-          onClick={handleOpenPDF}
-          loading={openingPDF}
-          className="text-sm font-medium text-black bg-white rounded-lg border border-black hover:bg-osdag-dark-green transition-colors p-2"
+          onClick={handleSavePDF}
+          loading={savingPDF}
+          className="text-sm font-medium text-white bg-osdag-green hover:bg-osdag-dark-green rounded-lg transition-colors px-4 py-1.5"
         >
-          Open PDF
+          Save PDF
         </Button>
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Button 
-            onClick={handleSavePDF}
-            loading={savingPDF}
-            style={{
-              backgroundColor: 'white',
-              color: 'black',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              border: '1px solid black',
-              padding: '5px 14px',
-            }}
-          >
-            Save PDF
-          </Button>
-          <Button 
-            onClick={onCancel}
-            style={{
-              backgroundColor: 'white',
-              color: 'black',
-              fontWeight: 'bold',
-              borderRadius: '5px',
-              border: '1px solid black',
-              padding: '5px 14px',
-            }}
-          >
-            Close
-          </Button>
-        </div>
+        <Button 
+          onClick={onCancel}
+          className="text-sm font-medium text-black bg-white rounded-lg border border-black transition-colors px-4 py-1.5"
+        >
+          Close
+        </Button>
       </div>
     </Modal>
   );
