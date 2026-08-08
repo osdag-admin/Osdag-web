@@ -15,6 +15,7 @@ import {
   downloadExportCadResponse,
 } from "./cadExport";
 import { canOpenAdditionalInputs } from "./designPrefOpenGuard";
+import { isGuestUser } from "../../../utils/auth";
 
 function UnifiedDropdownMenu({
   label,
@@ -45,6 +46,7 @@ function UnifiedDropdownMenu({
   hasOutput = false,
   moduleConfig = null,
   extraState = {},
+  setCreateDesignReportBool = null,
 }) {
   const service = useEngineeringService();
 
@@ -198,22 +200,36 @@ function UnifiedDropdownMenu({
           onCreateProject();
         }
         break;
+      case "Create Design Report":
+      case "Save Design Report":
+        if (setCreateDesignReportBool) {
+          setCreateDesignReportBool(true);
+        } else if (onMenuClick) {
+          onMenuClick(option.name);
+        }
+        break;
       case "Load Input":
         loadInput();
         break;
 
       case "Download Osi":
       case "Download Inputs OSI":
-        saveInput();
-        break;
+      case "Save Inputs (.osi)":
       case "Download Inputs CSV":
+      case "Save Inputs (.csv)":
       case "Download Outputs CSV":
-        if (onMenuClick) onMenuClick(option.name);
+      case "Save Outputs (.csv)":
+        if (onMenuClick) {
+          onMenuClick(option.name);
+        } else if (option.name === "Download Osi" || option.name === "Save Inputs (.osi)" || option.name === "Download Inputs OSI") {
+          saveInput();
+        }
         break;
       case "Save Log Messages":
         saveLogMessages();
         break;
       case "Save 3D Model":
+        console.log("[DEBUG UnifiedDropdownMenu] Clicked Save 3D Model", { hasOutput, onMenuClick: !!onMenuClick });
         if (onMenuClick) {
           onMenuClick(option.name);
         }
@@ -223,69 +239,13 @@ function UnifiedDropdownMenu({
       case "Export STEP":
       case "Export IGS":
       case "Export IFC":
-        (async () => {
-          const formatMap = {
-            "Export BREP": "brep",
-            "Export STL": "stl",
-            "Export STEP": "step",
-            "Export IGS": "iges",
-            "Export IFC": "ifc",
-          };
-          const format = formatMap[option.name];
-          const moduleId = moduleConfig?.designType || inputs?.module;
-          if (!moduleId) {
-            message.error("Module ID is missing. Unable to export CAD.");
-            return;
-          }
-
-          if (format === "brep" || format === "stl") {
-            const downloaded = await downloadCachedModelByFormat({
-              cadModelPaths,
-              format,
-              moduleId,
-              message,
-            });
-            if (downloaded) return;
-          }
-
-          if (typeof moduleConfig?.buildSubmissionParams !== "function") {
-            message.error("Module export configuration is missing.");
-            return;
-          }
-
-          try {
-            const inputValues = moduleConfig.buildSubmissionParams(
-              inputs,
-              allSelected,
-              contextData || {},
-              extraState || {}
-            );
-
-            const result = await service.exportCADModel(
-              moduleId,
-              inputValues,
-              format,
-              "Model"
-            );
-
-            if (!result?.success || !result?.blob) {
-              message.error(result?.error || "CAD export failed");
-              return;
-            }
-
-            downloadExportCadResponse({
-              blob: result.blob,
-              disposition: result.disposition,
-              fallbackFilename: `${moduleId}_Model.${format}`,
-            });
-            message.success(`${format.toUpperCase()} exported successfully`);
-          } catch (error) {
-            console.error("CAD export error:", error);
-            message.error(error?.message || "Failed to export CAD");
-          }
-        })();
+        console.log("[DEBUG UnifiedDropdownMenu] Clicked Export CAD format", option.name);
+        if (onMenuClick) {
+          onMenuClick(option.name);
+        }
         break;
       case "Save Cad Image":
+        console.log("[DEBUG UnifiedDropdownMenu] Clicked Save Cad Image");
         triggerScreenshotCapture();
         break;
       case "Quit":
@@ -387,9 +347,48 @@ function UnifiedDropdownMenu({
       {isOpen && (
         <div className="absolute top-full left-0 bg-white border border-[#ccc] border-t-0 min-w-52 z-[1]">
           {dropdown.map((option, index) => {
+            const isGuest = isGuestUser();
+            const isCreateProject = option.name === "Create Project";
+            const isDesignReport = option.name === "Create Design Report" || option.name === "Save Design Report";
+            const isSave3dModel = option.name === "Save 3D Model";
+            const isSaveCadImage = option.name === "Save Cad Image";
+            const isPlateGirder =
+              moduleConfig?.designType === "Plate-Girder" ||
+              moduleConfig?.sessionName === "Plate Girder Design" ||
+              moduleConfig?.routePath?.includes("plate_girder") ||
+              inputs?.module === "Plate-Girder";
+            const isOptimizationGraph = option.name === "Show Optimization Graph";
+            const isSaveOutputsCsv = option.name === "Download Outputs CSV" || option.name === "Save Outputs (.csv)";
+
             const isDisabled =
-              (option.name === "Create Project" && (isExistingProject || !hasOutput)) ||
-              (option.name === "Download Outputs CSV" && !hasOutput);
+              (isCreateProject && (isGuest || isExistingProject || !hasOutput)) ||
+              (isDesignReport && !hasOutput) ||
+              ((isSave3dModel || isSaveCadImage) && !hasOutput) ||
+              (isSaveOutputsCsv && !hasOutput) ||
+              (isOptimizationGraph && !isPlateGirder);
+
+            const getTooltipTitle = () => {
+              if (isCreateProject) {
+                if (isGuest) return "Only for authenticated users. Please log in to create projects.";
+                if (isExistingProject) return "This project is already created/saved.";
+                if (!hasOutput) return "Run design calculation first before creating a project.";
+              }
+              if (isDesignReport && !hasOutput) {
+                return "Run design calculation first before generating a report.";
+              }
+              if ((isSave3dModel || isSaveCadImage) && !hasOutput) {
+                return "Run design calculation first to enable CAD export.";
+              }
+              if (isSaveOutputsCsv && !hasOutput) {
+                return "Run design calculation first before exporting outputs CSV.";
+              }
+              if (isOptimizationGraph && !isPlateGirder) {
+                return "Optimization graph is only available for Plate Girder module.";
+              }
+              return undefined;
+            };
+            const itemTitle = getTooltipTitle();
+
             const hasSubmenu = Array.isArray(option.options) && option.options.length > 0;
             const isSubmenuOpen = openSubmenu === option.name;
             return (
@@ -400,12 +399,22 @@ function UnifiedDropdownMenu({
                 onMouseLeave={() => hasSubmenu && setOpenSubmenu((prev) => (prev === option.name ? null : prev))}
               >
                 <div
+                  title={itemTitle}
                   className={`flex w-full justify-between text-sm p-1 ${isDisabled
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-black hover:text-white hover:bg-osdag-green cursor-pointer"
                     }`}
                   onClick={() => {
-                    if (isDisabled) return;
+                    if (isDisabled) {
+                      if (isCreateProject && isGuest) {
+                        message.warning("Guest users cannot create projects. Please log in to create projects.");
+                      } else if ((isSave3dModel || isSaveCadImage) && !hasOutput) {
+                        message.warning("Run design calculation first to enable CAD export.");
+                      } else if (isDesignReport && !hasOutput) {
+                        message.warning("Run design calculation first before generating a report.");
+                      }
+                      return;
+                    }
                     if (hasSubmenu) {
                       setOpenSubmenu((prev) => (prev === option.name ? null : option.name));
                       return;

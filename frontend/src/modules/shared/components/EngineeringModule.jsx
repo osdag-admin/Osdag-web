@@ -778,7 +778,8 @@ export const EngineeringModule = ({
         return;
       }
 
-      if (!cadModelPaths || Object.keys(cadModelPaths).length === 0) {
+      const hasModelOrOutput = !!output || (cadModelPaths && Object.keys(cadModelPaths).length > 0);
+      if (!hasModelOrOutput) {
         message.warning("Run design first to generate CAD output.");
         return;
       }
@@ -791,6 +792,11 @@ export const EngineeringModule = ({
           message,
         });
         if (downloaded) return;
+      }
+
+      if (format === "stl" && cadModelPaths && Object.keys(cadModelPaths).length > 0) {
+        await downloadCadSectionsAsStl(cadModelPaths, message);
+        return;
       }
 
       if (typeof moduleConfig?.buildSubmissionParams !== "function") {
@@ -830,8 +836,22 @@ export const EngineeringModule = ({
       }
     };
 
+    if (name === "Create Design Report" || name === "Save Design Report") {
+      setCreateDesignReportBool(true);
+      return;
+    }
+    if (name === "Save 3D Model") {
+      const hasModelOrOutput = !!output || (cadModelPaths && Object.keys(cadModelPaths).length > 0);
+      if (!hasModelOrOutput) {
+        message.warning("No 3D model available. Run design first to enable Save 3D Model.");
+        return;
+      }
+      setSelectedSave3dType("Export STL");
+      setShowSave3dTypeModal(true);
+      return;
+    }
     // Database menu actions (desktop-style)
-    if (name === "Download Inputs CSV") {
+    if (name === "Download Inputs CSV" || name === "Save Inputs (.csv)") {
       const inputsExpanded = expandAllSelectedInputs(inputs, allSelected, contextData);
       const effectiveInputs = { ...inputsExpanded, ...(designPrefOverrides || {}) };
       const moduleId = moduleConfig?.designType || inputs?.module || moduleConfig?.cameraKey || MODULE_KEY_SEAT_ANGLE;
@@ -844,7 +864,7 @@ export const EngineeringModule = ({
         filename: `${moduleId}_inputs.csv`,
       });
     }
-    if (name === "Download Outputs CSV") {
+    if (name === "Download Outputs CSV" || name === "Save Outputs (.csv)") {
       const moduleId = moduleConfig?.designType || inputs?.module || moduleConfig?.cameraKey || MODULE_KEY_SEAT_ANGLE;
       return downloadGroupedOutputsCsv({
         output,
@@ -853,7 +873,7 @@ export const EngineeringModule = ({
         filename: `${moduleId}_outputs.csv`,
       });
     }
-    if (name === "Download Inputs OSI") {
+    if (name === "Download Inputs OSI" || name === "Save Inputs (.osi)" || name === "Download Osi") {
       return handleSaveInputs();
     }
     if (

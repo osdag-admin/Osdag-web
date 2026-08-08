@@ -512,8 +512,15 @@ export const EngineeringProvider = ({ moduleConfig, outputConfig, title, childre
   }, [designStatus.hoverDict]);
 
   const handleNavbarMenuClick = async (name) => {
+    console.log("[DEBUG EngineeringContext] handleNavbarMenuClick called with:", name);
+    if (name === "Create Design Report" || name === "Save Design Report") {
+      uiContext.setCreateDesignReportBool(true);
+      return;
+    }
     if (name === "Save 3D Model") {
-      if (!normalizedCadModelPaths || Object.keys(normalizedCadModelPaths).length === 0) {
+      const hasModelOrOutput = !!designStatus.output || (normalizedCadModelPaths && Object.keys(normalizedCadModelPaths).length > 0);
+      console.log("[DEBUG Save 3D Model]", { hasModelOrOutput, output: !!designStatus.output, cadPathsKeys: Object.keys(normalizedCadModelPaths || {}) });
+      if (!hasModelOrOutput) {
         message.warning("No 3D model available. Run design first to enable Save 3D Model.");
         return;
       }
@@ -521,7 +528,7 @@ export const EngineeringProvider = ({ moduleConfig, outputConfig, title, childre
       setShowSave3dTypeModal(true);
       return;
     }
-    if (name === "Download Inputs CSV") {
+    if (name === "Download Inputs CSV" || name === "Save Inputs (.csv)") {
       const inputsExpanded = expandAllSelectedInputs(form.inputs, form.allSelected, moduleData.contextData);
       const effectiveInputs = { ...inputsExpanded, ...(form.designPrefOverrides || {}) };
       const moduleId = moduleConfig?.designType || form.inputs?.module || moduleConfig?.cameraKey || MODULE_KEY_SEAT_ANGLE;
@@ -534,7 +541,7 @@ export const EngineeringProvider = ({ moduleConfig, outputConfig, title, childre
         filename: `${moduleId}_inputs.csv`,
       });
     }
-    if (name === "Download Outputs CSV") {
+    if (name === "Download Outputs CSV" || name === "Save Outputs (.csv)") {
       const moduleId = moduleConfig?.designType || form.inputs?.module || moduleConfig?.cameraKey || MODULE_KEY_SEAT_ANGLE;
       return downloadGroupedOutputsCsv({
         output: designStatus.output,
@@ -543,7 +550,7 @@ export const EngineeringProvider = ({ moduleConfig, outputConfig, title, childre
         filename: `${moduleId}_outputs.csv`,
       });
     }
-    if (name === "Download Inputs OSI") {
+    if (name === "Download Inputs OSI" || name === "Save Inputs (.osi)" || name === "Download Osi") {
       return handleSaveInputs();
     }
     if (

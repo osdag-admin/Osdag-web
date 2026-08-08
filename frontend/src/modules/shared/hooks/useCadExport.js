@@ -1,4 +1,4 @@
-import { downloadCachedModelByFormat, downloadExportCadResponse } from "../utils/cadExport";
+import { downloadCachedModelByFormat, downloadExportCadResponse, downloadCadSectionsAsStl } from "../utils/cadExport";
 import { message } from "antd";
 
 export const useCadExport = ({ form, moduleData, designStatus, actions }, moduleConfig) => {
@@ -27,7 +27,8 @@ export const useCadExport = ({ form, moduleData, designStatus, actions }, module
       return;
     }
 
-    if (!cadModelPaths || Object.keys(cadModelPaths).length === 0) {
+    const hasModelOrOutput = !!designStatus?.output || (cadModelPaths && Object.keys(cadModelPaths).length > 0);
+    if (!hasModelOrOutput) {
       message.warning("Run design first to generate CAD output.");
       return;
     }
@@ -40,6 +41,11 @@ export const useCadExport = ({ form, moduleData, designStatus, actions }, module
         message,
       });
       if (downloaded) return;
+    }
+
+    if (format === "stl" && cadModelPaths && Object.keys(cadModelPaths).length > 0) {
+      await downloadCadSectionsAsStl(cadModelPaths, message);
+      return;
     }
 
     if (typeof moduleConfig?.buildSubmissionParams !== "function") {

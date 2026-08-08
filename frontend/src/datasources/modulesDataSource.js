@@ -112,6 +112,16 @@ export async function exportCad(module_id, input_values, format, section = "Mode
       input_values,
     }),
   });
+
+  if (!res.ok) {
+    let errorMsg = "CAD export failed";
+    try {
+      const errorJson = await res.json();
+      errorMsg = errorJson.message || errorJson.error || errorMsg;
+    } catch (_e) { }
+    return { success: false, error: errorMsg };
+  }
+
   const blob = await res.blob();
   const disposition = res.headers.get("Content-Disposition");
   return { success: true, blob, disposition };

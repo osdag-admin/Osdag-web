@@ -52,9 +52,6 @@ export const downloadCachedModelByFormat = async ({
 }) => {
   const modelData = resolveModelDataForFormat(cadModelPaths, format);
   if (!modelData) {
-    message.warning(
-      `No cached ${format.toUpperCase()} model available. Run Design first to generate model files.`
-    );
     return false;
   }
 

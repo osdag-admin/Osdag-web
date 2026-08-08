@@ -137,7 +137,8 @@ export const useEngineeringShortcuts = ({
       {
         combos: SHORTCUT_ACTION_BY_ID["eng.model.save3d"]?.shortcuts,
         handler: () => {
-          if (!cadModelPaths || Object.keys(cadModelPaths).length === 0) {
+          const hasModelOrOutput = !!output || (cadModelPaths && Object.keys(cadModelPaths).length > 0);
+          if (!hasModelOrOutput) {
             message.warning("No 3D model available. Run design first to enable Save 3D Model.");
             return;
           }
