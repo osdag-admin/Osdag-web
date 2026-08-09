@@ -68,7 +68,7 @@ function UnifiedDropdownMenu({
     let element = document.createElement("input");
 
     element.setAttribute("type", "file");
-    element.accept = ".osi,application/json";
+    element.accept = ".osi";
     element.style.display = "none";
     parentRef.current.appendChild(element);
     element.click();

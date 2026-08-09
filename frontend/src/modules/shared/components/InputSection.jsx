@@ -170,7 +170,7 @@ export const InputSection = ({
       setImageSource(selectedImage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [extraState.selectedOption, safeInputs.connectivity]);
+  }, [extraState.selectedOption, extraState.selectedProfile, safeInputs.connectivity, safeInputs.section_profile]);
 
   useEffect(() => {
     setInputs((prev) => {
@@ -465,11 +465,19 @@ export const InputSection = ({
             isDisabled={isInputLocked}
             isSearchable={false}
             onChange={(selected) => {
-              setExtraState({ ...extraState, selectedOption: selected.value });
-              if (field.onChange) {
-                field.onChange(selected.value, safeInputs, setInputs, safeContextData, extraState, setExtraState);
-              } else {
-                setInputs({ ...safeInputs, [field.key]: selected.value, output: null });
+              const val = selected.value;
+              setExtraState((prev) => ({ ...prev, selectedOption: val }));
+              setInputs((prev) => ({ ...prev, [field.key]: val, output: null }));
+              if (typeof field.onChange === "function") {
+                try {
+                  field.onChange(val, safeInputs, setInputs, safeContextData, extraState, setExtraState);
+                } catch (_err) {
+                  try {
+                    field.onChange(val, setInputs, setExtraState);
+                  } catch (_e) {
+                    console.warn("[InputSection] connectivitySelect custom onChange warning:", _e?.message);
+                  }
+                }
               }
             }}
             menuPortalTarget={document.body}
@@ -492,11 +500,19 @@ export const InputSection = ({
             isDisabled={isInputLocked}
             isSearchable={false}
             onChange={(selected) => {
-              setExtraState({ ...extraState, selectedProfile: selected.value });
-              if (field.onChange) {
-                field.onChange(selected.value, safeInputs, setInputs, safeContextData, extraState, setExtraState);
-              } else {
-                setInputs({ ...safeInputs, [field.key]: selected.value });
+              const val = selected.value;
+              setInputs((prev) => ({ ...prev, [field.key]: val, section_designation: [] }));
+              setExtraState((prev) => ({ ...prev, selectedProfile: val }));
+              if (typeof field.onChange === "function") {
+                try {
+                  field.onChange(val, safeInputs, setInputs, safeContextData, extraState, setExtraState);
+                } catch (_err) {
+                  try {
+                    field.onChange(val, setInputs, setExtraState);
+                  } catch (_e) {
+                    console.warn("[InputSection] sectionProfileSelect custom onChange warning:", _e?.message);
+                  }
+                }
               }
             }}
             menuPortalTarget={document.body}
@@ -531,19 +547,50 @@ export const InputSection = ({
       case 'sectionProfileList': {
         const rawSectionList = getOptionsForField(field, safeContextData, safeInputs);
         const options = (rawSectionList || []).map((elem) => ({ value: elem, label: elem }));
-        const value = options.find(opt => String(opt.value) === String(inputs.section_profile));
+        const currentValue = safeInputs[field.key] || field.defaultValue;
+        const value = options.find(opt => String(opt.value) === String(currentValue));
         return (
           <Select
             options={options}
             value={value}
             isDisabled={isInputLocked}
-            onChange={(selected) => field.onChange(selected.value, inputs, setInputs, contextData, extraState, setExtraState)}
+            onChange={(selected) => {
+              const val = selected.value;
+
+              // 1. Direct inputs state update
+              setInputs((prev) => ({
+                ...prev,
+                [field.key]: val,
+                section_designation: [],
+              }));
+
+              // 2. Direct extraState update for profile image
+              setExtraState((prev) => ({
+                ...prev,
+                selectedProfile: val,
+              }));
+
+              // 3. Execute field.onChange safely
+              if (typeof field.onChange === "function") {
+                try {
+                  field.onChange(val, setInputs, safeContextData, setExtraState, safeInputs, extraState);
+                } catch (_err) {
+                  // Fallback invocation for (val, setInputs, setExtraState) signature
+                  try {
+                    field.onChange(val, setInputs, setExtraState);
+                  } catch (_e) {
+                    console.warn("[InputSection] sectionProfileList custom onChange warning:", _e?.message);
+                  }
+                }
+              }
+            }}
             menuPortalTarget={document.body}
             styles={customSelectStyles}
             classNamePrefix="react-select"
             className="w-[60%]"
             isSearchable={false}
-          />);
+          />
+        );
       }
       case 'dynamicSelect': {
         const options = getOptionsForField(field, safeContextData, safeInputs);

@@ -77,7 +77,7 @@ export const useOsiFileHandlers = ({ form, moduleData, actions }, moduleConfig) 
   const handleLoadInputFromShortcut = async () => {
     const element = document.createElement("input");
     element.setAttribute("type", "file");
-    element.accept = ".osi,application/json";
+    element.accept = ".osi";
     element.style.display = "none";
     document.body.appendChild(element);
     element.click();
