@@ -43,6 +43,20 @@ def flatten_and_translate_keys(inputs: Dict[str, Any]) -> Dict[str, Any]:
         "Bolt.TensionType": "bolt_tension_type",
         "Bolt.Type": "bolt_type",
         "Connector.Material": "connector_material",
+        "Connector.Plate.Thickness_List": "plate_thickness",
+        "Connector.Plate.Thickness_list": "plate_thickness",
+        "Connector.Flange_Plate.Thickness_list": "flange_plate_thickness",
+        "Connector.Flange_Plate.Thickness_List": "flange_plate_thickness",
+        "Connector.Web_Plate.Thickness_List": "web_plate_thickness",
+        "Connector.Web_Plate.Thickness_list": "web_plate_thickness",
+        "Connector.Angle_List": "angle_list",
+        "Connector.Top_Angle_List": "topangle_list",
+        "Member.Profile": "section_profile",
+        "Member.Profile *": "section_profile",
+        "Member.Section_Profile": "section_profile",
+        "Section.Profile": "section_profile",
+        "Section Profile": "section_profile",
+        "Section Profile *": "section_profile",
         "Design.Design_Method": "design_method",
         "Detailing.Corrosive_Influences": "detailing_corr_status",
         "Detailing.Edge_type": "detailing_edge_type",
@@ -110,6 +124,34 @@ def normalize_osi_keys(flat_inputs: Dict[str, Any]) -> Dict[str, Any]:
         "Bolt.TensionType": "bolt_tension_type",
         "Bolt.Type": "bolt_type",
         "Connector.Material": "connector_material",
+        "Connector.Plate.Thickness_List": "plate_thickness",
+        "Connector.Plate.Thickness_list": "plate_thickness",
+        "Connector.Flange_Plate.Thickness_list": "flange_plate_thickness",
+        "Connector.Flange_Plate.Thickness_List": "flange_plate_thickness",
+        "Connector.Web_Plate.Thickness_List": "web_plate_thickness",
+        "Connector.Web_Plate.Thickness_list": "web_plate_thickness",
+        "Connector.Angle_List": "angle_list",
+        "Connector.Top_Angle_List": "topangle_list",
+        "Member.Profile": "section_profile",
+        "Member.Profile *": "section_profile",
+        "Member.Section_Profile": "section_profile",
+        "Section.Profile": "section_profile",
+        "Section Profile": "section_profile",
+        "Section Profile *": "section_profile",
+        "Member.End_1": "end_condition_1",
+        "Member.End_2": "end_condition_2",
+        "Member.End_1_Y": "end_condition_1_y",
+        "Member.End_2_Y": "end_condition_2_y",
+        "End_1": "end_condition_1",
+        "End_2": "end_condition_2",
+        "End_1_Y": "end_condition_1_y",
+        "End_2_Y": "end_condition_2_y",
+        "Actual.Length_zz": "actual_length_zz",
+        "Actual.Length_yy": "actual_length_yy",
+        "Member.Length_zz": "actual_length_zz",
+        "Member.Length_yy": "actual_length_yy",
+        "Length_zz": "actual_length_zz",
+        "Length_yy": "actual_length_yy",
         "Design.Design_Method": "design_method",
         "Detailing.Corrosive_Influences": "detailing_corr_status",
         "Detailing.Edge_type": "detailing_edge_type",
@@ -141,6 +183,34 @@ def normalize_osi_keys(flat_inputs: Dict[str, Any]) -> Dict[str, Any]:
             clean_key = clean_key.replace('.', '_')
             clean_key = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', clean_key).lower()
             dock[clean_key] = value
+
+    if "plate_thickness_list" in dock and "plate_thickness" not in dock:
+        dock["plate_thickness"] = dock["plate_thickness_list"]
+    if "flange_plate_thickness_list" in dock and "flange_plate_thickness" not in dock:
+        dock["flange_plate_thickness"] = dock["flange_plate_thickness_list"]
+    if "web_plate_thickness_list" in dock and "web_plate_thickness" not in dock:
+        dock["web_plate_thickness"] = dock["web_plate_thickness_list"]
+    if "profile" in dock and "section_profile" not in dock:
+        dock["section_profile"] = dock["profile"]
+    if "end_1" in dock and "end_condition_1" not in dock:
+        dock["end_condition_1"] = dock["end_1"]
+    if "end_2" in dock and "end_condition_2" not in dock:
+        dock["end_condition_2"] = dock["end_2"]
+    if "end_1_y" in dock and "end_condition_1_y" not in dock:
+        dock["end_condition_1_y"] = dock["end_1_y"]
+    if "end_2_y" in dock and "end_condition_2_y" not in dock:
+        dock["end_condition_2_y"] = dock["end_2_y"]
+    if "load_axial" in dock:
+        if "axial_load" not in dock:
+            dock["axial_load"] = dock["load_axial"]
+        if "axial_force" not in dock:
+            dock["axial_force"] = dock["load_axial"]
+
+    sec_prof = dock.get("section_profile") or flat_inputs.get("Member.Profile") or flat_inputs.get("Section Profile")
+    if sec_prof in ["Channels", "Back to Back Channels"]:
+        dock["location"] = "Web"
+    elif sec_prof in ["Angles", "Back to Back Angles", "Star Angles"] and dock.get("location") not in ["Long Leg", "Short Leg"]:
+        dock["location"] = "Long Leg"
 
     connectivity = flat_inputs.get("Connectivity *") or flat_inputs.get("Connectivity")
     if connectivity:

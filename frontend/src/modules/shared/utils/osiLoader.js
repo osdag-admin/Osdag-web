@@ -25,6 +25,45 @@ export function loadStateFromOsi(payload, {
       }
     : normalizeOsiPayload(payload, moduleConfig);
 
+  // Ensure plate_thickness aliases are copied to standard form keys
+  if (normalizedPayload.dock) {
+    if (normalizedPayload.dock.plate_thickness_list && !normalizedPayload.dock.plate_thickness) {
+      normalizedPayload.dock.plate_thickness = normalizedPayload.dock.plate_thickness_list;
+    }
+    if (normalizedPayload.dock.flange_plate_thickness_list && !normalizedPayload.dock.flange_plate_thickness) {
+      normalizedPayload.dock.flange_plate_thickness = normalizedPayload.dock.flange_plate_thickness_list;
+    }
+    if (normalizedPayload.dock.web_plate_thickness_list && !normalizedPayload.dock.web_plate_thickness) {
+      normalizedPayload.dock.web_plate_thickness = normalizedPayload.dock.web_plate_thickness_list;
+    }
+    if (normalizedPayload.dock.profile && !normalizedPayload.dock.section_profile) {
+      normalizedPayload.dock.section_profile = normalizedPayload.dock.profile;
+    }
+    if (normalizedPayload.dock.end_1 && !normalizedPayload.dock.end_condition_1) {
+      normalizedPayload.dock.end_condition_1 = normalizedPayload.dock.end_1;
+    }
+    if (normalizedPayload.dock.end_2 && !normalizedPayload.dock.end_condition_2) {
+      normalizedPayload.dock.end_condition_2 = normalizedPayload.dock.end_2;
+    }
+    if (normalizedPayload.dock.end_1_y && !normalizedPayload.dock.end_condition_1_y) {
+      normalizedPayload.dock.end_condition_1_y = normalizedPayload.dock.end_1_y;
+    }
+    if (normalizedPayload.dock.end_2_y && !normalizedPayload.dock.end_condition_2_y) {
+      normalizedPayload.dock.end_condition_2_y = normalizedPayload.dock.end_2_y;
+    }
+    if (normalizedPayload.dock.load_axial) {
+      if (!normalizedPayload.dock.axial_load) normalizedPayload.dock.axial_load = normalizedPayload.dock.load_axial;
+      if (!normalizedPayload.dock.axial_force) normalizedPayload.dock.axial_force = normalizedPayload.dock.load_axial;
+    }
+
+    const prof = normalizedPayload.dock.section_profile;
+    if (prof && (prof === "Channels" || prof === "Back to Back Channels")) {
+      normalizedPayload.dock.location = "Web";
+    } else if (prof && (prof.includes("Angle") && normalizedPayload.dock.location !== "Short Leg")) {
+      normalizedPayload.dock.location = "Long Leg";
+    }
+  }
+
   const baseDefaults = moduleConfig.defaultInputs || {};
   const normalized = { ...baseDefaults, ...normalizedPayload.dock };
 
@@ -165,12 +204,14 @@ export function loadStateFromOsi(payload, {
         selectedOption: normalized.connectivity
       }));
     }
-    if (normalized.section_profile && typeof moduleConfig.getSectionImage === "function") {
-      const img = moduleConfig.getSectionImage(normalized.section_profile);
+    if (normalized.section_profile) {
+      const img = typeof moduleConfig?.getSectionImage === "function"
+        ? moduleConfig.getSectionImage(normalized.section_profile)
+        : null;
       setExtraState(prev => ({
         ...prev,
         selectedProfile: normalized.section_profile,
-        imageSource: img
+        ...(img ? { imageSource: img } : {})
       }));
     }
   }

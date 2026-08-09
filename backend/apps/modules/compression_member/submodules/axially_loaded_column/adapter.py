@@ -82,12 +82,35 @@ def get_required_keys() -> List[str]:
 def validate_input(input_values: Dict[str, Any]) -> None:
     """
     Validate that all required keys are present and of the correct type.
-
-    Pattern mirrors fin_plate and struts_bolted adapters:
-    - String fields: isinstance(x, str)
-    - Numeric fields (as strings): isinstance(x, str) and float_able/int_able(x)
-    - List fields: isinstance(x, list) and all items are str
     """
+    # Key alias normalization
+    if "end_condition_1" in input_values and "End_1" not in input_values:
+        input_values["End_1"] = input_values["end_condition_1"]
+    elif "Member.End_1" in input_values and "End_1" not in input_values:
+        input_values["End_1"] = input_values["Member.End_1"]
+
+    if "end_condition_2" in input_values and "End_2" not in input_values:
+        input_values["End_2"] = input_values["end_condition_2"]
+    elif "Member.End_2" in input_values and "End_2" not in input_values:
+        input_values["End_2"] = input_values["Member.End_2"]
+
+    if "end_condition_1_y" in input_values and "End_1_Y" not in input_values:
+        input_values["End_1_Y"] = input_values["end_condition_1_y"]
+    elif "Member.End_1_Y" in input_values and "End_1_Y" not in input_values:
+        input_values["End_1_Y"] = input_values["Member.End_1_Y"]
+
+    if "end_condition_2_y" in input_values and "End_2_Y" not in input_values:
+        input_values["End_2_Y"] = input_values["end_condition_2_y"]
+    elif "Member.End_2_Y" in input_values and "End_2_Y" not in input_values:
+        input_values["End_2_Y"] = input_values["Member.End_2_Y"]
+
+    if "actual_length_zz" in input_values and "Actual.Length_zz" not in input_values:
+        input_values["Actual.Length_zz"] = input_values["actual_length_zz"]
+    if "actual_length_yy" in input_values and "Actual.Length_yy" not in input_values:
+        input_values["Actual.Length_yy"] = input_values["actual_length_yy"]
+    if "axial_load" in input_values and "Load.Axial" not in input_values:
+        input_values["Load.Axial"] = input_values["axial_load"]
+
     required = get_required_keys()
     missing = contains_keys(input_values, required)
     if missing is not None:
@@ -196,6 +219,34 @@ def create_from_input(input_values: Dict[str, Any]) -> ColumnDesign:
     #   KEY_EFFECTIVE_AREA_PARA = 'Effective.Area_Para'
     #   KEY_DP_DESIGN_METHOD    = 'Design.Design_Method'
     material = str(input_values.get("Material", "E 250 (Fe 410 W)A"))
+
+    # Normalize key aliases if coming from frontend or OSI import
+    if "end_condition_1" in input_values and "End_1" not in input_values:
+        input_values["End_1"] = input_values["end_condition_1"]
+    elif "Member.End_1" in input_values and "End_1" not in input_values:
+        input_values["End_1"] = input_values["Member.End_1"]
+
+    if "end_condition_2" in input_values and "End_2" not in input_values:
+        input_values["End_2"] = input_values["end_condition_2"]
+    elif "Member.End_2" in input_values and "End_2" not in input_values:
+        input_values["End_2"] = input_values["Member.End_2"]
+
+    if "end_condition_1_y" in input_values and "End_1_Y" not in input_values:
+        input_values["End_1_Y"] = input_values["end_condition_1_y"]
+    elif "Member.End_1_Y" in input_values and "End_1_Y" not in input_values:
+        input_values["End_1_Y"] = input_values["Member.End_1_Y"]
+
+    if "end_condition_2_y" in input_values and "End_2_Y" not in input_values:
+        input_values["End_2_Y"] = input_values["end_condition_2_y"]
+    elif "Member.End_2_Y" in input_values and "End_2_Y" not in input_values:
+        input_values["End_2_Y"] = input_values["Member.End_2_Y"]
+
+    if "actual_length_zz" in input_values and "Actual.Length_zz" not in input_values:
+        input_values["Actual.Length_zz"] = input_values["actual_length_zz"]
+    if "actual_length_yy" in input_values and "Actual.Length_yy" not in input_values:
+        input_values["Actual.Length_yy"] = input_values["actual_length_yy"]
+    if "axial_load" in input_values and "Load.Axial" not in input_values:
+        input_values["Load.Axial"] = input_values["axial_load"]
 
     design_dict: Dict[str, Any] = {
         "Module":                    str(input_values.get("Module", "Axially-Loaded-Column")),
