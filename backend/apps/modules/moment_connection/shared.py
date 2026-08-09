@@ -213,13 +213,17 @@ def create_cover_plate_bolted_from_input(module_class, input_values):
     try:
         print("INPUT SET FOR FINAL OUTPUT", input_values)
         module.set_input_values(input_values)
+        if hasattr(module, "results_to_test") and callable(module.results_to_test):
+            try:
+                module.results_to_test()
+            except Exception as re:
+                print("results_to_test info:", re)
     except Exception as e:
         traceback.print_exc()
         print('e in set_input_values : ', e)
         print('error in setting the input values')
 
     return module
-
 
 def generate_cover_plate_bolted_output(module_class, input_values):
     """Generate, format and return the output values for a beam/column cover-plate bolted design."""
