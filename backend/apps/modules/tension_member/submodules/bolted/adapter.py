@@ -154,6 +154,13 @@ def create_from_input(input_values: Dict[str, Any]) -> Tension_bolted:
     else:
         input_values["Plate.Thickness"] = ""
     
+    # Auto-normalize Conn_Location for Channels / Angles
+    profile = input_values.get("Member.Profile", "")
+    if profile in ["Channels", "Back to Back Channels"]:
+        input_values["Conn_Location"] = "Web"
+    elif profile in ["Angles", "Back to Back Angles", "Star Angles"] and input_values.get("Conn_Location") not in ["Long Leg", "Short Leg"]:
+        input_values["Conn_Location"] = "Long Leg"
+
     module.set_input_values(input_values)
     return module
 

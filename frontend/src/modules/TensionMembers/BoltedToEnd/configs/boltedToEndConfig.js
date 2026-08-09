@@ -157,20 +157,24 @@ export const boltedToEndConfig = {
           key: "section_profile",
           label: "Section Profile",
           type: "sectionProfileList",
-          onChange: (value, setInputs, _contextData, setExtraState) => {
+          onChange: (value, setInputs, setExtraState) => {
             // Update image and reset section designation when profile changes
             const imageSource = boltedToEndConfig.getSectionImage(value);
-            setExtraState((extState) => ({
-              ...extState,
-              selectedProfile: value,
-              imageSource: imageSource
-            }));
-            setInputs((inps) => ({
-              ...inps,
-              section_profile: value,
-              section_designation: [], // Reset section designation
-              location: boltedToEndConfig.getLocationOptions(value)[0]?.value || "Long Leg"
-            }));
+            if (typeof setExtraState === "function") {
+              setExtraState((extState) => ({
+                ...extState,
+                selectedProfile: value,
+                imageSource: imageSource
+              }));
+            }
+            if (typeof setInputs === "function") {
+              setInputs((inps) => ({
+                ...inps,
+                section_profile: value,
+                section_designation: [], // Reset section designation
+                location: boltedToEndConfig.getLocationOptions(value)[0]?.value || "Long Leg"
+              }));
+            }
           }
         },
         {
