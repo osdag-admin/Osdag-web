@@ -1,14 +1,50 @@
 /* eslint-disable react/prop-types */
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MODULE_ROUTES, MODULE_NAME_TO_KEY, CONNECTIONS_TAB_CONTENT, GENERIC_SUBMODULE_CONTENT } from '../../constants/modules';
+import { toast } from 'react-toastify';
+import { MODULE_ROUTES, MODULE_NAME_TO_KEY, CONNECTIONS_TAB_CONTENT, GENERIC_SUBMODULE_CONTENT, normalizeModuleKey } from '../../constants/modules';
 import { isGuestUser } from '../../utils/auth';
 import { useAuth } from '../../context/AuthContext';
-import { searchProjects } from '../../datasources/projectsDataSource';
+import { searchProjects, getProjectById, deleteProject } from '../../datasources/projectsDataSource';
 import { downloadSectionCatalog, downloadSectionTemplate, importSectionXlsx } from '../../datasources/sectionsDataSource';
 import { apiClient } from '../../utils/apiClient';
 import { AUTH } from '../../datasources/endpoints';
 import ProjectActionButtons from './ProjectActionButtons';
+import { DesignReportModal } from '../../modules/shared/components/DesignReportModal';
+import { finPlateConfig } from '../../modules/shearConnection/finPlate/configs/finPlateConfig';
+import { endPlateConfig } from '../../modules/shearConnection/endPlate/configs/endPlateConfig';
+import { cleatAngleConfig } from '../../modules/shearConnection/cleatAngle/configs/cleatAngleConfig';
+import { seatedAngleConfig } from '../../modules/shearConnection/seatAngle/configs/seatedAngleConfig';
+import { coverPlateBoltedConfig } from '../../modules/coverPlateBolted/configs/coverPlateBoltedConfig';
+import { coverPlateWeldedConfig } from '../../modules/coverPlateWelded/configs/coverPlateWeldedConfig';
+import { beamBeamEndPlateConfig } from '../../modules/beamBeamEndPlate/configs/beamBeamEndPlateConfig';
+import { beamToColumnEndPlateConfig } from '../../modules/beamToColumnEndPlate/configs/beamToColumnEndPlateConfig';
+import { boltedToEndConfig } from '../../modules/TensionMembers/BoltedToEnd/configs/boltedToEndConfig';
+import { simplySupportedBeamConfig } from '../../modules/flexuralMember/simplySupportedBeam/configs/simplySupportedBeamConfig';
+import { purlinConfig } from '../../modules/flexuralMember/purlin/configs/purlinConfig';
+import { onCantileverConfig } from '../../modules/flexuralMember/onCantilever/configs/onCantileverConfig';
+import { lapJointWeldedConfig } from '../../modules/SimpleConnection/LapJointWelded/config/lapJointWeldedConfig';
+import { lapJointBoltedConfig } from '../../modules/SimpleConnection/LapJointBolted/config/lapJointBoltedConfig';
+import { buttJointWeldedConfig } from '../../modules/SimpleConnection/ButtJointWelded/config/buttJointWeldedConfig';
+import { buttJointBoltedConfig } from '../../modules/SimpleConnection/ButtJointBolted/config/buttJointBoltedConfig';
+import {
+  MODULE_KEY_FIN_PLATE,
+  MODULE_KEY_CLEAT_ANGLE,
+  MODULE_KEY_END_PLATE,
+  MODULE_KEY_SEAT_ANGLE,
+  MODULE_KEY_BEAM_TO_BEAM_COVER_PLATE_BOLTED,
+  MODULE_KEY_BEAM_TO_BEAM_COVER_PLATE_WELDED,
+  MODULE_KEY_BEAM_BEAM_END_PLATE_ALT,
+  MODULE_KEY_BEAM_COLUMN_END_PLATE_ALT,
+  MODULE_KEY_TENSION_BOLTED,
+  MODULE_KEY_SIMPLY_SUPPORTED_BEAM,
+  MODULE_KEY_PURLIN,
+  MODULE_KEY_ON_CANTILEVER_BEAM,
+  MODULE_KEY_LAP_JOINT_WELDED,
+  MODULE_KEY_LAP_JOINT_BOLTED,
+  MODULE_KEY_BUTT_JOINT_WELDED,
+  MODULE_KEY_BUTT_JOINT_BOLTED,
+} from '../../constants/DesignKeys';
 import dayButton from '../../assets/homepage/day_button.svg';
 import infoDefault from '../../assets/homepage/info_default.svg';
 import infoHover from '../../assets/homepage/info_hover.svg';
@@ -44,8 +80,89 @@ const Header = ({ setshowSideBar, active }) => {
   const [showThemeTooltip, setShowThemeTooltip] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const [projects, setProjects] = useState([]);
+  const [modulesList, setModulesList] = useState([]);
+
+  // Design report modal states for search results
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [designReportInputs, setDesignReportInputs] = useState({
+    companyName: "Your company",
+    groupTeamName: "Your team",
+    designer: "You",
+    projectTitle: "",
+    subtitle: "",
+    jobNumber: "1",
+    client: "Someone else",
+    additionalComments: "No comments",
+    companyLogo: null,
+    companyLogoName: "",
+  });
+  const [reportInputValues, setReportInputValues] = useState({});
+  const [reportModuleId, setReportModuleId] = useState(null);
+  const [reportModuleConfig, setReportModuleConfig] = useState(null);
+  const [reportAllSelected, setReportAllSelected] = useState({});
+  const [reportExtraState, setReportExtraState] = useState({});
+
+  const handleDeleteProject = async (projectId) => {
+    try {
+      const data = await deleteProject(projectId);
+      if (data.success) {
+        toast.success('Project deleted successfully');
+        setProjects((prev) => prev.filter((p) => p.id !== projectId));
+        window.dispatchEvent(new CustomEvent('osdag-projects-updated'));
+      } else {
+        toast.error(data.error || 'Failed to delete project');
+      }
+    } catch (_e) {
+      toast.error('Failed to delete project');
+    }
+  };
+
+  const handleGenerateReportClick = async (project) => {
+    try {
+      const data = await getProjectById(project.id);
+      if (!data.success) throw new Error(data.error || 'Failed to load project');
+      const detail = data.project;
+      setReportInputValues(detail?.inputs_json || {});
+      const rawModId = detail?.submodule || detail?.module || MODULE_KEY_FIN_PLATE;
+      const modId = normalizeModuleKey(rawModId);
+      setReportModuleId(modId);
+      const resolver = {
+        [MODULE_KEY_FIN_PLATE]: finPlateConfig,
+        [MODULE_KEY_END_PLATE]: endPlateConfig,
+        [MODULE_KEY_CLEAT_ANGLE]: cleatAngleConfig,
+        [MODULE_KEY_SEAT_ANGLE]: seatedAngleConfig,
+        [MODULE_KEY_BEAM_TO_BEAM_COVER_PLATE_BOLTED]: coverPlateBoltedConfig,
+        [MODULE_KEY_BEAM_TO_BEAM_COVER_PLATE_WELDED]: coverPlateWeldedConfig,
+        [MODULE_KEY_BEAM_BEAM_END_PLATE_ALT]: beamBeamEndPlateConfig,
+        [MODULE_KEY_BEAM_COLUMN_END_PLATE_ALT]: beamToColumnEndPlateConfig,
+        [MODULE_KEY_TENSION_BOLTED]: boltedToEndConfig,
+        [MODULE_KEY_SIMPLY_SUPPORTED_BEAM]: simplySupportedBeamConfig,
+        [MODULE_KEY_PURLIN]: purlinConfig,
+        [MODULE_KEY_ON_CANTILEVER_BEAM]: onCantileverConfig,
+        [MODULE_KEY_LAP_JOINT_WELDED]: lapJointWeldedConfig,
+        [MODULE_KEY_LAP_JOINT_BOLTED]: lapJointBoltedConfig,
+        [MODULE_KEY_BUTT_JOINT_WELDED]: buttJointWeldedConfig,
+        [MODULE_KEY_BUTT_JOINT_BOLTED]: buttJointBoltedConfig,
+      };
+      const cfg = resolver[modId] || null;
+      setReportModuleConfig(cfg);
+      if (cfg && Array.isArray(cfg.selectionConfig)) {
+        const initSel = cfg.selectionConfig.reduce((acc, s) => { acc[s.inputKey] = false; return acc; }, {});
+        setReportAllSelected(initSel);
+      } else {
+        setReportAllSelected({});
+      }
+      const defaultConnectivity = 'Column Flange-Beam-Web';
+      const selectedOption = (detail?.inputs_json && detail.inputs_json.connectivity) || defaultConnectivity;
+      setReportExtraState({ selectedOption });
+      setReportModalOpen(true);
+    } catch (e) {
+      toast.error(e.message || 'Failed to load project');
+    }
+  };
   const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   useEffect(() => {
@@ -133,9 +250,6 @@ const Header = ({ setshowSideBar, active }) => {
       setIsDeleting(false);
     }
   };
-
-  const [projects, setProjects] = useState([]);
-  const [modulesList, setModulesList] = useState([]);
 
   useEffect(() => {
     const dynamicModules = [];
@@ -317,7 +431,7 @@ const Header = ({ setshowSideBar, active }) => {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".osi,.yaml,.yml,text/yaml,text/x-yaml,application/x-yaml"
+        accept=".osi"
         className="hidden"
         onChange={async (e) => {
           try {
@@ -1207,11 +1321,29 @@ const Header = ({ setshowSideBar, active }) => {
                                 </div>
                                 <span className="text-osdag-text-muted text-xs">{item.date}</span>
                               </div>
-                              <div className="flex flex-wrap gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 max-h-0 group-hover:max-h-20 overflow-hidden pl-11">
+                              <div className="flex flex-wrap gap-2 mt-2 opacity-100 max-h-40 md:opacity-0 md:group-hover:opacity-100 md:max-h-0 md:group-hover:max-h-20 transition-all duration-300 overflow-hidden pl-11">
                                 <ProjectActionButtons
                                   project={item}
                                   onActionComplete={() => { setIsSearchFocused(false); setSearchQuery(''); }}
+                                  onGenerateReport={handleGenerateReportClick}
                                 />
+
+                                <button
+                                  type="button"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-red-300 dark:border-red-700 rounded-lg bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-400 transition-all active:scale-95"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (window.confirm('Are you sure you want to delete this project?')) {
+                                      handleDeleteProject(item.id);
+                                    }
+                                  }}
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                  Delete
+                                </button>
                               </div>
                             </div>
                           ))}
@@ -1303,6 +1435,21 @@ const Header = ({ setshowSideBar, active }) => {
       <XlsxDownloadModal
         isOpen={showDownloadModal}
         onClose={() => setShowDownloadModal(false)}
+      />
+
+      <DesignReportModal
+        isOpen={reportModalOpen}
+        onCancel={() => { setReportModalOpen(false); }}
+        onOk={() => { setReportModalOpen(false); }}
+        designReportInputs={designReportInputs}
+        setDesignReportInputs={setDesignReportInputs}
+        output={{}}
+        moduleId={reportModuleId}
+        inputValues={reportInputValues}
+        logs={[]}
+        moduleConfig={reportModuleConfig}
+        allSelected={reportAllSelected}
+        extraState={reportExtraState}
       />
     </div>
   );

@@ -136,11 +136,29 @@ Group/TeamName: ${designReportInputs.groupTeamName}`;
           console.warn("[DesignReportModal] logo upload failed", e);
         }
       }
+      // Unwrap inputValues if passed as { dock: {...}, pref: {...} }
+      let effectiveInputValues = inputValues || {};
+      if (effectiveInputValues.dock && typeof effectiveInputValues.dock === 'object') {
+        effectiveInputValues = {
+          ...effectiveInputValues.dock,
+          ...(effectiveInputValues.pref || {})
+        };
+      }
+
       // Transform input values using the same logic as design calculation
-      let transformedInputValues = inputValues;
-      if (moduleConfig?.buildSubmissionParams) {
+      let transformedInputValues = effectiveInputValues;
+      
+      // Check if effectiveInputValues is already a transformed backend dictionary (e.g. from saved DB projects)
+      const isAlreadyTransformed = effectiveInputValues && (
+        effectiveInputValues["Bolt.Diameter"] !== undefined ||
+        effectiveInputValues["Load.Shear"] !== undefined ||
+        effectiveInputValues["Module"] !== undefined ||
+        Object.keys(effectiveInputValues).some(k => k.includes('.'))
+      );
+
+      if (!isAlreadyTransformed && moduleConfig?.buildSubmissionParams) {
         try {
-          transformedInputValues = moduleConfig.buildSubmissionParams(inputValues, allSelected, lists || {
+          transformedInputValues = moduleConfig.buildSubmissionParams(effectiveInputValues, allSelected, lists || {
             boltDiameterList,
             propertyClassList,
             thicknessList,
@@ -148,8 +166,27 @@ Group/TeamName: ${designReportInputs.groupTeamName}`;
           }, extraState);
         } catch (transformErr) {
           console.warn("[DesignReportModal] buildSubmissionParams failed, using raw inputs:", transformErr.message);
-          transformedInputValues = inputValues;
+          transformedInputValues = effectiveInputValues;
         }
+      }
+
+      // Dynamically ensure array parameters expected by backend adapters are lists of strings
+      if (transformedInputValues) {
+        transformedInputValues = { ...transformedInputValues };
+        Object.keys(transformedInputValues).forEach((key) => {
+          const val = transformedInputValues[key];
+          const isListKey = key.endsWith('_List') || key.endsWith('List') || key.includes('Diameter') || key.includes('Grade');
+          
+          if (isListKey && val !== undefined && !Array.isArray(val)) {
+            if (val === null || val === '') {
+              transformedInputValues[key] = [];
+            } else {
+              transformedInputValues[key] = [String(val)];
+            }
+          } else if (Array.isArray(val)) {
+            transformedInputValues[key] = val.map(item => String(item));
+          }
+        });
       }
 
       // Optionally capture CAD views for report images (frontend-driven).

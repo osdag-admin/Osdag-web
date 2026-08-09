@@ -17,6 +17,12 @@ const MainContent = () => {
       return;
     }
     fetchRecentProjects();
+
+    const handleProjectsUpdated = () => {
+      fetchRecentProjects();
+    };
+    window.addEventListener('osdag-projects-updated', handleProjectsUpdated);
+    return () => window.removeEventListener('osdag-projects-updated', handleProjectsUpdated);
   }, [isGuest]);
 
   const fetchRecentProjects = async () => {
