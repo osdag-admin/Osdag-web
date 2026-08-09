@@ -344,6 +344,11 @@ class SectionImportView(APIView):
 
             logger.info("[SectionImport] done — inserted=%d ignored=%d rejected=%d",
                         inserted, len(ignored), len(rejected))
+            try:
+                from apps.sections.options_merge import ensure_custom_sections_in_sqlite
+                ensure_custom_sections_in_sqlite(request.user)
+            except Exception:
+                pass
             return Response(
                 {
                     "inserted": inserted,
@@ -372,6 +377,11 @@ class SectionCustomView(APIView):
         if not ser.is_valid():
             return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
         instance = ser.save()
+        try:
+            from apps.sections.options_merge import ensure_custom_sections_in_sqlite
+            ensure_custom_sections_in_sqlite(request.user)
+        except Exception:
+            pass
         out = Ser(instance, context={"request": request})
         return Response(out.data, status=status.HTTP_201_CREATED)
 
