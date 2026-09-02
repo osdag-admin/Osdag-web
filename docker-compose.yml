@@ -42,7 +42,7 @@ services:
       HOME: /tmp
       DEBUG: ${DEBUG:-True}
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,.trycloudflare.com}
       DATABASE_NAME: ${DATABASE_NAME:-postgres_Intg_osdag}
       DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
@@ -176,6 +176,14 @@ services:
     depends_on:
       influxdb:
         condition: service_healthy
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://frontend:5173
+    depends_on:
+      - frontend
+    # No ports needed — cloudflared connects outbound to Cloudflare's edge
 
   # metrics-collector:
   #   build:
