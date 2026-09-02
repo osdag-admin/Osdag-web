@@ -94,7 +94,7 @@ def create_from_input(input_values: Dict[str, Any]) -> Flexure:
         'Flexure.Support': input_values.get('Flexure.Support', ''),
         'Torsion.restraint': input_values.get('Torsion.restraint', ''),
         'Warping.restraint': input_values.get('Warping.restraint', ''),
-        'Loading.Condition': 'Normal',  # Default loading condition for simply supported beams
+        'Loading.Condition': input_values.get('Loading.Condition', 'Normal'),
     }
     
     module.set_input_values(design_dict)

@@ -19,7 +19,7 @@ from osdag_core.Common import (
     KEY_BOTTOM_Bflange_PG, KEY_BOTTOM_FLANGE_THICKNESS_PG,
     KEY_DESIGN_TYPE_FLEXURE, KEY_BENDING_MOMENT_SHAPE, KEY_TORSIONAL_RES,
     KEY_WARPING_RES, KEY_MAX_DEFL, KEY_ALLOW_CLASS, KEY_WEB_PHILOSOPHY,
-    KEY_SUPPORT_WIDTH, KEY_IntermediateStiffener_spacing, KEY_IntermediateStiffener_thickness,
+    KEY_SUPPORT_WIDTH, KEY_IntermediateStiffener, KEY_IntermediateStiffener_spacing, KEY_IntermediateStiffener_thickness,
     KEY_LongitudnalStiffener, KEY_LongitudnalStiffener_thickness,
     KEY_IntermediateStiffener_thickness_val, KEY_LongitudnalStiffener_thickness_val,
     KEY_IS_IT_SYMMETRIC, KEY_DISP_SYM, KEY_DISP_UNSYM,
@@ -61,6 +61,7 @@ def get_required_keys() -> List[str]:
         "Design.Allow_Class",               # KEY_ALLOW_CLASS
         "Design.Web_Philosophy",            # KEY_WEB_PHILOSOPHY
         "Design.Support_Width",              # KEY_SUPPORT_WIDTH
+        "Design.IntermediateStiffener",      # KEY_IntermediateStiffener
         "Design.IntermediateStiffener.Spacing",  # KEY_IntermediateStiffener_spacing
         "Design.IntermediateStiffener.Thickness", # KEY_IntermediateStiffener_thickness
         "Design.LongitudnalStiffener",      # KEY_LongitudnalStiffener
@@ -94,6 +95,7 @@ def get_optimization_required_keys() -> List[str]:
         "Design.Allow_Class",
         "Design.Web_Philosophy",  # Used to determine is_thick_web
         "Design.Support_Width",
+        "Design.IntermediateStiffener",
         "Design.IntermediateStiffener.Spacing",
         "Design.IntermediateStiffener.Thickness",
         "Design.LongitudnalStiffener",
@@ -123,6 +125,7 @@ def validate_input(input_values: Dict[str, Any]) -> None:
         "Design.Max_Deflection",
         "Design.Allow_Class",
         "Design.Web_Philosophy",
+        "Design.IntermediateStiffener",
         "Design.IntermediateStiffener.Thickness",
         "Design.LongitudnalStiffener",
         "Design.LongitudnalStiffener.Thickness",
@@ -236,6 +239,7 @@ def create_from_input(input_values: Dict[str, Any]):
         KEY_ALLOW_CLASS: input_values.get('Design.Allow_Class', 'Plastic'),
         KEY_WEB_PHILOSOPHY: input_values.get('Design.Web_Philosophy', 'Thick Web'),
         KEY_SUPPORT_WIDTH: input_values.get('Design.Support_Width', '100'),
+        KEY_IntermediateStiffener: input_values.get('Design.IntermediateStiffener', 'No'),
         KEY_IntermediateStiffener_spacing: input_values.get('Design.IntermediateStiffener.Spacing', ''),
         KEY_IntermediateStiffener_thickness: input_values.get('Design.IntermediateStiffener.Thickness', 'Standard'),
         KEY_LongitudnalStiffener: input_values.get('Design.LongitudnalStiffener', 'No'),
@@ -474,6 +478,7 @@ def create_optimization_input(input_values: Dict[str, Any]) -> Dict[str, Any]:
         KEY_ALLOW_CLASS: optimization_input.get('Design.Allow_Class', 'Plastic'),
         KEY_WEB_PHILOSOPHY: optimization_input.get('Design.Web_Philosophy', 'Thick Web without ITS'),
         KEY_SUPPORT_WIDTH: optimization_input.get('Design.Support_Width', '100'),
+        KEY_IntermediateStiffener: optimization_input.get('Design.IntermediateStiffener', 'No'),
         KEY_IntermediateStiffener_spacing: optimization_input.get('Design.IntermediateStiffener.Spacing', 'NA'),
         KEY_IntermediateStiffener_thickness: optimization_input.get('Design.IntermediateStiffener.Thickness', 'Standard'),
         KEY_LongitudnalStiffener: optimization_input.get('Design.LongitudnalStiffener', 'No'),

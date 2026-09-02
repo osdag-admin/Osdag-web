@@ -13,7 +13,11 @@ export const onCantileverConfig = {
     module: "On-Cantilever-Beam",
 
     section_profile: "Beams and Columns",
-    section_designation: ["ISMB 200"],
+    // "ISMB 200" doesn't exist in the sections DB at all (real prefix is
+    // "MB", not "ISMB") and even "MB 200" fails this module's own default
+    // loads (Load.Moment=100kNm, Load.Shear=50kN). "MB 400" passes with a
+    // comfortable margin (UR 0.376, verified via a live design run).
+    section_designation: ["MB 400"],
     material: "E 250 (Fe 410 W)A",
     section_material: "E 250 (Fe 410 W)A",
 
@@ -24,6 +28,13 @@ export const onCantileverConfig = {
     member_length: "5000",
     shear_force: "50",
     bending_moment: "100",
+
+    design_method: "Limit State Design",
+    allowable_class: "Yes",
+    effective_area_parameter: "1.0",
+    length_overwrite: "NA",
+    bearing_length: "NA",
+    loading_condition: "Normal",
   },
 
   modalConfig: [
@@ -116,13 +127,13 @@ export const onCantileverConfig = {
       "Load.Shear": inputs.shear_force,
       "Load.Moment": inputs.bending_moment,
 
-      // Design preferences (defaults sent from frontend)
-      "Design.Design_Method": "Limit State Design",
-      "Optimum.Class": "Yes",
-      "Effective.Area_Para": "1.0",
-      "Length.Overwrite": "NA",
-      "Bearing.Length": "NA",
-      "Loading.Condition": "Normal",
+      // Design preferences
+      "Design.Design_Method": inputs.design_method || "Limit State Design",
+      "Optimum.Class": inputs.allowable_class || "Yes",
+      "Effective.Area_Para": inputs.effective_area_parameter || "1.0",
+      "Length.Overwrite": inputs.length_overwrite || "NA",
+      "Bearing.Length": inputs.bearing_length || "NA",
+      "Loading.Condition": inputs.loading_condition || "Normal",
     };
   },
 
@@ -150,7 +161,7 @@ export const onCantileverConfig = {
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
-          defaultValue: ["ISMB 200"],
+          defaultValue: ["MB 400"], // see defaultInputs comment above
           getDynamicDataSource: (inputs, contextData) => {
             return onCantileverConfig.getDynamicSectionList(
               inputs.section_profile,
@@ -267,6 +278,49 @@ export const onCantileverConfig = {
           validation: "positive_number",
           placeholder: "Enter shear force", required: true },
       ],
+    },
+    {
+      title: "Optimization",
+      fields: [
+        {
+          key: "allowable_class",
+          label: "Allow Semi-Compact Sections",
+          type: "select",
+          options: [
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" }
+          ],
+          defaultValue: "Yes"
+        },
+        {
+          key: "effective_area_parameter",
+          label: "Effective Area Parameter",
+          type: "number",
+          validation: "positive_number"
+        },
+        {
+          key: "length_overwrite",
+          label: "Effective Length Parameter",
+          type: "text",
+          placeholder: "NA or a value in mm"
+        },
+        {
+          key: "bearing_length",
+          label: "Bearing Length (mm)",
+          type: "text",
+          placeholder: "NA or a value in mm"
+        },
+        {
+          key: "loading_condition",
+          label: "Loading Condition",
+          type: "select",
+          options: [
+            { value: "Normal", label: "Normal" },
+            { value: "Destabilizing", label: "Destabilizing" }
+          ],
+          defaultValue: "Normal"
+        }
+      ]
     },
   ],
 };

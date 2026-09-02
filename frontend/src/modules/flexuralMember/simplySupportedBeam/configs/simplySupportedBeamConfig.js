@@ -21,14 +21,24 @@ export const simplySupportedBeamConfig = {
   defaultInputs: {
     module: "Simply-Supported-Beam",
     section_profile: "Beams and Columns",
-    section_designation: ["ISMB 200"],
+    // "ISMB 200" doesn't exist in the sections DB at all (real prefix is
+    // "MB", not "ISMB" — confirmed against all 407 "Beams and Columns"
+    // designations) and even "MB 200" fails this module's own default
+    // loads (Load.Moment=100kNm, Load.Shear=50kN). "MB 400" passes with a
+    // comfortable margin (UR 0.376, verified via a live design run).
+    section_designation: ["MB 400"],
     material: "E 250 (Fe 410 W)A",
     section_material: "E 250 (Fe 410 W)A",
     design_method: "Limit State Design",
-    allowable_class: "Plastic",
+    // KEY_ALLOW_CLASS ('Optimum.Class') is a Yes/No toggle for "allow
+    // Semi-Compact sections in the optimization search" (flexure.py:869,
+    // `if self.allow_class == "Yes"`) — matches desktop's own default
+    // (flexure.py:172, KEY_ALLOW_CLASS: 'Yes'). NOT a section-class name.
+    allowable_class: "Yes",
     effective_area_parameter: "1.0",
     length_overwrite: "NA",
     bearing_length: "NA",
+    loading_condition: "Normal",
     shear_force: "50",
     bending_moment: "100",
     member_length: "6000",
@@ -128,6 +138,7 @@ export const simplySupportedBeamConfig = {
       "Flexure.Support": "Simply Supported", // Fixed value for simply supported beams
       [KEY_TORSIONAL_RES]: String(inputs.torsional_restraint),
       [KEY_WARPING_RES]: String(inputs.warping_restraint),
+      "Loading.Condition": String(inputs.loading_condition || "Normal"),
     };
   },
 
@@ -161,7 +172,7 @@ export const simplySupportedBeamConfig = {
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
-          defaultValue: ["ISMB 200"], // Default to a common beam section
+          defaultValue: ["MB 400"], // Default to a common beam section (see defaultInputs comment above)
           getDynamicDataSource: (inputs, contextData) => {
             return simplySupportedBeamConfig.getDynamicSectionList(
               inputs.section_profile,
@@ -247,6 +258,49 @@ export const simplySupportedBeamConfig = {
           type: "number",
           validation: "positive_number",
           placeholder: "Enter shear force", required: true }
+      ]
+    },
+    {
+      title: "Optimization",
+      fields: [
+        {
+          key: "allowable_class",
+          label: "Allow Semi-Compact Sections",
+          type: "select",
+          options: [
+            { value: "Yes", label: "Yes" },
+            { value: "No", label: "No" }
+          ],
+          defaultValue: "Yes"
+        },
+        {
+          key: "effective_area_parameter",
+          label: "Effective Area Parameter",
+          type: "number",
+          validation: "positive_number"
+        },
+        {
+          key: "length_overwrite",
+          label: "Effective Length Parameter",
+          type: "text",
+          placeholder: "NA or a value in mm"
+        },
+        {
+          key: "bearing_length",
+          label: "Bearing Length (mm)",
+          type: "text",
+          placeholder: "NA or a value in mm"
+        },
+        {
+          key: "loading_condition",
+          label: "Loading Condition",
+          type: "select",
+          options: [
+            { value: "Normal", label: "Normal" },
+            { value: "Destabilizing", label: "Destabilizing" }
+          ],
+          defaultValue: "Normal"
+        }
       ]
     }
   ],

@@ -267,6 +267,8 @@ export function makeCoverPlateWeldedConfig({
       "Connector.Web_Plate.Thickness_List": allSelected.web_plate_thickness
         ? lists.thicknessList : inputs.web_plate_thickness,
       "Design.Design_Method": inputs.design_method,
+      "Detailing.Corrosive_Influences": inputs.detailing_corr_status,
+      "Detailing.Edge_type": inputs.detailing_edge_type,
       "Detailing.Gap": inputs.detailing_gap,
       "Load.Axial": inputs.load_axial || "0",
       "Load.Moment": inputs.load_moment || "0",

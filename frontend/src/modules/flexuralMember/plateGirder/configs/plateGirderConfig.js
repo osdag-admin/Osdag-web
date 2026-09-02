@@ -25,6 +25,46 @@ import { validateRequiredFields } from '../../../shared/utils/validation';
  * IMPORTANT: If backend logic changes, this function must be updated to match.
  * Consider adding automated tests to ensure frontend/backend logic stays in sync.
  */
+/**
+ * Member Options narrow by Structure Type, matching backend
+ * plate_girder.py:member_options_change() / VALUES_MEMBER_OPTIONS.
+ */
+const getMemberOptionsList = (structureType) => {
+  if (structureType === 'Industrial Structure') {
+    return ['Purlin and Girts', 'Simple span', 'Cantilever span', 'Rafter Supporting', 'Gantry']
+      .map((v) => ({ value: v, label: v }));
+  }
+  if (structureType === 'Other Building') {
+    return ['Floor and roof', 'Cantilever'].map((v) => ({ value: v, label: v }));
+  }
+  // Highway Bridge / Railway Bridge (default)
+  return ['Simple Span', 'Cantilever Span'].map((v) => ({ value: v, label: v }));
+};
+
+/**
+ * Supporting Options narrow by Structure Type + Member Options, matching
+ * backend plate_girder.py:supp_options_change() (IS 800:2007 Table 6).
+ */
+const getSupportingOptionsList = (structureType, memberOption) => {
+  if (structureType === 'Highway Bridge' || structureType === 'Railway Bridge') {
+    return [{ value: 'Not Applicable', label: 'Not Applicable' }];
+  }
+  const memberLower = String(memberOption || '').toLowerCase();
+  if (['purlin and girts', 'simple span', 'cantilever span'].includes(memberLower)) {
+    return ['Elastic cladding', 'Brittle cladding'].map((v) => ({ value: v, label: v }));
+  }
+  if (memberLower === 'rafter supporting') {
+    return ['Profiled Metal sheeting', 'Plastered sheeting'].map((v) => ({ value: v, label: v }));
+  }
+  if (memberLower === 'gantry') {
+    return [{ value: 'Crane', label: 'Crane' }];
+  }
+  if (['floor and roof', 'cantilever'].includes(memberLower)) {
+    return ['Elements not susceptible to cracking', 'Element susceptible to cracking'].map((v) => ({ value: v, label: v }));
+  }
+  return [{ value: 'Not Applicable', label: 'Not Applicable' }];
+};
+
 const calculateMaxDeflection = (structureType, designLoad, memberOption, supportingOption) => {
   const VALUES_MAX_DEFL = ['Span/600', 'Span/800', 'Span/400', 'Span/300', 'Span/360', 'Span/150', 'Span/180', 'Span/240', 'Span/120', 'Span/500', 'Span/750', 'Span/1000'];
   
@@ -156,7 +196,7 @@ export const plateGirderConfig = {
     structure_type: "Highway Bridge",
     design_load: "Live load",
     member_options: "Simple Span",
-    supporting_options: "NA",
+    supporting_options: "Not Applicable",
     max_deflection: "Span/600",
     // Optimization bounds (only used when Optimized)
     total_depth_lb: "200",
@@ -194,8 +234,8 @@ export const plateGirderConfig = {
     { key: "webThicknessSelect", inputKey: "web_thickness", defaultValue: "All" },
     { key: "topFlangeThicknessSelect", inputKey: "top_flange_thickness", defaultValue: "All" },
     { key: "bottomFlangeThicknessSelect", inputKey: "bottom_flange_thickness", defaultValue: "All" },
-    { key: "intermediateStiffenerThicknessSelect", inputKey: "intermediate_stiffener_thickness_val", defaultValue: "Standard" },
-    { key: "longitudinalStiffenerThicknessSelect", inputKey: "longitudinal_stiffener_thickness_val", defaultValue: "Standard" },
+    { key: "intermediateStiffenerThicknessSelect", inputKey: "intermediate_stiffener_thickness_val", defaultValue: "All" },
+    { key: "longitudinalStiffenerThicknessSelect", inputKey: "longitudinal_stiffener_thickness_val", defaultValue: "All" },
   ],
 
   // Helper function to get section image
@@ -324,7 +364,18 @@ export const plateGirderConfig = {
         "Design.Design_Type_Flexure": String(inputs.support_type || "Major Laterally Supported"),
         "Design.Torsional_Restraint": String(inputs.torsional_restraint || "Fully Restrained"),
         "Design.Warping_Restraint": String(inputs.warping_restraint || "Both flanges fully restrained"),
-        "Design.Max_Deflection": String(inputs.max_deflection || "Span/600"),
+        // Deflection.Max is a desktop-side auto-computed (not directly
+        // user-editable) field, derived from Structure Type/Design Load/
+        // Member Options/Supporting Options (plate_girder.py:max_defl_change).
+        // Compute it fresh here rather than trusting a possibly-stale
+        // inputs.max_deflection so it always matches the user's actual
+        // Deflection Criteria selections.
+        "Design.Max_Deflection": calculateMaxDeflection(
+          inputs.structure_type || "Highway Bridge",
+          inputs.design_load || "Live load",
+          inputs.member_options || "Simple Span",
+          inputs.supporting_options || "Not Applicable"
+        ),
         "Design.Load": String(inputs.design_load || "Live load"),
         "Member.Options": String(inputs.member_options || "Simple Span"),
         "Supporting.Options": String(inputs.supporting_options || "NA"),
@@ -337,6 +388,7 @@ export const plateGirderConfig = {
         "Design.ShearBucklingOption": String(inputs.shear_buckling_option || "Simple Post Critical"),
       
         // --- Stiffener Settings ---
+        "Design.IntermediateStiffener": String(inputs.intermediate_stiffener || "No"),
         "Design.IntermediateStiffener.Spacing": String(inputs.intermediate_stiffener_spacing || "NA"),
         "Design.IntermediateStiffener.Thickness": String(inputs.intermediate_stiffener_thickness || "Standard"),
         "Design.LongitudnalStiffener": String(inputs.longitudinal_stiffener || "No"),
@@ -559,6 +611,161 @@ export const plateGirderConfig = {
             { value: "Warping not restrained in both flanges", label: "Warping not restrained in both flanges" }
           ],
           defaultValue: "Both flanges fully restrained"
+        },
+        {
+          key: "symmetry",
+          label: "Girder Symmetry",
+          type: "select",
+          options: [
+            { value: "Symmetrical", label: "Symmetrical" },
+            { value: "Unsymmetrical", label: "Unsymmetrical" }
+          ],
+          defaultValue: "Symmetrical"
+        },
+        {
+          key: "shear_buckling_option",
+          label: "Shear Buckling Design Method",
+          type: "select",
+          options: [
+            { value: "Simple Post Critical", label: "Simple Post Critical" },
+            { value: "Tension Field Test", label: "Tension Field Test" }
+          ],
+          defaultValue: "Simple Post Critical"
+        },
+        {
+          key: "loading_condition",
+          label: "Loading Condition",
+          type: "select",
+          options: [
+            { value: "Normal", label: "Normal" },
+            { value: "Destabilizing", label: "Destabilizing" }
+          ],
+          defaultValue: "Normal"
+        }
+      ]
+    },
+    {
+      title: "Stiffeners",
+      fields: [
+        {
+          key: "intermediate_stiffener",
+          label: "Intermediate Stiffener",
+          type: "select",
+          options: [
+            { value: "No", label: "No" },
+            { value: "Yes", label: "Yes" }
+          ],
+          defaultValue: "No"
+        },
+        {
+          key: "intermediate_stiffener_spacing",
+          label: "Intermediate Stiffener Spacing (mm)",
+          type: "text",
+          placeholder: "Leave as NA to auto-calculate per IS 800:2007",
+          conditionalDisplay: (extraState, inputs) => inputs?.intermediate_stiffener === "Yes"
+        },
+        {
+          key: "intermediate_stiffener_thickness",
+          label: "Intermediate Stiffener Thickness",
+          type: "select",
+          options: [
+            { value: "Standard", label: "Standard" },
+            { value: "Customized", label: "Customized" }
+          ],
+          defaultValue: "Standard",
+          conditionalDisplay: (extraState, inputs) => inputs?.intermediate_stiffener === "Yes"
+        },
+        {
+          key: "intermediate_stiffener_thickness_val",
+          label: "Intermediate Stiffener Thickness Values (mm)",
+          type: "customizable",
+          selectionKey: "intermediateStiffenerThicknessSelect",
+          modalKey: "intermediateStiffenerThicknessValues",
+          dataSource: "thicknessList",
+          conditionalDisplay: (extraState, inputs) =>
+            inputs?.intermediate_stiffener === "Yes" && inputs?.intermediate_stiffener_thickness === "Customized"
+        },
+        {
+          // Desktop's real dropdown (confirmed via a live schema dump) has
+          // 3 values, not a Yes/No toggle — the exact string matters, since
+          // osdag_core branches on it directly (core/plate_girder.py:1476-
+          // 1478, byte-identical on both desktop and web): "Yes" alone
+          // matches neither branch and silently falls through to
+          // "transverse_only" (no longitudinal stiffener at all), so a
+          // plain Yes/No toggle here would be non-functional even though it
+          // renders.
+          key: "longitudinal_stiffener",
+          label: "Longitudinal Stiffener",
+          type: "select",
+          options: [
+            { value: "No", label: "No" },
+            { value: "Yes and 1 stiffener", label: "Yes and 1 stiffener" },
+            { value: "Yes and 2 stiffeners", label: "Yes and 2 stiffeners" }
+          ],
+          defaultValue: "No"
+        },
+        {
+          key: "longitudinal_stiffener_thickness",
+          label: "Longitudinal Stiffener Thickness",
+          type: "select",
+          options: [
+            { value: "Standard", label: "Standard" },
+            { value: "Customized", label: "Customized" }
+          ],
+          defaultValue: "Standard",
+          conditionalDisplay: (extraState, inputs) => inputs?.longitudinal_stiffener !== "No"
+        },
+        {
+          key: "longitudinal_stiffener_thickness_val",
+          label: "Longitudinal Stiffener Thickness Values (mm)",
+          type: "customizable",
+          selectionKey: "longitudinalStiffenerThicknessSelect",
+          modalKey: "longitudinalStiffenerThicknessValues",
+          dataSource: "thicknessList",
+          conditionalDisplay: (extraState, inputs) =>
+            inputs?.longitudinal_stiffener !== "No" && inputs?.longitudinal_stiffener_thickness === "Customized"
+        }
+      ]
+    },
+    {
+      title: "Deflection Criteria",
+      fields: [
+        {
+          key: "structure_type",
+          label: "Type of Structure",
+          type: "select",
+          options: [
+            { value: "Highway Bridge", label: "Highway Bridge" },
+            { value: "Railway Bridge", label: "Railway Bridge" },
+            { value: "Industrial Structure", label: "Industrial Structure" },
+            { value: "Other Building", label: "Other Building" }
+          ],
+          defaultValue: "Highway Bridge"
+        },
+        {
+          key: "design_load",
+          label: "Design Load",
+          type: "select",
+          options: [
+            { value: "Live load", label: "Live load" },
+            { value: "Dead load", label: "Dead load" },
+            { value: "Crane Load(Manual operation)", label: "Crane Load (Manual operation)" },
+            { value: "Crane load(Electric operation up to 50t)", label: "Crane load (Electric operation up to 50t)" },
+            { value: "Crane load(Electric operation over 50t)", label: "Crane load (Electric operation over 50t)" }
+          ],
+          defaultValue: "Live load"
+        },
+        {
+          key: "member_options",
+          label: "Member Options",
+          type: "dynamicSelect",
+          getOptions: (inputs) => getMemberOptionsList(inputs.structure_type)
+        },
+        {
+          key: "supporting_options",
+          label: "Supporting Options",
+          type: "dynamicSelect",
+          getOptions: (inputs) => getSupportingOptionsList(inputs.structure_type, inputs.member_options)
         }
       ]
     },
