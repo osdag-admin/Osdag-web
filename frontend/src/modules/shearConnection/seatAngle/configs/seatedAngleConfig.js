@@ -10,6 +10,11 @@ export const seatedAngleConfig = {
   cadOptions: ["Model", "Beam", "Column", "SeatedAngle"],
   
   defaultInputs: {
+    // See finPlateConfig.js's identical comment on why this stays hardcoded
+    // (required-field validation checks raw inputs.connectivity) alongside
+    // the array[0]-derived fallback in validateInputs/buildSubmissionParams
+    // below.
+    connectivity: "Column Flange-Beam-Web",
     bolt_diameter: [],
     bolt_grade: [],
     bolt_type: "Bearing_Bolt",
@@ -52,11 +57,15 @@ export const seatedAngleConfig = {
     { key: "secondaryBeamSelect", inputKey: "secondary_beam", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+  validateInputs: (inputs, extraState, lists, selectionStates) => {
     const requiredCheck = validateRequiredFields(seatedAngleConfig.inputSections, inputs, extraState, selectionStates);
     if (!requiredCheck.isValid) return requiredCheck;
 
-    const connectivity = inputs.connectivity;
+    // Matches the connectivitySelect widget's own options[0] visual
+    // fallback (InputSection.jsx) — a user who never touches the
+    // Connectivity dropdown still sees/submits a real value, derived from
+    // the live list rather than a hardcoded literal.
+    const connectivity = extraState?.selectedOption || inputs.connectivity || lists?.connectivityList?.[0];
     
     if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
       if (!inputs.beam_section || !inputs.column_section || 
@@ -80,8 +89,9 @@ export const seatedAngleConfig = {
       // "Beam-Beam": "Beam-Beam",
     };
 
-    const connectivity = extraState?.selectedOption || inputs.connectivity;
-    
+    // See validateInputs's identical comment on this fallback chain.
+    const connectivity = extraState?.selectedOption || inputs.connectivity || lists?.connectivityList?.[0];
+
     if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
       return {
         "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,

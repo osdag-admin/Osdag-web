@@ -10,6 +10,13 @@ export const finPlateConfig = {
   cadOptions: ["Model", "Beam", "Column", "Plate"],
 
   defaultInputs: {
+    // Required so the shared getMissingRequiredFields() check (validation.js
+    // — checks raw inputs.connectivity, has no knowledge of extraState or
+    // the live connectivityList) doesn't block submission before the
+    // widget's own value is ever touched. The array[0]-derived fallback in
+    // validateInputs/buildSubmissionParams below is a second, non-hardcoded
+    // safety net for everything downstream of that check.
+    connectivity: "Column Flange-Beam-Web",
     bolt_diameter: [],
     bolt_grade: [],
     bolt_type: "Bearing_Bolt",
@@ -50,11 +57,16 @@ export const finPlateConfig = {
     { key: "thicknessSelect", inputKey: "plate_thickness", defaultValue: "All" },
   ],
 
-  validateInputs: (inputs, extraState, _lists, selectionStates) => {
+  validateInputs: (inputs, extraState, lists, selectionStates) => {
     const requiredCheck = validateRequiredFields(finPlateConfig.inputSections, inputs, extraState, selectionStates);
     if (!requiredCheck.isValid) return requiredCheck;
 
-    const connectivity = extraState?.selectedOption || inputs.connectivity;
+    // Matches the connectivitySelect widget's own options[0] visual
+    // fallback (InputSection.jsx) — a user who never touches the
+    // Connectivity dropdown still sees/submits a real value, derived from
+    // the live list rather than a hardcoded literal that could drift out
+    // of sync with the backend's actual option order.
+    const connectivity = extraState?.selectedOption || inputs.connectivity || lists?.connectivityList?.[0];
 
     // Basic numeric loads must not be empty
     if (inputs.load_shear === "") {
@@ -83,7 +95,8 @@ export const finPlateConfig = {
       "Beam-Beam": "Beam-Beam",
     };
 
-    const connectivity = extraState?.selectedOption || inputs.connectivity;
+    // See validateInputs's identical comment on this fallback chain.
+    const connectivity = extraState?.selectedOption || inputs.connectivity || lists?.connectivityList?.[0];
 
     if (connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web") {
       return {
@@ -168,6 +181,20 @@ export const finPlateConfig = {
             const connectivity = extraState?.selectedOption;
             return connectivity === "Column Flange-Beam-Web" || connectivity === "Column Web-Beam-Web";
           }
+        },
+        {
+          key: "primary_beam",
+          label: "Primary Beam Section",
+          type: "select",
+          options: "beamList",
+          conditionalDisplay: (extraState) => extraState?.selectedOption === "Beam-Beam"
+        },
+        {
+          key: "secondary_beam",
+          label: "Secondary Beam Section",
+          type: "select",
+          options: "beamList",
+          conditionalDisplay: (extraState) => extraState?.selectedOption === "Beam-Beam"
         },
         {
           key: "connector_material",

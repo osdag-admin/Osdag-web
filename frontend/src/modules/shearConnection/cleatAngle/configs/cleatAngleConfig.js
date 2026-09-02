@@ -10,6 +10,10 @@ export const cleatAngleConfig = {
   cadOptions: ["Model", "Beam", "Column", "CleatAngle"],
 
   defaultInputs: {
+    // See finPlateConfig.js's identical comment on why this stays hardcoded
+    // (required-field validation checks raw inputs.connectivity) alongside
+    // the array[0]-derived fallback in buildSubmissionParams below.
+    connectivity: "Column Flange-Beam-Web",
     bolt_diameter: [],
     bolt_grade: [],
     bolt_type: "Bearing Bolt",
@@ -74,7 +78,11 @@ export const cleatAngleConfig = {
       "Column Web-Beam-Web": "Column Web-Beam Web", 
       "Beam-Beam": "Beam-Beam",
     };
-    const connectivity = extraState?.selectedOption || inputs.connectivity || "Column Flange-Beam-Web";
+    // Matches the connectivitySelect widget's own options[0] visual
+    // fallback (InputSection.jsx), derived from the live list rather than
+    // a hardcoded literal that could drift out of sync with the backend's
+    // actual option order.
+    const connectivity = extraState?.selectedOption || inputs.connectivity || lists?.connectivityList?.[0];
     // Common parameters
     const baseParams = {
       "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,

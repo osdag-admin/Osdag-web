@@ -47,6 +47,7 @@ const DESIGN_PREF_CONFIG = {
       bolt_hole_type: inputs.bolt_hole_type ?? "Standard",
       bolt_slip_factor: inputs.bolt_slip_factor ?? "0.2",
       detailing_edge_type: inputs.detailing_edge_type ?? "Sheared or hand flame cut",
+      detailing_packing_plate: inputs.detailing_packing_plate ?? "Yes",
       design_for: inputs.design_for ?? "Tension",
     }),
     getDefaultPrefs: () => ({
@@ -54,6 +55,7 @@ const DESIGN_PREF_CONFIG = {
       bolt_hole_type: "Standard",
       bolt_slip_factor: "0.2",
       detailing_edge_type: "Sheared or hand flame cut",
+      detailing_packing_plate: "Yes",
       design_for: "Tension",
     }),
   },
@@ -187,6 +189,8 @@ const DESIGN_PREF_CONFIG = {
       bolt_tension_type: inputs.bolt_tension_type,
       bolt_hole_type: inputs.bolt_hole_type,
       bolt_slip_factor: inputs.bolt_slip_factor,
+      weld_fab: inputs.weld_fab ?? "Shop Weld",
+      weld_material_grade: inputs.weld_material_grade || "410",
       detailing_edge_type: inputs.detailing_edge_type,
       detailing_gap: inputs.detailing_gap,
       detailing_corr_status: inputs.detailing_corr_status,
@@ -478,10 +482,12 @@ const DESIGN_PREF_CONFIG = {
     getInitialPrefs: (inputs) => ({
       // Designation
       designation: inputs.designation || "50 x 50 x 3",
-  
+
       // Material
       material: inputs.material || "E 165 (Fe 290)",
-  
+      supported_material: inputs.supported_material || "E 165 (Fe 290)",
+      supporting_material: inputs.supporting_material || "E 165 (Fe 290)",
+
       // Mechanical Properties
       fu: inputs.fu || 290,
       fy: inputs.fy || 165,
@@ -489,51 +495,71 @@ const DESIGN_PREF_CONFIG = {
       shear_modulus: inputs.shear_modulus || 76.9,
       poisson_ratio: inputs.poisson_ratio || 0.3,
       thermal_coefficient: inputs.thermal_coefficient || 12,
-  
+
       // Type & Source
       type: inputs.type || "Rolled",
       source: inputs.source || "IS808 Rev",
-  
+
       // Dimensions
       long_leg: inputs.long_leg || 50,
       short_leg: inputs.short_leg || 50,
       thickness: inputs.thickness || 3,
       root_radius: inputs.root_radius || 6,
       toe_radius: inputs.toe_radius || 0,
-  
-      // Existing fields
+
+      // Bolt
+      bolt_hole_type: inputs.bolt_hole_type ?? "Standard",
+      bolt_slip_factor: inputs.bolt_slip_factor ?? "0.3",
+      bolt_tension_type: inputs.bolt_tension_type ?? "Pre-tensioned",
+
+      // Detailing
       weld_fab: inputs.weld_fab ?? "Shop weld",
       weld_material_grade: inputs.weld_material_grade || "290",
       detailing_edge_type:
         inputs.detailing_edge_type ?? "Sheared or hand flame cut",
       detailing_packing_plate: inputs.detailing_packing_plate,
+      detailing_gap: inputs.detailing_gap ?? "10",
+      detailing_corr_status: inputs.detailing_corr_status ?? "No",
+
+      // Design
       design_for: inputs.design_for ?? "Tension",
+      design_method: inputs.design_method ?? "Limit State Design",
     }),
-  
+
     getDefaultPrefs: (inputs) => ({
       designation: "50 x 50 x 3",
       material: "E 165 (Fe 290)",
-  
+      supported_material: "E 165 (Fe 290)",
+      supporting_material: "E 165 (Fe 290)",
+
       fu: 290,
       fy: 165,
       elastic_modulus: 200,
       shear_modulus: 76.9,
       poisson_ratio: 0.3,
       thermal_coefficient: 12,
-  
+
       type: "Rolled",
       source: "IS808 Rev",
-  
+
       long_leg: 50,
       short_leg: 50,
       thickness: 3,
       root_radius: 6,
       toe_radius: 0,
-  
+
+      bolt_hole_type: "Standard",
+      bolt_slip_factor: "0.3",
+      bolt_tension_type: "Pre-tensioned",
+
       weld_fab: "Shop weld",
       weld_material_grade: inputs.weld_material_grade || "290",
       detailing_edge_type: "Sheared or hand flame cut",
+      detailing_gap: "10",
+      detailing_corr_status: "No",
+
       design_for: "Tension",
+      design_method: "Limit State Design",
     }),
   },
 };
