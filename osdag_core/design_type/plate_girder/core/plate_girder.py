@@ -53,11 +53,6 @@ from ....custom_logger import CustomLogger
 
 scale = 1
 
-# Standard stiffener thickness values (used for intermediate and longitudinal stiffeners)
-# Values: 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40 mm
-VALUES_STIFFENER_THICKNESS = ['6', '8', '10', '12', '14', '16', '18', '20', 
-                              '22', '24', '26', '28', '30', '32', '36', '40']
-
 class PlateGirderWelded(Member):
     int_thicklist = []
     long_thicklist = []
@@ -737,7 +732,7 @@ class PlateGirderWelded(Member):
         t0 = (None, DISP_TITLE_MOMENT_DESIGN, TYPE_TITLE, None, True)
         out_list.append(t0)
         
-        t_beta = (KEY_betab_constatnt, KEY_DISP_betab_constatnt, TYPE_TEXTBOX,
+        t_beta = (KEY_betab_constatnt, 'β<sub>b</sub>', TYPE_TEXTBOX,
                   self.betab if flag else '', True)
         out_list.append(t_beta)
         
@@ -1433,7 +1428,8 @@ class PlateGirderWelded(Member):
                         self.logger.error("Web Buckling Check failed")
                     
                     web_height = self.total_depth - self.top_flange_thickness - self.bottom_flange_thickness
-                    is_safe, self.F_q = check_web_crippling(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, self.gamma_m0, self.logger, debug=self.debug)
+                    tf_used = min(self.top_flange_thickness, self.bottom_flange_thickness) if self.top_flange_thickness > 0 and self.bottom_flange_thickness > 0 else (self.top_flange_thickness or self.bottom_flange_thickness)
+                    is_safe, self.F_q = check_web_crippling_IS800(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, tf_used, self.gamma_m0, self.logger, debug=self.debug)
                     if self.debug:
                         print(f"Crippling Resistance (F_q): {self.F_q:.2f} N")
                     if is_safe:
@@ -1582,7 +1578,8 @@ class PlateGirderWelded(Member):
 
                         # Web Crippling Check (Added for Thin Web with ITS/Simple Post Critical)
                         web_height = self.total_depth - self.top_flange_thickness - self.bottom_flange_thickness
-                        is_safe_crip, self.F_q = check_web_crippling(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, self.gamma_m0, self.logger, debug=self.debug)
+                        tf_used = min(self.top_flange_thickness, self.bottom_flange_thickness) if self.top_flange_thickness > 0 and self.bottom_flange_thickness > 0 else (self.top_flange_thickness or self.bottom_flange_thickness)
+                        is_safe_crip, self.F_q = check_web_crippling_IS800(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, tf_used, self.gamma_m0, self.logger, debug=self.debug)
                         if is_safe_crip:
                             self.shearflag3 = True
                             self.logger.info("Web Crippling Check passed")
@@ -1639,7 +1636,8 @@ class PlateGirderWelded(Member):
 
                         # Web Crippling Check (Added for Thin Web with ITS/Tension Field)
                         web_height = self.total_depth - self.top_flange_thickness - self.bottom_flange_thickness
-                        is_safe_crip, self.F_q = check_web_crippling(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, self.gamma_m0, self.logger, debug=self.debug)
+                        tf_used = min(self.top_flange_thickness, self.bottom_flange_thickness) if self.top_flange_thickness > 0 and self.bottom_flange_thickness > 0 else (self.top_flange_thickness or self.bottom_flange_thickness)
+                        is_safe_crip, self.F_q = check_web_crippling_IS800(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, tf_used, self.gamma_m0, self.logger, debug=self.debug)
                         if is_safe_crip:
                             self.shearflag3 = True
                             self.logger.info("Web Crippling Check passed")
@@ -1686,10 +1684,8 @@ class PlateGirderWelded(Member):
         if not SKIP_DEFLECTION:
             # Note: self.load.moment is in N·mm, but evaluate_deflection_kNm_mm expects kN·m
             moment_kNm = self.load.moment / 1e6  # Convert N·mm to kN·m
-            # Note: self.length is in meters, but evaluate_deflection_kNm_mm expects mm
-            length_mm = self.length * 1000  # Convert m to mm
             is_safe, self.deflection_ratio, delta, allowable = evaluate_deflection_kNm_mm(
-                moment_kNm, length_mm, self.material.modulus_of_elasticity,
+                moment_kNm, self.length, self.material.modulus_of_elasticity,
                 self.loading_case, self.deflection_criteria, self.total_depth,
                 self.top_flange_width, self.bottom_flange_width, self.web_thickness,
                 self.top_flange_thickness, self.bottom_flange_thickness,
@@ -2027,7 +2023,8 @@ class PlateGirderWelded(Member):
                     
                     #web crippling check
                     web_height = self.total_depth - self.top_flange_thickness - self.bottom_flange_thickness
-                    is_safe, self.F_q = check_web_crippling(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, self.gamma_m0, self.logger, debug=self.debug)
+                    tf_used = min(self.top_flange_thickness, self.bottom_flange_thickness) if self.top_flange_thickness > 0 and self.bottom_flange_thickness > 0 else (self.top_flange_thickness or self.bottom_flange_thickness)
+                    is_safe, self.F_q = check_web_crippling_IS800(self.load.shear_force, self.b1, self.web_thickness, self.material.fy, web_height, tf_used, self.gamma_m0, self.logger, debug=self.debug)
                     if is_safe:
                         self.shearflag3 = True  # Fixed from False to True
                         # self.logger.info("Web Crippling Check passed")
@@ -2194,9 +2191,7 @@ class PlateGirderWelded(Member):
         if not SKIP_DEFLECTION:
             # Note: self.load.moment is in N·mm, but evaluate_deflection_kNm_mm expects kN·m
             moment_kNm = self.load.moment / 1e6  # Convert N·mm to kN·m
-            # Note: self.length is in meters, but evaluate_deflection_kNm_mm expects mm
-            length_mm = self.length * 1000  # Convert m to mm
-            is_safe, self.deflection_ratio, delta, allowable = evaluate_deflection_kNm_mm(moment_kNm, length_mm, self.material.modulus_of_elasticity, self.loading_case, self.deflection_criteria, self.total_depth, self.top_flange_width, self.bottom_flange_width, self.web_thickness, self.top_flange_thickness, self.bottom_flange_thickness)
+            is_safe, self.deflection_ratio, delta, allowable = evaluate_deflection_kNm_mm(moment_kNm, self.length, self.material.modulus_of_elasticity, self.loading_case, self.deflection_criteria, self.total_depth, self.top_flange_width, self.bottom_flange_width, self.web_thickness, self.top_flange_thickness, self.bottom_flange_thickness)
             self.calculated_deflection = round(delta, 2)
             self.deflection_limit = round(allowable, 2)
             if is_safe:

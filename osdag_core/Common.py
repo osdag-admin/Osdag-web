@@ -447,7 +447,7 @@ KEY_MODULE_STATUS = 'Module.Status'
 
 TYPE_MODULE = 'Window Title'
 
-KEY_DISP_FINPLATE = 'FinPlateConnection'
+KEY_DISP_FINPLATE = 'Fin Plate Connection'
 # KEY_DISP_ENDPLATE = 'End Plate Connection'
 KEY_DISP_HEADERPLATE = 'Header Plate Connection'
 KEY_DISP_CLEATANGLE = 'Cleat Angle Connection'
@@ -468,7 +468,7 @@ WELD_SIZES = [3, 5, 6, 10, 12]
 KEY_DESIGN_FOR = 'Design.For'
 KEY_DISP_DESIGN_FOR = 'Design For'
 KEY_AXIAL_FORCE = 'Load.Axial.Force'  # If not using existing KEY_AXIAL
-KEY_DISP_AXIAL_FORCE = 'Axial Force (kN)'
+KEY_DISP_AXIAL_FORCE = 'Axial Force (kN) (+/- for T/C)'
 
 # MADE THIS t.s.
 KEY_DISP_BUTTJOINTWELDED = 'Butt Joint Welded Connection'
@@ -538,10 +538,10 @@ KEY_DESIGN_STRENGTH_COMPRESSION = 'Design.Strength'
 KEY_MIN_DESIGN_COMP_STRESS = 'MinCompStress'
 KEY_MIN_DESIGN_COMP_STRESS_VAL = 'Min. Design Comp.Stress (MPa)'
 KEY_MAT_STRESS = 'MaterialStress'
-KEY_DISP_MAT_STRESS = 'fy/gamma_m0'
+KEY_DISP_MAT_STRESS = 'f<sub>y</sub>, γ<sub>m0</sub>'
 KEY_FCD = 'Fcd'
-KEY_DISP_FCD = 'f_cd'
-KEY_DISP_DESIGN_STRENGTH_COMPRESSION = 'Design Strength (kN)'
+KEY_DISP_FCD = 'f<sub>cd</sub>'
+KEY_DISP_DESIGN_STRENGTH_COMPRESSION = 'Design Capacity (kN)'
 DISP_TITLE_OPTIMUM_SECTION = 'Optimum Section'
 KEY_TITLE_OPTIMUM_DESIGNATION = 'Optimum.Designation'
 KEY_DISP_TITLE_OPTIMUM_DESIGNATION = 'Designation'
@@ -804,7 +804,7 @@ Support2 = 'Continous, with partial torsional restraint'
 Support3 = 'Continous, with lateral and torsional restraint'
 Support4 = 'Restrained laterally, torsionally and against rotation on flange'
 Supprt_Restraint_list = list(( Support1, Support2, Support3, Support4))
-DISP_TOP_RES = 'Top restraint *'
+DISP_TOP_RES = 'Top Flange Restraint *'
 KEY_SUPPORT_TYPE2 = 'Cantilever.Top'
 Top1 = 'Free'
 Top2 = 'Lateral restraint to top flange'
@@ -937,7 +937,7 @@ VALUES_SUPPORTING_OPTIONS_PSC = ['Elastic cladding', 'Brittle cladding']
 VALUES_SUPPORTING_OPTIONS_RS = ['Profiled Metal sheeting', 'Plastered sheeting']
 VALUES_SUPPORTING_OPTIONS_GNT = ['Crane']
 VALUES_SUPPORTING_OPTIONS_FRC = ['Elements not susceptible to cracking', 'Element susceptible to cracking']
-VALUES_SUPPORTING_OPTIONS_DEF = ['NA']
+VALUES_SUPPORTING_OPTIONS_DEF = ['Not Applicable']
 KEY_MAX_DEFL = 'Deflection.Max'
 KEY_DISP_MAX_DEFL = 'Maximum Deflection'
 VALUES_MAX_DEFL = ['Span/600','Span/800','Span/400','Span/300','Span/360','Span/150','Span/180','Span/240','Span/120','Span/500','Span/750','Span/1000']
@@ -1286,7 +1286,7 @@ KEY_DISP_SUPTDSEC_REPORT = 'Supported Section - Mechanical Properties'
 KEY_DISP_BEAMSEC = 'Beam Section *'
 KEY_DISP_BEAMSEC_REPORT = 'Beam Section'
 KEY_DISP_SECBM = 'Secondary Beam *'
-DISP_TITLE_FSL = 'Factored Loads'
+DISP_TITLE_FSL = 'Factored Load'
 KEY_DISP_MOMENT = 'Bending Moment (kNm) *'
 KEY_DISP_MOMENT_ZZ = 'Bending Moment (z-z) (kNm)'
 KEY_DISP_MOMENT_YY = 'Bending Moment (y-y) (kNm)'
@@ -1676,7 +1676,7 @@ KEY_DISP_FLANGE_T = 'Flange Thickness, T (mm)*'
 KEY_DISP_WEB_HEIGHT = 'Web Height, D (mm*)'
 KEY_DISP_WEB_T = 'Web Thickness, t (mm)*'
 KEY_DISP_FLANGE_S = 'Flange Slope, α (deg.)*'
-KEY_DISP_FLANGE_S_REPORT = 'Flange Slope'
+KEY_DISP_FLANGE_S_REPORT = 'Flange Slope ($\\alpha$)'
 KEY_DISP_ROOT_R = 'Root Radius, R1 (mm)*'
 KEY_DISP_TOE_R = 'Toe Radius, R2 (mm)*'
 KEY_DISP_TYPE = 'Type'
@@ -1720,8 +1720,8 @@ KEY_DISP_BASE_PLATE_FU = 'Ultimate Strength, Fu (MPa)'
 KEY_DSIP_BASE_PLATE_FY = 'Yield Strength , Fy (MPa)'
 KEY_DISP_ST_SK_FU = 'Ultimate Strength, Fu (MPa)'
 KEY_DSIP_ST_SK_FY = 'Yield Strength , Fy (MPa)'
-KEY_DISP_ULTIMATE_STRENGTH_REPORT = 'Ultimate Strength, $F_u$ (MPa)'
-KEY_DISP_YIELD_STRENGTH_REPORT = 'Yield Strength, $F_y$ (MPa)'
+KEY_DISP_ULTIMATE_STRENGTH_REPORT = 'Ultimate Strength, $f_u$ (MPa)'
+KEY_DISP_YIELD_STRENGTH_REPORT = 'Yield Strength, $f_y$ (MPa)'
 
 # Common keys for design report
 
@@ -1758,7 +1758,7 @@ KEY_REPORT_NB = 'Nominal bore, NB (mm)'
 KEY_REPORT_OD = 'Out diameter, OD (mm)'
 
 # Design cheks
-KEY_REPORT_DIAMETER = 'Diameter $(mm)$'
+KEY_REPORT_DIAMETER = 'Diameter (mm)'
 KEY_REPORT_BOLT_NOS = 'Number of Bolts'
 KEY_REPORT_PROPERTY_CLASS = 'Property Class'
 KEY_REPORT_MIN_END = 'Min. End Distance $(mm)$'
@@ -2163,7 +2163,7 @@ KEY_OUT_DISP_TOT_NO_BOLTS = 'Number of Bolts'
 KEY_OUT_KB = 'Bolt.Kb'
 KEY_OUT_BOLT_HOLE = 'Bolt.Hole'
 KEY_DISP_BOLT_HOLE = 'Hole Diameter (mm)'
-KEY_DISP_MIN_BOLT = 'Minimum Bolts (nos)'
+KEY_DISP_MIN_BOLT = 'Minimum Bolts (no)'
 
 KEY_OUT_WELD_CONN_LEN = 'Weld.ConnLength'
 
@@ -2175,9 +2175,9 @@ KEY_OUT_DISP_WELD_CONN_LEN = 'Length of Connection (mm)'
 KEY_OUT_BOLT_UTILIZATION = 'Bolt.Utilization'
 KEY_OUT_DISP_BOLT_UTILIZATION = 'Bolt Utilization'
 KEY_OUT_BASE_METAL_CAPACITY = 'Plate.BaseCapacity'
-KEY_OUT_DISP_BASE_METAL_CAPACITY = 'Base Metal Capacity (kN)'
+KEY_OUT_DISP_BASE_METAL_CAPACITY = 'Connected Plate Capacity (kN)'
 KEY_OUT_BASE_METAL_UTILIZATION = 'Plate.BaseUtilization'
-KEY_OUT_DISP_BASE_METAL_UTILIZATION = 'Base Metal Utilization'
+KEY_OUT_DISP_BASE_METAL_UTILIZATION = 'Connected Plate Utilization'
 
 KEY_DISP_BOLT_AREA = 'Nominal Stress Area (mm2)'
 KEY_DISP_KB = 'Kb'
@@ -2229,21 +2229,21 @@ KEY_OUT_PACKING_PLATE = 'Packing Plate Reduction Factor'
 KEY_OUT_BOLT_CAPACITY_REDUCED = 'Bolt Capacity (post reduction factor) (kN)'
 KEY_OUT_BOLT_GRP_CAPACITY = 'Bolt.GroupCapacity'
 KEY_OUT_BOLT_LINE = 'Bolt.Line'
-KEY_OUT_DISP_BOLT_LINE = 'Bolt Columns (nos)'
+KEY_OUT_DISP_BOLT_LINE = 'Bolt Columns (no)'
 KEY_OUT_INTER_BOLT_LINE = 'Bolt.InterLine'
-KEY_OUT_DISP_INTER_BOLT_LINE = 'Columns (nos)'
+KEY_OUT_DISP_INTER_BOLT_LINE = 'Columns (no)'
 KEY_OUT_BOLT_IR = 'Bolt.IR'
 KEY_OUT_DISP_BOLT_IR = 'Interaction Ratio'
 KEY_OUT_DISP_BOLT_COMBINED_CAPACITY = 'Combined Capacity, I.R'
 
 
 KEY_OUT_BOLTS_ONE_LINE = 'Bolt.OneLine'
-KEY_OUT_DISP_BOLTS_ONE_LINE = 'Bolt Rows (nos)'
+KEY_OUT_DISP_BOLTS_ONE_LINE = 'Bolt Rows (no)'
 KEY_OUT_BOLTS_ONE_LINE_S = 'Bolt.OneLineT'
-KEY_OUT_DISP_BOLTS_ONE_LINE_S = 'Rows per Angle(nos)'
+KEY_OUT_DISP_BOLTS_ONE_LINE_S = 'Rows per Angle(no)'
 
 KEY_OUT_INTER_BOLTS_ONE_LINE = 'Bolt.InterOneLine'
-KEY_OUT_DISP_INTER_BOLTS_ONE_LINE = 'Rows (nos)'
+KEY_OUT_DISP_INTER_BOLTS_ONE_LINE = 'Rows (no)'
 
 
 KEY_OUT_SPACING = 'spacing'
@@ -2323,7 +2323,7 @@ KEY_OUT_DISP_INTER_PLATE_LENGTH = 'Length (mm)'
 
 
 KEY_OUT_INTERCONNECTION = 'Intermittent.Connection'
-KEY_OUT_DISP_INTERCONNECTION = 'Connection (nos)'
+KEY_OUT_DISP_INTERCONNECTION = 'Connection (no)'
 
 KEY_OUT_INTERSPACING = 'Intermittent.Spacing'
 KEY_OUT_DISP_INTERSPACING = 'Spacing (mm)'
@@ -2537,7 +2537,7 @@ KEY_OUT_DISP_WELD_SIZE = 'Size (mm)'
 KEY_OUT_DISP_WELD_SIZE_EP = 'Size (mm)'
 KEY_OUT_DISP_WELD_TYPE = 'Type'
 KEY_OUT_WELD_STRENGTH = 'Weld.Strength'
-KEY_OUT_DISP_WELD_STRENGTH = 'Strength (N/mm2)'
+KEY_OUT_DISP_WELD_STRENGTH = 'Strength (N/mm)'
 
 KEY_OUT_WELD_STRESS = 'Weld.Stress'
 KEY_OUT_WELD_STRESS_NORMAL = 'Weld.NormalStress'

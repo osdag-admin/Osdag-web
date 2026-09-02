@@ -109,7 +109,7 @@ class ButtJointBolted(MomentConnection):
     def detailing_values(self, input_dictionary):
         values = {
             KEY_DP_DETAILING_EDGE_TYPE: 'Sheared or hand flame cut',
-            # KEY_DP_DETAILING_PACKING_PLATE: 'Yes',  # Commented out packing plate preference
+            KEY_DP_DETAILING_PACKING_PLATE: 'Yes',
         }
 
         for key in values.keys():
@@ -124,10 +124,10 @@ class ButtJointBolted(MomentConnection):
             values[KEY_DP_DETAILING_EDGE_TYPE])
         detailing.append(t1)
 
-        # Commented out packing plate design preference
-        # t3 = (KEY_DP_DETAILING_PACKING_PLATE, KEY_DISP_DP_DETAILING_PACKING_PLATE, TYPE_COMBOBOX,
-        #       ['Yes', 'No'], values[KEY_DP_DETAILING_PACKING_PLATE])
-        # detailing.append(t3)
+        # Packing plate required when plates of different thickness are joined (IS 800:2007 Cl. 10.3.3.3)
+        t3 = (KEY_DP_DETAILING_PACKING_PLATE, KEY_DISP_DP_DETAILING_PACKING_PLATE, TYPE_COMBOBOX,
+              ['Yes', 'No'], values[KEY_DP_DETAILING_PACKING_PLATE])
+        detailing.append(t3)
 
         t4 = ("textBrowser", "", TYPE_TEXT_BROWSER, DETAILING_DESCRIPTION_LAPJOINT, None)
         detailing.append(t4)
@@ -387,6 +387,10 @@ class ButtJointBolted(MomentConnection):
         t20 = (KEY_OUT_BOLT_CONN_LEN, KEY_OUT_DISP_BOLT_CONN_LEN, TYPE_TEXTBOX,
                self.len_conn if flag else '', True)
         out_list.append(t20)
+
+        t28 = (KEY_OUT_LENGTH_COVER_PLATE, KEY_OUT_DISP_LENGTH_COVER_PLATE, TYPE_TEXTBOX,
+               (2 * self.len_conn) if flag else '', True)
+        out_list.append(t28)
 
         # Populate Hover Dict (Butt Joint Bolted)
         try:

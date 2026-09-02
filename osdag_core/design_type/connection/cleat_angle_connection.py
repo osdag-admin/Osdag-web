@@ -365,6 +365,10 @@ class CleatAngleConnection(ShearConnection):
         t18 = (KEY_OUT_CLEAT_BLK_SHEAR, KEY_DISP_BLK_SHEAR, TYPE_TEXTBOX, round(self.sptd_leg.block_shear_capacity / 1000, 2) if flag else '', True)
         out_list.append(t18)
 
+        t_cap_sptd = ('button_sptd_cap', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON,
+                       ['Capacity Details', self.sptd_leg_capacities], True)
+        out_list.append(t_cap_sptd)
+
         t19 = (KEY_OUT_CLEAT_MOM_DEMAND, KEY_DISP_MOM_DEMAND, TYPE_TEXTBOX, round(self.sptd_leg.moment_demand / 1000000, 2) if flag else '', True)
         out_list.append(t19)
         #
@@ -402,6 +406,10 @@ class CleatAngleConnection(ShearConnection):
         t6 = (KEY_OUT_BOLT_CAPACITY_SPTD, KEY_OUT_DISP_BOLT_VALUE, TYPE_TEXTBOX, self.bolt_capacity_disp_sptd if flag else '', True)
         out_list.append(t6)
 
+        t3_1 = ('button_capacity_sptd', 'Capacity', TYPE_OUT_BUTTON,
+        ['Capacity', self.bolt_capacity_supported], True)
+        out_list.append(t3_1)
+
         t3_2 = (KEY_OUT_BOLT_IR_DETAILS_SPTD, KEY_OUT_DISP_BOLT_IR_DETAILS, TYPE_OUT_BUTTON, ['Details', self.bolt_capacity_details_supported], True)
         out_list.append(t3_2)
 
@@ -427,11 +435,26 @@ class CleatAngleConnection(ShearConnection):
         t6 = (KEY_OUT_BOLT_CAPACITY_SPTING, KEY_OUT_DISP_BOLT_VALUE, TYPE_TEXTBOX, self.bolt_capacity_disp_spting if flag else '', True)
         out_list.append(t6)
 
+        t3_3 = ('button_capacity_spting', 'Capacity', TYPE_OUT_BUTTON,
+        ['Capacity', self.bolt_capacity_supporting], True)
+        out_list.append(t3_3)
+
         t3_2 = (KEY_OUT_BOLT_IR_DETAILS_SPTING, KEY_OUT_DISP_BOLT_IR_DETAILS, TYPE_OUT_BUTTON, ['Details', self.bolt_capacity_details_suporting], True)
         out_list.append(t3_2)
 
         t19 = (KEY_OUT_SPTING_SPACING, KEY_OUT_DISP_SPACING, TYPE_OUT_BUTTON, ['Spacing Details', self.spting_spacing], True)
         out_list.append(t19)
+
+        t_cap_spting = ('button_spting_cap', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON,
+                         ['Capacity Details', self.spting_leg_capacities], True)
+        out_list.append(t_cap_spting)
+
+        t20a = (None, 'Section Details', TYPE_TITLE, None, True)
+        out_list.append(t20a)
+
+        t20b = ('button_section_capacity', 'Capacity', TYPE_OUT_BUTTON,
+        ['Capacity', self.section_capacity_details], True, self.show_hide_capacity_buttons)
+        out_list.append(t20b)
 
         """      Bolt Properties- Supporting leg: End        """
         """"""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -518,6 +541,12 @@ class CleatAngleConnection(ShearConnection):
             round(self.spting_leg.block_shear_capacity_axial / 1000, 2) if flag else ''))
 
         return capacities
+
+    def show_hide_capacity_buttons(self, design_dict):
+        value = design_dict.get(KEY_CONN, None)
+        if value == CONN_CFBW:
+            return False
+        return True
 
     def bolt_capacity_supported(self, flag):
         capacity = []

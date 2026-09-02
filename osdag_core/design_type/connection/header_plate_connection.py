@@ -1285,11 +1285,11 @@ class HeaderPlateConnection(ShearConnection):
         t3_1 = (KEY_OUT_ROW_PROVIDED, KEY_OUT_DISP_ROW_PROVIDED, TYPE_TEXTBOX, self.output[0][0] if flag else '', True)
         out_list.append(t3_1)
 
-        # t4 = (KEY_OUT_BOLT_SHEAR, KEY_OUT_DISP_BOLT_SHEAR, TYPE_TEXTBOX,  self.output[0][7] if flag else '', True)
-        # out_list.append(t4)
-        #
-        # t5 = (KEY_OUT_BOLT_BEARING, KEY_OUT_DISP_BOLT_BEARING, TYPE_TEXTBOX, self.output[0][8] if flag else '', True)
-        # out_list.append(t5)
+        t4 = (KEY_OUT_BOLT_SHEAR, KEY_OUT_DISP_BOLT_SHEAR, TYPE_TEXTBOX,  self.output[0][7] if flag else '', True)
+        out_list.append(t4)
+
+        t5 = (KEY_OUT_BOLT_BEARING, KEY_OUT_DISP_BOLT_BEARING, TYPE_TEXTBOX, self.output[0][8] if flag else '', True)
+        out_list.append(t5)
 
         t6 = (KEY_OUT_BOLT_CAPACITY, KEY_OUT_DISP_BOLT_VALUE, TYPE_TEXTBOX, self.bolt_capacity if flag else '', True)
         out_list.append(t6)
@@ -1303,8 +1303,8 @@ class HeaderPlateConnection(ShearConnection):
         t21_1 = (KEY_OUT_BOLT_TENSION_FORCE, KEY_OUT_DISP_BOLT_TENSION_FORCE, TYPE_TEXTBOX, self.bolt_tension if flag else '', True)
         out_list.append(t21_1)
 
-        # t21_2 = (KEY_OUT_BOLT_PRYING_FORCE, KEY_OUT_DISP_BOLT_PRYING_FORCE, TYPE_TEXTBOX, self.output[0][17] if flag else '', True)
-        # out_list.append(t21_2)
+        t21_2 = (KEY_OUT_BOLT_PRYING_FORCE, KEY_OUT_DISP_BOLT_PRYING_FORCE, TYPE_TEXTBOX, self.output[0][17] if flag else '', True)
+        out_list.append(t21_2)
 
         t3_2 = (KEY_OUT_BOLT_IR_DETAILS, KEY_OUT_DISP_BOLT_IR_DETAILS, TYPE_OUT_BUTTON, ['Details', self.bolt_capacity_details], True)
         out_list.append(t3_2)
@@ -1330,6 +1330,14 @@ class HeaderPlateConnection(ShearConnection):
 
         t22 = (KEY_OUT_PLATE_CAPACITIES, KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON, ['Capacity Details', self.capacities], True)
         out_list.append(t22)
+
+        # --- SECTION PROPERTIES ---
+        t13_1 = (None, DISP_TITLE_SECTION, TYPE_TITLE, None, True)
+        out_list.append(t13_1)
+
+        t22_1 = ('button_section_capacity', KEY_OUT_DISP_PLATE_CAPACITIES, TYPE_OUT_BUTTON,
+                 ['Capacity Details', self.section_capacities], True, self.show_hide_capacity_buttons)
+        out_list.append(t22_1)
 
         # TODO: Plate Properties: End
 
@@ -1451,6 +1459,21 @@ class HeaderPlateConnection(ShearConnection):
         spacing.append(t12)
 
         return spacing
+
+    def show_hide_capacity_buttons(self, design_dict):
+        value = design_dict.get(KEY_CONN, None)
+        if value == CONN_CFBW:
+            return False
+        return True
+
+    def section_capacities(self, flag):
+        '''
+        Method to supply values for the Section Capacity Details window.
+        Uses same logic as Plate Capacities for mirroring.
+        '''
+        # Aap chahein toh yahan section ke specific capacity logic add kar sakte hain
+        # Filhal ye Plate Capacity waali values hi return kar raha hai mirror diagram ke liye
+        return self.capacities(flag)
 
     def capacities(self, flag):
 

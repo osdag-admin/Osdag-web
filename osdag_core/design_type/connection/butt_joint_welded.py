@@ -385,7 +385,7 @@ class ButtJointWelded(MomentConnection):
         out_list.append(t38)
 
         t28 = (KEY_OUT_LENGTH_COVER_PLATE, KEY_OUT_DISP_LENGTH_COVER_PLATE, TYPE_TEXTBOX,
-               round(self.weld_length_provided, 1) if flag else '', True)
+               round(self.cover_plate_length, 1) if flag and hasattr(self, 'cover_plate_length') else '', True)
         out_list.append(t28)
 
         t47 = (KEY_OUT_THICKNESS_COVER_PLATE, KEY_OUT_DISP_THICKNESS_COVER_PLATE, TYPE_TEXTBOX,
@@ -419,7 +419,7 @@ class ButtJointWelded(MomentConnection):
         out_list.append(t26)
 
         t27 = (KEY_OUT_BOLT_CONN_LEN, KEY_OUT_DISP_BOLT_CONN_LEN, TYPE_TEXTBOX,
-               round(self.weld_length_provided, 1) if flag else '', True)
+               round(self.connection_length, 1) if flag and hasattr(self, 'connection_length') else '', True)
         out_list.append(t27)
 
         t29 = (KEY_OUT_DESIGN_FOR, KEY_OUT_DISP_DESIGN_FOR, TYPE_TEXTBOX,
@@ -427,7 +427,7 @@ class ButtJointWelded(MomentConnection):
         out_list.append(t29)
 
         # Populate Hover Dict (Butt Joint Welded) with actual dimensions
-        plate_length = getattr(self, 'weld_length_provided', 0)
+        plate_length = getattr(self, 'cover_plate_length', 0)
         plate_width = getattr(self, 'plates_width', 0)
         plate1_thk = float(self.plate1.thickness[0]) if hasattr(
             self, 'plate1') and self.plate1 and self.plate1.thickness else 0
@@ -690,27 +690,29 @@ class ButtJointWelded(MomentConnection):
         cover_plate_type_str = design_dictionary[KEY_COVER_PLATE]
         self.cover_plate_type = cover_plate_type_str  # Store for CAD generation
 
-        # Cover plate and packing plate logic as per documentation
         available_thicknesses = [float(thk) for thk in PLATE_THICKNESS_SAIL]
         if "double" in cover_plate_type_str.lower():
             self.planes = 2
-            # Double cover plate thickness as per Eq. 3.2
-            Tcp = math.ceil((9.0 / 16.0) * Tmin)
+            # Double cover plate: each plate area ≥ A_main/2 (load shared equally); 5/8 × Tmin
+            # Reference: Indian Machine Design practice (IBR); validate against IS 800:2007 Cl. 10.1
+            Tcp = math.ceil((5.0 / 8.0) * Tmin)
             self.calculated_cover_plate_thickness = min(
                 [thk for thk in available_thicknesses if thk >= Tcp],
                 default=Tcp
             )
 
-            # Packing plate logic as per Cl. 10.3.3.2
-            if abs(plate1_thk - plate2_thk) > 0.001:
+            # Packing plate as per IS 800:2007 Cl. 10.3.3.3; only when user preference is 'Yes'
+            use_packing = design_dictionary.get(KEY_DP_DETAILING_PACKING_PLATE, 'Yes') == 'Yes'
+            if use_packing and abs(plate1_thk - plate2_thk) > 0.001:
                 self.packing_plate_thickness = abs(plate1_thk - plate2_thk)
             else:
                 self.packing_plate_thickness = 0.0
 
         elif "single" in cover_plate_type_str.lower():
             self.planes = 1
-            # Single cover plate thickness as per Eq. 3.1
-            Tcp = math.ceil((5.0 / 8.0) * Tmin)
+            # Single cover plate: plate area ≥ A_main (full load alone); 9/8 × Tmin
+            # Reference: Indian Machine Design practice (IBR); validate against IS 800:2007 Cl. 10.1
+            Tcp = math.ceil((9.0 / 8.0) * Tmin)
             self.calculated_cover_plate_thickness = min(
                 [thk for thk in available_thicknesses if thk >= Tcp],
                 default=Tcp
@@ -943,6 +945,21 @@ class ButtJointWelded(MomentConnection):
 
             self.logger.info(
                 ": Skewed weld will be provided with angle {:.2f} degrees".format(self.weld_angle))
+
+        # Overlap length of cover plate on each side
+        # Reference: IS 800:2007 Clause 10.5.1.2 (for lap/overlap length) and Clause 10.5.10 (for return welds) / N. Subramanian, Design of Steel Structures, Sec. 3.10.
+        self.overlap = max(4 * self.calculated_cover_plate_thickness, 40.0)
+        if self.side_weld_length > 0:
+            self.overlap = max(self.overlap, self.side_weld_length + 2 * self.weld_size)
+
+        # Cover plate length spans symmetrically on both sides of the joint line
+        # Formula: L_cp = 2 * overlap
+        # Reference: Symmetrical welded splice plate design. N. Subramanian, Design of Steel Structures, Sec. 3.10.
+        self.cover_plate_length = 2 * self.overlap
+
+        # Connection length represents the length of the weld group along the force direction (longitudinal direction)
+        # Reference: IS 800:2007 Cl. 10.5.1.2 / N. Subramanian, Design of Steel Structures, Sec. 3.10.
+        self.connection_length = self.side_weld_length
 
         # Update output values for UI display
         self.output_values_dict[KEY_OUT_WELD_LENGTH] = self.weld_length_effective

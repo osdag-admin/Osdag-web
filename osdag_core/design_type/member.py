@@ -633,11 +633,11 @@ class Member(Main):
         t12 = ('Label_5', KEY_DISP_TOE_R, TYPE_TEXTBOX, None, toe_radius)
         section.append(t12)
 
-        # if KEY_MODULE in input_dictionary and input_dictionary[KEY_MODULE] == KEY_DISP_STRUT_WELDED_END_GUSSET:
-        #     t12 = ('Label_0', KEY_DISP_DPPLATETHK, TYPE_COMBOBOX, PLATE_THICKNESS_IS_1730_1989, plate_thk)
-        # else:
-        #     t12 = ('Label_0', KEY_DISP_DPPLATETHK, TYPE_COMBOBOX, VALUES_PLATETHK_CUSTOMIZED, plate_thk)
-        # section.append(t12)
+        if KEY_MODULE in input_dictionary and input_dictionary[KEY_MODULE] == KEY_DISP_STRUT_WELDED_END_GUSSET:
+            t12 = ('Label_0', KEY_DISP_DPPLATETHK, TYPE_COMBOBOX, PLATE_THICKNESS_IS_1730_1989, plate_thk)
+        else:
+            t12 = ('Label_0', KEY_DISP_DPPLATETHK, TYPE_COMBOBOX, VALUES_PLATETHK_CUSTOMIZED, plate_thk)
+        section.append(t12)
 
         t17 = (None, KEY_DISP_SEC_PROP, TYPE_TITLE, None, None)
         section.append(t17)
@@ -2942,7 +2942,7 @@ class Member(Main):
 
         t8 = (KEY_IntermediateStiffener_spacing, KEY_DISP_IntermediateStiffener_spacing, TYPE_TEXTBOX, None, values[KEY_IntermediateStiffener_spacing])
         optimum.append(t8)
-        t9 = (KEY_LongitudnalStiffener, KEY_DISP_LongitudnalStiffener, TYPE_COMBOBOX, ['Yes','No'],  values[KEY_LongitudnalStiffener])
+        t9 = (KEY_LongitudnalStiffener, KEY_DISP_LongitudnalStiffener, TYPE_COMBOBOX, ['No', 'Yes and 1 stiffener', 'Yes and 2 stiffeners'],  values[KEY_LongitudnalStiffener])
         optimum.append(t9)
         t10 = (KEY_IntermediateStiffener_thickness, KEY_DISP_IntermediateStiffener_thickness, TYPE_COMBOBOX, ['All','Customized'], values[KEY_IntermediateStiffener_thickness])
         optimum.append(t10)
