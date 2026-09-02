@@ -128,9 +128,11 @@ def create_from_input(input_values: Dict[str, Any]) -> Tension_welded:
     elif profile in ["Angles", "Back to Back Angles", "Star Angles"] and input_values.get("Conn_Location") not in ["Long Leg", "Short Leg"]:
         input_values["Conn_Location"] = "Long Leg"
 
-    # Set weld defaults
-    input_values["Weld.Material_Grade_OverWrite"] = "410"
-    input_values["Weld.Fab"] = "Shop Weld"
+    # Weld fabrication/grade defaults (only when not supplied by the user)
+    if not input_values.get("Weld.Material_Grade_OverWrite"):
+        input_values["Weld.Material_Grade_OverWrite"] = "410"
+    if not input_values.get("Weld.Fab"):
+        input_values["Weld.Fab"] = "Shop Weld"
     module.set_input_values(input_values)
     return module
 

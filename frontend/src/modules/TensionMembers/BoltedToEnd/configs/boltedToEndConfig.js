@@ -8,7 +8,7 @@ import {
   KEY_LENGTH, KEY_AXIAL, KEY_D, KEY_TYP, KEY_GRD, KEY_DP_BOLT_HOLE_TYPE,
   KEY_DP_BOLT_SLIP_FACTOR, KEY_CONNECTOR_MATERIAL, KEY_DP_DETAILING_EDGE_TYPE,
   KEY_DP_DETAILING_GAP, KEY_DP_DETAILING_CORROSIVE_INFLUENCES,
-  KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL
+  KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL, KEY_DP_BOLT_TYPE
 } from "../../../../constants/DesignKeys";
 
 import { validateRequiredFields } from '../../../shared/utils/validation';
@@ -34,6 +34,7 @@ export const boltedToEndConfig = {
     material: "E 250 (Fe 410 W)A",
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
+    bolt_tension_type: "Pre-tensioned",
     member_designation: "All",
     detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
     detailing_gap: "10",
@@ -127,6 +128,7 @@ export const boltedToEndConfig = {
       [KEY_D]: getArrayParam(allSelected.bolt_diameter, lists.boltDiameterList, inputs.bolt_diameter),
       [KEY_GRD]: getArrayParam(allSelected.bolt_grade, lists.propertyClassList, inputs.bolt_grade),
       [KEY_DP_BOLT_SLIP_FACTOR]: String(inputs.bolt_slip_factor),
+      [KEY_DP_BOLT_TYPE]: String(inputs.bolt_tension_type),
       [KEY_TYP]: String(inputs.bolt_type),
       [KEY_CONNECTOR_MATERIAL]: String(inputs.connector_material),
       [KEY_MATERIAL]: String(inputs.material),

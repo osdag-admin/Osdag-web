@@ -32,6 +32,7 @@ export const strutsBoltedConfig = {
     material: "E 250 (Fe 410 W)A",
     bolt_hole_type: "Standard",
     bolt_slip_factor: "0.3",
+    bolt_tension_type: "Pre-tensioned",
     member_designation: "All",
     detailing_edge_type: "Rolled, machine-flame cut, sawn and planed",
     detailing_gap: "10",
@@ -166,6 +167,7 @@ export const strutsBoltedConfig = {
       "Bolt.Type": inputs.bolt_type,
       "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
       "Bolt.Slip_Factor": String(inputs.bolt_slip_factor),
+      "Bolt.TensionType": inputs.bolt_tension_type,
 
       "Connector.Material": inputs.connector_material,
       "Connector.Plate.Thickness_List": getList("plate_thickness", "thicknessList"),

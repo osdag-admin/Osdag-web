@@ -30,6 +30,10 @@ export const strutsWeldedConfig = {
     design_method: "Limit State Design",
     end_condition_1: "Hinged",
     end_condition_2: "Hinged",
+    weld_fab: "Shop Weld",
+    weld_material_grade: "",
+    allow_ur: "1.0",
+    effective_area_parameter: "1.0",
   },
 
   modalConfig: [
@@ -146,6 +150,10 @@ export const strutsWeldedConfig = {
       "Connector.Plate.Thickness_List": getList("plate_thickness", "thicknessList"),
 
       "Design.Design_Method": inputs.design_method,
+      "Weld.Fab": inputs.weld_fab || "Shop Weld",
+      "Weld.Material_Grade_OverWrite": String(inputs.weld_material_grade || ""),
+      "Optimum.AllowUR": String(inputs.allow_ur || "1.0"),
+      "Effective.Area_Para": String(inputs.effective_area_parameter || "1.0"),
     };
   },
 
@@ -320,6 +328,23 @@ export const strutsWeldedConfig = {
           dataSource: "thicknessList"
         }
       ]
-    }
+    },
+    {
+      title: "Optimization",
+      fields: [
+        {
+          key: "allow_ur",
+          label: "Allowable Utilization Ratio (UR)",
+          type: "number",
+          validation: "positive_number",
+        },
+        {
+          key: "effective_area_parameter",
+          label: "Effective Area Parameter",
+          type: "number",
+          validation: "positive_number",
+        },
+      ],
+    },
   ]
 };

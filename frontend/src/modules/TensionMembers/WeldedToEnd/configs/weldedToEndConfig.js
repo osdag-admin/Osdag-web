@@ -7,7 +7,8 @@ import {
     KEY_MODULE, KEY_SEC_PROFILE, KEY_LOCATION, KEY_SECSIZE, KEY_MATERIAL,
     KEY_LENGTH, KEY_AXIAL, KEY_CONNECTOR_MATERIAL, KEY_DP_DETAILING_EDGE_TYPE,
     KEY_DP_DETAILING_GAP, KEY_DP_DETAILING_CORROSIVE_INFLUENCES,
-    KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL
+    KEY_DP_DESIGN_METHOD, KEY_PLATETHK, KEY_SEC_MATERIAL,
+    KEY_DP_WELD_FAB, KEY_DP_WELD_MATERIAL_G_O
 } from "../../../../constants/DesignKeys";
 
 import { validateRequiredFields } from '../../../shared/utils/validation';
@@ -33,6 +34,8 @@ export const weldedToEndConfig = {
         detailing_gap: "10",
         detailing_corr_status: "No",
         design_method: "Limit State Design",
+        weld_fab: "Shop Weld",
+        weld_material_grade: "410",
     },
 
     modalConfig: [
@@ -118,6 +121,8 @@ export const weldedToEndConfig = {
             [KEY_DP_DETAILING_CORROSIVE_INFLUENCES]: String(inputs.detailing_corr_status),
             [KEY_DP_DETAILING_EDGE_TYPE]: String(inputs.detailing_edge_type),
             [KEY_DP_DETAILING_GAP]: String(inputs.detailing_gap),
+            [KEY_DP_WELD_FAB]: String(inputs.weld_fab),
+            [KEY_DP_WELD_MATERIAL_G_O]: String(inputs.weld_material_grade),
             [KEY_AXIAL]: String(inputs.axial_force),
             [KEY_SECSIZE]: dynamicSectionList,
             [KEY_LENGTH]: String(inputs.length),

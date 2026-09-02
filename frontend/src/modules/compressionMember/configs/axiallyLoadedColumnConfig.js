@@ -30,6 +30,10 @@ export const axiallyLoadedColumnConfig = {
     end_condition_1_y: "Fixed",
     end_condition_2_y: "Fixed",
     axial_load: "100",
+    design_method: "Limit State Design",
+    allow_ur: "1.0",
+    effective_area_parameter: "1.0",
+    optimum_para: "Utilization Ratio",
   },
 
   modalConfig: [
@@ -145,6 +149,10 @@ export const axiallyLoadedColumnConfig = {
       End_1_Y: String(inputs.end_condition_1_y),
       End_2_Y: String(inputs.end_condition_2_y),
       "Load.Axial": String(inputs.axial_load),
+      "Design.Design_Method": String(inputs.design_method || "Limit State Design"),
+      "Optimum.AllowUR": String(inputs.allow_ur || "1.0"),
+      "Effective.Area_Para": String(inputs.effective_area_parameter || "1.0"),
+      "Optimum.Para": String(inputs.optimum_para || "Utilization Ratio"),
     };
   },
 
@@ -349,6 +357,33 @@ export const axiallyLoadedColumnConfig = {
           label: "Axial Force (kN)",
           type: "number",
           validation: "positive_number",
+        },
+      ],
+    },
+    {
+      title: "Optimization",
+      fields: [
+        {
+          key: "allow_ur",
+          label: "Allowable Utilization Ratio (UR)",
+          type: "number",
+          validation: "positive_number",
+        },
+        {
+          key: "effective_area_parameter",
+          label: "Effective Area Parameter",
+          type: "number",
+          validation: "positive_number",
+        },
+        {
+          key: "optimum_para",
+          label: "Optimization Parameter",
+          type: "select",
+          options: [
+            { value: "Utilization Ratio", label: "Utilization Ratio" },
+            { value: "Cost", label: "Cost" },
+          ],
+          defaultValue: "Utilization Ratio",
         },
       ],
     },
