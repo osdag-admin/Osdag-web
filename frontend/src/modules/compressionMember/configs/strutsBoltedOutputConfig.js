@@ -73,10 +73,10 @@ export const strutsBoltedOutputConfig = {
                     { key: "Bolt.EdgeDist", label: "Edge Distance (mm)" },
                 ],
                 diagram: {
-                    origin: "right",
+                    origin: "left",
                     props: {
                         plateWidth: "Plate.Length",
-                        plateHeight: "Plate.Height",
+                        plateHeight: "Member.Depth",
                         rows: "Bolt.OneLine",
                         cols: "Bolt.Line",
                         end: "Bolt.EndDist",

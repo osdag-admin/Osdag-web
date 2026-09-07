@@ -37,7 +37,7 @@ const distributeWithGauge = (count, origin, edge, plateWidth, gaugeValues) => {
   }
 
   if (count === 1) {
-    return [plateWidth / 2];
+    return [origin === "right" ? plateWidth - edge : edge];
   }
 
   const gauges = gaugeValues.length ? gaugeValues : [plateWidth / (count + 1)];
@@ -70,7 +70,7 @@ const distributeRows = (rows, end, pitch, plateHeight) => {
   }
 
   if (rows === 1) {
-    return [plateHeight / 2];
+    return [end];
   }
 
   const positions = [];
@@ -446,9 +446,12 @@ const SpacingDiagram = ({
   holeDiameter,
   origin = "left",
   weldSize = 0,
+  weldPattern = "edge",
+  weldGap = 0,
   layout = "linear",
   angleDesignation = "",
   drawAngleThickness = "none",
+  thicknessBand = "none",
   className = "",
   children,
 }) => {
@@ -511,6 +514,7 @@ const SpacingDiagram = ({
         gaugeValues,
         holeDia: 0,
         weld: Math.max(0, toNumber(weldSize, 0)),
+        weldGap: Math.max(0, toNumber(weldGap, 0)),
         error: 'Missing plate dimensions from backend',
         angleThickness: 0,
         angleLegSize: 0,
@@ -540,11 +544,12 @@ const SpacingDiagram = ({
       gaugeValues,
       holeDia: holeDia || 0,
       weld: Math.max(0, toNumber(weldSize, 0)),
+      weldGap: Math.max(0, toNumber(weldGap, 0)),
       layout,
       angleThickness,
       angleLegSize,
     };
-  }, [plateWidth, plateHeight, rows, cols, edge, end, pitch, gauge, holeDiameter, weldSize, layout, angleDesignation]);
+  }, [plateWidth, plateHeight, rows, cols, edge, end, pitch, gauge, holeDiameter, weldSize, weldGap, layout, angleDesignation]);
 
   const scale = useMemo(() => {
     if (numericParams.error || numericParams.width <= 0 || numericParams.height <= 0) {
@@ -665,17 +670,70 @@ const SpacingDiagram = ({
         />
       )}
 
-      {/* Optional weld strip */}
-      {numericParams.weld > 0 && (
+      {/* Thickness band -- full-width strip along the top or bottom edge, representing the angle's own leg thickness (e.g. Seated Angle) */}
+      {thicknessBand === 'top' && numericParams.angleThickness > 0 && (
         <rect
           x={offsetX}
           y={offsetY}
-          width={numericParams.weld * scale}
-          height={numericParams.height * scale}
-          fill="rgba(220, 20, 60, 0.2)"
-          stroke="rgba(220, 20, 60, 0.6)"
-          strokeWidth="2"
+          width={numericParams.width * scale}
+          height={numericParams.angleThickness * scale}
+          fill="rgba(0, 0, 0, 0.15)"
+          stroke="#000"
+          strokeWidth="1"
+          strokeDasharray="4,4"
         />
+      )}
+      {thicknessBand === 'bottom' && numericParams.angleThickness > 0 && (
+        <rect
+          x={offsetX}
+          y={offsetY + (numericParams.height - numericParams.angleThickness) * scale}
+          width={numericParams.width * scale}
+          height={numericParams.angleThickness * scale}
+          fill="rgba(0, 0, 0, 0.15)"
+          stroke="#000"
+          strokeWidth="1"
+          strokeDasharray="4,4"
+        />
+      )}
+
+      {/* Optional weld strip(s) -- either pinned to one edge (default) or flanking a center gap */}
+      {weldPattern === "center-gap" ? (
+        numericParams.weld > 0 && numericParams.weldGap > 0 && (
+          <>
+            <rect
+              x={offsetX + (numericParams.width / 2 - numericParams.weldGap / 2 - numericParams.weld) * scale}
+              y={offsetY}
+              width={numericParams.weld * scale}
+              height={numericParams.height * scale}
+              fill="rgba(220, 20, 60, 0.2)"
+              stroke="rgba(220, 20, 60, 0.6)"
+              strokeWidth="2"
+            />
+            <rect
+              x={offsetX + (numericParams.width / 2 + numericParams.weldGap / 2) * scale}
+              y={offsetY}
+              width={numericParams.weld * scale}
+              height={numericParams.height * scale}
+              fill="rgba(220, 20, 60, 0.2)"
+              stroke="rgba(220, 20, 60, 0.6)"
+              strokeWidth="2"
+            />
+          </>
+        )
+      ) : (
+        numericParams.weld > 0 && (
+          <rect
+            x={origin === "right"
+              ? offsetX + numericParams.width * scale - numericParams.weld * scale
+              : offsetX}
+            y={offsetY}
+            width={numericParams.weld * scale}
+            height={numericParams.height * scale}
+            fill="rgba(220, 20, 60, 0.2)"
+            stroke="rgba(220, 20, 60, 0.6)"
+            strokeWidth="2"
+          />
+        )
       )}
 
       {/* Bolt holes */}

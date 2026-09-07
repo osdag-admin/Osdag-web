@@ -121,8 +121,8 @@ export const coverPlateBoltedOutputConfig = {
         diagram: {
           layout: "symmetric",
           props: {
-            plateWidth: "flange_plate.Length",
-            plateHeight: "Flange_Plate.Width (mm)",
+            plateWidth: "Flange_Plate.Width (mm)",
+            plateHeight: "flange_plate.Length",
             rows: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
             cols: "Flange_plate.Bolt_Line_flange_bolt_capacity",
             end: "Flange_plate.end_dist_provided_flange_spacing",

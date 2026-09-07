@@ -331,6 +331,21 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
                 "label": label,
                 "val": value  # Changed from "value" to "val" to match frontend expectations
             }  # Set label, key and value in output
+
+    # Extra key needed by the frontend spacing diagram (weld center-gap pattern)
+    try:
+        web_thickness = getattr(getattr(module, "supported_section", None), "web_thickness", None)
+        if web_thickness is not None:
+            if hasattr(web_thickness, 'item'):
+                web_thickness = web_thickness.item()
+            output["Beam.WebThickness"] = {
+                "key": "Beam.WebThickness",
+                "label": "Beam Web Thickness (mm)",
+                "val": web_thickness,
+            }
+    except Exception as e:
+        print(f"[EndPlateAdapter.generate_output] Warning: could not add Beam.WebThickness diagram key: {e}")
+
     print(f"[EndPlateAdapter.generate_output] output keys count={len(output)}")
     try:
         logs = list(reversed(logs))

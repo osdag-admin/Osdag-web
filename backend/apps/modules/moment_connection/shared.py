@@ -240,7 +240,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
     web_spacing_raw = module.webspacing(True)
 
     raw_flange_bolt_capacity = [
-        (f"{key}_flange_bolt_capacity", label, typ, value, visible if len(item) == 5 else True)
+        (f"{key.strip()}_flange_bolt_capacity", label, typ, value, visible if len(item) == 5 else True)
         for item in flange_bolt_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
@@ -248,7 +248,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
     ]
 
     raw_web_bolt_capacity = [
-        (f"{key}_web_bolt_capacity", label, typ, value, visible if len(item) == 5 else True)
+        (f"{key.strip()}_web_bolt_capacity", label, typ, value, visible if len(item) == 5 else True)
         for item in web_bolt_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
@@ -256,7 +256,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
     ]
 
     raw_flange_capacity = [
-        (f"{key}_flange_capacity", label, typ, value, visible if len(item) == 5 else True)
+        (f"{key.strip()}_flange_capacity", label, typ, value, visible if len(item) == 5 else True)
         for item in flange_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
@@ -264,7 +264,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
     ]
 
     raw_web_capacity = [
-        (f"{key}_web_capacity", label, typ, value, visible if len(item) == 5 else True)
+        (f"{key.strip()}_web_capacity", label, typ, value, visible if len(item) == 5 else True)
         for item in web_capacity_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
@@ -272,7 +272,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
     ]
 
     raw_flange_spacing = [
-        (f"{key}_flange_spacing", label, typ, value, visible if len(item) == 5 else True)
+        (f"{key.strip()}_flange_spacing", label, typ, value, visible if len(item) == 5 else True)
         for item in flange_spacing_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]
@@ -280,7 +280,7 @@ def generate_cover_plate_bolted_output(module_class, input_values):
     ]
 
     raw_web_spacing = [
-        (f"{key}_web_spacing", label, typ, value, visible if len(item) == 5 else True)
+        (f"{key.strip()}_web_spacing", label, typ, value, visible if len(item) == 5 else True)
         for item in web_spacing_raw
         if len(item) >= 4 and item[0] and item[2] == "TextBox"
         for (key, label, typ, value, *rest) in [item]

@@ -82,16 +82,16 @@ export const finPlateOutputConfig = {
           { key: "Plate.Shear", label: "Shear Yielding Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
           { key: "Plate.Rupture", label: "Rupture Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
           { key: "Plate.BlockShear", label: "Block Shear Capacity (kN)", section: "Failure Pattern due Shear in Plate" },
-          
+
           { key: "Plate.TensionYield", label: "Tension Yielding Capacity (kN)", section: "Failure due Tension in Plate" },
           { key: "Plate.TensionRupture", label: "Tension Rupture Capacity (kN)", section: "Failure due Tension in Plate" },
           { key: "Plate.BlockShearAxial", label: "Axial Block Shear Capacity (kN)", section: "Failure due Tension in Plate" },
-          
+
           { key: "Plate.MomDemand", label: "Moment Demand (kNm)", section: "Moment Analysis" },
           { key: "Plate.MomCapacity", label: "Moment Capacity (kNm)", section: "Moment Analysis" },
         ],
         diagram: {
-          origin: "right",
+          origin: "left",
           diagramType: "plate",
           props: {
             plateWidth: "Plate.Length",
@@ -121,7 +121,7 @@ export const finPlateOutputConfig = {
           { key: "Section.MomCapacity", label: "Moment Capacity (kNm)", section: "Moment Analysis" },
         ],
         diagram: {
-          origin: "left",
+          origin: "right",
           diagramType: "section",
           props: {
             plateWidth: "Plate.Length",

@@ -171,6 +171,14 @@ export const BaseOutputDock = React.memo(({
       resolved.drawAngleThickness = diagramConfig.props.drawAngleThickness;
     }
 
+    if (diagramConfig.props?.weldPattern) {
+      resolved.weldPattern = diagramConfig.props.weldPattern;
+    }
+
+    if (diagramConfig.props?.thicknessBand) {
+      resolved.thicknessBand = diagramConfig.props.thicknessBand;
+    }
+
     return resolved;
   };
 
