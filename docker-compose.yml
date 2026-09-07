@@ -183,7 +183,6 @@ services:
     command: tunnel --no-autoupdate --url http://frontend:5173
     depends_on:
       - frontend
-    # No ports needed — cloudflared connects outbound to Cloudflare's edge
 
   # metrics-collector:
   #   build:

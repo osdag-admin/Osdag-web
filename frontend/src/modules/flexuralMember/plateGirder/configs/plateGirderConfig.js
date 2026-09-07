@@ -686,14 +686,6 @@ export const plateGirderConfig = {
             inputs?.intermediate_stiffener === "Yes" && inputs?.intermediate_stiffener_thickness === "Customized"
         },
         {
-          // Desktop's real dropdown (confirmed via a live schema dump) has
-          // 3 values, not a Yes/No toggle — the exact string matters, since
-          // osdag_core branches on it directly (core/plate_girder.py:1476-
-          // 1478, byte-identical on both desktop and web): "Yes" alone
-          // matches neither branch and silently falls through to
-          // "transverse_only" (no longitudinal stiffener at all), so a
-          // plain Yes/No toggle here would be non-functional even though it
-          // renders.
           key: "longitudinal_stiffener",
           label: "Longitudinal Stiffener",
           type: "select",

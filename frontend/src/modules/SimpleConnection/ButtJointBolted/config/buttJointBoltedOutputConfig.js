@@ -19,6 +19,7 @@ export const buttJointBoltedOutputConfig = {
             { key: "Plate.BaseUtilization", label: "Connected Plate Utilization" },
             { key: "Bolt.Utilization", label: "Bolt Utilization" },
             { key: "Bolt.ConnLength", label: "Length of Connection (mm)" },
+            { key: "Length of Cover Plate", label: "Length of Cover Plate (mm)" },
         ],
     },
 

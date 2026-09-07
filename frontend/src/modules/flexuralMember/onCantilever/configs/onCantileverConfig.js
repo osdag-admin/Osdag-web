@@ -13,10 +13,6 @@ export const onCantileverConfig = {
     module: "On-Cantilever-Beam",
 
     section_profile: "Beams and Columns",
-    // "ISMB 200" doesn't exist in the sections DB at all (real prefix is
-    // "MB", not "ISMB") and even "MB 200" fails this module's own default
-    // loads (Load.Moment=100kNm, Load.Shear=50kN). "MB 400" passes with a
-    // comfortable margin (UR 0.376, verified via a live design run).
     section_designation: ["MB 400"],
     material: "E 250 (Fe 410 W)A",
     section_material: "E 250 (Fe 410 W)A",
@@ -161,7 +157,7 @@ export const onCantileverConfig = {
           type: "customizable",
           selectionKey: "sectionDesignationSelect",
           modalKey: "sectionDesignation",
-          defaultValue: ["MB 400"], // see defaultInputs comment above
+          defaultValue: ["MB 400"],
           getDynamicDataSource: (inputs, contextData) => {
             return onCantileverConfig.getDynamicSectionList(
               inputs.section_profile,
