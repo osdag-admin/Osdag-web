@@ -281,13 +281,16 @@ class CustomizeReport(APIView):
                 print(f'[report_customization_api] CustomizeReport:compiling in {os.getcwd()}')
                 print(f'[report_customization_api] CustomizeReport:tex file exists: {os.path.exists("filtered_report.tex")}')
                 
-                print(f'[report_customization_api] CustomizeReport:using pdflatex at {PDFLATEX}')
+                pdflatex_exe = PDFLATEX or shutil.which('pdflatex')
+                print(f'[report_customization_api] CustomizeReport:using pdflatex at {pdflatex_exe!r}')
 
                 # Check if pdflatex is available
                 try:
-                    subprocess.run([PDFLATEX, '--version'], capture_output=True, text=True, timeout=10)
+                    if not pdflatex_exe:
+                        raise FileNotFoundError("pdflatex executable not found")
+                    subprocess.run([pdflatex_exe, '--version'], capture_output=True, text=True, timeout=10)
                     print('[report_customization_api] CustomizeReport:pdflatex is available')
-                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
+                except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError, PermissionError, OSError):
                     print('[report_customization_api] CustomizeReport:pdflatex not found, trying alternative approach')
                     return Response(
                         {"error": "LaTeX (pdflatex) not found. Please install a LaTeX distribution like MiKTeX or TeX Live."},
@@ -298,7 +301,7 @@ class CustomizeReport(APIView):
                     print(f"[report_customization_api] CustomizeReport:running pdflatex on {platform.system().lower()}")
                     for pass_num in (1, 2):
                         result = subprocess.run([
-                            PDFLATEX, '-interaction=nonstopmode',
+                            pdflatex_exe, '-interaction=nonstopmode',
                             'filtered_report.tex'
                         ], capture_output=True, text=True, timeout=60)
                         print(f'[report_customization_api] CustomizeReport:pdflatex pass {pass_num} result: {result.returncode}')
