@@ -23,6 +23,7 @@ from django.http import FileResponse
 from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from osdag_core.Common import PDFLATEX
 
 
 class LaTeXParser:
@@ -228,14 +229,6 @@ class CustomizeReport(APIView):
             filter_obj = LaTeXFilter()
             print('[report_customization_api] CustomizeReport:filtering content')
             filtered_latex = filter_obj.filter_content(original_latex, selected_sections)
-            filtered_latex = filtered_latex.replace(
-    		r"\usepackage{lastpage}",
-    		r"\usepackage{pageslts}"
-	    )
-            filtered_latex = filtered_latex.replace(
-    		r"\pageref{LastPage}",
-    		r"\lastpageref{pagesLTS.lastpage}"
-            )
             filtered_latex = (
                 filtered_latex
                 .lstrip('\ufeff')
@@ -288,33 +281,27 @@ class CustomizeReport(APIView):
                 print(f'[report_customization_api] CustomizeReport:compiling in {os.getcwd()}')
                 print(f'[report_customization_api] CustomizeReport:tex file exists: {os.path.exists("filtered_report.tex")}')
                 
-                # Compile LaTeX - use system pdflatex (same as working design_report_pdf_view.py)
-                print(f'[report_customization_api] CustomizeReport:using system pdflatex')
-                
+                print(f'[report_customization_api] CustomizeReport:using pdflatex at {PDFLATEX}')
+
                 # Check if pdflatex is available
                 try:
-                    subprocess.run(['pdflatex', '--version'], capture_output=True, text=True, timeout=10)
+                    subprocess.run([PDFLATEX, '--version'], capture_output=True, text=True, timeout=10)
                     print('[report_customization_api] CustomizeReport:pdflatex is available')
                 except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
                     print('[report_customization_api] CustomizeReport:pdflatex not found, trying alternative approach')
                     return Response(
-                        {"error": "LaTeX (pdflatex) not found. Please install a LaTeX distribution like MiKTeX or TeX Live."}, 
+                        {"error": "LaTeX (pdflatex) not found. Please install a LaTeX distribution like MiKTeX or TeX Live."},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR
                     )
-                
+
                 try:
-                    if platform.system().lower() == 'windows':
-                        print('[report_customization_api] CustomizeReport:running pdflatex on windows')
+                    print(f"[report_customization_api] CustomizeReport:running pdflatex on {platform.system().lower()}")
+                    for pass_num in (1, 2):
                         result = subprocess.run([
-                            'pdflatex', '-interaction=nonstopmode', 
+                            PDFLATEX, '-interaction=nonstopmode',
                             'filtered_report.tex'
                         ], capture_output=True, text=True, timeout=60)
-                    else:
-                        print('[report_customization_api] CustomizeReport:running pdflatex on unix')
-                        result = subprocess.run([
-                            'pdflatex', '-interaction=nonstopmode', 
-                            'filtered_report.tex'
-                        ], capture_output=True, text=True, timeout=60)
+                        print(f'[report_customization_api] CustomizeReport:pdflatex pass {pass_num} result: {result.returncode}')
                 except subprocess.TimeoutExpired as e:
                     print(f'[report_customization_api] CustomizeReport:pdflatex timeout: {e}')
                     raise

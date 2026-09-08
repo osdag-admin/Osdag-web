@@ -87,8 +87,8 @@ export const coverPlateBoltedOutputConfig = {
         diagram: {
           layout: "symmetric",
           props: {
-            plateWidth: "Web_Plate.Height (mm)",
-            plateHeight: "Web_Plate.Width",
+            plateWidth: "Web_Plate.Width",
+            plateHeight: "Web_Plate.Height (mm)",
             rows: "Web_plate.Bolt_OneLine_web_bolt_capacity",
             cols: "Web_plate.Bolt_Line_web_bolt_capacity",
             end: "Web_plate.end_dist_provided_web_spacing",

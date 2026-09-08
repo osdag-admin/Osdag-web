@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app:/app/backend
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,frontend}
@@ -72,7 +72,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app:/app/backend
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
@@ -89,7 +89,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery -A config worker --workdir=/app -Q calculations --loglevel=info --concurrency=18"
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q calculations --loglevel=info --concurrency=18"
 
   celery_worker_cad:
     build:
@@ -97,7 +97,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app:/app/backend
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
@@ -118,7 +118,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery -A config worker --workdir=/app -Q cad --loglevel=info --concurrency=8 --max-tasks-per-child=10"
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q cad --loglevel=info --concurrency=8 --max-tasks-per-child=10"
 
   celery_worker_reports:
     build:
@@ -126,7 +126,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app:/app/backend
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
@@ -147,7 +147,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery -A config worker --workdir=/app -Q reports --loglevel=info --concurrency=4"
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q reports --loglevel=info --concurrency=4"
 
   celery_beat:
     build:
@@ -155,7 +155,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app:/app/backend
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
       DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
@@ -190,6 +190,13 @@ services:
       - osifiles_volume:/app/osifiles
     depends_on:
       - backend
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --protocol http2 --url http://frontend:80
+    depends_on:
+      - frontend
 
 volumes:
   postgres_data:

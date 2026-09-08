@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Modal, Row, Col, Input, Button, Upload, message } from 'antd';
 import { ReportCustomizationModal } from './ReportCustomizationModal';
 import { useEngineeringService } from '../hooks/useEngineeringService';
+import { apiBase } from '../../../api';
 
 export const DesignReportModal = ({
   isOpen,
@@ -123,7 +124,7 @@ Group/TeamName: ${designReportInputs.groupTeamName}`;
         try {
           const formData = new FormData();
           formData.append("file", designReportInputs.companyLogo);
-          const BASE_URL = (import.meta.env.VITE_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+          const BASE_URL = apiBase.replace(/\/$/, "");
           const logoRes = await fetch(`${BASE_URL}/api/company-logo/`, {
             method: "POST",
             body: formData,
@@ -171,12 +172,18 @@ Group/TeamName: ${designReportInputs.groupTeamName}`;
       }
 
       // Dynamically ensure array parameters expected by backend adapters are lists of strings
+      const LIST_TYPED_KEYS = new Set([
+        'Bolt.Diameter', 'Bolt.Grade',
+        'Anchor.Diameter', 'Anchor.Grade',
+        'Anchor.Diameter.ICF', 'Anchor.Diameter.OCF',
+        'Anchor.Grade.ICF', 'Anchor.Grade.OCF',
+      ]);
       if (transformedInputValues) {
         transformedInputValues = { ...transformedInputValues };
         Object.keys(transformedInputValues).forEach((key) => {
           const val = transformedInputValues[key];
-          const isListKey = key.endsWith('_List') || key.endsWith('List') || key.includes('Diameter') || key.includes('Grade');
-          
+          const isListKey = key.endsWith('_List') || key.endsWith('List') || LIST_TYPED_KEYS.has(key);
+
           if (isListKey && val !== undefined && !Array.isArray(val)) {
             if (val === null || val === '') {
               transformedInputValues[key] = [];

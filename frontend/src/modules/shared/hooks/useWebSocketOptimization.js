@@ -17,12 +17,9 @@ export const useWebSocketOptimization = (onUpdate, onComplete, onError) => {
   const pendingStartRef = useRef(null);
   const MAX_RECONNECT_ATTEMPTS = 3;
 
-  // Get WebSocket URL from environment or default
   const getWebSocketUrl = () => {
-    // Use backend server URL (port 8000), not frontend URL (port 5173)
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const backendHost = import.meta.env.VITE_BASE_URL?.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'localhost:8000';
-    return `${protocol}//${backendHost}/ws/optimize/plate-girder/`;
+    return `${protocol}//${window.location.host}/ws/optimize/plate-girder/`;
   };
 
   // Connect to WebSocket
