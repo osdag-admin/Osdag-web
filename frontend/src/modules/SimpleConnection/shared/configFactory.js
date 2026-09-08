@@ -1,0 +1,288 @@
+import {
+    KEY_MODULE, KEY_MATERIAL, KEY_AXIAL, KEY_DP_DETAILING_EDGE_TYPE,
+    KEY_PLATE1_THICKNESS, KEY_PLATE2_THICKNESS, KEY_PLATE_WIDTH, KEY_WELD_SIZE,
+    KEY_COVER_PLATE, KEY_DISP_COVER_PLT, KEY_DP_DETAILING_PACKING_PLATE,
+    KEY_DISP_PLATE1_THICKNESS, KEY_DISP_PLATE_WIDTH, KEY_DP_BOLT_SLIP_FACTOR,
+    KEY_DISP_PLATE2_THICKNESS, KEY_D, KEY_TYP, KEY_GRD, KEY_DP_BOLT_HOLE_TYPE,
+    KEY_DP_BOLT_TYPE, KEY_DESIGN_FOR, KEY_DISP_WELD_SIZE,
+    KEY_DP_WELD_TYPE, KEY_DP_WELD_MATERIAL_G_O,
+} from "../../../constants/DesignKeys";
+import { validateSimpleConnectionInputs } from "./validation";
+import { validateRequiredFields } from "../../shared/utils/validation";
+
+function getArrayParam(allSelectedFlag, fullList, selectedList) {
+    if (allSelectedFlag) {
+        const list = Array.isArray(fullList) && fullList.length ? fullList : (Array.isArray(selectedList) ? selectedList : []);
+        return list.filter(item => item !== "All");
+    }
+    if (Array.isArray(selectedList)) {
+        return selectedList.filter(item => item !== "All");
+    }
+    return [selectedList].filter(item => item !== "All");
+}
+
+// Shared shape for the 4 SimpleConnection bolted configs (butt/lap joint bolted).
+// Butt joint adds a "Cover Plate" splice the lap joint doesn't have (a real
+// structural difference, not just a label) — captured with hasCoverPlate
+// rather than unified away.
+export function makeSimpleConnectionBoltedConfig({ sessionName, routePath, designType, hasCoverPlate }) {
+    const config = {
+        sessionName,
+        routePath,
+        designType,
+        cameraKey: "Connection",
+        cadOptions: hasCoverPlate
+            ? ["Model", "Plate 1", "Plate 2", "Cover Plate", "Bolts"]
+            : ["Model", "Plate 1", "Plate 2", "Bolts"],
+
+        defaultInputs: {
+            axial_force: "60",
+            module: sessionName,
+            plate1_thickness: [],
+            plate2_thickness: [],
+            bolt_diameter: [],
+            bolt_grade: [],
+            bolt_type: "Bearing Bolt",
+            bolt_hole_type: "Standard",
+            bolt_slip_factor: "0.3",
+            plate_width: "200",
+            material: "E 250 (Fe 410 W)A",
+            detailing_edge_type: "Sheared or hand flame cut",
+            ...(hasCoverPlate ? { cover_plate: "Single-Cover", detailing_packing_plate: "Yes" } : {}),
+            bolt_tension_type: "Non Pre-tensioned",
+            design_for: "Tension",
+        },
+
+        modalConfig: [
+            { key: "boltDiameter", inputKey: "bolt_diameter", dataSource: "boltDiameterList" },
+            { key: "propertyClass", inputKey: "bolt_grade", dataSource: "propertyClassList" },
+        ],
+
+        selectionConfig: [
+            { key: "boltDiameterSelect", inputKey: "bolt_diameter", defaultValue: "All" },
+            { key: "propertyClassSelect", inputKey: "bolt_grade", defaultValue: "All" },
+        ],
+
+        buildSubmissionParams: (inputs, allSelected, lists) => ({
+            [KEY_MODULE]: designType,
+            [KEY_PLATE1_THICKNESS]: String(inputs.plate1_thickness),
+            [KEY_PLATE2_THICKNESS]: String(inputs.plate2_thickness),
+            [KEY_PLATE_WIDTH]: String(inputs.plate_width),
+            [KEY_MATERIAL]: String(inputs.material),
+            ...(hasCoverPlate ? { [KEY_COVER_PLATE]: String(inputs.cover_plate) } : {}),
+            ...(hasCoverPlate ? { [KEY_DP_DETAILING_PACKING_PLATE]: String(inputs.detailing_packing_plate || "Yes") } : {}),
+            [KEY_AXIAL]: String(inputs.axial_force),
+            [KEY_D]: getArrayParam(allSelected.bolt_diameter, lists.boltDiameterList, inputs.bolt_diameter),
+            [KEY_GRD]: getArrayParam(allSelected.bolt_grade, lists.propertyClassList, inputs.bolt_grade),
+            [KEY_TYP]: String(inputs.bolt_type),
+            [KEY_DP_BOLT_HOLE_TYPE]: String(inputs.bolt_hole_type),
+            [KEY_DP_BOLT_SLIP_FACTOR]: String(inputs.bolt_slip_factor),
+            [KEY_DP_DETAILING_EDGE_TYPE]: String(inputs.detailing_edge_type),
+            [KEY_DP_BOLT_TYPE]: String(inputs.bolt_tension_type),
+            [KEY_DESIGN_FOR]: String(inputs.design_for),
+        }),
+
+        inputSections: [
+            {
+                title: "Connecting Members",
+                fields: [
+                    {
+                        key: "material",
+                        label: "Material",
+                        type: "select",
+                        options: "materialList",
+                        onChange: (value, inputs, setInputs, materialList) => {
+                            const material = materialList.find(item => item.id === value);
+                            setInputs({ ...inputs, material: material.Grade, connector_material: material.Grade });
+                        }
+                    },
+                    {
+                        key: "plate1_thickness",
+                        label: KEY_DISP_PLATE1_THICKNESS,
+                        type: "select",
+                        options: "thicknessList",
+                        onChange: (value, inputs, setInputs) => { setInputs({ ...inputs, "plate1_thickness": value }); }
+                    },
+                    {
+                        key: "plate2_thickness",
+                        label: KEY_DISP_PLATE2_THICKNESS,
+                        type: "select",
+                        options: "thicknessList",
+                        onChange: (value, inputs, setInputs) => { setInputs({ ...inputs, "plate2_thickness": value }); }
+                    },
+                    { key: "plate_width", label: KEY_DISP_PLATE_WIDTH, type: "number" },
+                    ...(hasCoverPlate ? [{
+                        key: "cover_plate",
+                        label: KEY_DISP_COVER_PLT,
+                        type: "select",
+                        options: 'coverPlateList',
+                        onChange: (value, inputs, setInputs) => { setInputs({ ...inputs, "cover_plate": value }); }
+                    }] : []),
+                ]
+            },
+            {
+                title: "Factored Loads",
+                fields: [{ key: "axial_force", label: "Axial Force (kN)", type: "number" }]
+            },
+            {
+                title: "Bolt",
+                fields: [
+                    {
+                        key: "bolt_diameter",
+                        label: "Diameter (mm)",
+                        type: "customizable",
+                        selectionKey: "boltDiameterSelect",
+                        modalKey: "boltDiameter",
+                        dataSource: "boltDiameterList"
+                    },
+                    {
+                        key: "bolt_type",
+                        label: "Type",
+                        type: "select",
+                        options: [
+                            { value: "Bearing Bolt", label: "Bearing Bolt" },
+                            { value: "Friction Grip Bolt", label: "Friction Grip Bolt" }
+                        ]
+                    },
+                    {
+                        key: "bolt_grade",
+                        label: "Property Class",
+                        type: "customizable",
+                        selectionKey: "propertyClassSelect",
+                        modalKey: "propertyClass",
+                        dataSource: "propertyClassList"
+                    }
+                ]
+            },
+        ],
+    };
+
+    config.validateInputs = (inputs, extraState, _lists, selectionStates) => {
+        const requiredCheck = validateRequiredFields(config.inputSections, inputs, extraState, selectionStates);
+        if (!requiredCheck.isValid) return requiredCheck;
+        return validateSimpleConnectionInputs(inputs, { moduleType: 'bolted' });
+    };
+
+    return config;
+}
+
+// Shared shape for the 4 SimpleConnection welded configs (butt/lap joint welded).
+// Same hasCoverPlate axis as the bolted pair; butt-welded also carries a
+// detailing_packing_plate default alongside cover_plate (co-occurs in the
+// original butt config, so bundled under the same flag rather than split
+// into a second param).
+export function makeSimpleConnectionWeldedConfig({ sessionName, routePath, designType, hasCoverPlate }) {
+    const config = {
+        sessionName,
+        routePath,
+        designType,
+        cameraKey: "Connection",
+        cadOptions: hasCoverPlate
+            ? ["Model", "Plate 1", "Plate 2", "Cover Plate", "Welds"]
+            : ["Model", "Plate 1", "Plate 2", "Welds"],
+
+        defaultInputs: {
+            axial_force: "60",
+            module: sessionName,
+            plate1_thickness: [],
+            plate2_thickness: [],
+            weld_size: [],
+            plate_width: "200",
+            material: "E 250 (Fe 410 W)A",
+            detailing_edge_type: "Sheared or hand flame cut",
+            ...(hasCoverPlate ? { detailing_packing_plate: "No", cover_plate: "Single-Cover" } : {}),
+            weld_fab: "Shop weld",
+            weld_material_grade: "290",
+            design_for: "Tension",
+        },
+
+        modalConfig: [
+            { key: "weldSelect", inputKey: "weld_size", dataSource: "weldSizeList" },
+        ],
+
+        selectionConfig: [
+            { key: "weldSizeSelect", inputKey: "weld_size", defaultValue: "All" },
+        ],
+
+        buildSubmissionParams: (inputs, allSelected, lists) => ({
+            [KEY_MODULE]: designType,
+            [KEY_PLATE1_THICKNESS]: String(inputs.plate1_thickness),
+            [KEY_PLATE2_THICKNESS]: String(inputs.plate2_thickness),
+            [KEY_PLATE_WIDTH]: String(inputs.plate_width),
+            [KEY_MATERIAL]: String(inputs.material),
+            ...(hasCoverPlate ? { [KEY_COVER_PLATE]: String(inputs.cover_plate) } : {}),
+            [KEY_AXIAL]: String(inputs.axial_force),
+            [KEY_WELD_SIZE]: getArrayParam(allSelected.weld_size, lists.weldSizeList, inputs.weld_size),
+            [KEY_DESIGN_FOR]: String(inputs.design_for),
+            [KEY_DP_WELD_TYPE]: String(inputs.weld_fab || "Shop weld"),
+            [KEY_DP_WELD_MATERIAL_G_O]: String(inputs.weld_material_grade || ""),
+            [KEY_DP_DETAILING_EDGE_TYPE]: String(inputs.detailing_edge_type),
+            ...(hasCoverPlate ? { [KEY_DP_DETAILING_PACKING_PLATE]: String(inputs.detailing_packing_plate || "No") } : {}),
+        }),
+
+        inputSections: [
+            {
+                title: "Connecting Members",
+                fields: [
+                    {
+                        key: "plate1_thickness",
+                        label: KEY_DISP_PLATE1_THICKNESS,
+                        type: "select",
+                        options: "thicknessList",
+                        onChange: (value, inputs, setInputs) => { setInputs({ ...inputs, "plate1_thickness": value }); }
+                    },
+                    {
+                        key: "plate2_thickness",
+                        label: KEY_DISP_PLATE2_THICKNESS,
+                        type: "select",
+                        options: "thicknessList",
+                        onChange: (value, inputs, setInputs) => { setInputs({ ...inputs, "plate2_thickness": value }); }
+                    },
+                    { key: "plate_width", label: KEY_DISP_PLATE_WIDTH, type: "number" },
+                    {
+                        key: "material",
+                        label: "Material",
+                        type: "select",
+                        options: "materialList",
+                        onChange: (value, inputs, setInputs, materialList) => {
+                            const material = materialList.find(item => item.id === value);
+                            setInputs({ ...inputs, material: material.Grade, connector_material: material.Grade });
+                        }
+                    },
+                    ...(hasCoverPlate ? [{
+                        key: "cover_plate",
+                        label: KEY_DISP_COVER_PLT,
+                        type: "select",
+                        options: 'coverPlateList',
+                        onChange: (value, inputs, setInputs) => { setInputs({ ...inputs, "cover_plate": value }); }
+                    }] : []),
+                ]
+            },
+            {
+                title: "Factored Loads",
+                fields: [{ key: "axial_force", label: "Axial Force (kN)", type: "number" }]
+            },
+            {
+                title: "Weld",
+                fields: [
+                    {
+                        key: "weld_size",
+                        label: KEY_DISP_WELD_SIZE,
+                        type: "customizable",
+                        selectionKey: "weldSizeSelect",
+                        modalKey: "weldSelect",
+                        dataSource: "weldSizeList"
+                    }
+                ]
+            }
+        ],
+    };
+
+    config.validateInputs = (inputs, extraState, _lists, selectionStates) => {
+        const requiredCheck = validateRequiredFields(config.inputSections, inputs, extraState, selectionStates);
+        if (!requiredCheck.isValid) return requiredCheck;
+        return validateSimpleConnectionInputs(inputs, { moduleType: 'welded' });
+    };
+
+    return config;
+}

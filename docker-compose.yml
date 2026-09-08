@@ -1,0 +1,215 @@
+services:
+  db:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-osdagdeveloper}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      POSTGRES_DB: ${DATABASE_NAME:-postgres_Intg_osdag}
+    ports:
+      - "${DB_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-osdagdeveloper} -d ${DATABASE_NAME:-postgres_Intg_osdag}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    restart: unless-stopped
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      PYTHONPATH: /app:/app/backend
+      HOME: /tmp
+      DEBUG: ${DEBUG:-True}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,.trycloudflare.com}
+      DATABASE_NAME: ${DATABASE_NAME:-postgres_Intg_osdag}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-false}
+      INFLUXDB_URL:    http://influxdb:8086
+      INFLUXDB_TOKEN:  ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
+      INFLUXDB_ORG:    osdag
+      INFLUXDB_BUCKET: osdag_metrics
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    command: >
+      bash -c "/opt/conda/envs/osdag_env/bin/python manage.py migrate &&
+      /opt/conda/envs/osdag_env/bin/python populate_database.py &&
+      exec /opt/conda/envs/osdag_env/bin/gunicorn config.asgi:application
+      --bind 0.0.0.0:8000
+      --workers 8
+      --worker-class uvicorn.workers.UvicornWorker
+      --worker-connections 1000
+      --timeout 180
+      --keep-alive 5
+      --log-level info"
+
+
+  celery_worker:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    restart: unless-stopped
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    volumes:
+      - .:/app
+    environment:
+      PYTHONPATH: /app:/app/backend
+      HOME: /tmp
+      DEBUG: ${DEBUG:-True}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      DATABASE_NAME: ${DATABASE_NAME:-postgres_Intg_osdag}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-false}
+      INFLUXDB_URL:    http://influxdb:8086
+      INFLUXDB_TOKEN:  ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
+      INFLUXDB_ORG:    osdag
+      INFLUXDB_BUCKET: osdag_metrics
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    command: bash -c "cd /app && export PYTHONPATH=/app:/app/backend && exec /opt/conda/envs/osdag_env/bin/celery -A config worker -Q calculations,cad,reports,celery --loglevel=info --concurrency=18"
+
+  frontend:
+    platform: linux/amd64
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      network: host
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+      VITE_PROXY_BACKEND_URL: http://backend:8000
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+
+  # ─── Observability stack ────────────────────────────────────────────────────
+  influxdb:
+    image: mirror.gcr.io/library/influxdb:2.7-alpine
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "8086:8086"   # InfluxDB UI + API  →  http://<server-ip>:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE:         setup
+      DOCKER_INFLUXDB_INIT_USERNAME:     osdag_admin
+      DOCKER_INFLUXDB_INIT_PASSWORD:     osdag_password_123
+      DOCKER_INFLUXDB_INIT_ORG:          osdag
+      DOCKER_INFLUXDB_INIT_BUCKET:       osdag_metrics
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN:  ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
+      DOCKER_INFLUXDB_INIT_RETENTION:    0   # 0 = keep forever
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  grafana:
+    image: mirror.gcr.io/grafana/grafana:10.4.2
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "3001:3000"   # Grafana UI  →  http://<server-ip>:3001
+    environment:
+      GF_SECURITY_ADMIN_USER:     admin
+      GF_SECURITY_ADMIN_PASSWORD: osdag_grafana
+      GF_AUTH_ANONYMOUS_ENABLED:  "true"        # allow LAN users to view without login
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/osdag_load_test.json
+      GF_SERVER_ROOT_URL:         "%(protocol)s://%(domain)s:%(http_port)s"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      influxdb:
+        condition: service_healthy
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://frontend:5173
+    depends_on:
+      - frontend
+
+  # metrics-collector:
+  #   build:
+  #     context: ./monitoring
+  #     dockerfile: Dockerfile
+  #     network: host
+  #   platform: linux/amd64
+  #   restart: unless-stopped
+  #   pid: "host"          # share PID namespace so psutil reads host CPU/RAM
+  #   environment:
+  #     INFLUXDB_URL:        http://influxdb:8086
+  #     INFLUXDB_TOKEN:      ${INFLUXDB_TOKEN:?INFLUXDB_TOKEN must be set}
+  #     INFLUXDB_ORG:        osdag
+  #     INFLUXDB_BUCKET:     osdag_metrics
+  #     REDIS_URL:           redis://redis:6379/0
+  #     SAMPLE_INTERVAL_S:   "0.5"
+  #     HOST_LABEL:          osdag-server
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     influxdb:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+
+volumes:
+  postgres_data_dev:
+  grafana_data:
+  influxdb_data:
+  influxdb_config:

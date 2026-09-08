@@ -1,298 +1,197 @@
-<p align="center"> 
-  <img src = "https://user-images.githubusercontent.com/19147922/27816506-9f15355a-60a9-11e7-98cc-585312264801.png"><br>
-  Open Steel Design and Graphics <br><br>
-  <a href="http://osdag.fossee.in/">Osdag</a><br><br>
-  Osdag is a cross-platform free/libre and open-source software for the design (and detailing) of steel structures, following the Indian Standard IS 800:2007. It allows the user to design steel connections, members and systems using a graphical user interface. The interactive GUI provides a 3D visualisation of the designed component and an option to export the CAD model to any drafting software for the creation of construction/fabrication drawings. The design is typically optimised following industry best practices.
-  Starting with version 2017.06.a.e2dd, the beta version of Osdag is released under the terms and conditions of the GNU LESSER GENERAL PUBLIC LICENSE (LGPL) Version 3.
-
-</p>
-
-## Table of contents
-* <a href="#quick-start">Quick start</a>
-* <a href="#contribute">Contributing</a>
-* <a href="#bugs">Bugs and known issues</a>
-* <a href="#version">Versioning</a>
-* <a href="#license">Copyright and license</a>
-
-## <a id="user-content-quick-start" class="anchor" href="#quick-start" aria-hidden="true"></a> Quick start
-
-<a href= "http://osdag.fossee.in/resources/downloads">Download the latest version of Osdag</a>
-
-### 1. Windows Installation
-
-#### System Requirements:
-    Supported Operating Systems:
-        Windows Vista
-        Windows 7,
-        Windows 8,
-        Windows 8.1,
-        Windows 10
-    Supported Architecture:
-             64-bit
-    RAM and Storage Space:
-        Minimum 2 Gb RAM recommended
-        Minimum 1 Gb free storage space recommended
-        
-	
-    Installation steps:
-    ===================
-    
-    Uninstalling Earlier Version of Osdag: If you have a previous version of Osdag installed then it is mandatory to uninstall the same.
-    
-    		i) Go to the location where Osdag was installed and run "Uninstall.exe".
-   
-    # Note: If you have an active Antivirus package installed on your system please disable it during the installation of Osdag. Since, Osdag is not registered with the Microsoft store, the antivirus might block installation/running of Osdag. Osdag does not install any harmful package on your system.
-    
-    To install Osdag, Run Osdag_windows_setup.exe
-    
-    # Follow on-screen instructions AND select the following options in the Setup:
-    
-        	i)    Double click on the Osdag_windows_installer.exe to start the start the installation process. 
-		ii)   Click Next.
-		iii)  Read the License and click 'I Agree' to proceed.
-		iv)   Select the installation directory after checking the space requirement and click Next.
-		v)    Click Install.
-		vi)   Wait for the installation process to get over (this might take several minutes).
-		vii)  Accept the MiKTeX license and click Next.
-		Viii) Choose the MiKTeX installation scope and click Next.
-		ix)   Select the installation directory and click Next.
-		x)    Keep the MiKTeX setting to default and click Next.
-		xi)   Click start to install MiKTeX.
-		xii)  Click Next.
-		Xiii) (optional) You can check for MiKTeX package updates.
-		xiv)  Click Close to exit the MiKTeX setup wizard.
-		xv)   The installation process will continue. After the process ends, click the Finish button.
-	
-	Osdag will be successfully installed!
-    
-    Running Osdag:
-    ==============
-    After the installation is complete, you may run Osdag by one of the following methods:
-    
-    		i)   Double-clicking on the Desktop shortcut or
-		ii)  Press the Windows key and search Osdag 
-		iii) Navigating to the installation-directory and double-clicking on the Osdag shortcut
-
-    
-
-### 2. Ubuntu Installation
-
-#### System Requirements:
-    Operating System: 
-        Ubuntu 14.04 (LTS) and later; 64-bit
-    Hardware Requirements:
-        Minimum 4 Gb RAM
-        Minimum of 1 Gb of free disk space
- 
-    This setup script is for machines running Ubuntu that do not have Miniconda3.  
-    If you have Miniconda3 already installed on your computer, please skip Step/Command 1 and proceed to Step/Command 2.
- 
-
-    Installation steps:
-    ===================
-      Extract the downloaded installer using the Archive Manager/File-Roller, or using the following command on the bash prompt: tar -xvf Osdag_ubuntu_installer.tar.gz
-
-      # If you have already installed the  previous version of Osdag in your system then skip Step/Command 1) and just run the new 2-install-osdag.sh.
-
-		In bash, navigate to the extracted installation folder containing the shell 
-		scripts (the folder that contains this README file) and a folder named Osdag, 
-		and enter Command 1 , Command 2 and Command 3 given below.  
-		 
-			Note: After entering Command 1, while installing Miniconda3, you will be asked  
-		whether you wish to set the system default python to Miniconda3. You need to agree  
-		to this.After that you have to run command 2 in order for the 3rd command to work.
-		After that execute the 3rd steps. After 3rd step completed run the command 4.Please be sure 
-		to have internet connection as it's required to download some files.
-			Step/Command 1:
-				bash 1-install-Miniconda3-latest-Linux-x86_64.sh
-			 Step/Command 2:
-			bash 2-init-conda_base.sh
-			Step/Command 3:
-				bash 3-install-osdag.sh
-			Step/Command 4:
-			bash 4-install-texlive.sh
+# Osdag-Web Application
+
+Osdag-Web is the web-based version of Osdag, providing professional-grade design, 3D CAD modeling, and report generation for structural steel connections and members. 
+
+Under the hood, Osdag-Web uses an asynchronous architecture powered by **Django**, **Celery**, and **Redis** to offload heavy calculations and CAD/PDF rendering to background workers, ensuring high availability and responsive UI interactions under concurrent user load.
+
+---
+
 
+## Core Features & Project Workspace
 
-    Running Osdag:
-    =============
-      After the installation is complete, you may copy/move the extracted Osdag folder to a location of your choice (say, directly under your home folder). 
-      You can run Osdag in two ways
-      1) Using the Osdag Launcher:
-          To run Osdag, navigate to the Osdag folder, double click on the file named Osdag (without any extension). 
-          This file is different from Osdag_icon.ico (although both will show the Osdag logo in the grid icon view mode).
-          If you are using the Unity desktop, you may also pin this launcher to the launcher sidebar.
+Osdag-Web provides a full-featured engineering workspace in the web browser, containing several key capabilities:
 
-      2) Using the Command:
-          In the bash prompt, navigate to the Osdag directory and enter the following command python osdagMainPage.py
+* **Persistent Project Dashboard**: Authenticated users can create, save, list, load, and manage structural design projects, persisting their configurations in a cloud PostgreSQL database.
+* **Interactive 3D CAD Viewer**: Real-time rendering of structural steel details using Three.js / React Three Fiber. Features camera actions (axis-aligned view snaps, pan, zoom, auto-rotation) and contextual dimension tooltips when hovering over components.
+* **CAD File Export**: Save full 3D assembly models of calculated connections in high-fidelity formats like **STEP**, **BREP**, **STL**, **IGES**, and **IFC** for use in professional CAD/BIM tools.
+* **Automated Design Reports**: Compile complete design calculation sheets with Limit States verification summaries, structural drawings, and parameters into PDF reports, or export raw inputs/outputs to CSV format.
+* **Design Preferences Configuration**: Fine-tune detailed safety factors, mechanical limit states, spacing rules, weld sizes, and bolt property constraints.
+* **OSI File Exchange Format Support**: Full compatibility with the Osdag Input (`.osi`) plain-text configuration format to exchange design states between Osdag Web and Osdag Desktop environments.
+* **Guest vs. Authenticated Sessions**: Non-registered users can test modules on-the-fly with file-based imports, while logged-in users get complete database persistence and auto-save.
+
+---
+
+## Available Design Modules
+
+Osdag-Web supports design calculations and CAD visualization for multiple categories of structural connections and members:
+
+* **Shear Connections**:
+  * **Fin Plate Connection**
+  * **End Plate Connection**
+  * **Cleat Angle Connection**
+  * **Seated Angle Connection**
+* **Moment Connections**:
+  * **Beam-to-Column Connections**:
+    * **End Plate Connection**
+  * **Beam Splices (Beam-to-Beam)**:
+    * **End Plate Splice**
+    * **Cover Plate Splice (Bolted)**
+    * **Cover Plate Splice (Welded)**
+  * **Column Splices (Column-to-Column)**:
+    * **End Plate Splice**
+    * **Cover Plate Splice (Bolted)**
+    * **Cover Plate Splice (Welded)**
+* **Simple Connections**:
+  * **Lap Joint (Bolted)**
+  * **Lap Joint (Welded)**
+  * **Butt Joint (Bolted)**
+  * **Butt Joint (Welded)**
+* **Tension Members**:
+  * **Tension Member (Bolted to End Gusset)**
+  * **Tension Member (Welded to End Gusset)**
+* **Compression Members**:
+  * **Axially Loaded Column**
+  * **Struts (Bolted to End Gusset)**
+  * **Struts (Welded to End Gusset)**
+* **Flexural Members**:
+  * **Simply Supported Beams**
+  * **Cantilever Beams**
+  * **Purlins**
+* **Base Plate**:
+  * **Base Plate Connection**
+
+---
+
+## Developer Documentation
+
+For a comprehensive guide to the codebase topology, API adapters, frontend state management, 3D CAD visualization pipeline, and containerization setup, refer to the [Osdag-Web Code & Architecture Documentation Index](documentation/INDEX.md).
+
+Recommended to use linux for the dev setup. because why not:)
+
+---
+
+## How to Run Osdag-Web
+
+You can run the Osdag-Web application either using **Docker Compose** (recommended, as it automatically sets up Redis and databases) or **Native Local Development**.
+
+### Firebase Configuration (Prerequisite)
+
+Before running the application via either Docker or Native setups, you must add the Firebase service account credentials JSON file for authentication:
+Ask abhijithsogal@gmail.com to add your email to users in the project. 
+
+1. Obtain your service account key JSON file from the Firebase Console (Project Settings -> Service Accounts -> Generate new private key).
+2. Save this file as `firebase-service-account.json` and place it inside the `backend/` directory of this repository:
+   ```
+   backend/firebase-service-account.json
+   ```
+
+### Option A: Using Docker Compose (Recommended)
+
+To run the entire stack (Postgres, Redis, Django, Celery Worker, React frontend) in containers:
+
+1. Build and run all services:
+   ```bash
+   docker compose up --build
+   ```
+2. Navigate to `http://localhost:5173/` in your browser.
+
+> [!TIP]
+> **Docker Development & Auto-Reloading:**
+> * **Frontend Changes**: You **do not** need to rebuild or restart anything. The `./frontend` directory is volume-mounted, and Vite's Hot Module Replacement (HMR) automatically reflects changes in your browser instantly.
+> * **Backend / Python Changes**: You **do not** need to run `--build` since the code is volume-mounted directly. To load your python changes, you just need to quickly restart the container processes:
+>   ```bash
+>   docker compose restart backend celery_worker
+>   ```
+> * **When to build**: You only need to run `--build` when modifying Dockerfiles, adding dependencies (in `requirements.txt` / `package.json`), or changing build configurations.
+
+---
+
+### Option B: Native Local Development (No Docker)
+
+> [!WARNING]
+> **`python manage.py runserver` cannot be used for load testing.**
+> It is single-process, single-threaded, and does not support WebSockets (Django Channels).
+> Under concurrent load it will queue all requests behind each other, producing completely misleading results.
+> Use **gunicorn + uvicorn** (shown below) for any real testing.
+
+#### Prerequisites
+1. **Redis**: Ensure a Redis server is installed and running:
+   ```bash
+   sudo apt-get install redis-server
+   sudo systemctl start redis-server
+   ```
+2. **Postgres**: Make sure Postgres is running and the database is configured according to the [Installation Instructions](documentation/installation.md).
+
+#### Step-by-Step Setup
+
+1. **Start the Celery Worker**:
+   Open a new terminal session, navigate to the `backend` folder, activate the conda environment, and start the Celery worker:
+   ```bash
+   cd backend
+   conda activate osdag-web
+   celery -A config worker -Q calculations,cad,reports,celery --loglevel=info --concurrency=4
+   ```
+
+2. **Start the Django Backend (ASGI — required for load testing)**:
+   Use **gunicorn with uvicorn workers** — this is the same server the Docker setup uses and the only one that correctly handles concurrent requests and WebSocket connections.
+   ```bash
+   cd backend
+   conda activate osdag-web
+   # Run migrations first (only needed once or after model changes)
+   python manage.py migrate
+
+   # Start gunicorn with uvicorn ASGI workers
+   gunicorn config.asgi:application \
+     --bind 0.0.0.0:8000 \
+     --workers 2 \
+     --worker-class uvicorn.workers.UvicornWorker \
+     --timeout 120 \
+     --log-level info
+   ```
+
+   > [!NOTE]
+   > Increase `--workers` to match your CPU core count for heavier tests.
+   > A common rule of thumb is `2 × CPU cores + 1`.
+   > Each worker is a separate OS process that handles requests concurrently.
+
+   > [!TIP]
+   > **For quick day-to-day development only** (single user, no WebSocket, no concurrency),
+   > you may still use `python manage.py runserver 8000`. Never use it for performance testing.
+
+3. **Start the Vite Frontend**:
+   Open a new terminal session, navigate to the `frontend` folder, and start the React dev server:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+4. **Access the Application**:
+   Navigate to `http://localhost:5173/` in your browser.
+
+
+
+---
+
+### Option C: Using the Launcher Script (Linux / macOS)
+
+If you are on Linux or macOS, you can launch all three services (Celery worker, Django backend, and Vite frontend) automatically using the provided `osdagweb.sh` script:
+
+1. Ensure the script is executable:
+   ```bash
+   chmod +x osdagweb.sh
+   ```
+2. Run the script:
+   ```bash
+   ./osdagweb.sh
+   ```
+   This will start all background processes and output their logs into the `logs/` directory. Press `Ctrl-C` at any time to shut down all processes cleanly.
+
+---
+
+## Load Testing & Diagnostics
+
+Osdag-Web ships with a full observability stack (InfluxDB v2 time-series database & Grafana live dashboards) for stress-testing and monitoring concurrently running design calculations.
+
+For details on configuration, telemetry schemas, and running load tests, refer to [Chapter 12: Load Test Monitoring & Observability](documentation/chapter_12_load_testing_observability.md).
 
-      Note that, Step/Command 2 will work only if the system default python is the one installed through Miniconda2.
-      Alternatively, you may specify the (installed) python you wish to use, in Command 2.
-
-## <a id="user-content-contribute" class="anchor" href="#bugs" aria-hidden="true"></a> Contributing
-Osdag invites enthusiasts with similar interest(s) to contribute to Osdag development. Your contributions can go a long way in improving the software.
-Please take a moment to review the <a href= "https://github.com/osdag-admin/Osdag/blob/master/CONTRIBUTING.md">guidelines for contributing</a>.
-
-   * Bug reports
-   * Feature requests
-   * Pull requests
-
-## <a id="user-content-bugs" class="anchor" href="#bugs" aria-hidden="true"></a> Bugs and known issues
-Have a bug or a feature request? Please first read the <a href= "https://github.com/osdag-admin/Osdag/blob/master/CONTRIBUTING.md#using-the-issue-tracker">issue guidelines</a> and search for existing and closed issues. If your problem or idea has not been addressed yet, please <a href= "https://github.com/osdag-admin/Osdag/issues/new">open a new issue</a> or post a query <a href= "https://osdag.fossee.in/forum"> on the Osdags discussion forum</a>.
-
-## <a id="user-content-version" class="anchor" href="#version" aria-hidden="true"></a> Versioning
-The latest version of Osdag can perform design for two scenarios;
-
-Scenario 1: Users can obtain the optimum design for a given scenario, from a suite of available options in terms of steel sections (e.g., different channel sizes and plate thicknesses) and connectors (e.g., bolts of different grades and diameters). The optimum design is selected based on the total volume of material and this design solution is detailed in the output dock and design report.
-
-Scenario 2: Perform a design check with a specific set of single inputs/selections in the 'Customized' option. In this case, Osdag will inform if the design checks are satisfied and suggest changes otherwise. 
-
-The Design Report has been reformatted using the LaTeX software system through the PyLaTeX package. The report is much more detailed and shows step-by-step calculation(s) for a better user experience.
-
-The Shear and Moment connections available with the previous versions have been modified in terms of structure at the backend, GUI and calculations. Any know bug(s) have been fixed. 
-
-The latest version of Osdag contains the following modules (in addition to the ones available with the previous versions):
-
-    Beam-Beam Splice Connection
-
-        Beam-Beam Cover Plate Bolted
-        Beam-Beam End Plate
-        Beam-Beam Cover Plate Welded
-
-    Beam-Column Connection
-        
-        Beam-Column End Plate
-
-    Column-Column Splice Connection
-
-        Column-Column Cover Plate Bolted
-        Column-Column Cover Plate Welded
-        Column-Column End Plate
-
-    Base Plate Connection 
-    
-    Tension Member
-
-        Tension Member Bolted
-        Tension Member Welded
-
-Previous Releases
-
-Version 2017.08.a.874e
-
-    Bugs fixed
-
-Version 2017.06.a.e2dd
-
-    This beta version of Osdag contains only the shear connection modules.
-
-===============================================
-The contributors of the latest version are:
-
-Osdag development team (2019 - Present)
-
-===============================
-
-Project Investigator - Osdag
-
-Professor Siddhartha Ghosh
-
-===============================
-
-Research Associates/Assistants - Technical and Development Team
-
-Mr. Danish Ansari
-
-Mr. Ajmal Babu MS
-
-Mr. N Dharma Teja
-
-Ms. Thushara Pushkaran
-
-Mr. Yash Lokhande
-
-Mr. Anand Swaroop
-
-Mr. Darshan Divesan
-
-Mr. Anjali Jatav
-
-Mr. Sourabh Das
-
-Ms. Deepthi Reddy
-
-===============================
-
-Project Interns
-
-Mr. Ansari Mohammad Umair 
-
-Mr. Amir Chappalwala
-
-Mr. Zunzunia Arsil
-
-Mr. Mohammad Azhar U Din Mir
-
-Mr. Satyam Singh Niranjan
-
-Mr. Anshul Kumar Singh
-
-Mr. Mosam Patel
-
-Mr. Shahadad PP
-
-Ms. Priti Kumari
-
-===============================
-
-Project Management
-
-Ms. Usha Viswanathan
-
-Ms. Vineeta Parmar
-
-Mr. Sunil Shetye
-
-===============================
-
-Web, Graphics, Promotions and System Administrators Team
-
-Ms. Sashi Rekha B M K
-
-Mr. Lee Thomas Stephen
-
-Mr. Rohan Mhatre
-
-Mr. Khushal Singh Rajput
-
-Mr. Yash Vohra
-
-===============================
-
-Office Staff
-
-Ms.Komal Solanki
-
-Mr.Vishal Birare
-
-Mr. Sushant Bammkanti
-
-===============================
-
-Acknowledgements:
-
-Ministry of Education (MoE), Govt. of India
-
-FOSSEE
-
-Professor Kannan Moudgalya
-
-Professor Prabhu Ramachandran
-
-Mr. Sunil Shetye
-
-## <a id="user-content-license" class="anchor" href="#license" aria-hidden="true"></a> Copyright and license
-(c) Copyright Osdag contributors 2020.<br>
-This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the <a href="https://github.com/osdag-admin/Osdag/files/1207162/License.txt">License.txt</a> file for details regarding the license.
-The beta version of Osdag is released under the terms and conditions of the GNU LESSER GENERAL PUBLIC LICENSE (LGPL) Version 3.
-
-=============================== End of File ===============================
