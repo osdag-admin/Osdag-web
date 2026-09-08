@@ -6,7 +6,9 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'osdag_web.settings')
+    # Add backend to path so 'config.settings' can be found
+    sys.path.append(os.path.join(os.path.dirname(__file__), "backend"))
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

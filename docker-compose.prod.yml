@@ -1,0 +1,195 @@
+services:
+  db:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-osdagdeveloper}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      POSTGRES_DB: ${DATABASE_NAME:-osdagdeveloper}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-osdagdeveloper} -d ${DATABASE_NAME:-osdagdeveloper}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
+    restart: unless-stopped
+    environment:
+      PYTHONPATH: /app:/app/backend
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,frontend}
+      DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-true}
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - osifiles_volume:/app/osifiles
+      - file_storage_volume:/app/file_storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      bash -c "/opt/conda/envs/osdag_env/bin/python manage.py migrate &&
+      /opt/conda/envs/osdag_env/bin/python manage.py collectstatic --noinput &&
+      /opt/conda/envs/osdag_env/bin/python populate_database.py &&
+      exec /opt/conda/envs/osdag_env/bin/gunicorn config.asgi:application 
+      --bind 0.0.0.0:8000 
+      --workers 4 
+      --worker-class uvicorn.workers.UvicornWorker 
+      --timeout 60"
+    expose:
+      - "8000"
+
+  celery_worker_calc:
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
+    restart: unless-stopped
+    environment:
+      PYTHONPATH: /app:/app/backend
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-true}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q calculations --loglevel=info --concurrency=18"
+
+  celery_worker_cad:
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
+    restart: unless-stopped
+    environment:
+      PYTHONPATH: /app:/app/backend
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-true}
+    volumes:
+      - media_volume:/app/media
+      - osifiles_volume:/app/osifiles
+      - file_storage_volume:/app/file_storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q cad --loglevel=info --concurrency=8 --max-tasks-per-child=10"
+
+  celery_worker_reports:
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
+    restart: unless-stopped
+    environment:
+      PYTHONPATH: /app:/app/backend
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-true}
+    volumes:
+      - media_volume:/app/media
+      - osifiles_volume:/app/osifiles
+      - file_storage_volume:/app/file_storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q reports --loglevel=info --concurrency=4"
+
+  celery_beat:
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
+    restart: unless-stopped
+    environment:
+      PYTHONPATH: /app:/app/backend
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
+      DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
+      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery -A config beat --loglevel=info"
+    volumes:
+      - media_volume:/app/media
+      - osifiles_volume:/app/osifiles
+      - file_storage_volume:/app/file_storage
+
+  frontend:
+    image: ghcr.io/sogalabhi/osdag-web/frontend:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - osifiles_volume:/app/osifiles
+    depends_on:
+      - backend
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --protocol http2 --url http://frontend:80
+    depends_on:
+      - frontend
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+  osifiles_volume:
+  file_storage_volume:

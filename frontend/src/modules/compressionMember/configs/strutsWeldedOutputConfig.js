@@ -1,0 +1,43 @@
+export const strutsWeldedOutputConfig = {
+    sections: {
+        "Section Details": [
+            { key: "Optimum.Designation", label: "Designation" },
+            { key: "Optimum.UR", label: "Utilization Ratio" },
+            { key: "Optimum.SectionClassification", label: "Section Classification" },
+            { key: "MajorEffSecArea", label: "Eff. Sectional Area (cm²)" },
+            { key: "Major.Effective_Length", label: "Eff. Length (m)" },
+            { key: "ESR", label: "Effective SR" },
+            { key: "ESRLambdavv", label: "Lambda v-v" },
+            { key: "ESRLambdapsi", label: "Lambda psi" },
+            { key: "MajorBucklingStress", label: "Buckling Stress (MPa)" },
+            { key: "BucklingCurve", label: "Buckling Curve" },
+            { key: "ImperfectionFactor", label: "Imperfection" },
+            { key: "StressReductionFactor", label: "Stress Reduction" },
+            { key: "NDESR", label: "ND Eff. Slenderness" },
+        ],
+        "Design Results": [
+            { key: "MinorDCS", label: "Compressive Stress (MPa)" },
+            { key: "Design.Strength", label: "Design Capacity (kN)" },
+        ],
+        "Weld Details": [
+            { key: "Weld.Type", label: "Type" },
+            { key: "Weld.Size", label: "Size (mm)" },
+            { key: "Weld.Strength", label: "Strength (N/mm)" },
+            { key: "bolt.long_joint", label: "Long Joint Red.Factor" },
+            { key: "Weld.Strength_red", label: "Red.Strength (N/mm)" },
+            { key: "Weld.Stress", label: "Stress (N/mm)" },
+            { key: "Weld.EffLength", label: "Eff.Length (mm)" },
+        ],
+        "Gusset Plate Details": [
+            { key: "Plate.Thickness", label: "Thickness (mm)" },
+            { key: "Plate.Height", label: "Min.Height (mm)" },
+            { key: "Plate.Length", label: "Min.Plate Length (mm)" },
+            { key: "Plate.Yield", label: "Tension Yielding Capacity (kN)" },
+            { key: "Plate.BlockShear", label: "Block Shear Capacity (kN)" },
+            { key: "Plate.Capacity", label: "Tension Capacity (kN)" },
+        ],
+    },
+    modals: {},
+    modalTypes: {},
+    modalData: {},
+};
