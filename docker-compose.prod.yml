@@ -26,9 +26,7 @@ services:
       retries: 5
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
     restart: unless-stopped
     environment:
       PYTHONPATH: /app:/app/backend
@@ -67,9 +65,7 @@ services:
       - "8000"
 
   celery_worker_calc:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
     restart: unless-stopped
     environment:
       PYTHONPATH: /app:/app/backend
@@ -92,9 +88,7 @@ services:
     command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q calculations --loglevel=info --concurrency=18"
 
   celery_worker_cad:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
     restart: unless-stopped
     environment:
       PYTHONPATH: /app:/app/backend
@@ -121,9 +115,7 @@ services:
     command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q cad --loglevel=info --concurrency=8 --max-tasks-per-child=10"
 
   celery_worker_reports:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
     restart: unless-stopped
     environment:
       PYTHONPATH: /app:/app/backend
@@ -150,9 +142,7 @@ services:
     command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q reports --loglevel=info --concurrency=4"
 
   celery_beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sogalabhi/osdag-web/backend:latest
     restart: unless-stopped
     environment:
       PYTHONPATH: /app:/app/backend
@@ -178,9 +168,7 @@ services:
       - file_storage_volume:/app/file_storage
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
+    image: ghcr.io/sogalabhi/osdag-web/frontend:latest
     restart: unless-stopped
     ports:
       - "80:80"

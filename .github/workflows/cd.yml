@@ -6,9 +6,19 @@ on:
     types: [completed]
     branches: [main]
 
+concurrency:
+  group: cd-${{ github.event.workflow_run.head_branch || 'main' }}
+  cancel-in-progress: false
+
 jobs:
   build-and-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Repo is public, and this workflow deploys to a self-hosted runner on
+    # prod infra. Guard against a fork PR whose branch happens to be named
+    # "main" from satisfying the `branches: [main]` filter above and
+    # triggering a build/deploy from fork-controlled code.
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_repository.full_name == github.repository }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -16,6 +26,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set lowercase image repo
+        run: echo "IMAGE_REPO=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -31,8 +46,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/backend:latest
-            ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+            ghcr.io/${{ env.IMAGE_REPO }}/backend:latest
+            ghcr.io/${{ env.IMAGE_REPO }}/backend:${{ github.event.workflow_run.head_sha }}
 
       - name: Build and push frontend
         uses: docker/build-push-action@v5
@@ -41,20 +56,44 @@ jobs:
           file: ./frontend/Dockerfile.prod
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/frontend:latest
-            ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+            ghcr.io/${{ env.IMAGE_REPO }}/frontend:latest
+            ghcr.io/${{ env.IMAGE_REPO }}/frontend:${{ github.event.workflow_run.head_sha }}
 
   deploy:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    # Server is on a private IP reachable only via VPN, so a GitHub-hosted
+    # runner can't SSH in. This job runs on a self-hosted runner installed
+    # directly on the deploy target (self-hosted runners connect outbound
+    # to GitHub to poll for jobs, so no inbound network access is needed).
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: read
     steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /opt/osdag-web
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy
+        run: |
+          set -e
+          cd /opt/osdag-web
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+          echo "Waiting for containers to settle..."
+          sleep 15
+
+          echo "--- docker compose ps ---"
+          docker compose -f docker-compose.prod.yml ps
+
+          if docker compose -f docker-compose.prod.yml ps | grep -Eiq "unhealthy|exit|restarting"; then
+            echo "Deploy health check FAILED: one or more containers are unhealthy/exited/restarting."
+            docker compose -f docker-compose.prod.yml logs --tail=100
+            exit 1
+          fi
+
+          echo "Deploy health check passed."
