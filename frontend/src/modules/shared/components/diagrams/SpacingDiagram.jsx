@@ -639,7 +639,7 @@ const SpacingDiagram = ({
         y={offsetY}
         width={numericParams.width * scale}
         height={numericParams.height * scale}
-        fill="#b8b8a0"
+        fill="#fff"
         stroke="#000"
         strokeWidth="2"
       />

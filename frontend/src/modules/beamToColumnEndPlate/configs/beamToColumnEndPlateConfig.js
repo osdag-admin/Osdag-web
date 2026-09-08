@@ -59,12 +59,6 @@ export const beamToColumnEndPlateConfig = {
     return { isValid: true };
   },
   buildSubmissionParams: (inputs, allSelected, lists, extraData) => {
-    const conn_map = {
-      "Extended One-Way": "Extended One-Way",
-      "Extended Both Ways": "Extended Both Ways",
-      "Flushed - Reversible Moment": "Flushed - Reversible Moment",
-    };
-
     return {
       "Bolt.Bolt_Hole_Type": inputs.bolt_hole_type,
       "Bolt.Diameter": allSelected.bolt_diameter ? lists.boltDiameterList : inputs.bolt_diameter,
@@ -73,7 +67,7 @@ export const beamToColumnEndPlateConfig = {
       "Bolt.TensionType": inputs.bolt_tension_type,
       "Bolt.Type": inputs.bolt_type.replaceAll("_", " "),
       "Connectivity": inputs.connectivity,
-      EndPlateType: conn_map[extraData?.selectedOption] || "Extended One-Way",
+      EndPlateType: extraData?.selectedOption || "Flushed - Reversible Moment",
       "Connector.Plate.Thickness_List": allSelected.plate_thickness 
         ? lists.thicknessList : inputs.plate_thickness,
       "Connector.Material": inputs.connector_material,
@@ -111,7 +105,12 @@ export const beamToColumnEndPlateConfig = {
         {
           key: "endPlateType",
           label: "End Plate Type",
-          type: "endPlateSelect"
+          type: "endPlateSelect",
+          options: [
+            "Flushed - Reversible Moment",
+            "Extended One Way - Irreversible Moment",
+            "Extended Both Ways - Reversible Moment",
+          ]
         },
         {
           key: "column_section",

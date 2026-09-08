@@ -91,7 +91,7 @@ export const boltedToEndOutputConfig = {
           { key: "Bolt.EdgeDist", label: "Edge Distance (mm)" }
         ],
         diagram: {
-          origin: "right",
+          origin: "left",
           props: {
             plateWidth: "Plate.Length",
             plateHeight: "Plate.Height",

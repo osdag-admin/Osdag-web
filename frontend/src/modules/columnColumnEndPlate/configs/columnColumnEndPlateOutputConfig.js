@@ -7,7 +7,7 @@ export const columnColumnEndPlateOutputConfig = {
       { key: "Bolt.Bearing", label: "Bearing Capacity (kN)" },
       { key: "Bolt.Capacity", label: "Bolt Value (kN)" },
       { key: "Bolt.Tension", label: "Bolt Tension Capacity (kN)" },
-      { key: "Bolt.Pitch", label: "Pitch Distance (mm)" },
+      { key: "ColumnEndPlate.Pitch", label: "Pitch Distance (mm)" },
       { key: "Bolt.EndDist", label: "End Distance (mm)" },
       { key: "ColumnEndPlate.nb", label: "Total No. of Bolts" },
       { key: "WebBoltSpacingModal", label: "Web Bolts Spacing" },
@@ -67,9 +67,9 @@ export const columnColumnEndPlateOutputConfig = {
     },
     spacing: {
       title: "Bolt Spacing Details",
-      width: "60%",
-      layout: "spacing-diagram",
-      note: "Representative image for Bolt Spacing"
+      width: "68%",
+      layout: "column-endplate-diagram",
+      note: "Traced from the desktop's actual bolt-pattern drawing (the spliced I-beam cross-section), not a generic grid."
     }
   },
 
@@ -85,38 +85,57 @@ export const columnColumnEndPlateOutputConfig = {
     spacing: {
       WebBoltSpacingModal: {
         fields: [
+          { key: "Plate.Length", label: "Plate Length (mm)" },
+          { key: "Plate.Height", label: "Plate Height (mm)" },
           { key: "Bolt.EndDist", label: "End Distance (mm)" },
+          { key: "ColumnEndPlate.Pitch", label: "Pitch Distance (mm)" },
+          { key: "ColumnEndPlate.MidPitch", label: "Pitch (center gap) (mm)" },
           { key: "ColumnEndPlate.nbw", label: "No. of Bolts (along one side of the web) (n)" },
-          { key: "ColumnEndPlate.nbwtotal", label: "No. of Bolts (along web)" },
-          { key: "ColumnEndPlate.p2_flange", label: "Pitch (Web) (p2)" }
+          { key: "ColumnEndPlate.nbwtotal", label: "No. of Bolts (along web)" }
         ],
         diagram: {
-          origin: "right",
           props: {
-            pitch: "ColumnEndPlate.p2_flange",
-            plateWidth: "Plate.Length",
+            view: "web",
+            plateLength: "Plate.Length",
             plateHeight: "Plate.Height",
-            holeDiameter: "Bolt.Diameter"
+            stiffenerWidth: "Stiffener.Width",
+            stiffenerThickness: "Stiffener.Thickness",
+            webThickness: "ColumnEndPlate.WebThickness",
+            flangeThickness: "ColumnEndPlate.FlangeThickness",
+            holeDia: "Bolt.Diameter",
+            pitch: "ColumnEndPlate.Pitch",
+            midPitch: "ColumnEndPlate.MidPitch",
+            endDist: "Bolt.EndDist",
+            numBoltsWeb: "ColumnEndPlate.nbw",
+            nbfTotal: "ColumnEndPlate.nbftotal"
           }
         }
       },
 
       FlangeBoltSpacingModal: {
         fields: [
+          { key: "Plate.Length", label: "Plate Length (mm)" },
+          { key: "Plate.Height", label: "Plate Height (mm)" },
           { key: "Bolt.EndDist", label: "End Distance (mm)" },
+          { key: "ColumnEndPlate.p2_flange", label: "Pitch (bolts along centre) (p2)" },
           { key: "ColumnEndPlate.nbf", label: "No. of Bolts (along one side of the flange overhang) (n)" },
-          { key: "ColumnEndPlate.nbftotal", label: "No. of Bolts (along Flange)" },
-          { key: "ColumnEndPlate.p2_flange", label: "Pitch (bolts along center) (p2)" }
+          { key: "ColumnEndPlate.nbftotal", label: "No. of Bolts (along Flange)" }
         ],
         diagram: {
-          origin: "right",
           props: {
-            cols: "ColumnEndPlate.nbf",
-            rows: "ColumnEndPlate.nbftotal",
-            pitch: "ColumnEndPlate.p2_flange",
-            plateWidth: "Plate.Length",
+            view: "flange",
+            plateLength: "Plate.Length",
             plateHeight: "Plate.Height",
-            holeDiameter: "Bolt.Diameter"
+            stiffenerWidth: "Stiffener.Width",
+            stiffenerThickness: "Stiffener.Thickness",
+            webThickness: "ColumnEndPlate.WebThickness",
+            flangeThickness: "ColumnEndPlate.FlangeThickness",
+            holeDia: "Bolt.Diameter",
+            pitch: "ColumnEndPlate.Pitch",
+            midPitch: "ColumnEndPlate.MidPitch",
+            endDist: "Bolt.EndDist",
+            numBoltsWeb: "ColumnEndPlate.nbw",
+            nbfTotal: "ColumnEndPlate.nbftotal"
           }
         }
       }

@@ -40,10 +40,20 @@ const BasePlateSketch = ({
   diaOcfBolt,
   edgeOcf,
   endOcf,
+  gaugeOcf,
   noIcfBolts,
   diaIcfBolt,
   edgeIcf,
   endIcf,
+  stiffAlongLength,
+  stiffAlongThickness,
+  stiffAcrossLength,
+  stiffAcrossThickness,
+  stiffFlangeLength,
+  stiffFlangeThickness,
+  stiffDThickness,
+  stiffBThickness,
+  stiffODThickness,
   memberDesignation = "",
   className = "",
 }) => {
@@ -59,10 +69,6 @@ const BasePlateSketch = ({
       return { error: "Missing base plate dimensions" };
     }
 
-    // Pedestal has a default 100mm padding around base plate
-    const pedL = pL + 200;
-    const pedW = pW + 200;
-
     // Detect column type from designation
     const des = String(memberDesignation).toUpperCase();
     let colType = "I-Section";
@@ -74,6 +80,20 @@ const BasePlateSketch = ({
       colType = "CHS";
     }
 
+    // Desktop (base_plate.py) overrides column_len from the along-web
+    // stiffener span when that stiffener exists, instead of using the raw
+    // column depth - this feeds both the drawing AND the OCF bolt edge formula.
+    const alongLenNum = Number(stiffAlongLength);
+    const hasAlongStiff = Number.isFinite(alongLenNum) && alongLenNum > 0;
+    const colLenEff = hasAlongStiff ? pL - 2 * colTf - 2 * alongLenNum : colD;
+
+    const acrossLenNum = Number(stiffAcrossLength);
+    const hasAcrossStiff = Number.isFinite(acrossLenNum) && acrossLenNum > 0;
+    const acrossThickNum = Number(stiffAcrossThickness);
+
+    const flangeLenNum = Number(stiffFlangeLength);
+    const hasFlangeStiff = Number.isFinite(flangeLenNum) && flangeLenNum > 0;
+
     return {
       pL,
       pW,
@@ -81,11 +101,30 @@ const BasePlateSketch = ({
       colB,
       colTf,
       colTw,
-      pedL,
-      pedW,
       colType,
+      colLenEff,
+      hasAlongStiff,
+      alongThickNum: Number(stiffAlongThickness),
+      hasAcrossStiff,
+      acrossLenNum,
+      acrossThickNum,
+      hasFlangeStiff,
+      flangeLenNum,
+      flangeThickNum: Number(stiffFlangeThickness),
     };
-  }, [plateLength, plateWidth, columnDepth, columnWidth, columnTf, columnTw, memberDesignation]);
+  }, [
+    plateLength, plateWidth, columnDepth, columnWidth, columnTf, columnTw, memberDesignation,
+    stiffAlongLength, stiffAlongThickness, stiffAcrossLength, stiffAcrossThickness,
+    stiffFlangeLength, stiffFlangeThickness,
+  ]);
+
+  // Hollow (SHS/RHS/CHS) stiffener thickness - desktop's base_plate_hollow.py
+  // reuses stiff_OD_thickness for the "B" (left/right) stiffeners on CHS
+  // columns too (the SHS/RHS-only reassignment to stiff_B_thickness never
+  // triggers for CHS), so replicate that exact quirk rather than a separate value.
+  const isCHS = params.colType === "CHS";
+  const dThick = isCHS ? toNumber(stiffODThickness) : toNumber(stiffDThickness);
+  const bThick = isCHS ? toNumber(stiffODThickness) : toNumber(stiffBThickness);
 
   if (params.error) {
     return (
@@ -95,64 +134,103 @@ const BasePlateSketch = ({
     );
   }
 
-  // Scaling
+  // Scaling - plate drawn in its own local (0,0)-(pL,pW) coordinate system,
+  // matching desktop's createDrawing() coordinate space exactly (no pedestal
+  // box - desktop's base_plate.py / base_plate_hollow.py never draw one).
   const usableWidth = VIEWBOX_WIDTH - 2 * MARGIN;
   const usableHeight = VIEWBOX_HEIGHT - 2 * MARGIN;
-  const scaleX = usableWidth / params.pedL;
-  const scaleY = usableHeight / params.pedW;
-  const scale = Math.min(scaleX, scaleY);
+  const scale = Math.min(usableWidth / params.pL, usableHeight / params.pW, 1.4);
+  const offsetX = (VIEWBOX_WIDTH - params.pL * scale) / 2;
+  const offsetY = (VIEWBOX_HEIGHT - params.pW * scale) / 2;
+  const sx = (mm) => offsetX + mm * scale;
+  const sy = (mm) => offsetY + mm * scale;
 
-  const offsetX = (VIEWBOX_WIDTH - params.pedL * scale) / 2;
-  const offsetY = (VIEWBOX_HEIGHT - params.pedW * scale) / 2;
+  const centerX = params.pL / 2;
+  const centerY = params.pW / 2;
 
-  // Center of base plate & pedestal
-  const cX = offsetX + (params.pedL * scale) / 2;
-  const cY = offsetY + (params.pedW * scale) / 2;
+  // ---- OCF (outside column flange) anchor bolts ----
+  // I-Section: desktop (base_plate.py) recomputes its own "effective edge"
+  // from geometry rather than using the raw Detailing.EdgeDistanceOut value,
+  // and steps bolts inward by `gauge` per extra column, mirrored from both
+  // plate ends - always a multiple of 4 (4 or 8 bolts), never a midpoint bolt.
+  // Hollow (base_plate_hollow.py): always exactly 4 bolts, plain corners.
+  const getOcfBolts = () => {
+    const nBolts = Math.round(toNumber(noOcfBolts));
+    const end = toNumber(endOcf);
+    if (nBolts <= 0 || end <= 0) return [];
 
-  // Base Plate box
-  const bpX = offsetX + 100 * scale;
-  const bpY = offsetY + 100 * scale;
-  const bpW = params.pL * scale;
-  const bpH = params.pW * scale;
+    if (params.colType !== "I-Section") {
+      const edge = toNumber(edgeOcf);
+      if (edge <= 0) return [];
+      return [
+        { x: edge, y: end },
+        { x: params.pL - edge, y: end },
+        { x: edge, y: params.pW - end },
+        { x: params.pL - edge, y: params.pW - end },
+      ];
+    }
 
-  // Bolts positioning helper
-  const getBolts = (count, edge, end) => {
-    const num = toNumber(count);
-    const ed = toNumber(edge);
-    const en = toNumber(end);
-    if (num <= 0 || ed <= 0 || en <= 0) return [];
+    const cols = Math.floor(nBolts / 4);
+    if (cols <= 0) return [];
+    const gauge = toNumber(gaugeOcf);
+    const edge = cols === 1
+      ? (params.pL - params.colLenEff - 2 * params.colTf) / 4
+      : ((params.pL - params.colLenEff) / 2 - params.colTf - gauge) / 2;
+    if (!Number.isFinite(edge)) return [];
 
     const positions = [];
-    if (num === 2) {
-      positions.push({ x: params.pL / 2, y: en });
-      positions.push({ x: params.pL / 2, y: params.pW - en });
-    } else if (num >= 4) {
-      positions.push({ x: ed, y: en });
-      positions.push({ x: params.pL - ed, y: en });
-      positions.push({ x: ed, y: params.pW - en });
-      positions.push({ x: params.pL - ed, y: params.pW - en });
-
-      if (num === 6) {
-        positions.push({ x: params.pL / 2, y: en });
-        positions.push({ x: params.pL / 2, y: params.pW - en });
-      } else if (num === 8) {
-        positions.push({ x: params.pL / 2, y: en });
-        positions.push({ x: params.pL / 2, y: params.pW - en });
-        positions.push({ x: ed, y: params.pW / 2 });
-        positions.push({ x: params.pL - ed, y: params.pW / 2 });
-      }
+    for (let col = 0; col < cols; col += 1) {
+      const x = edge + col * gauge;
+      positions.push({ x, y: end });
+      positions.push({ x, y: params.pW - end });
+    }
+    for (let col = 0; col < cols; col += 1) {
+      const x = params.pL - edge - col * gauge;
+      positions.push({ x, y: end });
+      positions.push({ x, y: params.pW - end });
     }
     return positions;
   };
 
-  const ocfBolts = getBolts(noOcfBolts, edgeOcf, endOcf, true);
-  const icfBolts = getBolts(noIcfBolts, edgeIcf, endIcf, false);
+  // ---- ICF (inside column flange / uplift) anchor bolts ----
+  // I-Section only - desktop never draws these for hollow sections.
+  const getIcfBolts = () => {
+    if (params.colType !== "I-Section") return [];
+    const nBolts = Math.round(toNumber(noIcfBolts));
+    if (nBolts === 0) return [];
+    const edge = toNumber(edgeIcf);
+    const end = toNumber(endIcf);
+    const webThickness = params.colTw;
+
+    if (nBolts === 4 && params.hasAcrossStiff) {
+      const xMidLeft = centerX - params.acrossThickNum / 2;
+      const xMidRight = centerX + params.acrossThickNum / 2;
+      const yMidTop = centerY - webThickness / 2;
+      const yMidBot = centerY + webThickness / 2;
+      return [
+        { x: xMidLeft - edge, y: yMidTop - end },
+        { x: xMidLeft - edge, y: yMidBot + end },
+        { x: xMidRight + edge, y: yMidTop - end },
+        { x: xMidRight + edge, y: yMidBot + end },
+      ];
+    }
+    if (nBolts === 2 && !params.hasAcrossStiff) {
+      return [
+        { x: centerX, y: centerY - end },
+        { x: centerX, y: centerY + end },
+      ];
+    }
+    return [];
+  };
+
+  const ocfBolts = getOcfBolts();
+  const icfBolts = getIcfBolts();
 
   // Render anchor bolt graphic
   const renderAnchor = (x, y, dia, key) => {
-    const r = Math.max(4, (toNumber(dia, 20) / 2) * scale);
-    const cx = bpX + x * scale;
-    const cy = bpY + y * scale;
+    const r = Math.max(3, (toNumber(dia, 20) / 2) * scale);
+    const cx = sx(x);
+    const cy = sy(y);
     return (
       <g key={key}>
         <circle cx={cx} cy={cy} r={r + 3} fill="none" stroke="#94a3b8" strokeWidth="1.5" />
@@ -162,8 +240,6 @@ const BasePlateSketch = ({
       </g>
     );
   };
-
-  // Dimension lines helper
 
   return (
     <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} className={`h-auto w-full ${className}`} role="img">
@@ -176,127 +252,141 @@ const BasePlateSketch = ({
         </marker>
       </defs>
 
-      {/* Concrete Pedestal Outer Box */}
-      <rect
-        x={offsetX}
-        y={offsetY}
-        width={params.pedL * scale}
-        height={params.pedW * scale}
-        fill="#f8fafc"
-        stroke="#94a3b8"
-        strokeWidth="1.5"
-        strokeDasharray="5,5"
-      />
-
       {/* Base Plate */}
-      <rect
-        x={bpX}
-        y={bpY}
-        width={bpW}
-        height={bpH}
-        fill="#cbd5e1"
-        stroke="#334155"
-        strokeWidth="2"
-      />
+      <rect x={sx(0)} y={sy(0)} width={params.pL * scale} height={params.pW * scale} fill="#f1f5f9" stroke="#334155" strokeWidth="2" />
 
-      {/* Column Shape */}
-      {params.colType === "CHS" && params.colD > 0 && (
+      {/* Column Shape - SHS/RHS/CHS, matching base_plate_hollow.py exactly:
+          desktop draws SHS and RHS identically (col_len=colD horizontal,
+          col_width=colB vertical, wall thickness = column_tf, NOT
+          column_tw), and CHS as an ellipse with the same bounding box. */}
+      {(params.colType === "SHS" || params.colType === "RHS") && params.colD > 0 && params.colB > 0 && (
         <g>
-          {/* Outer circle */}
-          <circle cx={cX} cy={cY} r={(params.colD / 2) * scale} fill="#475569" stroke="#000" strokeWidth="2" />
-          {/* Inner circle */}
-          {params.colTw > 0 && (
-            <circle cx={cX} cy={cY} r={((params.colD - 2 * params.colTw) / 2) * scale} fill="#cbd5e1" stroke="#000" strokeWidth="1" />
+          <rect x={sx(centerX - params.colD / 2)} y={sy(centerY - params.colB / 2)} width={params.colD * scale} height={params.colB * scale} fill="#475569" stroke="#000" strokeWidth="2" />
+          {params.colTf > 0 && (
+            <rect x={sx(centerX - params.colD / 2 + params.colTf)} y={sy(centerY - params.colB / 2 + params.colTf)} width={Math.max((params.colD - 2 * params.colTf) * scale, 0)} height={Math.max((params.colB - 2 * params.colTf) * scale, 0)} fill="#f1f5f9" stroke="#000" strokeWidth="1" />
           )}
         </g>
       )}
 
-      {params.colType === "SHS" && params.colD > 0 && (
+      {params.colType === "CHS" && params.colD > 0 && params.colB > 0 && (
         <g>
-          {/* Outer box */}
-          <rect
-            x={cX - (params.colD / 2) * scale}
-            y={cY - (params.colD / 2) * scale}
-            width={params.colD * scale}
-            height={params.colD * scale}
-            fill="#475569"
-            stroke="#000"
-            strokeWidth="2"
-          />
-          {/* Inner offset box */}
-          {params.colTw > 0 && (
-            <rect
-              x={cX - (params.colD / 2 - params.colTw) * scale}
-              y={cY - (params.colD / 2 - params.colTw) * scale}
-              width={(params.colD - 2 * params.colTw) * scale}
-              height={(params.colD - 2 * params.colTw) * scale}
-              fill="#cbd5e1"
-              stroke="#000"
-              strokeWidth="1"
-            />
+          <ellipse cx={sx(centerX)} cy={sy(centerY)} rx={(params.colD / 2) * scale} ry={(params.colB / 2) * scale} fill="#475569" stroke="#000" strokeWidth="2" />
+          {params.colTf > 0 && (
+            <ellipse cx={sx(centerX)} cy={sy(centerY)} rx={Math.max((params.colD / 2 - params.colTf) * scale, 0)} ry={Math.max((params.colB / 2 - params.colTf) * scale, 0)} fill="#f1f5f9" stroke="#000" strokeWidth="1" />
           )}
         </g>
       )}
 
-      {params.colType === "RHS" && params.colD > 0 && params.colB > 0 && (
-        <g>
-          {/* Outer box */}
-          <rect
-            x={cX - (params.colB / 2) * scale}
-            y={cY - (params.colD / 2) * scale}
-            width={params.colB * scale}
-            height={params.colD * scale}
-            fill="#475569"
-            stroke="#000"
-            strokeWidth="2"
-          />
-          {/* Inner box */}
-          {params.colTw > 0 && (
-            <rect
-              x={cX - (params.colB / 2 - params.colTw) * scale}
-              y={cY - (params.colD / 2 - params.colTw) * scale}
-              width={(params.colB - 2 * params.colTw) * scale}
-              height={(params.colD - 2 * params.colTw) * scale}
-              fill="#cbd5e1"
-              stroke="#000"
-              strokeWidth="1"
-            />
-          )}
+      {/* Hollow-section stiffeners: D/OD group top+bottom (vertical bands,
+          height = distance from plate edge to column), B group left+right
+          (horizontal bands, length = distance from plate edge to column). */}
+      {(params.colType === "SHS" || params.colType === "RHS" || params.colType === "CHS") && dThick > 0 && (
+        <g fill="#dc2626" opacity="0.75" stroke="#1d4ed8" strokeWidth="1.5">
+          {(() => {
+            const stiffX = centerX - dThick / 2;
+            const stiffHeight = centerY - params.colB / 2;
+            return (
+              <>
+                <rect x={sx(stiffX)} y={sy(0)} width={dThick * scale} height={Math.max(stiffHeight * scale, 0)} />
+                <rect x={sx(stiffX)} y={sy(centerY + params.colB / 2)} width={dThick * scale} height={Math.max(stiffHeight * scale, 0)} />
+              </>
+            );
+          })()}
+        </g>
+      )}
+      {(params.colType === "SHS" || params.colType === "RHS" || params.colType === "CHS") && bThick > 0 && (
+        <g fill="#dc2626" opacity="0.75" stroke="#1d4ed8" strokeWidth="1.5">
+          {(() => {
+            const stiffY = centerY - bThick / 2;
+            const stiffLength = centerX - params.colD / 2;
+            return (
+              <>
+                <rect x={sx(0)} y={sy(stiffY)} width={Math.max(stiffLength * scale, 0)} height={bThick * scale} />
+                <rect x={sx(centerX + params.colD / 2)} y={sy(stiffY)} width={Math.max(stiffLength * scale, 0)} height={bThick * scale} />
+              </>
+            );
+          })()}
         </g>
       )}
 
-      {params.colType === "I-Section" && params.colD > 0 && params.colB > 0 && (
-        <g>
-          {/* Web */}
+      {/* I-Section - plan view matching desktop's base_plate.py exactly:
+          web is a thin horizontal band spanning colLenEff (the column's
+          depth, oriented along the plate's length), flanges are vertical
+          end-caps spanning colB (flange width) at each end of the web. */}
+      {params.colType === "I-Section" && params.colLenEff > 0 && params.colB > 0 && (
+        <g fill="#475569" stroke="#000">
           <rect
-            x={cX - (params.colTw / 2) * scale}
-            y={cY - (params.colD / 2 - params.colTf) * scale}
-            width={params.colTw * scale}
-            height={(params.colD - 2 * params.colTf) * scale}
-            fill="#475569"
-            stroke="#000"
+            x={sx(centerX - params.colLenEff / 2)}
+            y={sy(centerY - params.colTw / 2)}
+            width={params.colLenEff * scale}
+            height={params.colTw * scale}
             strokeWidth="1"
           />
-          {/* Top flange */}
           <rect
-            x={cX - (params.colB / 2) * scale}
-            y={cY - (params.colD / 2) * scale}
-            width={params.colB * scale}
-            height={params.colTf * scale}
-            fill="#475569"
-            stroke="#000"
+            x={sx(centerX - params.colLenEff / 2 - params.colTf)}
+            y={sy(centerY - params.colB / 2)}
+            width={params.colTf * scale}
+            height={params.colB * scale}
             strokeWidth="1.5"
           />
-          {/* Bottom flange */}
           <rect
-            x={cX - (params.colB / 2) * scale}
-            y={cY + (params.colD / 2 - params.colTf) * scale}
-            width={params.colB * scale}
-            height={params.colTf * scale}
-            fill="#475569"
-            stroke="#000"
+            x={sx(centerX + params.colLenEff / 2)}
+            y={sy(centerY - params.colB / 2)}
+            width={params.colTf * scale}
+            height={params.colB * scale}
             strokeWidth="1.5"
           />
+        </g>
+      )}
+
+      {/* Stiffeners (I-Section only) */}
+      {params.colType === "I-Section" && params.hasFlangeStiff && (
+        <g fill="#dc2626" opacity="0.75" stroke="#1d4ed8" strokeWidth="1.5">
+          {(() => {
+            const stiffThk = params.flangeThickNum;
+            const offset = (stiffThk - params.colTf) / 2;
+            const topY = centerY - params.colB / 2;
+            const botY = centerY + params.colB / 2;
+            const leftFlangeOuterX = centerX - params.colLenEff / 2 - params.colTf;
+            const rightFlangeOuterX = centerX + params.colLenEff / 2 + params.colTf;
+            return (
+              <>
+                <rect x={sx(leftFlangeOuterX - offset)} y={sy(0)} width={stiffThk * scale} height={topY * scale} />
+                <rect x={sx(leftFlangeOuterX - offset)} y={sy(botY)} width={stiffThk * scale} height={(params.pW - botY) * scale} />
+                <rect x={sx(rightFlangeOuterX - stiffThk - offset)} y={sy(0)} width={stiffThk * scale} height={topY * scale} />
+                <rect x={sx(rightFlangeOuterX - stiffThk - offset)} y={sy(botY)} width={stiffThk * scale} height={(params.pW - botY) * scale} />
+              </>
+            );
+          })()}
+        </g>
+      )}
+      {params.colType === "I-Section" && params.hasAlongStiff && (
+        <g fill="#dc2626" opacity="0.75" stroke="#1d4ed8" strokeWidth="1.5">
+          {(() => {
+            const webCenterLeft = centerX - params.colLenEff / 2 - params.colTf;
+            const webCenterRight = centerX + params.colLenEff / 2 + params.colTf;
+            const offset = (params.colTw - params.alongThickNum) / 2;
+            const yTop = centerY - params.alongThickNum / 2 + offset;
+            return (
+              <>
+                <rect x={sx(0)} y={sy(yTop)} width={webCenterLeft * scale} height={params.alongThickNum * scale} />
+                <rect x={sx(webCenterRight)} y={sy(yTop)} width={(params.pL - webCenterRight) * scale} height={params.alongThickNum * scale} />
+              </>
+            );
+          })()}
+        </g>
+      )}
+      {params.colType === "I-Section" && params.hasAcrossStiff && (
+        <g fill="#dc2626" opacity="0.75" stroke="#1d4ed8" strokeWidth="1.5">
+          {(() => {
+            const xLeft = centerX - params.acrossThickNum / 2;
+            return (
+              <>
+                <rect x={sx(xLeft)} y={sy(centerY - params.acrossLenNum - params.colTw / 2)} width={params.acrossThickNum * scale} height={params.acrossLenNum * scale} />
+                <rect x={sx(xLeft)} y={sy(centerY + params.colTw / 2)} width={params.acrossThickNum * scale} height={params.acrossLenNum * scale} />
+              </>
+            );
+          })()}
         </g>
       )}
 
@@ -305,38 +395,34 @@ const BasePlateSketch = ({
       {icfBolts.map((b, i) => renderAnchor(b.x, b.y, diaIcfBolt, `icf-${i}`))}
 
       {/* Dimensions & Labels */}
-      {/* Horizontal length of plate */}
-      <line x1={bpX} y1={bpY + bpH + 30} x2={bpX + bpW} y2={bpY + bpH + 30} stroke="#000" strokeWidth="1" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
-      <line x1={bpX} y1={bpY + bpH + 5} x2={bpX} y2={bpY + bpH + 35} stroke="#000" strokeWidth="0.8" />
-      <line x1={bpX + bpW} y1={bpY + bpH + 5} x2={bpX + bpW} y2={bpY + bpH + 35} stroke="#000" strokeWidth="0.8" />
-      <DimensionText x={bpX + bpW / 2} y={bpY + bpH + 44} text={`${params.pL.toFixed(0)} mm`} />
+      <line x1={sx(0)} y1={sy(params.pW) + 30} x2={sx(params.pL)} y2={sy(params.pW) + 30} stroke="#000" strokeWidth="1" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
+      <line x1={sx(0)} y1={sy(params.pW) + 5} x2={sx(0)} y2={sy(params.pW) + 35} stroke="#000" strokeWidth="0.8" />
+      <line x1={sx(params.pL)} y1={sy(params.pW) + 5} x2={sx(params.pL)} y2={sy(params.pW) + 35} stroke="#000" strokeWidth="0.8" />
+      <DimensionText x={sx(params.pL / 2)} y={sy(params.pW) + 44} text={`${params.pL.toFixed(0)} mm`} />
 
-      {/* Vertical width of plate */}
-      <line x1={bpX - 30} y1={bpY} x2={bpX - 30} y2={bpY + bpH} stroke="#000" strokeWidth="1" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
-      <line x1={bpX - 35} y1={bpY} x2={bpX + 5} y2={bpY} stroke="#000" strokeWidth="0.8" />
-      <line x1={bpX - 35} y1={bpY + bpH} x2={bpX + 5} y2={bpY + bpH} stroke="#000" strokeWidth="0.8" />
-      <DimensionText x={bpX - 38} y={bpY + bpH / 2 + 4} text={`${params.pW.toFixed(0)} mm`} anchor="end" />
+      <line x1={sx(0) - 30} y1={sy(0)} x2={sx(0) - 30} y2={sy(params.pW)} stroke="#000" strokeWidth="1" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
+      <line x1={sx(0) - 35} y1={sy(0)} x2={sx(0) + 5} y2={sy(0)} stroke="#000" strokeWidth="0.8" />
+      <line x1={sx(0) - 35} y1={sy(params.pW)} x2={sx(0) + 5} y2={sy(params.pW)} stroke="#000" strokeWidth="0.8" />
+      <DimensionText x={sx(0) - 38} y={sy(params.pW / 2) + 4} text={`${params.pW.toFixed(0)} mm`} anchor="end" />
 
-      {/* Outside Anchor Spacing Labels */}
-      {ocfBolts.length > 0 && (
-        <g>
-          {/* End distance vertical label */}
-          <line x1={bpX + bpW + 15} y1={bpY} x2={bpX + bpW + 15} y2={bpY + endOcf * scale} stroke="#000" strokeWidth="0.8" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
-          <line x1={bpX + bpW + 10} y1={bpY + endOcf * scale} x2={bpX + bpW + 20} y2={bpY + endOcf * scale} stroke="#000" strokeWidth="0.8" />
-          <DimensionText x={bpX + bpW + 24} y={bpY + (endOcf * scale) / 2 + 4} text={`${toNumber(endOcf).toFixed(0)}`} anchor="start" />
+      {/* Outside Anchor Spacing Labels (edge measured from bolt to nearest plate edge, matching desktop) */}
+      {ocfBolts.length > 0 && (() => {
+        const firstX = ocfBolts[0].x;
+        const firstY = ocfBolts[0].y;
+        return (
+          <g>
+            <line x1={sx(params.pL) + 15} y1={sy(0)} x2={sx(params.pL) + 15} y2={sy(firstY)} stroke="#000" strokeWidth="0.8" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
+            <line x1={sx(params.pL) + 10} y1={sy(firstY)} x2={sx(params.pL) + 20} y2={sy(firstY)} stroke="#000" strokeWidth="0.8" />
+            <DimensionText x={sx(params.pL) + 24} y={sy(firstY / 2) + 4} text={`${toNumber(endOcf).toFixed(0)}`} anchor="start" />
 
-          {/* Edge distance horizontal label */}
-          <line x1={bpX} y1={bpY - 15} x2={bpX + edgeOcf * scale} y2={bpY - 15} stroke="#000" strokeWidth="0.8" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
-          <line x1={bpX + edgeOcf * scale} y1={bpY - 20} x2={bpX + edgeOcf * scale} y2={bpY - 10} stroke="#000" strokeWidth="0.8" />
-          <DimensionText x={bpX + (edgeOcf * scale) / 2} y={bpY - 22} text={`${toNumber(edgeOcf).toFixed(0)}`} />
-        </g>
-      )}
+            <line x1={sx(0)} y1={sy(0) - 15} x2={sx(firstX)} y2={sy(0) - 15} stroke="#000" strokeWidth="0.8" markerStart="url(#baseplate-arrow-start)" markerEnd="url(#baseplate-arrow-end)" />
+            <line x1={sx(firstX)} y1={sy(0) - 20} x2={sx(firstX)} y2={sy(0) - 10} stroke="#000" strokeWidth="0.8" />
+            <DimensionText x={sx(firstX / 2)} y={sy(0) - 22} text={`${firstX.toFixed(0)}`} />
+          </g>
+        );
+      })()}
 
-      {/* Pedestal description label */}
-      <text x={offsetX + 10} y={offsetY + 20} fontSize="11" fill="#64748b" fontFamily="Arial, sans-serif" fontWeight="bold">
-        Concrete Pedestal: {params.pedL.toFixed(0)}x{params.pedW.toFixed(0)} mm
-      </text>
-      <text x={bpX + 10} y={bpY + 20} fontSize="11" fill="#334155" fontFamily="Arial, sans-serif" fontWeight="bold">
+      <text x={sx(0) + 10} y={sy(0) + 18} fontSize="11" fill="#334155" fontFamily="Arial, sans-serif" fontWeight="bold">
         Base Plate: {params.pL.toFixed(0)}x{params.pW.toFixed(0)}x{toNumber(plateThickness).toFixed(0)} mm
       </text>
     </svg>

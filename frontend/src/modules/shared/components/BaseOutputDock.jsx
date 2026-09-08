@@ -39,16 +39,22 @@ export const BaseOutputDock = React.memo(({
     }
   };
 
-  // Read-only value box styled like input (transparent bg, grey border)
-  const ValueBox = ({ value }) => (
-    <div className="w-[45%]">
-      <div
-        className="w-full h-9 border border-gray-400 rounded-md px-3 text-sm flex items-center bg-transparent dark:bg-transparent text-gray-800 dark:text-gray-100"
-      >
-        {value !== undefined && value !== null && value !== '' ? String(value) : ' '}
+  // Read-only value box styled like input (transparent bg, grey border).
+  // min-h instead of a fixed h so long values wrap and grow the box
+  // instead of clipping or spilling outside it.
+  const ValueBox = ({ value }) => {
+    const display = value !== undefined && value !== null && value !== '' ? String(value) : ' ';
+    return (
+      <div className="w-[45%]">
+        <div
+          title={display !== ' ' ? display : undefined}
+          className="w-full min-h-9 border border-gray-400 rounded-md px-3 py-1.5 text-sm flex items-center break-words whitespace-normal bg-transparent dark:bg-transparent text-gray-800 dark:text-gray-100"
+        >
+          {display}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const getImageForModal = (imageType, selectedOption, basePlateState = {}) =>
     getOutputImage(imageType, selectedOption, basePlateState);
@@ -133,7 +139,7 @@ export const BaseOutputDock = React.memo(({
     };
 
     // Props that should be resolved as raw strings rather than numbers
-    const STRING_PROPS = new Set(["angleDesignation", "endplateType"]);
+    const STRING_PROPS = new Set(["angleDesignation", "endplateType", "memberDesignation"]);
 
     const resolved = Object.entries(diagramConfig.props || {}).reduce(
       (acc, [key, descriptor]) => {
@@ -177,6 +183,18 @@ export const BaseOutputDock = React.memo(({
 
     if (diagramConfig.props?.thicknessBand) {
       resolved.thicknessBand = diagramConfig.props.thicknessBand;
+    }
+
+    if (diagramConfig.props?.view) {
+      resolved.view = diagramConfig.props.view;
+    }
+
+    if (diagramConfig.props?.variant) {
+      resolved.variant = diagramConfig.props.variant;
+    }
+
+    if (diagramConfig.props?.orientation) {
+      resolved.orientation = diagramConfig.props.orientation;
     }
 
     return resolved;

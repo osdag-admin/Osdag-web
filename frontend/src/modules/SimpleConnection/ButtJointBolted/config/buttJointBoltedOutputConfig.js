@@ -28,4 +28,4 @@ export const buttJointBoltedOutputConfig = {
     modalTypes: {},
 
     modalData: {}
-}; 
+};

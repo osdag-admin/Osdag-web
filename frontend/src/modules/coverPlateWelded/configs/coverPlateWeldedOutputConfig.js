@@ -102,8 +102,8 @@ export const coverPlateWeldedOutputConfig = {
         ],
         diagram: {
           props: {
-            plateWidth:     "flange_plate.Length",
-            plateHeight:    "Flange_Plate.Width (mm)",
+            plateWidth:     "Flange_Plate.Width (mm)",
+            plateHeight:    "flange_plate.Length",
             plateThickness: "Connector.Flange_Plate.Thickness_list",
             weldSize:       "Flange_Weld.Size",
             weldGap:        "Detailing.Gap",

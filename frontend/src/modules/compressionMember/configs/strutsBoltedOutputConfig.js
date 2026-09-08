@@ -76,9 +76,9 @@ export const strutsBoltedOutputConfig = {
                     origin: "left",
                     props: {
                         plateWidth: "Plate.Length",
-                        plateHeight: "Member.Depth",
-                        rows: "Bolt.OneLine",
-                        cols: "Bolt.Line",
+                        plateHeight: "Plate.Height",
+                        rows: "Bolt.Line",
+                        cols: "Bolt.OneLine",
                         end: "Bolt.EndDist",
                         pitch: "Bolt.Pitch",
                         gauge: "Bolt.Gauge",

@@ -347,7 +347,29 @@ def generate_output(input_values: Dict[str, Any]):
         if hasattr(module, "stiffener_across_web_details"):
             _append_detail_list(output, module.stiffener_across_web_details(True))
         if hasattr(module, "stiffener_hollow_details"):
-            _append_detail_list(output, module.stiffener_hollow_details(True))
+            hollow_list = module.stiffener_hollow_details(True)
+            _append_detail_list(output, hollow_list)
+            # stiffener_hollow_details() returns 3 groups (D, B, OD/CHS) that
+            # all reuse the same KEY_OUT_STIFFENER_THICKNESS / _CHS constants
+            # (both literally 'Stiffener.Thickness' in Common.py) - the naive
+            # flatten-by-key above only keeps whichever group is written last,
+            # silently dropping the other two. Recover all 3 explicitly by
+            # index, matching desktop's own stiffdata[3]/[11]/[19] access in
+            # base_plate_hollow.py.
+            try:
+                hollow_thickness_indices = {
+                    "StiffenerHollow.D.Thickness": 3,
+                    "StiffenerHollow.B.Thickness": 11,
+                    "StiffenerHollow.OD.Thickness": 19,
+                }
+                for out_key, idx in hollow_thickness_indices.items():
+                    if idx < len(hollow_list) and len(hollow_list[idx]) >= 4:
+                        val = hollow_list[idx][3]
+                        if hasattr(val, "item"):
+                            val = val.item()
+                        output[out_key] = {"key": out_key, "label": hollow_list[idx][1], "val": val}
+            except Exception as e:
+                print(f"[BasePlate adapter] Warning: could not add hollow stiffener extra keys: {e}")
 
         # Add column dimensions to output for dynamic sketch drawing
         if hasattr(module, "column_properties") and module.column_properties:

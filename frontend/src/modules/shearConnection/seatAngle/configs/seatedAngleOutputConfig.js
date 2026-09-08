@@ -21,7 +21,7 @@ export const seatedAngleOutputConfig = {
       { key: "SpacingModal_Seated_beam", label: "Bolt Spacing Details" },
     ],
     "Section Details": [
-      // { key: "SectionCapacityModal", label: "Section Capacity" },
+      { key: "SectionCapacityModal", label: "Section Capacity" },
     ],
     "Top Angle": [
       { key: "TopAngle.Designation", label: "Designation" },
@@ -52,8 +52,7 @@ export const seatedAngleOutputConfig = {
     capacity: {
       title: "Capacity Details",
       width: "68%",
-      layout: "capacity-complex",
-      hasImage: false,
+      layout: "seated-angle-capacity-sketch",
       note: "Note: Representative image for Failure Pattern",
     },
     sectionCapacity: {
@@ -186,15 +185,11 @@ export const seatedAngleOutputConfig = {
           props: {
             plateWidth: "SeatedAngle.Width",
             plateHeight: "SeatedAngle.LegLength",
-            rows: "Bolt.Rows_seated_col",
             cols: "Bolt.Cols_seated_col",
             end: "Bolt.EndDist_seated_col",
-            pitch: "Bolt.Pitch_seated_col",
-            gauge: ["Bolt.GaugeCentral_seated_col", "Bolt.Gauge_seated_col"],
+            gauge: "Bolt.GaugeCentral_seated_col",
             edge: "Bolt.EdgeDist_seated_col",
-            holeDiameter: "Bolt.Diameter",
-            angleDesignation: "SeatedAngle.Designation",
-            drawAngleThickness: "left",
+            holeDia: "Bolt.Diameter",
           },
         },
       },
@@ -210,10 +205,6 @@ export const seatedAngleOutputConfig = {
         diagram: {
           props: {
             gauge: "Bolt.GaugeCentral_seated_col",
-            end: "Bolt.EndDist_seated_col",
-            pitch: "Bolt.Pitch_seated_col",
-            rows: "Bolt.Rows_seated_col",
-            cols: "Bolt.Cols_seated_col",
           },
         },
       },

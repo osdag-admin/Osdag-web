@@ -346,6 +346,32 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as e:
         print(f"[EndPlateAdapter.generate_output] Warning: could not add Beam.WebThickness diagram key: {e}")
 
+    # Section-capacity values for the "Section Capacity" popup: desktop's
+    # EndPlateSectionDetails reads these directly off supported_section /
+    # supporting_section attributes (not via any output_values()/capacities()
+    # tuple list), so they are not exposed by the generic flatten loop above.
+    try:
+        supported = getattr(module, "supported_section", None)
+        supporting = getattr(module, "supporting_section", None)
+        shear_yield = getattr(supported, "shear_yielding_capacity", None)
+        tension_yield = getattr(supporting, "tension_yielding_capacity", None)
+        block_shear_axial = getattr(supported, "block_shear_capacity_axial", None)
+
+        extra_section_keys = {
+            "EndPlate.SupportedShearYield": ("Supported Section Shear Yielding Capacity (kN)", shear_yield),
+            "EndPlate.SupportedShearAllowable": ("Supported Section Allowable Shear Capacity (kN)", shear_yield),
+            "EndPlate.SupportingTensionYield": ("Supporting Section Tension Yielding Capacity (kN)", tension_yield),
+            "EndPlate.SupportedBlockShearAxial": ("Section Tension Block Shear Capacity (kN)", block_shear_axial),
+        }
+        for key, (label, raw_val) in extra_section_keys.items():
+            if raw_val is not None:
+                val = round(raw_val / 1000, 2)
+                if hasattr(val, 'item'):
+                    val = val.item()
+                output[key] = {"key": key, "label": label, "val": val}
+    except Exception as e:
+        print(f"[EndPlateAdapter.generate_output] Warning: could not add section-capacity extra keys: {e}")
+
     print(f"[EndPlateAdapter.generate_output] output keys count={len(output)}")
     try:
         logs = list(reversed(logs))

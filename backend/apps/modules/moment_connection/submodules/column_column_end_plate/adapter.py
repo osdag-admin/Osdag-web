@@ -304,6 +304,32 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
                 "val": value
             }
 
+    # Extra keys needed by the frontend spacing diagram. Not exposed via the
+    # standard TextBox flattening above because they'd collide: both
+    # web_bolt_spacing() and flange_bolt_spacing() emit *multiple* rows under
+    # the same shared KEY_OUT_PITCH ('Bolt.Pitch') key (one per bolt gap,
+    # distinguished only by their label, e.g. "Pitch 1-2"), so flattening by
+    # key silently keeps only the last one. Reading the underlying attributes
+    # directly off the already-instantiated module sidesteps that collision.
+    # (Traced c2c_end_plate.py's own drawing formula: every bolt-row gap is
+    # either the regular pitch or, for the single center gap, p_2_web -- and
+    # the flange view's row spacing reuses these same two web-side values,
+    # not a separate flange pitch.)
+    try:
+        extra_keys = {
+            "ColumnEndPlate.Pitch": ("Pitch (regular)", getattr(module, "pitch", None)),
+            "ColumnEndPlate.MidPitch": ("Pitch (center gap)", getattr(module, "p_2_web", None)),
+            "ColumnEndPlate.WebThickness": ("Web Thickness (mm)", getattr(getattr(module, "section", None), "web_thickness", None)),
+            "ColumnEndPlate.FlangeThickness": ("Flange Thickness (mm)", getattr(getattr(module, "section", None), "flange_thickness", None)),
+        }
+        for key, (label, val) in extra_keys.items():
+            if val is not None:
+                if hasattr(val, 'item'):
+                    val = val.item()
+                output[key] = {"key": key, "label": label, "val": val}
+    except Exception as e:
+        logger.warning(f"Could not add extra diagram keys: {e}")
+
     logger.info(f"Output generation completed. Generated {len(output)} output fields and {len(logs)} log messages")
     logger.debug(f"Final logs being returned: {logs}")
     try:

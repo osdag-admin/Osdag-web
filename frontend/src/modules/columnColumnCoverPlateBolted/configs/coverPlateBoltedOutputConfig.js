@@ -64,8 +64,7 @@ export const coverPlateBoltedOutputConfig = {
     capacity: {
       title: "Plate Capacity Details",
       width: "68%",
-      layout: "two-column", // ← Configuration instead of JSX
-      hasImage: true,
+      layout: "plate-fracture-cards",
     },
   },
 
@@ -103,11 +102,11 @@ export const coverPlateBoltedOutputConfig = {
             label: "Edge Distance (mm)",
           },
           {
-            key: "Web_plate.Bolt_Line_web_bolt_capacity",
+            key: "Web_plate.Bolt_OneLine_web_bolt_capacity",
             label: "Number Of Columns (mm)",
           },
           {
-            key: "Web_plate.Bolt_OneLine_web_bolt_capacity",
+            key: "Web_plate.Bolt_Line_web_bolt_capacity",
             label: "Number Of Rows (mm)",
           },
         ],
@@ -116,8 +115,8 @@ export const coverPlateBoltedOutputConfig = {
           props: {
             plateWidth: "Web_Plate.Height (mm)",
             plateHeight: "Web_Plate.Width",
-            rows: "Web_plate.Bolt_OneLine_web_bolt_capacity",
-            cols: "Web_plate.Bolt_Line_web_bolt_capacity",
+            rows: "Web_plate.Bolt_Line_web_bolt_capacity",
+            cols: "Web_plate.Bolt_OneLine_web_bolt_capacity",
             end: "Web_plate.end_dist_provided_web_spacing",
             pitch: "Web_plate.pitch_provided_web_spacing",
             gauge: "Web_plate.gauge_provided_web_spacing",
@@ -157,11 +156,11 @@ export const coverPlateBoltedOutputConfig = {
             label: "Edge Distance (mm)",
           },
           {
-            key: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            key: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
             label: "Number Of Columns (mm)",
           },
           {
-            key: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
+            key: "Flange_plate.Bolt_Line_flange_bolt_capacity",
             label: "Number Of Rows (mm)",
           },
         ],
@@ -170,8 +169,8 @@ export const coverPlateBoltedOutputConfig = {
           props: {
             plateWidth: "Flange_Plate.Width (mm)",
             plateHeight: "flange_plate.Length",
-            rows: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
-            cols: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            rows: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            cols: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
             end: "Flange_plate.end_dist_provided_flange_spacing",
             pitch: "Flange_plate.pitch_provided_flange_spacing",
             gauge: "Flange_plate.gauge_provided_flange_spacing",
@@ -183,34 +182,54 @@ export const coverPlateBoltedOutputConfig = {
     },
 
     capacity: {
-      WebCapacityModal: [
-        {
-          key: "section.Tension_capacity_web_web_capacity",
-          label: "Web Tension Capacity (kN)",
+      WebCapacityModal: {
+        fields: [
+          {
+            key: "section.Tension_capacity_web_web_capacity",
+            label: "Web Tension Capacity (kN)",
+          },
+          {
+            key: "Web_plate.capacity_web_capacity",
+            label: "Web Plate Tension Capacity (kN)",
+          },
+          {
+            key: "web_plate.shear_capacity_web_plate_web_capacity",
+            label: "Web Plate Shear Capacity (kN)",
+          },
+          {
+            key: "Web_Plate.MomDemand_web_capacity",
+            label: "Web Moment Demand (kNm)",
+          },
+        ],
+        diagram: {
+          props: {
+            rows: "Web_plate.Bolt_OneLine_web_bolt_capacity",
+            cols: "Web_plate.Bolt_Line_web_bolt_capacity",
+            orientation: "portrait",
+            variant: "web",
+          },
         },
-        {
-          key: "Web_plate.capacity_web_capacity",
-          label: "Web Plate Tension Capacity (kN)",
+      },
+      FlangeCapacityModal: {
+        fields: [
+          {
+            key: "Section.flange_capacity_flange_capacity",
+            label: "Flange Tension Capacity (kN)",
+          },
+          {
+            key: "flange_plate.tension_capacity_flange_plate_flange_capacity",
+            label: "Flange Plate Tension Capacity (kN)",
+          },
+        ],
+        diagram: {
+          props: {
+            rows: "Flange_plate.Bolt_OneLine_flange_bolt_capacity",
+            cols: "Flange_plate.Bolt_Line_flange_bolt_capacity",
+            orientation: "portrait",
+            variant: "flange",
+          },
         },
-        {
-          key: "web_plate.shear_capacity_web_plate_web_capacity",
-          label: "Web Plate Shear Capacity (kN)",
-        },
-        {
-          key: "Web_Plate.MomDemand_web_capacity",
-          label: "Web Moment Demand (kNm)",
-        },
-      ],
-      FlangeCapacityModal: [
-        {
-          key: "Section.flange_capacity_flange_capacity",
-          label: "Flange Tension Capacity (kN)",
-        },
-        {
-          key: "flange_plate.tension_capacity_flange_plate_flange_capacity",
-          label: "Flange Plate Tension Capacity (kN)",
-        },
-      ],
+      },
     },
 
     details: {

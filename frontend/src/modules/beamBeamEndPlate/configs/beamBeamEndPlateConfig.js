@@ -112,7 +112,12 @@ export const beamBeamEndPlateConfig = {
         {
           key: "endPlateType",
           label: "End Plate Type",
-          type: "endPlateSelect"
+          type: "endPlateSelect",
+          options: [
+            "Flushed - Reversible Moment",
+            "Extended One Way - Irreversible Moment",
+            "Extended Both Ways - Reversible Moment",
+          ]
         },
         {
           key: "supported_designation",

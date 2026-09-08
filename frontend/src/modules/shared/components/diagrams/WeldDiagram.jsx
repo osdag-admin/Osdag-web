@@ -122,7 +122,7 @@ const WeldDiagram = ({
         y={oy}
         width={W}
         height={H}
-        fill="#e8e8d0"
+        fill="#fff"
         stroke="#333"
         strokeWidth="2"
       />

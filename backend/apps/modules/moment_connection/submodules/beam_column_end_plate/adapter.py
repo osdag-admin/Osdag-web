@@ -366,8 +366,25 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
                     "val": value
                 }
         
+        # Extra keys needed by the frontend bolt-pattern diagram (not exposed
+        # via output_values()/detailing() as TextBox rows on osdag_core's side)
+        try:
+            extra_keys = {
+                "Beam.WebThickness":    ("Beam Web Thickness (mm)",    getattr(module, "beam_tw", None)),
+                "Beam.FlangeThickness": ("Beam Flange Thickness (mm)", getattr(module, "beam_tf", None)),
+                "EndPlateType":         ("End Plate Type",             getattr(module, "endplate_type", None)),
+                "Detailing.MiddleBolts": ("Middle Bolt Row (0/1)",     getattr(module, "bolt_row_web", None)),
+            }
+            for key, (label, val) in extra_keys.items():
+                if val is not None:
+                    if hasattr(val, 'item'):
+                        val = val.item()
+                    output[key] = {"key": key, "label": label, "val": val}
+        except Exception as e:
+            logger.warning(f"Could not add extra diagram keys: {e}")
+
         logger.info(f"Output generation completed. Generated {len(output)} output fields and {len(logs)} log messages")
-        
+
     except Exception as e:
         logger.error(f"Error in generate_output: {str(e)}")
         logger.error(traceback.format_exc())

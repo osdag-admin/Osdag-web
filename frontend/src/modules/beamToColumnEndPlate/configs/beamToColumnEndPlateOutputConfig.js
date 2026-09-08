@@ -23,7 +23,8 @@ export const beamToColumnEndPlateOutputConfig = {
       { key: "Detailing.Cross-centre Gauge Distance", label: "Cross-centre Gauge (mm)" },
       { key: "Detailing.EndDistanceOut", label: "End Distance (mm)" },
       { key: "Detailing.EdgeDistanceOut", label: "Edge Distance (mm)" },
-      { key: "DetailingModal", label: "Typical Detailing" }
+      { key: "DetailingModal", label: "Typical Detailing" },
+      { key: "BoltPatternModal", label: "Bolt Pattern" }
     ],
     "End Plate": [
       { key: "Plate.Height", label: "Height (mm)" },
@@ -59,7 +60,8 @@ export const beamToColumnEndPlateOutputConfig = {
     DetailingModal: { type: "detailing", buttonText: "Details" },
     ContinuityPlateModal: { type: "details", buttonText: "Details" },
     WebStiffenerModal: { type: "details", buttonText: "Details" },
-    SketchFlangeModal: { type: "groove", buttonText: "Details" }
+    SketchFlangeModal: { type: "groove", buttonText: "Details" },
+    BoltPatternModal: { type: "boltPattern", buttonText: "Details" }
   },
   modalTypes: {
     details: {
@@ -81,6 +83,12 @@ export const beamToColumnEndPlateOutputConfig = {
       layout: "image-only",
       hasImage: true,
       imageType: "groove"
+    },
+    boltPattern: {
+      title: "Bolt Pattern Details",
+      width: "68%",
+      layout: "beamcolumn-endplate-diagram",
+      note: "Traced from the desktop's actual bolt-pattern drawing for the selected End Plate Type, not a generic grid."
     }
   },
 
@@ -98,6 +106,42 @@ export const beamToColumnEndPlateOutputConfig = {
         { key: "WebStiffener.Width", label: "Width (mm)" },
         { key: "WebStiffener.Thickness", label: "Thickness (mm)" }
       ]
+    },
+
+    boltPattern: {
+      BoltPatternModal: {
+        fields: [
+          { key: "Plate.Width", label: "Plate Width (mm)" },
+          { key: "Plate.Height", label: "Plate Height (mm)" },
+          { key: "Detailing.No. of Rows", label: "No. of Rows" },
+          { key: "Detailing.No. of Columns", label: "No. of Columns" },
+          { key: "Detailing.PitchDistanceOut", label: "Pitch Distance (mm)" },
+          { key: "Detailing.GaugeDistanceOut", label: "Gauge Distance (mm)" },
+          { key: "Detailing.Cross-centre Gauge Distance", label: "Cross-centre Gauge (mm)" },
+          { key: "Detailing.EndDistanceOut", label: "End Distance (mm)" },
+          { key: "Detailing.EdgeDistanceOut", label: "Edge Distance (mm)" }
+        ],
+        diagram: {
+          props: {
+            endplateType: "EndPlateType",
+            plateWidth: "Plate.Width",
+            plateHeight: "Plate.Height",
+            rows: "Detailing.No. of Rows",
+            cols: "Detailing.No. of Columns",
+            pitch: "Detailing.PitchDistanceOut",
+            gauge: "Detailing.GaugeDistanceOut",
+            crossGauge: "Detailing.Cross-centre Gauge Distance",
+            end: "Detailing.EndDistanceOut",
+            edge: "Detailing.EdgeDistanceOut",
+            holeDia: "Bolt.Diameter",
+            webThickness: "Beam.WebThickness",
+            flangeThickness: "Beam.FlangeThickness",
+            stiffenerLength: "Stiffener.Length",
+            stiffenerThickness: "Stiffener.Thickness",
+            middleBolts: "Detailing.MiddleBolts"
+          }
+        }
+      }
     }
   }
 };
