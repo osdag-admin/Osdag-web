@@ -89,25 +89,27 @@ def healthcheck_task():
 
 
 @shared_task(bind=True)
-def run_design_calculation_task(self, module_name: str, submodule_slug: str, inputs: dict, project_id=None, user_email=None):
+def run_design_calculation_task(self, module_name: str, submodule_slug: str, inputs: dict, project_id=None, user_email=None, user_id=None):
     """
     Celery task to run CPU-bound connection design calculations.
     """
     logger.info(f"Starting calculation task: {module_name}/{submodule_slug} (Task ID: {self.request.id})")
-    
+
     ServiceClass = get_service_class(module_name, submodule_slug)
     if not ServiceClass:
         raise ValueError(f"Service class for {module_name}/{submodule_slug} not found")
-        
+
     from apps.core.main_registry import WebMainRegistry
+    from apps.core.osdag_overrides import user_rows
     WebMainRegistry.start_recording()
     try:
-        result = ServiceClass.calculate(
-            inputs=inputs,
-            request=None,
-            project_id=project_id,
-            user_email=user_email
-        )
+        with user_rows(user_id):
+            result = ServiceClass.calculate(
+                inputs=inputs,
+                request=None,
+                project_id=project_id,
+                user_email=user_email
+            )
     finally:
         instances = WebMainRegistry.stop_recording()
         
@@ -159,39 +161,43 @@ def run_design_calculation_task(self, module_name: str, submodule_slug: str, inp
 
 
 @shared_task(bind=True)
-def run_cad_generation_task(self, module_name: str, submodule_slug: str, inputs: dict, sections: list):
+def run_cad_generation_task(self, module_name: str, submodule_slug: str, inputs: dict, sections: list, user_id=None):
     """
     Celery task to generate CAD models.
     """
     logger.info(f"Starting CAD generation task: {module_name}/{submodule_slug} (Task ID: {self.request.id})")
-    
+
     ServiceClass = get_service_class(module_name, submodule_slug)
     if not ServiceClass:
         raise ValueError(f"Service class for {module_name}/{submodule_slug} not found")
-        
+
     create_from_input_func = get_create_from_input_func(module_name, submodule_slug)
-    
+
     from apps.core.utils.cad_helpers import generate_cad_models
-    result = generate_cad_models(
-        service_class=ServiceClass,
-        inputs=inputs,
-        sections=sections,
-        session_id=self.request.id,
-        create_from_input_func=create_from_input_func
-    )
-    
+    from apps.core.osdag_overrides import user_rows
+    with user_rows(user_id):
+        result = generate_cad_models(
+            service_class=ServiceClass,
+            inputs=inputs,
+            sections=sections,
+            session_id=self.request.id,
+            create_from_input_func=create_from_input_func
+        )
+
     return result
 
 
 @shared_task(bind=True)
-def run_report_generation_task(self, mapped_data: dict):
+def run_report_generation_task(self, mapped_data: dict, user_id=None):
     """
     Celery task to build initial reports.
     """
     logger.info(f"Starting report generation task (Task ID: {self.request.id})")
-    
+
     from apps.core.api.design.report_customization_api import generate_initial_report_core
-    payload, status_code = generate_initial_report_core(mapped_data)
+    from apps.core.osdag_overrides import user_rows
+    with user_rows(user_id):
+        payload, status_code = generate_initial_report_core(mapped_data)
     
     return {
         "payload": payload,

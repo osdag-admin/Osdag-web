@@ -152,6 +152,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from apps.core.tasks import run_design_calculation_task, run_cad_generation_task, run_report_generation_task
 from apps.core.utils.cad_helpers import get_default_sections
+from apps.core.osdag_overrides import user_id_from_request
 
 def trigger_async_design(module_name: str, submodule_slug: str, ServiceClass, request) -> Response:
     """
@@ -176,7 +177,8 @@ def trigger_async_design(module_name: str, submodule_slug: str, ServiceClass, re
         submodule_slug=submodule_slug,
         inputs=inputs,
         project_id=project_id if not context.get('is_guest') else None,
-        user_email=context.get('user_email')
+        user_email=context.get('user_email'),
+        user_id=user_id_from_request(request),
     )
     
     response_data = {
@@ -217,7 +219,8 @@ def trigger_async_cad(module_name: str, submodule_slug: str, ServiceClass, reque
         module_name=module_name,
         submodule_slug=submodule_slug,
         inputs=inputs,
-        sections=sections
+        sections=sections,
+        user_id=user_id_from_request(request),
     )
     
     return Response({
@@ -263,7 +266,7 @@ def trigger_async_report(module_name: str, submodule_slug: str, module_id_map: d
     if "images" in request.data:
         mapped_data["images"] = request.data.get("images")
 
-    task = run_report_generation_task.delay(mapped_data)
+    task = run_report_generation_task.delay(mapped_data, user_id=user_id_from_request(request))
     
     return Response({
         "success": True,

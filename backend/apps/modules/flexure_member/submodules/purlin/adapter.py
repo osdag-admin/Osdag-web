@@ -70,8 +70,7 @@ def _validate_and_fix_sections(sec_profile: str, sec_size: list) -> tuple:
     This prevents 'NoneType' crashes inside ISection when a wrong profile type is
     sent from the frontend (e.g., 'JB 150' with profile 'Channels').
     """
-    import sqlite3
-    from osdag_core.Common import PATH_TO_DATABASE, VALUES_SECTYPE
+    from osdag_core.Common import VALUES_SECTYPE, fetch_row
 
     # Map sec_profile string to the DB table name to validate against
     CHANNEL_PROFILE = VALUES_SECTYPE[6]   # 'Channels'
@@ -87,9 +86,6 @@ def _validate_and_fix_sections(sec_profile: str, sec_size: list) -> tuple:
         return sec_profile, sec_size
 
     try:
-        conn = sqlite3.connect(str(PATH_TO_DATABASE))
-        cur = conn.cursor()
-
         validated = []
         corrected_profile = sec_profile
 
@@ -97,30 +93,18 @@ def _validate_and_fix_sections(sec_profile: str, sec_size: list) -> tuple:
             designation = designation.strip("'")
 
             # Check in the declared table
-            cur.execute(f"SELECT Designation FROM {target_table} WHERE Designation = ?", (designation,))
-            if cur.fetchone():
+            if fetch_row(target_table, designation):
                 validated.append(designation)
                 continue
 
-            # Not found — check Beams
-            cur.execute("SELECT Designation FROM Beams WHERE Designation = ?", (designation,))
-            if cur.fetchone():
-                print(f"[purlin adapter] '{designation}' not in '{target_table}', correcting profile to '{ISEC_PROFILE}'")
-                corrected_profile = ISEC_PROFILE
-                validated.append(designation)
-                continue
-
-            # Check Columns
-            cur.execute("SELECT Designation FROM Columns WHERE Designation = ?", (designation,))
-            if cur.fetchone():
+            # Not found — check Beams, then Columns
+            if fetch_row("Beams", designation) or fetch_row("Columns", designation):
                 print(f"[purlin adapter] '{designation}' not in '{target_table}', correcting profile to '{ISEC_PROFILE}'")
                 corrected_profile = ISEC_PROFILE
                 validated.append(designation)
                 continue
 
             print(f"[purlin adapter] WARNING: '{designation}' not found in any known table. Skipping.")
-
-        conn.close()
 
         if not validated:
             print(f"[purlin adapter] No valid sections found after validation; keeping originals.")

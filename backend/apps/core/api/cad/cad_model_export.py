@@ -20,6 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 from apps.core.module_finder import get_module_api
+from apps.core.osdag_overrides import user_id_from_request, user_rows
 from .cad_module_aliases import resolve_module_id
 
 
@@ -52,6 +53,11 @@ class CADExport(View):
         "format": "step" | "iges" | "brep" | "stl" | "ifc"
       }
     """
+
+    def dispatch(self, request, *args, **kwargs):
+        # Make the requesting user's custom sections/materials visible to osdag_core.
+        with user_rows(user_id_from_request(request)):
+            return super().dispatch(request, *args, **kwargs)
 
     def post(self, request: HttpRequest):
         try:

@@ -12,6 +12,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from apps.core.module_finder import developed_modules, get_module_api
+from apps.core.osdag_overrides import user_id_from_request, user_rows
 import shutil
 import json
 import os
@@ -30,6 +31,11 @@ class CADGeneration(View):
             Accepts POST requests with input data and module information.
             Generates CAD models directly from input data without requiring sessions.
     """
+
+    def dispatch(self, request, *args, **kwargs):
+        # Make the requesting user's custom sections/materials visible to osdag_core.
+        with user_rows(user_id_from_request(request)):
+            return super().dispatch(request, *args, **kwargs)
 
     def post(self, request: HttpRequest):
         try:

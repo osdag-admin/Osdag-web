@@ -1258,7 +1258,7 @@ class ISection(Material):
 
     def __init__(self, designation, material_grade="", table=""):
         if table == "":
-            table = "Beams" if designation in connectdb("Beams", "popup") else "Columns"
+            table = "Beams and Columns"
         if table == "Channels":
             self.connect_to_database_update_other_attributes_channels(table, designation, material_grade)
         elif table == "Beams and Columns":
@@ -1304,18 +1304,11 @@ class ISection(Material):
         # self.member_block_eqn = 0.0
 
     def connect_to_database_update_other_attributes(self, table, designation, material_grade="", tables_combined=False):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
         if tables_combined:
-            db_query = f"SELECT * FROM Beams WHERE Designation = ? UNION SELECT * FROM Columns WHERE Designation = ?"
-            cur = conn.cursor()
-            cur.execute(db_query, (designation, designation))
+            row = fetch_beam_or_column(designation)
         else:
-            db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
-            cur = conn.cursor()
-            cur.execute(db_query, (designation,))
-        row = cur.fetchone()
+            row = fetch_row(table, designation)
         if row is None:
-            conn.close()
             raise ValueError(
                 f"Section '{designation}' not found in "
                 f"{'Beams/Columns' if tables_combined else table} table of the database."
@@ -1366,16 +1359,9 @@ class ISection(Material):
         self.source = row[21]
         self.type = 'Rolled' if row[22] is None else row[22]
 
-        conn.close()
-
     def connect_to_database_update_other_attributes_channels(self, table, designation, material_grade=""):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
-        db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
-        cur = conn.cursor()
-        cur.execute(db_query, (designation,))
-        row = cur.fetchone()
+        row = fetch_row(table, designation)
         if row is None:
-            conn.close()
             raise ValueError(
                 f"Section '{designation}' not found in '{table}' table of the database."
             )
@@ -1425,8 +1411,6 @@ class ISection(Material):
             if row[20] is None else round(row[21] * 10 ** 6, 2)
         self.source = row[22]
         self.type = 'Rolled' if row[23] is None else row[23]
-
-        conn.close()
 
     def tension_member_yielding(self, A_g, F_y):
         "design strength of members under axial tension,T_dg,as governed by yielding of gross section"
@@ -1669,11 +1653,7 @@ class Channel(Material):
         # self.length =0.0
 
     def connect_to_database_update_other_attributes(self, designation, material_grade):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
-        db_query = "SELECT * FROM Channels WHERE Designation = ?"
-        cur = conn.cursor()
-        cur.execute(db_query, (designation,))
-        row = cur.fetchone()
+        row = fetch_row("Channels", designation)
         self.designation = designation
         self.mass = row[2]
         self.area = row[3] * 100
@@ -1699,8 +1679,6 @@ class Channel(Material):
         self.Iw =  row[21] * 10 ** 6
         self.source = row[22]
         self.type = 'Rolled' if row[23] is None else row[23]
-
-        conn.close()
 
     def min_plate_height(self):
         return 0.6 * self.depth
@@ -1906,13 +1884,7 @@ class Angle(Material):
         # self.length = 0.0
 
     def connect_to_database_update_other_attributes(self, designation, material_grade=""):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
-        # db_query = "SELECT AXB, t FROM Angles WHERE Designation = ?"
-        db_query = "SELECT * FROM Angles WHERE Designation = ?"
-        cur = conn.cursor()
-
-        cur.execute(db_query, (designation,))
-        row = cur.fetchone()
+        row = fetch_row("Angles", designation)
 
         self.mass = row[2]
         self.area = row[3] * 100
@@ -1949,7 +1921,6 @@ class Angle(Material):
         self.It = row[24] * 10 ** 4
         self.source = row[25]
         self.type = 'Rolled' if row[26] is None else row[26]
-        conn.close()
 
     def angle_weld_length(self, weld_strength, depth_weld, force, C, depth):
 
@@ -2186,11 +2157,7 @@ class HollowSection(Material):
         self.type = "Rolled"
 
     def connect_to_database_update_other_attributes(self, table, designation, material_grade=""):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
-        db_query = "SELECT * FROM " + table + " WHERE Designation = ?"
-        cur = conn.cursor()
-        cur.execute(db_query, (designation,))
-        row = cur.fetchone()
+        row = fetch_row(table, designation)
         self.mass = row[5]  # kg/m
         self.area = row[6] * 100  # mm^2
         self.depth = row[2]  # mm
@@ -2210,7 +2177,6 @@ class HollowSection(Material):
         self.toe_radius = 0.0
         self.flange_slope = 'N/A'
         self.source = row[15]  # IS 4923:1997
-        conn.close()
 
 
 class SHS(HollowSection):
@@ -2231,11 +2197,7 @@ class CHS(Material):
         self.type = "Rolled"
 
     def connect_to_database_update_other_attributes(self, designation, material_grade=""):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
-        db_query = "SELECT * FROM CHS WHERE Designation = ?"
-        cur = conn.cursor()
-        cur.execute(db_query, (designation,))
-        row = cur.fetchone()
+        row = fetch_row("CHS", designation)
         self.mass = row[5]  # kg/m
         self.area = row[6] * 100  # mm^2
         self.nominal_bore = row[2]  # mm
@@ -2279,5 +2241,3 @@ class CHS(Material):
         self.rad_of_gy_y = self.rad_of_gy
         self.flange_slope = 'N/A'
         self.source = row[14]  # IS 1161:2014
-
-        conn.close()

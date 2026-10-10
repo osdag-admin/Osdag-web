@@ -566,19 +566,9 @@ class Connection(Main):
             if KEY_CONN in design_dictionary and design_dictionary[KEY_CONN] == VALUES_CONN_2[0]:
                 primary = design_dictionary[KEY_SUPTNGSEC]
                 secondary = design_dictionary[KEY_SUPTDSEC]
-                conn = sqlite3.connect(PATH_TO_DATABASE)
-                cursor = conn.execute("SELECT D FROM BEAMS WHERE Designation = ( ? ) UNION SELECT D FROM COLUMNS WHERE Designation = ( ? )", (primary, primary))
-                lst = []
-                rows = cursor.fetchall()
-                for row in rows:
-                    lst.append(row)
-                p_val = lst[0][0]
-                cursor2 = conn.execute("SELECT D FROM BEAMS WHERE Designation = ( ? ) UNION SELECT D FROM COLUMNS WHERE Designation = ( ? )", (secondary, secondary))
-                lst1 = []
-                rows1 = cursor2.fetchall()
-                for row1 in rows1:
-                    lst1.append(row1)
-                s_val = lst1[0][0]
+                # Beams/Columns row layout: [4]=D, [5]=B, [7]=T, [9]=R1, [10]=R2
+                p_val = fetch_beam_or_column(primary)[4]
+                s_val = fetch_beam_or_column(secondary)[4]
                 if p_val <= s_val:
                     error = "Secondary beam depth is higher than clear depth of primary beam web " + "\n" + "(No provision in Osdag till now)"
                     all_errors.append(error)
@@ -588,14 +578,9 @@ class Connection(Main):
             elif KEY_CONN in design_dictionary and design_dictionary[KEY_CONN] == VALUES_CONN_1[1]:
                 primary = design_dictionary[KEY_SUPTNGSEC]
                 secondary = design_dictionary[KEY_SUPTDSEC]
-                conn = sqlite3.connect(PATH_TO_DATABASE)
-                cursor = conn.execute("SELECT D, T, R1, R2 FROM COLUMNS WHERE Designation = ( ? ) UNION SELECT D, T, R1, R2 FROM BEAMS WHERE Designation = ( ? ) ", (primary,primary))
-                p_beam_details = cursor.fetchone()
-                p_val = p_beam_details[0] - 2*p_beam_details[1] - p_beam_details[2] - p_beam_details[3]
-                cursor2 = conn.execute("SELECT B FROM BEAMS WHERE Designation = ( ? ) UNION SELECT B FROM COLUMNS WHERE Designation = ( ? )", (secondary,secondary))
-
-                s_beam_details = cursor2.fetchone()
-                s_val = s_beam_details[0]
+                p_row = fetch_row("Columns", primary) or fetch_row("Beams", primary)
+                p_val = p_row[4] - 2*p_row[7] - p_row[9] - p_row[10]
+                s_val = fetch_beam_or_column(secondary)[5]
                 #print(p_val,s_val)
                 if p_val <= s_val:
                     error = "Secondary beam width is higher than clear depth of primary column web " + "\n" + "(No provision in Osdag till now)"

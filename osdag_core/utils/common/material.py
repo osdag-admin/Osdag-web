@@ -33,11 +33,7 @@ class Material(object):
         return repr
 
     def connect_to_database_to_get_fy_fu(self, grade, thickness):
-        conn = sqlite3.connect(PATH_TO_DATABASE)
-        db_query = "SELECT * FROM Material WHERE Grade = ?"
-        cur = conn.cursor()
-        cur.execute(db_query, (grade,))
-        row = cur.fetchone()
+        row = fetch_row("Material", grade, key="Grade")
         if row:
             self.fy_20 = row[1]
             self.fy_20_40 = row[2]
@@ -52,7 +48,6 @@ class Material(object):
             else:
                 self.fy = min(self.fy_20, self.fy_20_40, self.fy_40)
             self.fu = row[4]
-        conn.close()
 
     # def tension_member_yielding(self, A_g, F_y):
     #     "design strength of members under axial tension,T_dg,as governed by yielding of gross section"
