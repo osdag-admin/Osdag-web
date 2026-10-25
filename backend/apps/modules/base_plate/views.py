@@ -17,6 +17,7 @@ from apps.core.utils.module_helpers import (
 )
 from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 
+from . import MODULE_ID
 from .service import BasePlateService
 from .adapter import create_from_input
 from apps.sections.options_merge import merge_user_sections_into_options
@@ -94,3 +95,11 @@ class BasePlateViewSet(viewsets.ViewSet):
         Asynchronously runs CAD generation task.
         """
         return trigger_async_cad('base-plate', 'base-plate', BasePlateService, request)
+
+    @action(detail=False, methods=['post'], url_path='report/generate-initial')
+    def report_generate_initial(self, request):
+        """
+        POST /api/modules/base-plate/report/generate-initial/
+        Asynchronously runs LaTeX report generation task.
+        """
+        return trigger_async_report('base-plate', 'base-plate', {'base-plate': MODULE_ID}, request)
