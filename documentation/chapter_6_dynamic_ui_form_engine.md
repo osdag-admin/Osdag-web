@@ -258,7 +258,8 @@ The script imports `osdag_core.Common`, so run it in the backend environment (se
 | `title` | Page title passed to `EngineeringModule`. |
 | `load` | Lazy imports of the module's input config and output config, so each module is its own chunk. [ModulePage.jsx](../frontend/src/modules/ModulePage.jsx) renders `EngineeringModule` from the result. |
 | `apiSlug` | Backend URL slug for options, design, CAD and report calls (omitted when the module id is the slug). |
-| `menu` | Optional `{ tab, section, label, img }` placing the module on a selection page. Entries without `menu` (such as Purlin) have a route but no card. |
+| `menu` | Optional `{ tab, section, label, img }` placing the module on a selection page. Entries without `menu` have a route but no card. |
+| `hidden` | Optional. `true` leaves the entry out of `MODULES` and `findModule`, so it has no route or card (Purlin, which the desktop menu does not offer either). |
 | `designPref` | Optional per-module design-preference data, such as the fin plate connectivity names. |
 
 `MENU_GROUPS` in the same file lists the tabs and sections of each selection page, including entries marked `status: "development"` (Truss, PEB). Helpers: `findModule(id)`, `getModuleRoute(id)`, `getModuleSlug(id)`, `getModuleDesignPref(id)`, `loadModuleConfigs(id)` and `getMenuSections(tabKey)`. Lookups use the exact id; there are no aliases.

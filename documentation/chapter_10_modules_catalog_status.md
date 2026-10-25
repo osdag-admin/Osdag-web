@@ -48,9 +48,8 @@ Certain connection submodules are listed in `MENU_GROUPS` in [registry.js](../fr
 * **Truss Connections**: The `"Truss"` tab under the Connections category.
 * **Pre-Engineered Buildings (PEB)**: The `"PEB"` section in the Moment Connections tab.
 
-### 2. Route-Only Modules
-* **Purlin**: `/design/flexure/purlin` is a registry entry that points to a backend module adapter (`apps.modules.flexure_member.submodules.purlin`), but the entry has no `menu` field, so there is no homepage card for it.
-* **Struts in Trusses**: `/design/compression-member/struts_in_trusses` is a registry entry without a `menu` field. It has no `osdag_core` module name, so its id is `Compression-Member-Design`, the value its config and the backend route already use.
+### 2. Hidden Modules
+* **Purlin**: The desktop menu does not offer Purlin, so the registry entry is marked `hidden: true` in [registry.js](../frontend/src/modules/registry.js). A hidden entry is left out of `MODULES` and `findModule`: it gets no route, no homepage card, and an `.osi` file for it is rejected as unsupported. Its frontend configs and the backend adapter (`apps.modules.flexure_member.submodules.purlin`, served at `flexure-member/purlin`) stay in place; removing `hidden` and adding a `menu` field enables it.
 
 ### 3. Backend-Only Adapters (Omitted from UI)
 * **Cantilever Connection (Shear)**: The directory `apps.modules.shear_connection.submodules.cantilever` registers a backend adapter (`adapter.py`) containing design validation, output generation, and CAD compilation code, but lacks a corresponding frontend configuration card or router mapping.

@@ -78,7 +78,7 @@ Welcome to the comprehensive Osdag-Web developer documentation. This index serve
 
 ### 10. [Chapter 10: Modules Catalog & Status Directory](./chapter_10_modules_catalog_status.md)
 * **10.1 Active Modules Directory:** Operational catalog details, module ids, routes, and adapter mappings.
-* **10.2 Under-Development & Hidden Modules Directory:** Analysis of disabled tabs, missing routes, and hidden backend-only adapters.
+* **10.2 Under-Development & Hidden Modules Directory:** Analysis of disabled tabs, hidden modules, and backend-only adapters.
 * **10.3 Backend Adapter & Auto-Discovery Registry:** Auto-discovery logic (`module_finder.py`), `MODULE_ID` from `Common.py`, adapter interfaces, and legacy fallback registries.
 * **10.4 Observations & Areas of Improvement:** Hardcoded UI status flags and route configuration mismatches.
 
