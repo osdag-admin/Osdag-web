@@ -1,5 +1,4 @@
 """
 Compression Member Module
+Parent module for compression member design calculations
 """
-MODULE_ID = 'Compression-Member'
-from .service import CompressionMemberService as Service

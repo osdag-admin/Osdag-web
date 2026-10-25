@@ -48,20 +48,12 @@ class CompressionMemberViewSet(viewsets.ViewSet):
     @staticmethod
     def _normalize_slug(raw_slug: str) -> str:
         """
-        Accept URL slugs written with underscores.
-        Example inputs:
-          - 'struts_bolted' -> 'struts-bolted'
-          - 'Compression-Member-Design' -> 'struts-bolted' (the struts in trusses page)
+        Accept URL slugs written with underscores, e.g. 'struts_bolted' -> 'struts-bolted'.
         """
         if not raw_slug:
             return raw_slug
-        # Convert underscores to hyphens (URL format to registry format)
-        normalized = raw_slug.replace('_', '-').lower()
-        module_id_map = {
-            'compression-member-design': 'struts-bolted',
-        }
-        return module_id_map.get(normalized, normalized)
-    
+        return raw_slug.replace('_', '-').lower()
+
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/design')
     def design(self, request, submodule_slug=None):
         """

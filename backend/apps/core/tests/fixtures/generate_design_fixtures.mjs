@@ -48,7 +48,6 @@ const CONFIG_FILES = {
   ccCoverBolted: ['columnColumnCoverPlateBolted/configs/coverPlateBoltedConfig.js', 'coverPlateBoltedConfig'],
   ccCoverWelded: ['columnColumnCoverPlateWelded/configs/coverPlateWeldedConfig.js', 'coverPlateWeldedConfig'],
   columnColumnEndPlateConfig: 'columnColumnEndPlate/configs/columnColumnEndPlateConfig.js',
-  compressionMemberConfig: 'compressionMember/configs/compressionMemberConfig.js',
   axiallyLoadedColumnConfig: 'compressionMember/configs/axiallyLoadedColumnConfig.js',
   strutsBoltedConfig: 'compressionMember/configs/strutsBoltedConfig.js',
   strutsWeldedConfig: 'compressionMember/configs/strutsWeldedConfig.js',
@@ -129,7 +128,6 @@ const LISTS = {
   tensionWelded: (c) => ({ materialList: c.materialList, angleList: c.angles, channelList: c.channels, thicknessList: THICKNESS }),
   strutsBolted: (c) => ({ ...LISTS.tensionBolted(c) }),
   strutsWelded: (c) => ({ ...LISTS.tensionWelded(c) }),
-  compressionParent: (c) => ({ materialList: c.materialList, angleList: c.angles }),
   axiallyLoaded: (c) => ({ materialList: c.materialList, beamList: c.beams, columnList: c.columns, rhsList: c.rhs, shsList: c.shs, chsList: c.chs, angleList: c.angles, channelList: c.channels, endConditionList: ['Fixed', 'Free', 'Hinged', 'Roller'] }),
   flexure: (c) => ({ materialList: c.materialList, beamList: c.beams, columnList: c.columns }),
   plateGirder: (c) => ({ materialList: c.materialList, thicknessList: PG_THICKNESS, stiffenerThicknessList: PG_STIFFENER_THICKNESS }),
@@ -185,7 +183,6 @@ const MODULES = [
   { slug: 'simple_connection__butt_joint_bolted', cfg: 'buttJointBoltedConfig', lists: 'simpleBolted', fill: { plate1_thickness: '10', plate2_thickness: '12' }, custom: { bolt_diameter: ['16', '20'], bolt_grade: ['8.8', '10.9'] } },
   { slug: 'simple_connection__butt_joint_welded', cfg: 'buttJointWeldedConfig', lists: 'simpleWelded', fill: { plate1_thickness: '10', plate2_thickness: '12' }, custom: { weld_size: ['6', '8'] } },
   // ----- compression member -----
-  { slug: 'compression_member', cfg: 'compressionMemberConfig', lists: 'compressionParent', custom: { section_designation: ['50 x 50 x 6', '60 x 60 x 6'] } },
   { slug: 'compression_member__axially_loaded_column', cfg: 'axiallyLoadedColumnConfig', lists: 'axiallyLoaded', custom: { section_designation: ['MB 300', 'MB 350'] } },
   { slug: 'compression_member__struts_bolted', cfg: 'strutsBoltedConfig', lists: 'strutsBolted', custom: { ...BOLT_CUSTOM, section_designation: ['50 x 50 x 6', '60 x 60 x 6'] } },
   { slug: 'compression_member__struts_welded', cfg: 'strutsWeldedConfig', lists: 'strutsWelded', custom: { plate_thickness: ['10', '12', '16'], section_designation: ['50 x 50 x 6', '60 x 60 x 6'] } },

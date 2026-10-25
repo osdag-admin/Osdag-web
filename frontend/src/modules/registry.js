@@ -34,10 +34,6 @@ import {
   KEY_DISP_PLATE_GIRDER_WELDED,
 } from "../constants/generated/coreKeys";
 
-// The struts-in-trusses page has no osdag_core module name; this is the id its
-// config and the backend route already use.
-const STRUTS_IN_TRUSSES = "Compression-Member-Design";
-
 // Resolves a module's input config and output config from two lazy imports, so
 // each module stays in its own chunk.
 const loadConfigs = async (configImport, configName, outputImport, outputName) => {
@@ -357,15 +353,6 @@ export const MODULES = [
     load: () => loadConfigs(
       import("./compressionMember/configs/axiallyLoadedColumnConfig"), "axiallyLoadedColumnConfig",
       import("./compressionMember/configs/axiallyLoadedColumnOutputConfig"), "axiallyLoadedColumnOutputConfig",
-    ),
-  },
-  {
-    id: STRUTS_IN_TRUSSES,
-    path: "/design/compression-member/struts_in_trusses",
-    title: UI_STRINGS.COMPRESSION_MEMBER_STRUTS,
-    load: () => loadConfigs(
-      import("./compressionMember/configs/compressionMemberConfig"), "compressionMemberConfig",
-      import("./compressionMember/configs/compressionMemberOutputConfig"), "compressionMemberOutputConfig",
     ),
   },
 

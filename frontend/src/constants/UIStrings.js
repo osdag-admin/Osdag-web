@@ -88,7 +88,6 @@ export const UI_STRINGS = {
   COVER_PLATE_WELDED: "Cover Plate — Welded",
   STRUTS_BOLTED_TO_END_GUSSET: "Struts Bolted to End Gusset",
   STRUTS_WELDED_TO_END_GUSSET: "Struts Welded to End Gusset",
-  COMPRESSION_MEMBER_STRUTS: "Compression Member (Struts in Trusses)",
   AXIALLY_LOADED_COLUMN: "Axially Loaded Column",
   BUTT_JOINT_BOLTED: "Butt Joint — Bolted",
   BUTT_JOINT_WELDED: "Butt Joint — Welded",

@@ -4273,7 +4273,6 @@ class CommonDesignLogic(object):
             final_model = self.ColObj
 
         elif self.mainmodule in (
-            'Struts in Trusses',
             KEY_DISP_STRUT_BOLTED_END_GUSSET,
             KEY_DISP_STRUT_WELDED_END_GUSSET
         ):

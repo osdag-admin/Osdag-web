@@ -20,10 +20,7 @@ urlpatterns = [
     # Flexure Member module
     path('flexure-member/', include('apps.modules.flexure_member.urls')),
     
-    # Compression Member module (using MODULE_ID format for frontend compatibility)
-    path('Compression-Member-Design/', include('apps.modules.compression_member.urls')),
-    
-    # Compression Member module (lowercase slug for new submodule routing)
+    # Compression Member module
     path('compression-member/', include('apps.modules.compression_member.urls')),
     
     # Base Plate

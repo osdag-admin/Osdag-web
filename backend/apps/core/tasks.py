@@ -29,7 +29,7 @@ def get_service_class(module_name: str, submodule_slug: str):
     elif module_name == 'flexure-member':
         from apps.modules.flexure_member.registry import FlexureMemberRegistry
         return FlexureMemberRegistry.get_service_by_slug(submodule_slug)
-    elif module_name in ('compression-member', 'Compression-Member-Design'):
+    elif module_name == 'compression-member':
         from apps.modules.compression_member.registry import CompressionMemberRegistry
         return CompressionMemberRegistry.get_service_by_slug(submodule_slug)
     elif module_name == 'base-plate':
@@ -70,7 +70,7 @@ def get_create_from_input_func(module_name: str, submodule_slug: str):
             slug_clean = submodule_slug.replace('-', '_')
             mod = __import__(f"apps.modules.flexure_member.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
             return getattr(mod, "create_from_input", None)
-        elif module_name in ('compression-member', 'Compression-Member-Design'):
+        elif module_name == 'compression-member':
             slug_clean = submodule_slug.replace('-', '_')
             mod = __import__(f"apps.modules.compression_member.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
             return getattr(mod, "create_from_input", None)

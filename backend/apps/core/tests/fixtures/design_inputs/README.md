@@ -1,6 +1,6 @@
 # Design-input fixtures
 
-Known-good request bodies for all 26 module adapters, used by
+Known-good request bodies for all 25 module adapters, used by
 `apps/core/tests/test_design_input_fixtures.py`. Each file is the flat, dotted-key
 dict that reaches an adapter's `validate_input()` today:
 
@@ -17,11 +17,11 @@ about whether the design then succeeds.
 
 The directory name is the adapter's path under `apps/modules/`, without `submodules/`
 (`shear_connection__fin_plate` is `shear_connection/submodules/fin_plate/adapter.py`;
-`base_plate` and `compression_member` are the top-level adapters).
+`base_plate` is the top-level adapter).
 
 ## Sources
 
-**`frontend-defaults:<config>`** (all 26 modules). The module's real
+**`frontend-defaults:<config>`** (all 25 modules). The module's real
 `buildSubmissionParams(inputs, allSelected, lists, extraState)` run on its
 `defaultInputs`, so the body is exactly what the browser POSTs. Variants per module:
 `defaults-all` (every customizable list on "All", the UI default, so the full option
@@ -49,7 +49,7 @@ form state; `buildSubmissionParams` builds the body. An example whose body today
 | Source | Modules |
 |---|---|
 | osi + frontend-defaults | fin plate (5 osi), cleat angle (4), header plate (5), seated angle (5), base plate (3), beam-beam cover plate bolted (2) and welded (5), column-column cover plate bolted (4) and welded (5), beam-beam end plate (2), beam-column end plate (5), column-column end plate (1), tension bolted (5) and welded (5) |
-| frontend-defaults only, no desktop example | compression parent, axially loaded column, struts bolted and welded, simply supported beam, on cantilever, purlin, plate girder, lap/butt joint bolted and welded |
+| frontend-defaults only, no desktop example | axially loaded column, struts bolted and welded, simply supported beam, on cantilever, purlin, plate girder, lap/butt joint bolted and welded |
 
 `parse_osi()` also returns the keys as written in the file (`flat`); `loadStateFromOsi()`
 maps those to the module's own fields, so the generator passes `{dock, pref, flat}`.

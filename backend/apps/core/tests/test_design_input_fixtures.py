@@ -56,7 +56,7 @@ def _param(path: Path):
 
 
 def test_every_adapter_has_a_fixture():
-    assert len(ADAPTER_SLUGS) == 26, ADAPTER_SLUGS
+    assert len(ADAPTER_SLUGS) == 25, ADAPTER_SLUGS
     missing = [s for s in ADAPTER_SLUGS if not list((FIXTURES_DIR / s).glob("*.json"))]
     assert not missing, f"adapters without a design-input fixture: {missing}"
 
