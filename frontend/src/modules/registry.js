@@ -72,7 +72,7 @@ export const MENU_GROUPS = {
   ],
 };
 
-export const MODULES = [
+const MODULE_ENTRIES = [
   // Plated connections
   {
     id: KEY_DISP_LAPJOINTBOLTED,
@@ -390,8 +390,13 @@ export const MODULES = [
       import("./flexuralMember/plateGirder/configs/plateGirderOutputConfig"), "plateGirderOutputConfig",
     ),
   },
+  // Purlin is under development and is not in the desktop app's menu either, so
+  // it is hidden: no route, no menu card, and findModule does not resolve it (an
+  // .osi file for it is rejected as unsupported). Its configs and backend
+  // adapter stay in place. Remove `hidden` to enable it.
   {
     id: KEY_DISP_FLEXURE4,
+    hidden: true,
     path: "/design/flexure/purlin",
     apiSlug: "flexure-member/purlin",
     title: UI_STRINGS.PURLIN,
@@ -401,6 +406,9 @@ export const MODULES = [
     ),
   },
 ];
+
+/** Modules users can open: every entry except those marked `hidden`. */
+export const MODULES = MODULE_ENTRIES.filter((module) => !module.hidden);
 
 const MODULES_BY_ID = new Map(MODULES.map((module) => [module.id, module]));
 
