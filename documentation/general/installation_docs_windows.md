@@ -1,10 +1,12 @@
 # Osdag-Web Installation Guide — Windows
 
-This guide covers two ways to run **Osdag-Web** on Windows:
+This guide covers three ways to run **Osdag-Web** on Windows:
 
-- **[Option A — Docker Compose (Recommended)](#option-a-docker-compose-recommended)** — spins up all services (Postgres, Redis, Django, Celery, React) in containers with a single command.
+- **[Option A — Docker Compose](#option-a-docker-compose-full-stack)** — spins up the full stack (Postgres, Redis, Django, Celery, React, plus InfluxDB/Grafana) in containers with a single command.
 - **[Option B — Manual Setup via WSL 2 (No Docker)](#option-b-manual-setup-via-wsl-2-no-docker)** — run services manually inside the Windows Subsystem for Linux (WSL 2) using Conda, pip, and Node.js.
 - **[Option C — Native Windows (No WSL, No Docker)](#option-c-native-windows-setup-no-wsl-no-docker)** — run everything directly on Windows; requires a Windows Redis (Memurai) and the Celery `solo` pool.
+
+> **Which one should I use?** For local development on a laptop, **Option C is the most resource-efficient**: it reuses the native PostgreSQL/Memurai services and uses roughly **0.7–0.8 GB of RAM**. Docker adds a WSL 2 VM plus eight containers and typically needs several GB. Choose Docker only if you need the full observability stack or an environment identical to production.
 
 ---
 
@@ -20,9 +22,9 @@ This guide covers two ways to run **Osdag-Web** on Windows:
 
 ---
 
-## Option A: Docker Compose (Recommended)
+## Option A: Docker Compose (Full Stack)
 
-> This is the fastest path. All services are managed by Docker; you do **not** need to install Postgres, Redis, Conda, or Python compilers manually.
+> This path needs no manual Postgres, Redis, Conda, or Python setup, but it runs a WSL 2 VM and eight containers. See the note above before choosing it.
 
 ### A.1 — System Requirements
 
@@ -200,7 +202,7 @@ Once your Ubuntu instance is running:
 
 Runs everything directly on Windows with Conda, pip, and Node.js. A few things behave differently from Linux — read **C.0** first.
 
-> **Automated setup:** `setup_windows.ps1` in the repository root performs C.1–C.7 (winget installs, Conda env, PostgreSQL role/database, `.env`, migrations, database population, frontend). Run `powershell -ExecutionPolicy Bypass -File .\setup_windows.ps1` from the repo root; it is safe to re-run and prints a per-step timing summary. It has not been tested on every Windows version; if a command is not found after an install, close and reopen PowerShell and re-run.
+> **Automated setup:** `setup_windows.ps1` in the repository root performs C.1–C.7 (winget installs, MiKTeX auto-install, Conda env, the conda-forge `pyside6` replacement, PostgreSQL role/database, `.env`, migrations, frontend). Run `powershell -ExecutionPolicy Bypass -File .\setup_windows.ps1` from the repo root; it is safe to re-run and prints a per-step timing summary. It has not been tested on every Windows version; if a command is not found after an install, close and reopen PowerShell and re-run.
 
 ### C.0 — What Differs on Native Windows
 
@@ -208,7 +210,9 @@ Runs everything directly on Windows with Conda, pip, and Node.js. A few things b
 |---|---|---|
 | **Redis** | `apt`/`pacman` package | No official build. Use **Memurai Developer** (free, Redis-compatible) or the community **tporadowski/redis** port. Redis is required: it is the Celery broker/result backend **and** the Django Channels (WebSocket) layer. |
 | **Celery worker** | prefork pool | Prefork is unsupported on Windows and crashes. Start the worker with `--pool=solo` (one task at a time). |
-| **PDF reports** | TeX Live | Install **MiKTeX**; `pdflatex` must be on `PATH`. |
+| **PDF reports** | TeX Live | Install **MiKTeX**; `pdflatex` must be on `PATH` **and** missing-package auto-install must be enabled (see C.1). |
+| **Qt bindings** | pip `PySide6` works | pip `PySide6` 6.12 conflicts with the conda `qtbase` pulled in by VTK: importing `QtCore` fails with `DLL load failed`. Install `pyside6` from conda-forge instead (see C.3). |
+| **Report storage** | `/app/file_storage` | `backend\file_storage` — reports generated locally are written there (the process runs from `backend\`). |
 | **Shell scripts** (`osdagweb.sh`, `setup_*.sh`) | `bash` | Do not run natively; use the commands below in PowerShell/cmd. |
 
 ### C.1 — Install Prerequisites
@@ -226,7 +230,11 @@ winget install --id Memurai.MemuraiDeveloper -e
 
 Notes:
 - During the PostgreSQL install, set the `postgres` superuser password and remember it (default port `5432`).
-- In MiKTeX setup, set **"Install missing packages on-the-fly"** to **Yes**, otherwise report generation will hang on a missing `.sty` prompt.
+- In MiKTeX setup, set **"Install missing packages on-the-fly"** to **Yes**. You can enforce it after installation with:
+  ```powershell
+  initexmf --set-config-value=[MPM]AutoInstall=1
+  ```
+  Without this, `pdflatex -interaction=nonstopmode` aborts with `File 'kvoptions.sty' not found` / `ltxcmds.sty not found` and no PDF is produced.
 - Memurai installs as a Windows service and starts automatically on port `6379`.
 - If `winget` has no Memurai package, download it from [memurai.com](https://www.memurai.com/get-memurai), or use the [tporadowski/redis releases](https://github.com/tporadowski/redis/releases) `.msi`.
 
@@ -266,6 +274,16 @@ pip install -r requirements.txt
 ```
 
 If a package fails to build, install the [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) ("Desktop development with C++") and retry.
+
+> **PySide6 / Qt DLL conflict (important):** `requirements.txt` allows the latest pip `PySide6` (6.12), but the conda `qtbase` pulled in by VTK is 6.11. Importing it then fails with `ImportError: DLL load failed while importing QtCore: The specified procedure could not be found`, and the backend cannot start. Replace the pip build with the conda-forge one:
+>
+> ```powershell
+> python -m pip uninstall -y PySide6 PySide6-Addons PySide6-Essentials shiboken6
+> conda install -c conda-forge pyside6 -y
+> python -c "from PySide6 import QtCore, QtWidgets; print('PySide6 OK', QtCore.qVersion())"
+> ```
+>
+> Repeat this whenever you reinstall `requirements.txt`.
 
 ### C.4 — Create the Database
 
@@ -327,31 +345,34 @@ cd ..
 
 ### C.8 — Start All Services
 
-Open **three** terminals. Activate the conda env in the first two.
-
-**Terminal 1 — Django:**
+From the repository root, run:
 ```powershell
-conda activate osdag-web
-cd Osdag-web\backend
-python manage.py runserver 8000
+powershell -ExecutionPolicy Bypass -File .\start_windows.ps1
 ```
 
-**Terminal 2 — Celery worker (note `--pool=solo`):**
-```powershell
-conda activate osdag-web
-cd Osdag-web\backend
-celery -A config worker -Q calculations,cad,reports,celery --pool=solo --loglevel=info
-```
+The script builds the frontend when needed (first run or after source changes) and opens Django, the Celery worker, and the frontend in separate windows. Open **http://localhost:5173**; close each window to stop that process. PostgreSQL and Memurai must also be running.
 
-**Terminal 3 — Vite:**
-```powershell
-cd Osdag-web\frontend
-npm run dev
-```
+Default mode is tuned for low memory (roughly 0.7–0.8 GB total):
 
-Open **http://localhost:5173**.
+| Service | How it runs |
+|---|---|
+| Django | `runserver` (ASGI/Daphne), `--noreload`, one process |
+| Celery | `--pool=solo --concurrency=1`, one task at a time |
+| Frontend | pre-built `dist/` served by `vite preview` (~90 MB, proxies `/api` and `/ws`) |
+
+Flags:
+
+```powershell
+# Force a frontend rebuild (automatic when sources are newer than dist/)
+powershell -ExecutionPolicy Bypass -File .\start_windows.ps1 -Build
+
+# Vite dev server with hot module replacement (much lighter on rebuilds, ~1.2 GB RAM)
+powershell -ExecutionPolicy Bypass -File .\start_windows.ps1 -Dev
+```
 
 > With `--pool=solo` the worker runs one task at a time, so a long CAD or report job blocks other tasks until it finishes. This is acceptable for development.
+
+Use the **Docker** option only if you need the full observability stack; it runs a WSL 2 VM plus eight containers and needs several GB of RAM.
 
 ### C.9 — Native Windows Troubleshooting
 
@@ -360,11 +381,24 @@ Open **http://localhost:5173**.
 | `ValueError: not enough values to unpack` / `PermissionError` on Celery start | Prefork pool on Windows | Add `--pool=solo` to the Celery command |
 | `Error 10061 connecting to localhost:6379` | Redis/Memurai not running | Start the **Memurai** service (`services.msc`) or run `redis-server` |
 | `LaTeX (pdflatex) not found` | MiKTeX not on `PATH` | Add MiKTeX's `bin\x64` folder to `PATH` and reopen the terminal |
-| PDF generation hangs | MiKTeX waiting to install a package | In MiKTeX Console → Settings, set "Install missing packages" to **Always** |
+| PDF generation hangs | MiKTeX waiting to install a package | In MiKTeX Console → Settings, set "Install missing packages" to **Always**, or run `initexmf --set-config-value=[MPM]AutoInstall=1` |
+| `LaTeX Error: File 'kvoptions.sty' / 'ltxcmds.sty' not found` then `no output PDF file produced` | Auto-install disabled; `-interaction=nonstopmode` cannot answer the prompt | Run `initexmf --set-config-value=[MPM]AutoInstall=1` and retry Save PDF |
+| `ImportError: DLL load failed while importing QtCore` | pip `PySide6` 6.12 against conda `qtbase` 6.11 | Follow the PySide6 block in C.3 |
+| Save PDF returns 404 `LaTeX file not found` | The report was generated elsewhere (e.g. Docker), so its `.tex` is not under `backend\file_storage` | Regenerate the report locally, then Save PDF |
 | `psql` is not recognized | PostgreSQL `bin` not on `PATH` | Add `C:\Program Files\PostgreSQL\16\bin` to `PATH` |
 | `ImportError: DLL load failed` (cairo / OCC) | Mixed pip/conda installs | Reinstall with `conda install -c conda-forge cairo pythonocc-core -y` |
 | `password authentication failed for user "osdagdeveloper"` | Role not created or wrong password | Re-run the SQL in C.4 |
 | WebSocket status never updates | Redis unreachable by Channels | Confirm `redis-cli ping` returns `PONG` and `REDIS_URL` is correct |
+
+### C.10 — PDF Reports ("Save PDF")
+
+Report generation and PDF compilation run **in the Django process**, not in Celery.
+
+- The LaTeX source and report images are written to `backend\file_storage\design_report\<report_id>\`.
+- **Save PDF** re-reads that `.tex`, filters the selected sections, runs `pdflatex` twice in a temporary directory, and streams the PDF back to the browser.
+- Requirements: `pdflatex` on `PATH` **and** MiKTeX auto-install enabled (see C.1). The first save for each module may take longer while MiKTeX downloads missing packages.
+- Each compile has a 60 s timeout. If a first-time download exceeds it, retry once the packages are cached.
+- Reports generated while running Docker live under the repository-root `file_storage` and reference `/app/...` paths, so they return "LaTeX file not found" locally. Open the project and regenerate the report once on Windows, then Save PDF.
 
 ---
 
@@ -380,7 +414,7 @@ Open **http://localhost:5173**.
 
 ## Summary: Key Steps
 
-### Docker Path (Recommended)
+### Docker Path (Full Stack)
 
 | Step | Task |
 |---|---|
@@ -404,12 +438,12 @@ Open **http://localhost:5173**.
 
 | Step | Task |
 |---|---|
-| C.0 | Read the native Windows differences (Redis, Celery pool, MiKTeX) |
-| C.1 | Install Git, Node, PostgreSQL, Miniconda, MiKTeX, Memurai |
+| C.0 | Read the native Windows differences (Redis, Celery pool, MiKTeX, PySide6) |
+| C.1 | Install Git, Node, PostgreSQL, Miniconda, MiKTeX, Memurai; enable MiKTeX auto-install |
 | C.2 | Create conda env, install `pythonocc-core` + `cairo` |
-| C.3 | Clone repo, `pip install -r requirements.txt` |
+| C.3 | Clone repo, install requirements, replace pip `PySide6` with conda `pyside6` |
 | C.4 | Create database role + database |
 | C.5 | Write `.env`, add Firebase key |
 | C.6 | `migrate` |
 | C.7 | `npm install`, write `frontend\.env` |
-| C.8 | Start Django, Celery (`--pool=solo`), Vite |
+| C.8 | `.\start_windows.ps1` — lean stack (Django, Celery solo, static frontend) |

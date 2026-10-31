@@ -71,6 +71,13 @@ try {
     if (-not (Have pdflatex)) { Winget-Install 'MiKTeX.MiKTeX' }
     Refresh-Path
 
+    # Make pdflatex install missing packages instead of prompting: with
+    # -interaction=nonstopmode a prompt becomes a fatal "file not found" error.
+    $Initexmf = Get-Command initexmf -ErrorAction SilentlyContinue
+    if ($Initexmf) {
+        & $Initexmf.Source '--set-config-value=[MPM]AutoInstall=1' 2>$null | Out-Null
+    }
+
     Step 'Install PostgreSQL 16'
     if (-not (Have psql) -and -not (Test-Path 'C:\Program Files\PostgreSQL\16\bin\psql.exe')) {
         Winget-Install 'PostgreSQL.PostgreSQL.16' @('--override', "--mode unattended --superpassword $PgSuperPass")
@@ -85,6 +92,7 @@ try {
         catch { Write-Warning 'Memurai install via winget failed. Install it from https://www.memurai.com/get-memurai and re-run.' }
     }
     Refresh-Path
+    if (Test-Path $PgBin) { $env:Path += ";$PgBin" }
     Get-Service -Name 'Memurai' -ErrorAction SilentlyContinue | Where-Object Status -ne 'Running' | Start-Service
     $RedisCli = if (Have memurai-cli) { 'memurai-cli' } elseif (Have redis-cli) { 'redis-cli' } else { $null }
     if ($RedisCli) { & $RedisCli ping } else { Write-Warning 'No redis-cli/memurai-cli found; verify Redis manually (port 6379).' }
@@ -115,6 +123,12 @@ try {
     Set-Location $ProjectDir
     & $Conda run -n $EnvName --no-capture-output python -m pip install --upgrade pip pyopenssl; Check 'pip upgrade'
     & $Conda run -n $EnvName --no-capture-output python -m pip install -r requirements.txt; Check 'pip install'
+
+    # pip's PySide6 (6.12) conflicts with the conda qtbase that VTK pulls in (6.11):
+    # importing QtCore fails with "DLL load failed". Use the conda-forge build instead.
+    Step 'Replace pip PySide6 with conda-forge pyside6'
+    & $Conda run -n $EnvName --no-capture-output python -m pip uninstall -y PySide6 PySide6-Addons PySide6-Essentials shiboken6 2>$null | Out-Null
+    & $Conda install -n $EnvName -c conda-forge pyside6 -y; Check 'conda install pyside6'
 
     Step 'PostgreSQL role and database'
     $env:PGPASSWORD = $PgSuperPass
@@ -165,12 +179,10 @@ USE_REDIS_CACHE=false
 
     Step 'Done'
     Write-Host @"
-Start the app in three terminals (conda activate $EnvName for the first two):
-  cd $ProjectDir\backend; python manage.py runserver 8000
-  cd $ProjectDir\backend; celery -A config worker -Q calculations,cad,reports,celery --pool=solo --loglevel=info
-  cd $ProjectDir\frontend; npm run dev
+Start all app services in separate windows:
+  powershell -ExecutionPolicy Bypass -File .\start_windows.ps1
 Then open http://localhost:5173
-(Celery needs --pool=solo on Windows.)
+(PostgreSQL and Memurai must be running; Celery uses --pool=solo on Windows.)
 "@
 }
 finally {
