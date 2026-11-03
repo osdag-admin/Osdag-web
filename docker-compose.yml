@@ -110,7 +110,7 @@ services:
         condition: service_healthy
       influxdb:
         condition: service_healthy
-    command: bash -c "cd /app && export PYTHONPATH=/app:/app/backend && exec /opt/conda/envs/osdag_env/bin/celery -A config worker -Q calculations,cad,reports,celery --loglevel=info --concurrency=18"
+    command: bash -c "cd /app && export PYTHONPATH=/app:/app/backend && exec /opt/conda/envs/osdag_env/bin/celery -A config worker -Q calculations,reports,celery --loglevel=info --concurrency=18"
 
   frontend:
     platform: linux/amd64

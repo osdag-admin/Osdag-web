@@ -229,9 +229,6 @@ CELERY_TASK_ROUTES = {
     'apps.core.tasks.run_design_calculation_task': {
         'queue': 'calculations',
     },
-    'apps.core.tasks.run_cad_generation_task': {
-        'queue': 'cad',
-    },
     'apps.core.tasks.run_report_generation_task': {
         'queue': 'reports',
     },

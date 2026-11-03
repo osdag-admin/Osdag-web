@@ -190,7 +190,7 @@ def _get_shapes(cld):
     return list(components.values()) if components else []
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """
     Generate CAD model for Simply Supported Beam.
     Returns relative BREP file path.
@@ -202,7 +202,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     # ------------------------------------
     # Create module from inputs
     # ------------------------------------
-    module = create_from_input(input_values)
+    module = module if module is not None else create_from_input(input_values)
 
     return fm_shared.create_cad_model(
         module, KEY_DISP_FLEXURE, section, session, _get_shapes,

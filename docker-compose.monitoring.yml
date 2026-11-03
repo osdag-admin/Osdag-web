@@ -114,7 +114,7 @@ services:
     restart: unless-stopped
     command:
       - --broker-url=${MONITORING_BROKER_URL:-redis://:${REDIS_PASSWORD:-}@redis:6379/0}
-      - --queues=calculations,cad,reports,celery  # emit queue_length even when idle
+      - --queues=calculations,reports,celery  # emit queue_length even when idle
       - --default-queue-name=calculations
       - --retry-interval=5  # survive Redis restarts instead of exiting
     networks: [monitoring, app]

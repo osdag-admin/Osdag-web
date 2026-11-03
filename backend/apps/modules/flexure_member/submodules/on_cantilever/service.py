@@ -78,7 +78,7 @@ class OnCantileverService:
             }
 
     @staticmethod
-    def get_cad_model(inputs: dict, section: str, session: str) -> str:
+    def get_cad_model(inputs: dict, section: str, session: str, module=None) -> str:
         """
         Generate CAD model and return file path.
 
@@ -86,8 +86,9 @@ class OnCantileverService:
             inputs: Dictionary of input parameters
             section: Section to generate (e.g. 'Model', 'Beam')
             session: Session identifier for file naming
+            module: Solved module instance to build from; when omitted the design is recalculated
 
         Returns:
             File path to the generated CAD model (or empty string on failure)
         """
-        return create_cad_model(inputs, section, session)
+        return create_cad_model(inputs, section, session, module=module)

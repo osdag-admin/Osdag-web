@@ -4,7 +4,6 @@ import ModuleReducer from "./ModuleReducer";
 import { createDesign as apiCreateDesign } from '../modules/shared/api/moduleApi';
 import {
   fetchModuleOptions as dsFetchModuleOptions,
-  createCad as dsCreateCad,
   downloadCad as dsDownloadCad,
   addCustomMaterial as dsAddCustomMaterial,
   fetchDesignPreferences as dsFetchDesignPreferences,
@@ -202,62 +201,6 @@ export const ModuleProvider = ({ children }) => {
   // ===================================================================
   // 3. CAD - 3D Model Generation and Download
   // ===================================================================
-
-  /**
-   * Create 3D CAD model from input data
-   * @param {Object} inputData - Design input values
-   * @param {string} moduleId - Module identifier
-   * @param {Function} onCADSuccess - Success callback function
-   */
-  const createCADModel = useCallback(async (inputData, moduleId, onCADSuccess = null) => {
-    try {
-      const { status, data } = await dsCreateCad(moduleId, inputData);
-
-      // Handle "coming soon" status (200 with coming_soon status)
-      if (status === 200 && data.status === "coming_soon") {
-        dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
-        // Don't show error alert for "coming soon"
-        return { success: false, coming_soon: true, message: data.message || "3D model generation is coming soon" };
-      }
-
-      if (status < 200 || status >= 300) {
-        const errMsg = data.message || `CAD generation failed: ${status}`;
-        throw new Error(errMsg);
-      }
-
-      if (status === 201 && data.status === "success") {
-
-        // Store CAD data and trigger rendering
-        dispatch({ type: "SET_CAD_MODEL_PATHS", payload: data.files });
-
-        if (data.hover_dict) {
-          dispatch({ type: "SET_HOVER_DICT", payload: data.hover_dict });
-        }
-        dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: true });
-
-        // Execute success callback if provided
-        if (onCADSuccess && typeof onCADSuccess === 'function') {
-          try {
-            await onCADSuccess();
-          } catch (error) {
-            if (import.meta.env.DEV) {
-              console.error('[ModuleState] onCADSuccess callback failed:', error);
-            }
-          }
-        }
-
-        return { success: true, files: data.files };
-      } else {
-        throw new Error(`CAD generation failed: ${data.message || 'Unknown error'}`);
-      }
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('[ModuleState] createCADModel ERROR:', error);
-      }
-      dispatch({ type: "SET_RENDER_CAD_MODEL_BOOLEAN", payload: false });
-      return { success: false, error: error.message };
-    }
-  }, [dispatch]);
 
   /**
    * Download CAD model in specified format
@@ -467,7 +410,6 @@ export const ModuleProvider = ({ children }) => {
         createDesign,               // Design calculation
 
         // 3. CAD (2 functions)
-        createCADModel,             // Generate 3D model
         downloadCADModel,           // Download CAD file
 
         // 5. PREFERENCES (1 function)

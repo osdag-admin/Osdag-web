@@ -54,7 +54,6 @@ The state provider exposes 8 core callbacks to coordinate design module operatio
 | `getConnectivityData` | Connectivity lists loader. | Filters listings based on beam-to-column or beam-to-beam orientation rules. |
 | `manageCustomMaterials` | Custom section register. | Dispatches updates to state caches and triggers option refetches. |
 | `createDesign` | Computation orchestrator. | Coordinates inputs submission and dispatches output state saves. |
-| `createCADModel` | CAD model compiler. | Sends verified inputs to CAD engines and dispatches paths and `hoverDict`. |
 | `downloadCADModel` | Export helper. | Downloads compiled assemblies in STEP, IGES, or STL formats. |
 | `generateReport` | Report exporter. | Generates download links for PDF or CSV representations of calculated values. |
 | `manageDesignPreferences` | Configuration synchronizer. | Modifies section properties and material limits. |
@@ -136,9 +135,9 @@ export const DESIGN_STATUS = {
 #### The Submission Pipeline
 1. **Validate**: Iterates through `inputSections`, checking for missing fields. Checks conditional logic rules to skip inactive inputs and validates custom options checklist counts.
 2. **Build Parameters**: Triggers `buildSubmissionParams` mapping form units into backend-compatible structures.
-3. **Calculate**: Enters `CALCULATING`, invoking `service.createDesign`. Checks response variables for safe/unsafe status flags.
-4. **Persist**: If a `projectId` is present, it calls `service.updateProject` to save inputs and results into the PostgreSQL database.
-5. **CAD Build**: Enters `CAD_GENERATING` and calls `service.createCADModel`. Returns generated files, updates `cadModelPaths`, and registers `hoverDict` tooltips.
+3. **Calculate**: Enters `CALCULATING`, invoking `service.createDesign(designType, params, { onDesignReady })`. One backend task calculates the design and builds the 3D model.
+4. **Show the design**: The outputs, logs and raw CSV are rendered as soon as the design is known. This happens on the early `DESIGN_READY` WebSocket message if the client received it (status becomes `CAD_GENERATING`, "Building 3D model..."), otherwise when the final result arrives. If a `projectId` is present, it also calls `service.updateProject` (debounced) to save inputs and results into the PostgreSQL database. An unsafe result (`design_status === false`) ends here with the "Design is unsafe / failed" error status.
+5. **CAD Build**: The final result carries the model: `files` (updates `cadModelPaths`, with the `beam`/`column`/`plate` key normalisation) and `hover_dict` (registers `hoverDict` tooltips). If `files` is empty the status becomes an error reading "Calculation succeeded, but ..." followed by `cad_error`, or "failed to generate 3d model" when there is none.
 6. **Finalize**: Transition to `COMPLETE`, resetting the status to `IDLE` after 1 second.
 
 ### 4. `useDependentData.js`

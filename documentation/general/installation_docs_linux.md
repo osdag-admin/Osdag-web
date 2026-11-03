@@ -489,7 +489,7 @@ python manage.py runserver 8000
 ```bash
 conda activate osdag-web
 cd Osdag-web/backend
-celery -A config worker -Q calculations,cad,reports,celery --loglevel=info
+celery -A config worker -Q calculations,reports,celery --loglevel=info
 ```
 
 > Celery must be running for design calculations, CAD generation, and PDF report creation to work. Without it, requests will hang indefinitely.
@@ -538,7 +538,7 @@ gnome-terminal \
   --tab --title="Django Backend" -- bash -c \
     "$ACTIVATE && cd $PROJECT_DIR/backend && python manage.py runserver 8000; exec bash" \
   --tab --title="Celery Worker" -- bash -c \
-    "$ACTIVATE && cd $PROJECT_DIR/backend && celery -A config worker -Q calculations,cad,reports,celery --loglevel=info; exec bash" \
+    "$ACTIVATE && cd $PROJECT_DIR/backend && celery -A config worker -Q calculations,reports,celery --loglevel=info; exec bash" \
   --tab --title="Vite Frontend" -- bash -c \
     "cd $PROJECT_DIR/frontend && npm run dev; exec bash"
 ```

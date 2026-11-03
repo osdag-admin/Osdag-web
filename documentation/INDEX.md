@@ -10,11 +10,11 @@ Welcome to the comprehensive Osdag-Web developer documentation. This index serve
 * **1.1 The Asynchronous Calculation Design Pattern:** Separation of lightweight HTTP requests from heavy structural engineering calculations.
 * **1.2 The Osdag Input (.osi) File Exchange Format:** Plain-text format structure, and desktop-to-web / web-to-desktop exchange mechanisms.
 * **1.3 System Component Topology:** The role of the React Frontend, Django Backend, PostgreSQL Database, Redis Message Broker, and Celery Worker Pool.
-* **1.4 Request Lifecycle Walkthrough:** Detailed path of a design request from client clicks to Celery execution and real-time WebSocket status pushes.
+* **1.4 Request Lifecycle Walkthrough:** Detailed path of a design request from client clicks to the single Celery task that calculates and builds the 3D model, with the early outputs message and the final result pushed over WebSocket.
 
 ### 2. [Chapter 2: Backend Architecture & Configuration](./chapter_2_backend_architecture.md)
 * **2.1 Django Application Structure (`apps/core` vs `apps/modules`):** Core database models and settings vs individual design module logic.
-* **2.2 Celery & Redis Integration:** Configuration details (`CELERY_BROKER_URL`, queues: `calculations`, `cad`, `reports`, `celery`), concurrency tuning, task scheduling, and signal handling (`exec` wrappers).
+* **2.2 Celery & Redis Integration:** Configuration details (`CELERY_BROKER_URL`, queues: `calculations`, `reports`, `celery`), concurrency tuning, task scheduling, and signal handling (`exec` wrappers), and the one design task that calculates once and builds CAD from the same solver (`DESIGN_READY` early message, final result).
 * **2.3 The Adapter Pattern for Osdag Desktop Modules:** How backend adapters bridge Django web requests to the underlying Osdag desktop computational engine, and the input fixtures that test every adapter's `validate_input()`.
 * **2.4 DB Schema & Models:** Detail `Project`, `Design`, `UserAccount`, and `OsiFile` fields and constraints.
 * **2.5 Asset Storage Lifecycle (CAD Models & Reports):** Filesystem storage structure of generated component geometries (BREP, STL) and PDF reports.
@@ -68,7 +68,7 @@ Welcome to the comprehensive Osdag-Web developer documentation. This index serve
 
 ### 9. [Chapter 9: 3D CAD Scene Visualization System](./chapter_9_3d_cad_visualization.md)
 * **9.1 Three.js & React Three Fiber (R3F) Integration:** Viewport canvas, lighting rig, camera action dispatcher, OrbitControls, and ViewCube.
-* **9.2 SceneManager Architecture:** Base64 STL loading and text OBJ parsing, and geometry unmount memory disposal.
+* **9.2 SceneManager Architecture:** Base64 STL loading and text OBJ parsing (models arrive in the design result), and geometry unmount memory disposal.
 * **9.3 Part Customization & Mapping:** Styling color configuration, depth priority render orders, and active-view filters.
 * **9.4 Module-Specific CAD Option Specifications:** Mapping tables for config-declared cadOptions selection lists for all modules.
 * **9.5 SmartPart & Performance Optimization:** Edge geometry memoization, raycast state separation, and material optimization to maintain 60 FPS.
@@ -86,7 +86,7 @@ Welcome to the comprehensive Osdag-Web developer documentation. This index serve
 * **11.1 Conda Environment Configuration:** pythonocc-core packaging rules, local environment creation, and multi-service process wrapping (`osdagweb.sh`).
 * **11.2 Docker Containerization Architecture:** Backend miniconda setups with OpenGL/texlive layers and frontend multi-stage Nginx production builds.
 * **11.3 Development Orchestration (`docker-compose.yml`):** Dev container layout, hot-reloading configurations, and database migrations and seeding.
-* **11.4 Production Orchestration (`docker-compose.prod.yml`):** Nginx reverse proxy routing, shared static volumes, and specialized Celery worker queue divisions.
+* **11.4 Production Orchestration (`docker-compose.prod.yml`):** Nginx reverse proxy routing, shared static volumes, and the Celery worker split (calculations with CAD, reports).
 * **11.5 Observations & Areas of Improvement:** Analysis of hardcoded user ID mappings and static database port issues.
 * **11.6 Deploying the Custom Sections & Materials Change:** Restarting Celery workers with the web app, and restoring the catalog SQLite in dev setups that mount `.:/app`.
 * **11.7 Section Catalog: One Source of Truth:** The catalog is read from `osdag_core`'s SQLite through `apps/core/catalog.py`; the Postgres copy and `populate_database.py` are removed.

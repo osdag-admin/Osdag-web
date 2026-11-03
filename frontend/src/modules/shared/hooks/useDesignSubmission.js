@@ -198,25 +198,12 @@ export const useDesignSubmission = (service, moduleConfig) => {
     });
     setLoading(true);
 
-    try {
-      const designResult = await service.createDesign(moduleConfig.designType, param);
-      const designBody = designResult?.body;
-      const designSuccess =
-        (designResult?.status === 200 || designResult?.status === 201) &&
-        designBody?.success !== false &&
-        designBody?.data;
-
-      if (!designSuccess) {
-        const errorMessage = designBody?.error || "Design failed. Please check inputs.";
-        setStatus({
-          step: DESIGN_STATUS.ERROR,
-          message: errorMessage,
-          error: new Error(errorMessage)
-        });
-        setLoading(false);
-        message.error(errorMessage);
-        return;
-      }
+    // Shows the calculated design and queues its project save. Runs for the early
+    // "design ready" message and again for the final result; the second call does nothing.
+    let designShown = false;
+    const showDesign = (designBody) => {
+      if (designShown) return;
+      designShown = true;
 
       // Normalize design output once and set (keep all keys so output dock can show every configured field)
       const formattedOutput = {};
@@ -236,13 +223,6 @@ export const useDesignSubmission = (service, moduleConfig) => {
       setDisplayOutput(true);
 
       if (designBody?.design_status === false) {
-        const failMessage = "Design is unsafe / failed. Please inspect calculation logs for details.";
-        setStatus({
-          step: DESIGN_STATUS.ERROR,
-          message: failMessage,
-          error: new Error(failMessage)
-        });
-        setLoading(false);
         return;
       }
 
@@ -279,12 +259,53 @@ export const useDesignSubmission = (service, moduleConfig) => {
         message: 'Building 3D model...',
         error: null
       });
+    };
 
-      const cadResult = await service.createCADModel(moduleConfig.designType, param);
+    try {
+      // One request calculates the design and builds its 3D model. The outputs can arrive
+      // first (onDesignReady); the final result always holds both.
+      const designResult = await service.createDesign(moduleConfig.designType, param, {
+        onDesignReady: (earlyBody) => {
+          if (earlyBody?.success === false || !earlyBody?.data) return;
+          showDesign(earlyBody);
+        },
+      });
+      const designBody = designResult?.body;
+      const designSuccess =
+        (designResult?.status === 200 || designResult?.status === 201) &&
+        designBody?.success !== false &&
+        designBody?.data;
 
-      if (cadResult?.success) {
+      if (!designSuccess) {
+        const errorMessage = designBody?.error || "Design failed. Please check inputs.";
+        setStatus({
+          step: DESIGN_STATUS.ERROR,
+          message: errorMessage,
+          error: new Error(errorMessage)
+        });
+        setLoading(false);
+        message.error(errorMessage);
+        return;
+      }
+
+      showDesign(designBody);
+
+      if (designBody?.design_status === false) {
+        const failMessage = "Design is unsafe / failed. Please inspect calculation logs for details.";
+        setStatus({
+          step: DESIGN_STATUS.ERROR,
+          message: failMessage,
+          error: new Error(failMessage)
+        });
+        setLoading(false);
+        return;
+      }
+
+      const cadFiles = designBody.files || {};
+
+      if (Object.keys(cadFiles).length > 0) {
         const normalizedFiles = {};
-        Object.entries(cadResult.files || {}).forEach(([key, value]) => {
+        Object.entries(cadFiles).forEach(([key, value]) => {
           if (!key) return;
           const normKey = key.trim();
           const mapped =
@@ -296,7 +317,7 @@ export const useDesignSubmission = (service, moduleConfig) => {
         });
 
         setCadModelPaths(normalizedFiles);
-        setHoverDict(cadResult.hover_dict || {});
+        setHoverDict(designBody.hover_dict || {});
         setRenderCadModel(true);
         setRenderBoolean(true);
         setDisplayOutput(true);
@@ -317,7 +338,8 @@ export const useDesignSubmission = (service, moduleConfig) => {
           });
         }, 1000);
       } else {
-        const cadErrorMessage = cadResult?.error || 'Failed to generate 3D model';
+        // No 3D model: it failed to build (cad_error) or the module has none yet.
+        const cadErrorMessage = designBody.cad_error || 'Failed to generate 3D model';
         setStatus({
           step: DESIGN_STATUS.ERROR,
           message: `Calculation succeeded, but ${cadErrorMessage.toLowerCase()}`,

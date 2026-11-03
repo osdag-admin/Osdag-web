@@ -399,7 +399,7 @@ def generate_output(input_values: Dict[str, Any]):
 BASE_PLATE_CAD_SECTIONS = ("Model", "Column", "Plate", "Welds", "Bolts", "Concrete", "Grout")
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate CAD model from input values as BREP/STL. Returns file path or empty string.
     Desktop options: Model, Column, Base Plate (Plate), Welds, Bolts, Concrete, Grout.
     """
@@ -410,7 +410,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
         )
 
     try:
-        module = create_from_input(input_values)
+        module = module if module is not None else create_from_input(input_values)
     except Exception as e:
         traceback.print_exc()
         print(f"[BasePlate CAD] create_from_input failed: {e}")

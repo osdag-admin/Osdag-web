@@ -8,7 +8,7 @@ from django.urls import Resolver404, resolve
 REGISTRY = Path(__file__).resolve().parents[4] / "frontend" / "src" / "modules" / "registry.js"
 
 # Same paths as frontend/src/datasources/endpoints.js (MODULES.*).
-ENDPOINTS = ["options/", "design/", "cad/", "report/generate-initial/"]
+ENDPOINTS = ["options/", "design/", "report/generate-initial/"]
 
 
 def _api_slugs():

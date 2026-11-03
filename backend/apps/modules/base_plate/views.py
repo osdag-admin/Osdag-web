@@ -12,10 +12,8 @@ from apps.core.models import CustomMaterials
 from apps.core.utils.module_helpers import (
     handle_design_request,
     trigger_async_design,
-    trigger_async_cad,
     trigger_async_report
 )
-from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 
 from . import MODULE_ID
 from .service import BasePlateService
@@ -87,14 +85,6 @@ class BasePlateViewSet(viewsets.ViewSet):
         except Exception as exc:
             logger.exception("Base plate options failed")
             return error_response('internal_error', str(exc), status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    @action(detail=False, methods=['post'], url_path='cad')
-    def cad(self, request):
-        """
-        POST /api/modules/base-plate/cad/
-        Asynchronously runs CAD generation task.
-        """
-        return trigger_async_cad('base-plate', 'base-plate', BasePlateService, request)
 
     @action(detail=False, methods=['post'], url_path='report/generate-initial')
     def report_generate_initial(self, request):

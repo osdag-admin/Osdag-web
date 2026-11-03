@@ -114,7 +114,15 @@ export async function pollTask(taskId, delayMs = 1000, maxRetries = 300) {
   throw new Error("Task polling timed out");
 }
 
-export function subscribeToTask(taskId) {
+/**
+ * Wait for a Celery task over its WebSocket and resolve with its final result.
+ *
+ * `onProgress(data)` is called for messages a task sends before it finishes, for example
+ * the design outputs sent ahead of the 3D model (`data.status` names the stage and
+ * `data.result` holds its payload). A client that connects late never sees these, so the
+ * resolved result must always be complete on its own.
+ */
+export function subscribeToTask(taskId, { onProgress } = {}) {
   return new Promise((resolve, reject) => {
     let retries = 0;
     const maxRetries = 3;
@@ -164,6 +172,8 @@ export function subscribeToTask(taskId) {
             completed = true;
             reject(new Error(data.error || "Async task execution failed"));
             socket.close();
+          } else if (onProgress) {
+            onProgress(data);
           }
         } catch (err) {
           console.error("Error parsing WebSocket message:", err);

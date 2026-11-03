@@ -3,6 +3,9 @@ import { MODULES, CAD, MATERIALS, DESIGN_PREFERENCES } from "./endpoints";
 import { getModuleSlug } from "../modules/registry";
 import { getErrorMessage } from "../utils/apiError";
 
+// Status the design task sends once the design is calculated, before its 3D model is built.
+const DESIGN_READY_STATUS = "DESIGN_READY";
+
 /**
  * Fetch module options / lists for a given module key.
  */
@@ -23,9 +26,14 @@ export async function fetchModuleOptions(moduleKey, { connectivity } = {}) {
 }
 
 /**
- * Create design calculation for a module.
+ * Create design calculation for a module. The result also carries the 3D model
+ * (`files`, `hover_dict`, `warnings`, or `cad_error` when it could not be built).
+ *
+ * `onDesignReady(body)` is called with the calculated design (same shape as `body`, no 3D
+ * model yet) as soon as it is ready, if the client is connected in time. The returned
+ * `body` always has everything.
  */
-export async function createDesign(moduleKey, inputs) {
+export async function createDesign(moduleKey, inputs, { onDesignReady } = {}) {
   const slug = getModuleSlug(moduleKey);
   const url = MODULES.design(slug);
   const res = await apiClient(url, {
@@ -36,15 +44,23 @@ export async function createDesign(moduleKey, inputs) {
   if (res.status === 202) {
     const acceptedBody = await res.json();
     const taskId = acceptedBody.task_id;
+    const withProjectInfo = (taskResult) => ({
+      ...taskResult,
+      project_saved: acceptedBody.project_saved,
+      project_id: acceptedBody.project_id,
+      project_error: acceptedBody.project_error
+    });
     try {
-      const taskResult = await subscribeToTask(taskId);
-      const finalBody = {
-        ...taskResult,
-        project_saved: acceptedBody.project_saved,
-        project_id: acceptedBody.project_id,
-        project_error: acceptedBody.project_error
-      };
-      return { status: 200, body: finalBody };
+      const taskResult = await subscribeToTask(taskId, {
+        onProgress: onDesignReady
+          ? (message) => {
+              if (message.status === DESIGN_READY_STATUS && message.result) {
+                onDesignReady(withProjectInfo(message.result));
+              }
+            }
+          : undefined,
+      });
+      return { status: 200, body: withProjectInfo(taskResult) };
     } catch (err) {
       return { status: 400, body: { success: false, error: err.message } };
     }
@@ -52,40 +68,6 @@ export async function createDesign(moduleKey, inputs) {
 
   const body = await res.json();
   return { status: res.status, body };
-}
-
-/**
- * Create 3D CAD model for a module.
- */
-export async function createCad(moduleKey, inputs) {
-  const slug = getModuleSlug(moduleKey);
-  const url = MODULES.cad(slug);
-  const res = await apiClient(url, {
-    method: "POST",
-    body: JSON.stringify({ inputs }),
-  });
-  
-  if (res.status === 202) {
-    const acceptedBody = await res.json();
-    const taskId = acceptedBody.task_id;
-    try {
-      const taskResult = await subscribeToTask(taskId);
-      const isComingSoon = !taskResult.files || Object.keys(taskResult.files).length === 0;
-      const finalData = {
-        status: isComingSoon ? 'coming_soon' : 'success',
-        files: taskResult.files || {},
-        hover_dict: taskResult.hover_dict || {},
-        warnings: taskResult.warnings || [],
-        message: isComingSoon ? '3D model generation is coming soon' : 'CAD models generated successfully'
-      };
-      return { status: isComingSoon ? 200 : 201, data: finalData };
-    } catch (err) {
-      return { status: 500, data: { status: 'error', message: err.message } };
-    }
-  }
-
-  const data = await res.json();
-  return { status: res.status, data };
 }
 
 /**

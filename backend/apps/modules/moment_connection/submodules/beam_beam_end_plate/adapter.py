@@ -309,12 +309,12 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     return output, logs, raw_csv
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
     if section not in ("Model", "Beam", "Connector", "Bolt", "Weld"):
         raise InvalidInputTypeError("section", "'Model', 'Beam', 'Connector', 'Bolt' or 'Weld'")
 
-    module = create_from_input(input_values)
+    module = module if module is not None else create_from_input(input_values)
     from osdag_core.Common import KEY_DISP_BB_EP_SPLICE
     # Force correct keys for CAD routing
     if getattr(module, "module", None) != KEY_DISP_BB_EP_SPLICE:

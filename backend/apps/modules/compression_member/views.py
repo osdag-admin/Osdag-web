@@ -14,10 +14,8 @@ from .registry import CompressionMemberRegistry
 from apps.core.utils.module_helpers import (
     handle_design_request,
     trigger_async_design,
-    trigger_async_cad,
     trigger_async_report
 )
-from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from apps.core.api.design.report_customization_api import generate_initial_report_core
 from apps.core import catalog
 from apps.core.models import CustomMaterials
@@ -197,84 +195,6 @@ class CompressionMemberViewSet(viewsets.ViewSet):
         except Exception as exc:
             return error_response('internal_error', str(exc), status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/cad')
-    def cad(self, request, submodule_slug=None):
-        """
-        POST /api/modules/compression-member/{submodule_slug}/cad/
-        Asynchronously runs CAD generation task.
-        """
-        normalized_slug = self._normalize_slug(submodule_slug)
-        ServiceClass = CompressionMemberRegistry.get_service_by_slug_or_404(normalized_slug, COMPRESSION_MEMBER_ALLOWED_SLUGS)
-
-        if not ServiceClass:
-            return error_response('submodule_not_found', f'Sub-module {normalized_slug} not found', 404)
-        
-        # Extract inputs
-        inputs = request.data.get('inputs', request.data)
-        
-        if not inputs:
-            return error_response('missing_field', 'inputs are required', 400)
-        
-        # Get sections from request or use defaults
-        sections = request.data.get('sections')
-        if not sections:
-            sections = get_default_sections('compression-member', normalized_slug)
-        
-        if not sections:
-            return error_response('no_sections', f'No sections defined for {normalized_slug}', 400)
-
-        user_id = user_id_from_request(request)
-        material_error = unknown_material_error(inputs, user_id)
-        if material_error:
-            return error_response('bad_request', material_error, 400)
-
-        try:
-            # Import adapter to get create_from_input function for hover_dict
-            create_from_input_func = None
-            try:
-                if normalized_slug in ('struts-bolted', 'struts_bolted'):
-                    from .submodules.struts_bolted.adapter import create_from_input
-                    create_from_input_func = create_from_input
-                elif normalized_slug in ('struts-welded', 'struts_welded'):
-                    from .submodules.struts_welded.adapter import create_from_input
-                    create_from_input_func = create_from_input
-                elif normalized_slug == 'axially-loaded-column':
-                    from .submodules.axially_loaded_column.adapter import create_from_input
-                    create_from_input_func = create_from_input
-            except ImportError as e:
-                print(f"[CompressionMemberViewSet] Could not import create_from_input for {normalized_slug}: {e}")
-            
-            # Runs in the web process (not Celery), so the user's custom rows are installed here.
-            with user_rows(user_id):
-                result = generate_cad_models(
-                    service_class=ServiceClass,
-                    inputs=inputs,
-                    sections=sections,
-                    create_from_input_func=create_from_input_func
-                )
-            
-            if not result['files']:
-                return error_response(
-                    'cad_generation_failed',
-                    'No CAD models were generated',
-                    422,
-                    errors=result['warnings'],
-                )
-            
-            return Response({
-                'status': 'success',
-                'files': result['files'],
-                'hover_dict': result['hover_dict'],
-                'message': 'CAD models generated successfully',
-                'warnings': result['warnings']
-            }, status=201)
-            
-        except Exception as e:
-            print(f"[CompressionMemberViewSet] Error generating CAD: {e}")
-            import traceback
-            traceback.print_exc()
-            return error_response('internal_error', str(e), 500)
-
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
     def report_generate_initial(self, request, submodule_slug=None):
         """

@@ -14,10 +14,8 @@ from .registry import FlexureMemberRegistry
 from apps.core.utils.module_helpers import (
     handle_design_request,
     trigger_async_design,
-    trigger_async_cad,
     trigger_async_report
 )
-from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from rest_framework import status
 from apps.core import catalog
 from apps.core.models import CustomMaterials
@@ -187,15 +185,6 @@ class FlexureMemberViewSet(viewsets.ViewSet):
         except Exception as e:
             return error_response('internal_error', str(e), status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/cad')
-    def cad(self, request, submodule_slug=None):
-        """
-        POST /api/modules/flexure-member/{submodule_slug}/cad/
-        Asynchronously runs CAD generation task.
-        """
-        ServiceClass = FlexureMemberRegistry.get_service_by_slug_or_404(submodule_slug, FLEXURE_MEMBER_ALLOWED_SLUGS)
-        return trigger_async_cad('flexure-member', submodule_slug, ServiceClass, request)
-
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
     def report_generate_initial(self, request, submodule_slug=None):
         """

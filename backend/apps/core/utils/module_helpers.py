@@ -150,8 +150,7 @@ def handle_design_request(
 
 from rest_framework.response import Response
 from rest_framework import status
-from apps.core.tasks import run_design_calculation_task, run_cad_generation_task, run_report_generation_task
-from apps.core.utils.cad_helpers import get_default_sections
+from apps.core.tasks import run_design_calculation_task, run_report_generation_task
 from apps.core.osdag_overrides import unknown_material_error, user_id_from_request
 from apps.core.utils.api_errors import error_response
 
@@ -210,44 +209,6 @@ def trigger_async_design(module_name: str, submodule_slug: str, ServiceClass, re
             response_data['project_error'] = context['project_result']['error']
             
     return Response(response_data, status=status.HTTP_202_ACCEPTED)
-
-
-def trigger_async_cad(module_name: str, submodule_slug: str, ServiceClass, request) -> Response:
-    """
-    Triggers asynchronous CAD model generation using Celery.
-    """
-    if not ServiceClass:
-        return error_response('submodule_not_found', f'Sub-module {submodule_slug} not found', 404)
-        
-    inputs = request.data.get('inputs', request.data)
-    if not inputs:
-        return error_response('missing_field', 'inputs are required', 400)
-        
-    sections = request.data.get('sections')
-    if not sections:
-        sections = get_default_sections(module_name, submodule_slug)
-        
-    if not sections:
-        return error_response('no_sections', f'No sections defined for {submodule_slug}', 400)
-
-    user_id = user_id_from_request(request)
-    material_error = _unknown_material_response(inputs, user_id)
-    if material_error:
-        return material_error
-
-    task = run_cad_generation_task.delay(
-        module_name=module_name,
-        submodule_slug=submodule_slug,
-        inputs=inputs,
-        sections=sections,
-        user_id=user_id,
-    )
-    
-    return Response({
-        "success": True,
-        "task_id": task.id,
-        "status": "PENDING"
-    }, status=status.HTTP_202_ACCEPTED)
 
 
 def trigger_async_report(module_name: str, submodule_slug: str, module_id_map: dict, request) -> Response:

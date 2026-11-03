@@ -343,7 +343,8 @@ def generate_output(
 
 
 def create_cad_model(
-    input_values: Dict[str, Any], section: str, session: str, export_formats=None
+    input_values: Dict[str, Any], section: str, session: str, export_formats=None,
+    module=None,
 ) -> str:
     """
     Generate a CAD model for the given section and return the file path.
@@ -366,7 +367,7 @@ def create_cad_model(
         return f"file_storage/cad_models/{session}_{section}.brep"
 
     try:
-        module = create_from_input(input_values)
+        module = module if module is not None else create_from_input(input_values)
     except Exception as e:
         traceback.print_exc()
         raise InvalidInputTypeError(

@@ -13,10 +13,8 @@ from apps.core.models import CustomMaterials
 from apps.core.utils.module_helpers import (
     handle_design_request,
     trigger_async_design,
-    trigger_async_cad,
     trigger_async_report
 )
-from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
 from apps.core.api.design.report_customization_api import generate_initial_report_core
 from osdag_core.Common import (
     KEY_DISP_BUTTJOINTBOLTED, KEY_DISP_BUTTJOINTWELDED,
@@ -140,15 +138,6 @@ class SimpleConnectionViewSet(viewsets.ViewSet):
         except Exception as exc:
             return error_response('internal_error', str(exc), 500)
     
-    @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/cad')
-    def cad(self, request, submodule_slug=None):
-        """
-        POST /api/modules/simple-connection/{submodule_slug}/cad/
-        Asynchronously runs CAD generation task.
-        """
-        ServiceClass = SimpleConnectionRegistry.get_service_by_slug_or_404(submodule_slug, SIMPLE_CONNECTION_ALLOWED_SLUGS)
-        return trigger_async_cad('simple-connection', submodule_slug, ServiceClass, request)
-
     @action(detail=False, methods=['post'], url_path='(?P<submodule_slug>[^/.]+)/report/generate-initial')
     def report_generate_initial(self, request, submodule_slug=None):
         """

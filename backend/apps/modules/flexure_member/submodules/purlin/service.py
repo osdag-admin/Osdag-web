@@ -48,5 +48,5 @@ class PurlinService:
             }
 
     @staticmethod
-    def get_cad_model(inputs: dict, section: str, session: str) -> str:
-        return create_cad_model(inputs, section, session)
+    def get_cad_model(inputs: dict, section: str, session: str, module=None) -> str:
+        return create_cad_model(inputs, section, session, module=module)

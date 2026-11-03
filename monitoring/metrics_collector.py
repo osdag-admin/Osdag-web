@@ -52,7 +52,7 @@ SAMPLE_INTERVAL = float(os.getenv("SAMPLE_INTERVAL_S", "0.5"))
 HOST_LABEL      = os.getenv("HOST_LABEL",      socket.gethostname())
 
 # Celery queue names to monitor (must match docker-compose celery command)
-CELERY_QUEUES = ["calculations", "cad", "reports", "celery"]
+CELERY_QUEUES = ["calculations", "reports", "celery"]
 
 # ─── InfluxDB client ──────────────────────────────────────────────────────────
 influx_client = InfluxDBClient(

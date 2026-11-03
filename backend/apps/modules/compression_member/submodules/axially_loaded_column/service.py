@@ -84,7 +84,7 @@ class AxiallyLoadedColumnService:
             }
 
     @staticmethod
-    def get_cad_model(inputs: dict, section: str, session: str) -> str:
+    def get_cad_model(inputs: dict, section: str, session: str, module=None) -> str:
         """
         Generate CAD model and return file path.
 
@@ -96,5 +96,5 @@ class AxiallyLoadedColumnService:
         Returns:
             File path to the generated CAD model (relative to project root).
         """
-        return create_cad_model(inputs, section, session)
+        return create_cad_model(inputs, section, session, module=module)
 

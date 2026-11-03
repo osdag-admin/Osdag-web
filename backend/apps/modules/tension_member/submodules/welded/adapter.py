@@ -185,7 +185,7 @@ def _get_connector_shape(t_obj):
     return tbm.fuse_shapes(shapes)
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
-    module = create_from_input(input_values)
+    module = module if module is not None else create_from_input(input_values)
     return tbm.create_cad_model(module, KEY_DISP_TENSION_WELDED, _get_connector_shape, section, session, export_formats)

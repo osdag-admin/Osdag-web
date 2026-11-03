@@ -79,7 +79,7 @@ class BoltedTensionMemberService:
             }
     
     @staticmethod
-    def get_cad_model(inputs: dict, section: str, session: str) -> str:
+    def get_cad_model(inputs: dict, section: str, session: str, module=None) -> str:
         """
         Generate CAD model and return file path.
         
@@ -87,9 +87,10 @@ class BoltedTensionMemberService:
             inputs: Dictionary of input parameters
             section: Section to generate ('Model', 'Member', 'Plate', 'Endplate')
             session: Session identifier for file naming
+            module: Solved module instance to build from; when omitted the design is recalculated
             
         Returns:
             File path to the generated CAD model
         """
-        return create_cad_model(inputs, section, session)
+        return create_cad_model(inputs, section, session, module=module)
 

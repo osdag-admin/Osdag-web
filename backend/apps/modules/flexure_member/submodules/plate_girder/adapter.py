@@ -690,14 +690,14 @@ def build_plate_girder_cad(module, section: str, session: str) -> str:
     return file_path
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, module=None) -> str:
     """Generate a plate girder CAD part as a BREP file. Returns the relative path."""
     valid = ("Model", "Web", "Top Flange", "Bottom Flange", "Stiffeners", "Girder")
     if section not in valid:
         raise InvalidInputTypeError("section", f"one of {valid}")
 
     try:
-        module = create_from_input(input_values)
+        module = module if module is not None else create_from_input(input_values)
     except Exception:
         traceback.print_exc()
         return ""

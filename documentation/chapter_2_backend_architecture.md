@@ -36,7 +36,7 @@ backend/
 
 ## 2.2 Celery & Redis Integration
 
-Celery handles calculation, CAD rendering, and report compilation tasks out-of-process.
+Celery handles design calculation (with its 3D model) and report compilation tasks out-of-process.
 
 ### 1. Connection Configurations
 In `backend/config/settings.py`, Celery links to Redis via URL environment variables:
@@ -45,7 +45,6 @@ CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
 CELERY_TASK_ROUTES = {
     'apps.core.tasks.run_design_calculation_task': {'queue': 'calculations'},
-    'apps.core.tasks.run_cad_generation_task': {'queue': 'cad'},
     'apps.core.tasks.run_report_generation_task': {'queue': 'reports'},
 }
 ```
@@ -53,21 +52,34 @@ CELERY_TASK_ROUTES = {
 ### 2. Task Dispatching
 Celery tasks are defined in `backend/apps/core/tasks.py`. They invoke the corresponding adapter methods inside the worker process:
 ```python
-@shared_task(bind=True, name="run_design_calculation_task")
-def run_design_calculation_task(self, module_name, submodule_slug, inputs, project_id=None, user_email=None):
-    # Retrieve the appropriate module adapter
-    adapter = get_module_adapter(module_name, submodule_slug)
-    
-    # Run calculations
-    output, logs = adapter.generate_output(inputs)
-    
-    # Return result to Redis backend
-    return {
-        "success": True,
-        "data": output,
-        "logs": logs,
-    }
+@shared_task(bind=True)
+def run_design_calculation_task(self, module_name, submodule_slug, inputs, project_id=None, user_email=None, user_id=None):
+    ServiceClass = get_service_class(module_name, submodule_slug)
+
+    with user_rows(user_id):
+        WebMainRegistry.start_recording()
+        try:
+            result = ServiceClass.calculate(inputs=inputs, ...)   # the design runs once
+        finally:
+            instances = WebMainRegistry.stop_recording()          # every Main created while it ran
+
+        solver = _solved_module(instances)                        # last recorded, with a design_status
+        result["design_status"] = bool(solver.design_status)
+
+        if safe:
+            _publish_design_ready(self.request.id, result)        # outputs go out first
+            cad = generate_cad_models(ServiceClass, inputs, module=solver,
+                                      sections=get_default_sections(...), session_id=self.request.id)
+            result.update(files=cad["files"], hover_dict=cad["hover_dict"], warnings=cad["warnings"])
+    return result
 ```
+
+**One task for design and 3D model.** `run_design_calculation_task` calculates the design once and builds every CAD section and the hover text from the solved module it recorded, as the desktop app does with its `main` object. The result holds the outputs, logs and `design_status` plus `files`, `hover_dict` and `warnings` (empty for an unsafe or failed design, which builds no CAD). If building the model raises, the design results are still returned with a `cad_error` string. There is no separate CAD task or `/cad/` endpoint.
+
+* **The solved module.** `WebMainRegistry` records every `Main` constructed while `calculate` runs. `_solved_module` takes the last recorded one that has a `design_status`. Moment connection services used to build a throwaway module before `generate_output` built the real one; that extra solve was removed so each module solves once.
+* **Sharing one module.** `create_cad_model(input_values, section, session, export_formats=None, module=None)` in each adapter, and `get_cad_model(inputs, section, session, module=None)` in each service, build from `module` when it is given and recalculate with `create_from_input` when it is not (report images and CAD export still do). The sections read the shared module without changing the geometry: STL output of every section was identical to the old one-module-per-section output.
+* **Early message.** As soon as the calculation finishes, the task `group_send`s to `task_{task_id}` with status `DESIGN_READY` and the design result (no CAD files). `TaskStatusConsumer.task_update` forwards any status unchanged, and `subscribeToTask(taskId, { onProgress })` passes non-final messages to the callback. Only clients already connected receive it; the final result (task state `SUCCESS`) always repeats the outputs, so a late client works from it alone. When the final result is larger than 500 KB `on_task_postrun` leaves it out of the broadcast and the client fetches `api/tasks/<id>/`.
+* **Queue.** The task runs on the `calculations` queue. That worker writes `file_storage/cad_models/` (it mounts `file_storage_volume`) and runs with `--max-tasks-per-child=10`, because pythonocc-core can leak memory. No task time limit is configured for any queue.
 
 **Designs must not keep state between runs.** A worker process runs many designs one after another, so anything a design leaves behind (a logger that keeps its messages, a class attribute or module-level list that is mutated, a cache) leaks into the next design's result. Create state on the design instance, or reset it when the design is set up. `backend/apps/core/tests/test_design_state_isolation.py` enforces this: it runs every design-input fixture through its adapter in one process, in sorted and in reversed order, and fails if any result differs between the two passes.
 
@@ -103,9 +115,9 @@ Executes calculations on the solver instance and extracts output arrays (includi
 
 **Safe and unsafe designs.** The solver's `output_values(flag)` and the detail-table methods it links to (`spacing`, `capacities`, ...) take the design status as `flag`, as the desktop app does: with `True` they read the computed results, with `False` they return every field empty. Many of those results only exist when a design was found, so reading them for a design that failed raises `AttributeError`. Each adapter therefore reads `design_status = bool(getattr(module, "design_status", False))` once after the module has run and passes it to every output method, and to `build_raw_output_dict(rows, design_status)`, which only follows the detail-table buttons for a finished design.
 
-An unsafe design is a normal result, not an error. When no combination of the selected sections, bolts or plates passes, `generate_output` returns the output dictionary with empty values, the logs that explain the failure, and the calculation task reports `design_status: False` (taken from the solver instance). The frontend (`useDesignSubmission`) shows the logs together with "Design is unsafe / failed" instead of an error message, and does not save the project outputs or request a CAD model. `apps/core/tests/test_unsafe_design_output.py` runs the customized-list fixtures of the affected modules through the design task to keep this behaviour.
+An unsafe design is a normal result, not an error. When no combination of the selected sections, bolts or plates passes, `generate_output` returns the output dictionary with empty values, the logs that explain the failure, and the calculation task reports `design_status: False` (taken from the solver instance). The frontend (`useDesignSubmission`) shows the logs together with "Design is unsafe / failed" instead of an error message, and does not save the project outputs; the task builds no CAD model for it. `apps/core/tests/test_unsafe_design_output.py` runs the customized-list fixtures of the affected modules through the design task to keep this behaviour.
 
-### 5. `create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str`
+### 5. `create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str`
 Creates the CAD geometry objects using `CommonDesignLogic` (from `osdag_core.cad`). When the requested section is `"Model"`, it merges shapes of components (Beams, Columns, Plates, Bolts, Welds) into a single TopoDS compound, writing a merged `.brep` and `.stl` file.
 
 ---
@@ -193,7 +205,7 @@ In production deployments, these folders are mounted as Docker host volumes (`me
 
 ### 3. Multi-Node Distributed Worker Challenges (Resolved via Shared Volume)
 * **The Problem:** In a containerized environment, separate containers (like the Django web backend and Celery workers) have isolated filesystems. Files generated by the Celery worker container are not visible to the Django backend container.
-* **Resolution:** Defined and mounted a shared Docker volume `file_storage_volume` in `docker-compose.prod.yml` across `backend`, `celery_worker_cad`, `celery_worker_reports`, and `celery_beat` services. This ensures file visibility on a single baremetal host without needing external cloud storage (AWS S3) or self-hosted object stores (MinIO).
+* **Resolution:** Defined and mounted a shared Docker volume `file_storage_volume` in `docker-compose.prod.yml` across `backend`, `celery_worker_calc`, `celery_worker_reports`, and `celery_beat` services. This ensures file visibility on a single baremetal host without needing external cloud storage (AWS S3) or self-hosted object stores (MinIO).
 
 ### 4. Database Engine Differences (Accepted - Postgres Only)
 * **The Problem:** The `UserAccount` model uses PostgreSQL-specific `ArrayField` for `allInputValueFiles`, restricting local SQLite execution for unit tests or lightweight dev configurations.

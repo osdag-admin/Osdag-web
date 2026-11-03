@@ -134,7 +134,7 @@ To run the entire stack (Postgres, Redis, Django, Celery Worker, React frontend)
    ```bash
    cd backend
    conda activate osdag-web
-   celery -A config worker -Q calculations,cad,reports,celery --loglevel=info --concurrency=4
+   celery -A config worker -Q calculations,reports,celery --loglevel=info --concurrency=4
    ```
 
 2. **Start the Django Backend (ASGI — required for load testing)**:

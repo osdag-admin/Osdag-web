@@ -224,7 +224,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     return output, logs, raw_csv
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP/STL file.
 
     External API uses section names: "Model", "Beam", "CoverPlate", "Bolt", "Weld".
@@ -235,7 +235,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     if section not in ("Model", "Beam", "CoverPlate", "Bolt", "Weld"):
         raise InvalidInputTypeError("section", "'Model', 'Beam', 'CoverPlate', 'Bolt' or 'Weld'")
 
-    module = create_from_input(input_values)
+    module = module if module is not None else create_from_input(input_values)
 
     from osdag_core.Common import KEY_DISP_BEAMCOVERPLATEWELD
     if getattr(module, "module", None) != KEY_DISP_BEAMCOVERPLATEWELD:

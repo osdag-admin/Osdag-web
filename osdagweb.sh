@@ -103,7 +103,7 @@ trap cleanup SIGINT SIGTERM
 # 1. Celery worker
 # ============================================================
 CELERY_PID=$(run_in_conda "celery" "$BACKEND_DIR" \
-  "celery -A config worker -Q calculations,cad,reports,celery --loglevel=info")
+  "celery -A config worker -Q calculations,reports,celery --loglevel=info")
 PIDS+=("$CELERY_PID")
 ok "Celery worker started (PID $CELERY_PID)"
 

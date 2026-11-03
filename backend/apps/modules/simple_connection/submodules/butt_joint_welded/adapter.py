@@ -165,7 +165,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         pass
     return output, logs, raw_csv
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path.
     Desktop options: Model, Plate 1, Plate 2, Cover Plate, Welds.
     """
@@ -173,10 +173,11 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     if section not in valid_sections:
         raise InvalidInputTypeError("section", "'Model', 'Plate 1', 'Plate 2', 'Cover Plate', 'Welds'")
 
-    module = ButtJointWelded()
-    module.set_osdaglogger(None, id="web")
-    validate_input(input_values)
-    module.set_input_values(input_values)
+    if module is None:
+        module = ButtJointWelded()
+        module.set_osdaglogger(None, id="web")
+        validate_input(input_values)
+        module.set_input_values(input_values)
     if getattr(module, "module", None) != KEY_DISP_BUTTJOINTWELDED:
         module.module = KEY_DISP_BUTTJOINTWELDED
 

@@ -397,7 +397,7 @@ def _get_shapes(cld):
     return [purlin_shape] if purlin_shape is not None else []
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """
     Generate CAD model for Purlin.
     Returns relative BREP file path.
@@ -411,7 +411,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     # (logger is initialized inside _create_purlin_module via create_from_input)
     # ------------------------------------
     try:
-        module = create_from_input(input_values)
+        module = module if module is not None else create_from_input(input_values)
     except Exception:
         traceback.print_exc()
         return ""

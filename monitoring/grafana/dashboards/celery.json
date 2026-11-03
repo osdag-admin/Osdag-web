@@ -756,7 +756,7 @@
     {
       "id": 16,
       "type": "row",
-      "title": "Worker sizing (calculations 18, cad 8, reports 4)",
+      "title": "Worker sizing (calculations 18, reports 4)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -818,7 +818,7 @@
           "sort": "desc"
         }
       },
-      "description": "Task-seconds of work per second (Little's law) = average number of busy worker processes. Compare with the pool size: calculations 18, cad 8, reports 4."
+      "description": "Task-seconds of work per second (Little's law) = average number of busy worker processes. Compare with the pool size: calculations 18, reports 4."
     },
     {
       "id": 18,

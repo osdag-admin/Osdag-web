@@ -148,7 +148,7 @@ $Processes = @(
     @{
         Title     = 'Osdag-Web Celery'
         Directory = Join-Path $ProjectDir 'backend'
-        Command   = "$ActivateCommand`n& '$PyLiteral' -m celery -A config worker -Q calculations,cad,reports,celery --pool=solo --concurrency=1 --loglevel=info"
+        Command   = "$ActivateCommand`n& '$PyLiteral' -m celery -A config worker -Q calculations,reports,celery --pool=solo --concurrency=1 --loglevel=info"
     },
     @{
         Title     = $FrontendTitle

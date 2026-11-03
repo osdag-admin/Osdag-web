@@ -137,31 +137,29 @@ The production deployment in [docker-compose.prod.yml](../docker-compose.prod.ym
           +----------------------+----+------------------+
                                  |                       |
                                  v                       v
-                      +--------------------+   +--------------------+
-                      | celery_worker_calc |   |  celery_worker_cad |
-                      | (Concurrency: 18)  |   | (Max Tasks: 10/ch) |
-                      +--------------------+   +--------------------+
+                      +--------------------+   +-----------------------+
+                      | celery_worker_calc |   | celery_worker_reports |
+                      | (Concurrency: 18)  |   | (Concurrency: 4)      |
+                      | (Max Tasks: 10/ch) |   +-----------------------+
+                      +--------------------+
 ```
 
 ### 1. Process and Volume Isolation
 * **Nginx Reverse Proxy**: The frontend service serves compiled static HTML assets and acts as the entry gateway. It proxies API requests (`/api`) to the Django Gunicorn server.
-* **Image Selection**: `backend`, the three Celery workers, `celery_beat` and `frontend` use images from GHCR (`ghcr.io/sogalabhi/osdag-web/backend` and `.../frontend`). The tag comes from `IMAGE_TAG`, which the deploy workflow sets to the commit SHA (see 11.8); it falls back to `latest` only for ad-hoc manual runs on the server. The file contains no `build:` sections.
+* **Image Selection**: `backend`, the two Celery workers, `celery_beat` and `frontend` use images from GHCR (`ghcr.io/sogalabhi/osdag-web/backend` and `.../frontend`). The tag comes from `IMAGE_TAG`, which the deploy workflow sets to the commit SHA (see 11.8); it falls back to `latest` only for ad-hoc manual runs on the server. The file contains no `build:` sections.
 * **Migrations**: The `backend` container does not run `migrate` on start. The deploy workflow runs it once before the containers are replaced (see 11.8). Its start command only runs `collectstatic` and then Gunicorn.
 * **Healthchecks**: Every service except `cloudflared` has a healthcheck, and `depends_on` waits for `db`, `redis` and `backend` to be healthy. `backend` calls `/api/health/`, the Celery workers use `celery inspect ping`, and `frontend` fetches `/` from Nginx.
 * **Static Asset Persistence**: Declares dedicated volume mounts (`static_volume`, `media_volume`, `osifiles_volume`) shared between the backend, frontend, and Celery workers to store user calculations, reports, and CAD drawings.
 
 ### 2. Specialized Celery Worker Splits
-To prevent heavy CPU computations or CAD rendering from blocking report generation, production workers are divided into three specialized service queues:
+To prevent heavy design computations from blocking report generation, production workers are divided into two specialized service queues. The design task calculates the design and builds its 3D model in one go, so there is no separate CAD worker:
 
 * **`celery_worker_calc`**:
   * **Queue**: `calculations`
   * **Concurrency**: `--concurrency=18`
-  * **Rationale**: Designed for fast, CPU-bound calculation iterations. High concurrency permits processing multiple design requests simultaneously.
-* **`celery_worker_cad`**:
-  * **Queue**: `cad`
-  * **Concurrency**: `--concurrency=8`
   * **Memory Limit**: `--max-tasks-per-child=10`
-  * **Rationale**: CAD generation relies on C++ extensions loaded via pythonocc-core, which can leak memory over multiple operations. Restricting child lifetimes to a maximum of 10 tasks forces worker sub-processes to restart regularly, clearing residual allocations.
+  * **Volume**: `file_storage_volume`, because the design task writes the 3D model files to `file_storage/cad_models/` before it reads them back into its result (and `clean_temporary_files` runs here and needs to see them).
+  * **Rationale**: Designed for CPU-bound design iterations. High concurrency permits processing multiple design requests simultaneously. CAD generation relies on C++ extensions loaded via pythonocc-core, which can leak memory over multiple operations. Restricting child lifetimes to a maximum of 10 tasks forces worker sub-processes to restart regularly, clearing residual allocations.
 * **`celery_worker_reports`**:
   * **Queue**: `reports`
   * **Concurrency**: `--concurrency=4`
@@ -204,7 +202,7 @@ ports:
 
 Users' custom sections and materials are no longer written into the bundled SQLite catalog (`osdag_core/data/ResourceFiles/Database/Intg_osdag.sqlite`). They live only in PostgreSQL, and each design, CAD and report run receives the owner's rows through a per-run override (`apps/core/osdag_overrides.py`). When rolling this out:
 
-* **Restart the Celery workers together with the web app.** `run_design_calculation_task`, `run_cad_generation_task`, `run_report_generation_task` and `run_pso_optimization` gained a `user_id` argument. A worker still running the old code rejects tasks queued by the new web app (and the reverse), so redeploy `backend`, `celery_worker` (or the `celery_worker_calc`, `celery_worker_cad` and `celery_worker_reports` splits) in one step.
+* **Restart the Celery workers together with the web app.** `run_design_calculation_task`, `run_report_generation_task` and `run_pso_optimization` gained a `user_id` argument. A worker still running the old code rejects tasks queued by the new web app (and the reverse), so redeploy `backend`, `celery_worker` (or the `celery_worker_calc` and `celery_worker_reports` splits) in one step.
 * **Dev setups with the `.:/app` mount** (see 11.3) may have custom rows written into the git-tracked `Intg_osdag.sqlite` by the old code. Restore the catalog with:
   ```bash
   git checkout -- osdag_core/data/ResourceFiles/Database/Intg_osdag.sqlite

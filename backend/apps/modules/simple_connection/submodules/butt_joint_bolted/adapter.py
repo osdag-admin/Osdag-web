@@ -173,7 +173,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         pass
     return output, logs, raw_csv
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path.
     Desktop options: Model, Plate 1, Plate 2, Cover Plate, Bolts.
     """
@@ -182,13 +182,14 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     if section not in valid_sections:
         raise InvalidInputTypeError("section", "'Model', 'Plate 1', 'Plate 2', 'Cover Plate', 'Bolts'")
 
-    print(f"[ButtJointBolted CAD] Creating module instance")
-    module = ButtJointBolted()
-    print(f"[ButtJointBolted CAD] Initializing logger")
-    module.set_osdaglogger(None, id="web")
-    print(f"[ButtJointBolted CAD] Setting input values")
-    module.set_input_values(input_values)
-    print(f"[ButtJointBolted CAD] Input values set successfully")
+    if module is None:
+        print(f"[ButtJointBolted CAD] Creating module instance")
+        module = ButtJointBolted()
+        print(f"[ButtJointBolted CAD] Initializing logger")
+        module.set_osdaglogger(None, id="web")
+        print(f"[ButtJointBolted CAD] Setting input values")
+        module.set_input_values(input_values)
+        print(f"[ButtJointBolted CAD] Input values set successfully")
     # Force correct display key for CAD, mirroring fin plate behavior
     if getattr(module, "module", None) != KEY_DISP_BUTTJOINTBOLTED:
         print(f"[CAD DEBUG] Adjusting module.module from {getattr(module, 'module', None)} to {KEY_DISP_BUTTJOINTBOLTED}")

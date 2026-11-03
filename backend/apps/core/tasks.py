@@ -39,59 +39,72 @@ def get_service_class(module_name: str, submodule_slug: str):
         raise ValueError(f"Unknown parent module: {module_name}")
 
 
-def get_create_from_input_func(module_name: str, submodule_slug: str):
-    """
-    Helper to resolve the create_from_input function for CAD hover_dict generation.
-    """
-    from apps.core.registry import BaseModuleRegistry
-    slug = submodule_slug.replace('_', '-')
-    for meta in BaseModuleRegistry._global_metadata.values():
-        if meta.get('slug') == slug and meta.get('adapter_func'):
-            return meta.get('adapter_func')
-
-    try:
-        if module_name == 'shear-connection':
-            slug_clean = submodule_slug.replace('-', '_')
-            mod = __import__(f"apps.modules.shear_connection.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
-            return getattr(mod, "create_from_input", None)
-        elif module_name == 'moment-connection':
-            slug_clean = submodule_slug.replace('-', '_')
-            mod = __import__(f"apps.modules.moment_connection.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
-            return getattr(mod, "create_from_input", None)
-        elif module_name == 'simple-connection':
-            slug_clean = submodule_slug.replace('-', '_')
-            mod = __import__(f"apps.modules.simple_connection.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
-            return getattr(mod, "create_from_input", None)
-        elif module_name == 'tension-member':
-            slug_clean = submodule_slug.replace('-', '_')
-            mod = __import__(f"apps.modules.tension_member.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
-            return getattr(mod, "create_from_input", None)
-        elif module_name == 'flexure-member':
-            slug_clean = submodule_slug.replace('-', '_')
-            mod = __import__(f"apps.modules.flexure_member.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
-            return getattr(mod, "create_from_input", None)
-        elif module_name == 'compression-member':
-            slug_clean = submodule_slug.replace('-', '_')
-            mod = __import__(f"apps.modules.compression_member.submodules.{slug_clean}.adapter", fromlist=["create_from_input"])
-            return getattr(mod, "create_from_input", None)
-        elif module_name == 'base-plate':
-            from apps.modules.base_plate.adapter import create_from_input
-            return create_from_input
-    except Exception as e:
-        logger.warning(f"Could not dynamically import create_from_input for {module_name}/{submodule_slug}: {e}")
-    return None
-
-
-
 @shared_task
 def healthcheck_task():
     return {"status": "ok", "worker": "celery"}
 
 
+# Status sent over the task's WebSocket group once the design is calculated, before the 3D
+# model is built. The final message (task state SUCCESS) carries everything again.
+DESIGN_READY_STATUS = "DESIGN_READY"
+
+
+def _solved_module(instances):
+    """The module the design ran on: the last recorded one that has a design_status."""
+    for inst in reversed(instances):
+        if hasattr(inst, 'design_status'):
+            return inst
+    return None
+
+
+def _logs_from_instances(instances):
+    from osdag_core.custom_logger import CustomLogger
+    extracted_logs = []
+    for inst in reversed(instances):
+        if hasattr(inst, 'logger') and isinstance(inst.logger, CustomLogger):
+            inst_logs = inst.logger.get_logs()
+            if inst_logs:
+                extracted_logs.extend(inst_logs)
+        elif hasattr(inst, 'logs') and inst.logs:
+            extracted_logs.extend(inst.logs)
+    return extracted_logs
+
+
+def _publish_design_ready(task_id, result):
+    """Send the calculated design to clients waiting on this task, ahead of the 3D model.
+
+    Clients that connect later miss this message; the task's final result has the
+    same design data, so this is only a head start.
+    """
+    try:
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
+        channel_layer = get_channel_layer()
+        if channel_layer is None:
+            return
+        async_to_sync(channel_layer.group_send)(
+            f"task_{task_id}",
+            {
+                "type": "task.update",
+                "status": DESIGN_READY_STATUS,
+                "result": result,
+                "error": None,
+            },
+        )
+    except Exception as exc:
+        logger.warning(f"Could not send the early design result for task {task_id}: {exc}")
+
+
 @shared_task(bind=True)
 def run_design_calculation_task(self, module_name: str, submodule_slug: str, inputs: dict, project_id=None, user_email=None, user_id=None):
     """
-    Celery task to run CPU-bound connection design calculations.
+    Celery task to run the design calculation and build its 3D model.
+
+    The design is calculated once. When it is safe, every CAD section and the hover
+    text are built from that same solved module, as the desktop app does. The result
+    holds the design outputs and logs plus the CAD files, so it is complete on its own;
+    the outputs are also sent over the task's WebSocket group as soon as they exist.
     """
     logger.info(f"Starting calculation task: {module_name}/{submodule_slug} (Task ID: {self.request.id})")
 
@@ -101,88 +114,74 @@ def run_design_calculation_task(self, module_name: str, submodule_slug: str, inp
 
     from apps.core.main_registry import WebMainRegistry
     from apps.core.osdag_overrides import user_rows
-    WebMainRegistry.start_recording()
-    try:
-        with user_rows(user_id):
+    from apps.core.utils.cad_helpers import generate_cad_models, get_default_sections
+
+    with user_rows(user_id):
+        WebMainRegistry.start_recording()
+        try:
             result = ServiceClass.calculate(
                 inputs=inputs,
                 request=None,
                 project_id=project_id,
                 user_email=user_email
             )
-    finally:
-        instances = WebMainRegistry.stop_recording()
-        
-    design_status = True
-    if result and isinstance(result, dict):
-        for inst in reversed(instances):
-            if hasattr(inst, 'design_status'):
-                design_status = bool(inst.design_status)
-                break
-        result['design_status'] = design_status
-        logger.info(f"Calculation task design_status resolved to: {design_status}")
+        finally:
+            instances = WebMainRegistry.stop_recording()
 
-        # Extract logs from recorded instances if result logs is empty/falsy
-        if not result.get('logs'):
-            extracted_logs = []
-            from osdag_core.custom_logger import CustomLogger
-            for inst in reversed(instances):
-                if hasattr(inst, 'logger') and isinstance(inst.logger, CustomLogger):
-                    inst_logs = inst.logger.get_logs()
-                    if inst_logs:
-                        extracted_logs.extend(inst_logs)
-                elif hasattr(inst, 'logs') and inst.logs:
-                    extracted_logs.extend(inst.logs)
-            if extracted_logs:
-                result['logs'] = extracted_logs
-    else:
-        # Fallback if result is None or not a dict
-        for inst in reversed(instances):
-            if hasattr(inst, 'design_status'):
-                design_status = bool(inst.design_status)
-                break
-        extracted_logs = []
-        from osdag_core.custom_logger import CustomLogger
-        for inst in reversed(instances):
-            if hasattr(inst, 'logger') and isinstance(inst.logger, CustomLogger):
-                inst_logs = inst.logger.get_logs()
-                if inst_logs:
-                    extracted_logs.extend(inst_logs)
-            elif hasattr(inst, 'logs') and inst.logs:
-                extracted_logs.extend(inst.logs)
-        result = {
-            'success': False,
-            'data': {},
-            'logs': extracted_logs,
-            'design_status': design_status
-        }
-    
-    return result
+        solver = _solved_module(instances)
+        design_status = bool(solver.design_status) if solver is not None else True
 
+        if result and isinstance(result, dict):
+            result['design_status'] = design_status
+            logger.info(f"Calculation task design_status resolved to: {design_status}")
 
-@shared_task(bind=True)
-def run_cad_generation_task(self, module_name: str, submodule_slug: str, inputs: dict, sections: list, user_id=None):
-    """
-    Celery task to generate CAD models.
-    """
-    logger.info(f"Starting CAD generation task: {module_name}/{submodule_slug} (Task ID: {self.request.id})")
+            # Extract logs from recorded instances if result logs is empty/falsy
+            if not result.get('logs'):
+                extracted_logs = _logs_from_instances(instances)
+                if extracted_logs:
+                    result['logs'] = extracted_logs
+        else:
+            # Fallback if result is None or not a dict
+            result = {
+                'success': False,
+                'data': {},
+                'logs': _logs_from_instances(instances),
+                'design_status': design_status
+            }
 
-    ServiceClass = get_service_class(module_name, submodule_slug)
-    if not ServiceClass:
-        raise ValueError(f"Service class for {module_name}/{submodule_slug} not found")
+        result['files'] = {}
+        result['hover_dict'] = {}
+        result['warnings'] = []
 
-    create_from_input_func = get_create_from_input_func(module_name, submodule_slug)
-
-    from apps.core.utils.cad_helpers import generate_cad_models
-    from apps.core.osdag_overrides import user_rows
-    with user_rows(user_id):
-        result = generate_cad_models(
-            service_class=ServiceClass,
-            inputs=inputs,
-            sections=sections,
-            session_id=self.request.id,
-            create_from_input_func=create_from_input_func
+        # Same condition the frontend applied before it asked for a 3D model.
+        build_cad = (
+            result.get('success') is not False
+            and bool(result.get('data'))
+            and design_status
         )
+        if not build_cad:
+            return result
+
+        _publish_design_ready(self.request.id, dict(result))
+
+        if solver is None:
+            result['cad_error'] = 'The solved design was not available for the 3D model'
+            return result
+
+        try:
+            cad = generate_cad_models(
+                service_class=ServiceClass,
+                inputs=inputs,
+                module=solver,
+                sections=get_default_sections(module_name, submodule_slug),
+                session_id=self.request.id,
+            )
+            result['files'] = cad['files']
+            result['hover_dict'] = cad['hover_dict']
+            result['warnings'] = cad['warnings']
+        except Exception as exc:
+            logger.exception(f"CAD generation failed for task {self.request.id}")
+            result['cad_error'] = str(exc) or type(exc).__name__
 
     return result
 

@@ -34,7 +34,6 @@ export const REPORTS = {
 export const MODULES = {
   options: (slug) => `${API_PREFIX}modules/${slug}/options/`, // GET
   design: (slug) => `${API_PREFIX}modules/${slug}/design/`, // POST
-  cad: (slug) => `${API_PREFIX}modules/${slug}/cad/`, // POST
   reportGenerateInitial: (slug) =>
     `${API_PREFIX}modules/${slug}/report/generate-initial/`, // POST
 };

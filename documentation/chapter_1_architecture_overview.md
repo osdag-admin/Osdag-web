@@ -15,7 +15,7 @@ Structural engineering tasks—such as design calculations, 3D CAD model geometr
 ### The Asynchronous Solution
 To decouple HTTP request handling from background calculation, Osdag-Web implements the **Asynchronous Calculation Design Pattern** using WebSockets:
 
-1. **Immediate Acceptance:** When a user clicks **Design**, **CAD**, or **Generate Report**, the frontend submits the request payload via HTTP POST. The Django backend instantly generates a background job, submits it to a Celery task queue, and returns an `HTTP 202 Accepted` response with a unique `task_id` (taking <50ms).
+1. **Immediate Acceptance:** When a user clicks **Design** or **Generate Report**, the frontend submits the request payload via HTTP POST. The Django backend instantly generates a background job, submits it to a Celery task queue, and returns an `HTTP 202 Accepted` response with a unique `task_id` (taking <50ms).
 2. **WebSocket Subscription:** The frontend intercepts the `task_id` and establishes a WebSocket connection to `/ws/tasks/{task_id}/`. Django Channels registers this WebSocket channel into a Redis channel group unique to the task (`task_{task_id}`).
 3. **Execution & Push:** The Celery worker processes the computation out-of-process. When finished, a `task_postrun` signal handler broadcasts the final task state and results to the corresponding Redis channel group. Django Channels receives the event and immediately pushes the payload to the active WebSocket client, avoiding repetitive HTTP polling requests. The client updates the UI state and closes the connection.
 
@@ -83,7 +83,7 @@ graph TD
 
 ## 1.4 Request Lifecycle Walkthrough
 
-Here is the exact progression of a design and CAD workflow:
+Here is the exact progression of a design and CAD workflow. One task does both: it calculates the design once and builds the 3D model from that same solved module. A client that connects after the `DESIGN_READY` message misses it, so the final result always carries the outputs as well as the CAD files.
 
 ```mermaid
 sequenceDiagram
@@ -102,25 +102,16 @@ sequenceDiagram
     FE->>BE: Establish WebSocket (ws/tasks/{task_id}/)
     BE->>Redis: Join group "task_{task_id}"
     
-    Redis->>Worker: Consume calculation task
-    Note over Worker: Runs Osdag-core solver
+    Redis->>Worker: Consume design task
+    Note over Worker: Runs Osdag-core solver once
+    Worker->>Redis: group_send DESIGN_READY (outputs, logs, design_status)
+    Redis->>BE: Route group event
+    BE->>FE: Push outputs via WebSocket
+    Note over FE: Render Output Dock, status "Building 3D model..."
+    Note over Worker: Builds every CAD section and hover text from the same solver (safe designs only)
     Worker->>Redis: Broadcast SUCCESS/FAILURE state via task_postrun signal
     Redis->>BE: Route group broadcast event
-    BE->>FE: Push status/results via WebSocket
-    Note over FE: Render Output Dock
-    FE->>BE: Close WebSocket
-
-    FE->>BE: HTTP POST /api/modules/.../cad/
-    BE->>Redis: Submit "run_cad_generation_task"
-    BE-->>FE: HTTP 202 Accepted (Returns task_id)
-    FE->>BE: Establish WebSocket (ws/tasks/{task_id}/)
-    BE->>Redis: Join group "task_{task_id}"
-
-    Redis->>Worker: Consume CAD task
-    Note over Worker: Generates STL/OBJ via PythonOCC
-    Worker->>Redis: Broadcast SUCCESS/FAILURE state via task_postrun signal
-    Redis->>BE: Route group broadcast event
-    BE->>FE: Push status/mesh URLs via WebSocket
+    BE->>FE: Push final result (outputs, logs, CAD files, hover_dict) via WebSocket
     Note over FE: Renders 3D components in R3F Canvas
     FE->>BE: Close WebSocket
 ```

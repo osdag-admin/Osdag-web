@@ -128,7 +128,7 @@ step "Done"
 cat <<EOF
 Start the app in three terminals (conda activate $ENV_NAME for the first two):
   cd $PROJECT_DIR/backend && python manage.py runserver 8000
-  cd $PROJECT_DIR/backend && celery -A config worker -Q calculations,cad,reports,celery --loglevel=info
+  cd $PROJECT_DIR/backend && celery -A config worker -Q calculations,reports,celery --loglevel=info
   cd $PROJECT_DIR/frontend && npm run dev
 Then open http://localhost:5173
 EOF

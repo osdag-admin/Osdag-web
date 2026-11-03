@@ -241,7 +241,7 @@ def _get_shapes(cld):
     return list(components.values()) if components else []
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """
     Generate CAD model for On-Cantilever-Beam.
     Uses createSimplySupportedBeam as the cantilever beam shape is structurally similar.
@@ -251,7 +251,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
         raise InvalidInputTypeError('section', "'Model' or 'Beam'")
 
     try:
-        module = create_from_input(input_values)
+        module = module if module is not None else create_from_input(input_values)
     except Exception:
         traceback.print_exc()
         return ''

@@ -326,7 +326,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     return output, logs, raw_csv
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     from apps.core.utils import write_stl
     from OCC.Core.BRep import BRep_Builder
     from OCC.Core.TopoDS import TopoDS_Compound
@@ -335,7 +335,7 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     if section not in ("Model", "Beam", "Column", "SeatedAngle", "Bolt", "Weld"):  # Error checking: If section is valid.
         raise InvalidInputTypeError(
             "section", "'Model', 'Beam', 'Column', 'SeatedAngle', 'Bolt' or 'Weld'")
-    module = create_from_input(input_values)  # Create module from input.
+    module = module if module is not None else create_from_input(input_values)  # Create module from input.
     # Object that will create the CAD model.
     try : 
         cld = CommonDesignLogic(None, None, '', KEY_DISP_SEATED_ANGLE, module.mainmodule)

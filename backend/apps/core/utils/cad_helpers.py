@@ -95,23 +95,75 @@ def resolve_file_path(path: str, repo_root: str, backend_root: str) -> tuple[str
         return path_repo_root, repo_root
 
 
+def _build_hover_dict(module, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    """Hover tooltip text per part, read from the solved module."""
+    hover_dict = {}
+    try:
+        # Call output_values() to populate hover_dict
+        if hasattr(module, 'output_values') and callable(module.output_values):
+            try:
+                module.output_values(True)
+                print(f"[cad_helpers] Called output_values(), hover_dict populated")
+            except Exception as output_err:
+                print(f"[cad_helpers] Error calling output_values(): {output_err}")
+                import traceback
+                traceback.print_exc()
+
+        # Get hover_dict after it's been populated
+        cand = getattr(module, 'hover_dict', None)
+        if isinstance(cand, dict) and len(cand) > 0:
+            hover_dict = cand
+            if "Weld" in hover_dict and "Welds" not in hover_dict:
+                hover_dict["Welds"] = hover_dict["Weld"]
+            print(f"[cad_helpers] Retrieved hover_dict: {hover_dict}")
+        else:
+            print(f"[cad_helpers] hover_dict is empty or not a dict: {cand}")
+            # Minimal fallback for Bolt info
+            bolt_grade = None
+            bolt_dia = None
+            try:
+                grades = inputs.get('Bolt.Grade') or []
+                dias = inputs.get('Bolt.Diameter') or []
+                if isinstance(grades, list) and grades:
+                    bolt_grade = grades[-1]
+                if isinstance(dias, list) and dias:
+                    bolt_dia = dias[-1]
+            except Exception:
+                pass
+            if bolt_grade or bolt_dia:
+                parts = []
+                if bolt_grade:
+                    parts.append(f"Grade: {bolt_grade}")
+                if bolt_dia:
+                    parts.append(f"Diameter: {bolt_dia} mm")
+                hover_dict['Bolt'] = ' '.join(parts)
+    except Exception as e:
+        print(f"[cad_helpers] Error building hover_dict: {e}")
+        import traceback
+        traceback.print_exc()
+    return hover_dict
+
+
 def generate_cad_models(
     service_class,
     inputs: Dict[str, Any],
+    module,
     sections: Optional[List[str]] = None,
     session_id: Optional[str] = None,
-    create_from_input_func=None
 ) -> Dict[str, Any]:
     """
     Generate CAD models for given sections using a service class.
-    
+
+    Every section and the hover_dict are built from the same solved module, so the
+    design is not calculated again.
+
     Args:
         service_class: Service class with get_cad_model method
         inputs: Design input parameters
-        sections: List of sections to generate (if None, uses default)
+        module: The solved module instance the design calculation produced
+        sections: List of sections to generate
         session_id: Session identifier (if None, generates UUID)
-        create_from_input_func: Optional function to create module instance for hover_dict
-        
+
     Returns:
         Dictionary with:
         - 'files': Dict mapping section names to base64-encoded file data
@@ -131,6 +183,10 @@ def generate_cad_models(
     output_files = {}
     error_details = []
     
+    # Read the hover text before any section is built: building CAD sets up the module for
+    # drawing, and hover_dict should reflect the module as the design left it.
+    hover_dict = _build_hover_dict(module, inputs)
+
     # Generate CAD for each section
     for section in sections:
         print(f"[cad_helpers] Generating section: {section}")
@@ -145,7 +201,7 @@ def generate_cad_models(
             
             # Call service to generate CAD
             print(f"[cad_helpers] Calling get_cad_model for section '{section}'")
-            path = service_class.get_cad_model(inputs, section, session_id)
+            path = service_class.get_cad_model(inputs, section, session_id, module=module)
             
             if not path:
                 print(f'[cad_helpers] Error generating {section}: get_cad_model() returned None or empty string')
@@ -244,55 +300,6 @@ def generate_cad_models(
             error_details.append({"section": section, "error": str(e)})
     
     print(f"[cad_helpers] Final output_files keys: {list(output_files.keys())}")
-    
-    # Build hover_dict if create_from_input function is provided
-    hover_dict = {}
-    if create_from_input_func:
-        try:
-            mdl = create_from_input_func(inputs)
-            
-            # Call output_values() to populate hover_dict
-            if hasattr(mdl, 'output_values') and callable(mdl.output_values):
-                try:
-                    mdl.output_values(True)
-                    print(f"[cad_helpers] Called output_values(), hover_dict populated")
-                except Exception as output_err:
-                    print(f"[cad_helpers] Error calling output_values(): {output_err}")
-                    import traceback
-                    traceback.print_exc()
-            
-            # Get hover_dict after it's been populated
-            cand = getattr(mdl, 'hover_dict', None)
-            if isinstance(cand, dict) and len(cand) > 0:
-                hover_dict = cand
-                if "Weld" in hover_dict and "Welds" not in hover_dict:
-                    hover_dict["Welds"] = hover_dict["Weld"]
-                print(f"[cad_helpers] Retrieved hover_dict: {hover_dict}")
-            else:
-                print(f"[cad_helpers] hover_dict is empty or not a dict: {cand}")
-                # Minimal fallback for Bolt info
-                bolt_grade = None
-                bolt_dia = None
-                try:
-                    grades = inputs.get('Bolt.Grade') or []
-                    dias = inputs.get('Bolt.Diameter') or []
-                    if isinstance(grades, list) and grades:
-                        bolt_grade = grades[-1]
-                    if isinstance(dias, list) and dias:
-                        bolt_dia = dias[-1]
-                except Exception:
-                    pass
-                if bolt_grade or bolt_dia:
-                    parts = []
-                    if bolt_grade:
-                        parts.append(f"Grade: {bolt_grade}")
-                    if bolt_dia:
-                        parts.append(f"Diameter: {bolt_dia} mm")
-                    hover_dict['Bolt'] = ' '.join(parts)
-        except Exception as e:
-            print(f"[cad_helpers] Error building hover_dict: {e}")
-            import traceback
-            traceback.print_exc()
     
     return {
         'files': output_files,

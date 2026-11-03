@@ -70,7 +70,7 @@ The `osdag_tasks` measurement tracks execution queues. When users request calcul
 * **Measurement Name:** `osdag_tasks`
 * **Tags:**
   * `host`: Host identity tag.
-  * `queue`: The Celery queue being monitored (`calculations`, `cad`, `reports`, or `celery`).
+  * `queue`: The Celery queue being monitored (`calculations`, `reports`, or `celery`).
   * `task_name`: The monitoring metric label (`queue_depth`).
   * `status`: Task state (e.g., `queued`).
 * **Fields:**
@@ -184,7 +184,7 @@ SAMPLE_INTERVAL = float(os.getenv("SAMPLE_INTERVAL_S", "0.5"))
 HOST_LABEL      = os.getenv("HOST_LABEL",      socket.gethostname())
 
 # Celery queue names to monitor (must match docker-compose celery command)
-CELERY_QUEUES = ["calculations", "cad", "reports", "celery"]
+CELERY_QUEUES = ["calculations", "reports", "celery"]
 
 # ─── InfluxDB client ──────────────────────────────────────────────────────────
 influx_client = InfluxDBClient(
@@ -723,7 +723,7 @@ For cloud deployments, Osdag can be adapted to expose a Prometheus `/metrics` en
 
 ### 2. Redis HA Clustering
 In multi-node worker pools, Redis must be configured with replication (Sentinel) or clustered backends. To prevent ASGI broadcast traffic from blocking Celery tasks, split the system into two distinct Redis deployments:
-* **Broker Redis:** Dedicated exclusively to handling Celery job queues (`calculations`, `cad`, `reports`).
+* **Broker Redis:** Dedicated exclusively to handling Celery job queues (`calculations`, `reports`).
 * **State Redis:** Dedicated exclusively to Django Channels WebSocket group routing and server sessions cache.
 This separation ensures that high WebSocket event throughput does not block Celery calculations.
 
@@ -817,7 +817,7 @@ All are provisioned from `monitoring/grafana/dashboards/` and open with the Prom
 | **Osdag: Celery** | Workers up, queue length per queue, tasks running per worker, runtime p50/p95 per queue, queue wait p95, tasks per minute by outcome, failure ratio, and the worker-sizing panels of 13.16. |
 | **Osdag: Postgres and Redis** | Postgres up, connections by state against `max_connections`, cache hit ratio, transactions, row throughput, deadlocks, database size; Redis up, clients, memory, ops/s, hit ratio, evictions, network. |
 
-Logs: in Grafana, Explore, choose Loki, and query by compose service, for example `{service="celery_worker_cad"} |= "Traceback"` or `{service="backend"} |~ "(?i)error"`. Labels are `service`, `project` and `container`. Logs are kept for 15 days.
+Logs: in Grafana, Explore, choose Loki, and query by compose service, for example `{service="celery_worker_calc"} |= "Traceback"` or `{service="backend"} |~ "(?i)error"`. Labels are `service`, `project` and `container`. Logs are kept for 15 days.
 
 ---
 

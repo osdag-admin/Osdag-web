@@ -166,7 +166,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
         pass
     return output, logs, raw_csv
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
     print(f"[LapJointBolted CAD] Starting CAD generation for section='{section}', session='{session}'")
     # Two separate plate options: Plate 1 and Plate 2 (each returns only that plate's geometry)
@@ -174,14 +174,15 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     if section not in valid_sections:
         raise InvalidInputTypeError("section", "'Model', 'Plate 1', 'Plate 2', 'Bolts'")
 
-    print(f"[LapJointBolted CAD] Creating module instance")
-    module = LapJointBolted()
-    print(f"[LapJointBolted CAD] Initializing logger")
-    module.set_osdaglogger(None, id="web")
-    print(f"[LapJointBolted CAD] Setting input values")
-    validate_input(input_values)
-    module.set_input_values(input_values)
-    print(f"[LapJointBolted CAD] Input values set successfully")
+    if module is None:
+        print(f"[LapJointBolted CAD] Creating module instance")
+        module = LapJointBolted()
+        print(f"[LapJointBolted CAD] Initializing logger")
+        module.set_osdaglogger(None, id="web")
+        print(f"[LapJointBolted CAD] Setting input values")
+        validate_input(input_values)
+        module.set_input_values(input_values)
+        print(f"[LapJointBolted CAD] Input values set successfully")
     if getattr(module, "module", None) != KEY_DISP_LAPJOINTBOLTED:
         print(f"[CAD DEBUG] Adjusting module.module from {getattr(module, 'module', None)} to {KEY_DISP_LAPJOINTBOLTED}")
         module.module = KEY_DISP_LAPJOINTBOLTED

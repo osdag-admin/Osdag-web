@@ -107,41 +107,16 @@ services:
       CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD}@redis:6379/0
       USE_REDIS_CACHE: ${USE_REDIS_CACHE:-true}
       REDIS_CACHE_URL: redis://:${REDIS_PASSWORD}@redis:6379/1
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q calculations --loglevel=info --concurrency=18"
-    healthcheck: *celery-healthcheck
-
-  celery_worker_cad:
-    image: ghcr.io/sogalabhi/osdag-web/backend:${IMAGE_TAG:-latest}
-    restart: unless-stopped
-    environment:
-      PYTHONPATH: /app:/app/backend
-      DEBUG: "False"
-      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set}
-      DATABASE_NAME: ${DATABASE_NAME:-osdagdeveloper}
-      DATABASE_USER: ${DATABASE_USER:-osdagdeveloper}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
-      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
-      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD}@redis:6379/0
-      USE_REDIS_CACHE: ${USE_REDIS_CACHE:-true}
-      REDIS_CACHE_URL: redis://:${REDIS_PASSWORD}@redis:6379/1
+    # The design task also builds the 3D model, so this worker writes to file_storage/cad_models
+    # and, as pythonocc-core can leak memory, recycles its child processes.
     volumes:
-      - media_volume:/app/media
-      - osifiles_volume:/app/osifiles
       - file_storage_volume:/app/file_storage
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q cad --loglevel=info --concurrency=8 --max-tasks-per-child=10"
+    command: bash -c "exec /opt/conda/envs/osdag_env/bin/celery --workdir=/app -A config worker -Q calculations --loglevel=info --concurrency=18 --max-tasks-per-child=10"
     healthcheck: *celery-healthcheck
 
   celery_worker_reports:

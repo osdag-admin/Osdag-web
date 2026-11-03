@@ -244,12 +244,12 @@ def setup_for_cad(cld, module):
     cld.call_3DModel(True, module)
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """Generate the CAD model from input values as a BREP file. Return file path."""
     if section not in ("Model", "Member", "Plate", "Connector"):
         raise InvalidInputTypeError("section", "'Model', 'Member', 'Plate', or 'Connector'")
     
-    module = create_from_input(input_values)
+    module = module if module is not None else create_from_input(input_values)
     
     # Object that will create the CAD model.
     try: 

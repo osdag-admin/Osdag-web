@@ -36,7 +36,7 @@ The camera responds to global window-level `cad-camera-action` events to support
 The rendering pipeline is orchestrated by [SceneManager.jsx](../frontend/src/modules/shared/components/cad/SceneManager.jsx), which serves as the loading and caching boundary for geometry models.
 
 ### 1. Base64 STL & Text OBJ File Parsing
-The backend computational engine outputs 3D models as base64-encoded binary STL formats or plain text OBJ models. 
+The backend computational engine outputs 3D models as base64-encoded binary STL formats or plain text OBJ models. They arrive in the design result (`files`, with `hover_dict`): the design task builds every section from the module it just solved, so no second request or second calculation is made for the model (see [Chapter 2, section 2.3](./chapter_2_backend_architecture.md)). Sections are written to `file_storage/cad_models/{task_id}_{section}.brep/.stl` and read back into the result by `generate_cad_models` in `apps/core/utils/cad_helpers.py`. 
 * **STL Loading**: The `STLLoader` parses raw binary ArrayBuffers reconstituted from incoming base64 data:
   ```javascript
   const base64 = dataUrl.split(',')[1];

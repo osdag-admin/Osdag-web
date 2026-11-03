@@ -491,7 +491,7 @@ def generate_output(input_values: Dict[str, Any]) -> Dict[str, Any]:
     return output, logs, raw_csv
 
 #we do not have plate in just like in finplate case, we have cleatAngle which is combination of angle & nutbolts
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     from apps.core.utils import write_stl
     from OCC.Core.BRep import BRep_Builder
     from OCC.Core.TopoDS import TopoDS_Compound
@@ -501,17 +501,19 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
         raise InvalidInputTypeError(
             "section", "'Model', 'Beam', 'Column', 'cleatAngle', 'Bolt' or 'Weld'")
     
-    # First check if we have valid output before attempting CAD generation
-    try:
-        output, logs, _ = generate_output(input_values)
-        if not output or len(output) == 0:
-            print('CleatAngle CAD - No valid output found. Cannot generate CAD model.')
-            raise ValueError("Cannot generate CAD model: No valid design output found. Please ensure the design calculation completed successfully.")
-    except Exception as e:
-        print(f'CleatAngle CAD - Error checking output: {e}')
-        raise ValueError(f"Cannot generate CAD model: Design calculation failed - {str(e)}")
-    
-    module = create_from_input(input_values)  # Create module from input.
+    # Without a solved module, first check that the design has valid output before generating CAD.
+    # (A solved module passed in already comes from a successful design.)
+    if module is None:
+        try:
+            output, logs, _ = generate_output(input_values)
+            if not output or len(output) == 0:
+                print('CleatAngle CAD - No valid output found. Cannot generate CAD model.')
+                raise ValueError("Cannot generate CAD model: No valid design output found. Please ensure the design calculation completed successfully.")
+        except Exception as e:
+            print(f'CleatAngle CAD - Error checking output: {e}')
+            raise ValueError(f"Cannot generate CAD model: Design calculation failed - {str(e)}")
+
+    module = module if module is not None else create_from_input(input_values)  # Create module from input.
     print('module from input values : ' , module)
     # Object that will create the CAD model.
     try : 

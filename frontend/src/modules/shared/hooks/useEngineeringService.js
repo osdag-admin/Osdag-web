@@ -16,7 +16,6 @@ import { exportToCSV as exportToCSVUtil } from '../../../utils/csvUtils';
 import {
   fetchModuleOptions,
   createDesign as dsCreateDesign,
-  createCad as dsCreateCad,
   downloadCad as dsDownloadCad,
   exportCad as dsExportCad,
   addCustomMaterial as dsAddCustomMaterial,
@@ -63,52 +62,23 @@ export const useEngineeringService = () => {
    * Create design calculation
    * @param {string} moduleKey - Module identifier
    * @param {Object} inputs - Design input values
-   * @returns {Promise<{status: number, body: Object}>}
+   * @param {Object} options - Optional parameters
+   * @param {Function} options.onDesignReady - Called with the calculated design as soon as it
+   *   is ready, before the 3D model is built
+   * @returns {Promise<{status: number, body: Object}>} body holds the design and its 3D model
+   *   (`files`, `hover_dict`, `cad_error`)
    */
-  const createDesign = useCallback(async (moduleKey, inputs) => {
+  const createDesign = useCallback(async (moduleKey, inputs, options = {}) => {
     try {
-      return await dsCreateDesign(moduleKey, inputs);
+      return await dsCreateDesign(moduleKey, inputs, options);
     } catch (error) {
       return { status: 500, body: { success: false, error: error.message } };
     }
   }, []);
 
   // ===================================================================
-  // 3. CAD - 3D Model generation and download
+  // 3. CAD - 3D Model download and export
   // ===================================================================
-
-  /**
-   * Create 3D CAD model
-   * @param {string} moduleKey - Module identifier
-   * @param {Object} inputs - Design input values
-   * @returns {Promise<{success: boolean, files?: Object, hover_dict?: Object, error?: string}>}
-   */
-  const createCADModel = useCallback(async (moduleKey, inputs) => {
-    try {
-      const { status, data } = await dsCreateCad(moduleKey, inputs);
-
-      // Handle "coming soon" status (200 with coming_soon status)
-      if (status === 200 && data.status === 'coming_soon') {
-        return {
-          success: false,
-          coming_soon: true,
-          message: data.message || '3D model generation is coming soon',
-        };
-      }
-
-      if (status === 201 && data.status === 'success') {
-        return {
-          success: true,
-          files: data.files,
-          hover_dict: data.hover_dict,
-        };
-      } else {
-        throw new Error(data.message || 'CAD generation failed');
-      }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, []);
 
   /**
    * Download CAD model in specified format
@@ -136,42 +106,6 @@ export const useEngineeringService = () => {
     },
     []
   );
-
-  /**
-   * Design and generate CAD in one call
-   * @param {string} moduleKey - Module identifier
-   * @param {Object} inputs - Design input values
-   * @returns {Promise<{design?: Object, cad?: Object, error?: string}>}
-   */
-  const designAndGenerateCad = useCallback(async (moduleKey, inputs) => {
-    try {
-      // First, run design calculation
-      const designResult = await createDesign(moduleKey, inputs);
-      
-      if (designResult.status !== 201) {
-        return { design: null, cad: null, error: designResult.body?.message || 'Design calculation failed' };
-      }
-
-      const designData = designResult.body;
-      const hasData = designData?.data && Object.keys(designData.data || {}).length > 0;
-      const isSuccess = designResult.status === 201 && designData?.success !== false && (hasData || Array.isArray(designData));
-
-      if (!isSuccess) {
-        return { design: null, cad: null, error: designData?.message || 'Design calculation failed' };
-      }
-
-      // Then, generate CAD
-      const cadResult = await createCADModel(moduleKey, inputs);
-      
-      if (!cadResult.success) {
-        return { design: designData, cad: null, error: cadResult.error };
-      }
-
-      return { design: designData, cad: cadResult, error: null };
-    } catch (error) {
-      return { design: null, cad: null, error: error.message };
-    }
-  }, [createDesign, createCADModel]);
 
   // ===================================================================
   // 4. PROJECTS - Project management
@@ -347,10 +281,8 @@ export const useEngineeringService = () => {
 
     // Design
     createDesign,
-    designAndGenerateCad,
 
     // CAD
-    createCADModel,
     downloadCADModel,
     exportCADModel,
 

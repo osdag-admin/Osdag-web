@@ -447,7 +447,7 @@ def generate_output(input_values: Dict[str, Any]) -> Tuple[Dict[str, Any], List[
         return {}, [error_msg]
 
 
-def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -> str:
+def create_cad_model(input_values: Dict[str, Any], section: str, session: str, export_formats=None, module=None) -> str:
     """
     Generate CAD model from input values.
     
@@ -455,6 +455,8 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
         input_values: Design input parameters
         section: Section name (e.g., "Model", "Beam", "Column")
         session: Session ID for file naming
+        module: The solved module from the design run. The design task passes it so every
+            section is built without recalculating; when it is None, build it from input_values.
     
     Returns:
         File path to generated CAD file (BREP format)
@@ -465,8 +467,8 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str) -
     from OCC.Core.BRep import BRep_Builder
     import os
     
-    # Create module instance
-    module = create_from_input(input_values)
+    # Use the solved module when the design task passes one, otherwise create it
+    module = module if module is not None else create_from_input(input_values)
     
     # Setup CAD logic
     cad_logic = CommonDesignLogic(module)
@@ -566,7 +568,7 @@ class NewConnectionService:
             }
     
     @staticmethod
-    def get_cad_model(inputs: dict, section: str, session: str) -> str:
+    def get_cad_model(inputs: dict, section: str, session: str, module=None) -> str:
         """
         Generate CAD model for a specific section.
         
@@ -574,11 +576,12 @@ class NewConnectionService:
             inputs: Design input parameters
             section: Section name (e.g., "Model", "Beam", "Column")
             session: Session ID for file naming
+            module: Solved module instance from the design run (None recalculates)
             
         Returns:
             File path to generated CAD file
         """
-        return create_cad_model(inputs, section, session)
+        return create_cad_model(inputs, section, session, module=module)
 ```
 
 ### Step 5: Verify Auto-Discovery
