@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { ModuleContext } from "../../../context/ModuleState";
 import { Input, Select } from "antd";
 import { STEEL_CONSTANTS, UNIT_LABELS } from "../constants/engineering";
@@ -56,6 +56,7 @@ const GenericSectionView = ({
   const [newDesignation, setNewDesignation] = useState("");
   const [detailsFromDb, setDetailsFromDb] = useState(true);
   const [lastPropDesignation, setLastPropDesignation] = useState("");
+  const defaultAppliedRef = useRef(false);
 
   const getDropdownOptions = useCallback(() => {
     const fullList =
@@ -90,6 +91,7 @@ const GenericSectionView = ({
       inputs?.cleat_section ||
       inputs?.seated_section ||
       inputs?.[displayConfig.designationKey] ||
+      inputs?.supported_designation ||
       "";
 
     let desigStr;
@@ -103,7 +105,10 @@ const GenericSectionView = ({
       const opts = getDropdownOptions();
       if (opts.length > 0) {
         desigStr = opts[0];
-        onDesignationChange?.(desigStr);
+        if (!defaultAppliedRef.current) {
+          defaultAppliedRef.current = true;
+          onDesignationChange?.(desigStr);
+        }
       }
     }
 
@@ -149,6 +154,7 @@ const GenericSectionView = ({
 
   const handleClearSectionTab = () => {
     onClearSection?.();
+    setDesignationStr("");
     setNewDesignation("");
     setDetailsFromDb(false);
     setDesignPrefInputs((prev) => ({
@@ -272,7 +278,8 @@ const GenericSectionView = ({
             ) : (
               <div className="flex flex-col gap-[5px]">
                 <Select
-                  value={designationStr}
+                  value={designationStr || undefined}
+                  placeholder="Select designation"
                   onChange={(val) => {
                     setDesignationStr(val);
                     setDetailsFromDb(true);

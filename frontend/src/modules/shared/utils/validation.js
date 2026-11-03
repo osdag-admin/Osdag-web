@@ -55,10 +55,37 @@ export const getMissingRequiredFields = (inputSections, inputs, extraState, sele
   return missing;
 };
 
+// The numeric input strips letters while typing, but partial entries such as "-" or "." survive.
+const isNumericValue = (value) => {
+  if (typeof value === 'number') return Number.isFinite(value);
+  return /^-?(\d+\.?\d*|\.\d+)$/.test(String(value).trim());
+};
+
+/** Visible, enabled 'number' fields whose non-empty value is not a number. */
+export const getInvalidNumberFields = (inputSections, inputs, extraState) => {
+  const invalid = [];
+  for (const section of inputSections || []) {
+    for (const field of section.fields || []) {
+      const effectiveType = typeof field.conditionalType === 'function' ? field.conditionalType(inputs) : field.type;
+      if (!field.key || effectiveType !== 'number' || field.disabled) continue;
+      if (field.conditionalDisplay && !field.conditionalDisplay(extraState, inputs)) continue;
+      const value = inputs?.[field.key];
+      if (isEmptyValue(value) || isNumericValue(value)) continue;
+      invalid.push({ key: field.key, label: field.label });
+    }
+  }
+  return invalid;
+};
+
 /** Convenience wrapper returning the shape modules' validateInputs() expects. */
 export const validateRequiredFields = (inputSections, inputs, extraState, selectionStates, message) => {
   const missing = getMissingRequiredFields(inputSections, inputs, extraState, selectionStates);
-  if (missing.length === 0) return { isValid: true };
+  if (missing.length === 0) {
+    const invalid = getInvalidNumberFields(inputSections, inputs, extraState);
+    if (invalid.length === 0) return { isValid: true };
+    const badLabel = stripRequiredMark(invalid[0].label)?.trim() || invalid[0].key;
+    return { isValid: false, message: `Please enter a valid number: ${badLabel}` };
+  }
   const label = stripRequiredMark(missing[0].label)?.trim() || missing[0].key;
   return { isValid: false, message: message || `Please fill: ${label}` };
 };

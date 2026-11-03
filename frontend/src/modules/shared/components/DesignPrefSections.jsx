@@ -164,7 +164,16 @@ const DesignPrefSections = ({
   );
   const handleDesignationChange = useCallback(async (tabIndex, newDesignation) => {
     let keyToUpdate = null;
-    if (tabIndex === 0) {
+    // End plate splices keep their one section here. Opening an .osi can also set this key on
+    // modules that use column_section and beam_section, so those keys take priority.
+    if (
+      inputsRef.current.supported_designation !== undefined &&
+      !inputsRef.current.column_section &&
+      !inputsRef.current.beam_section &&
+      (tabIndex === 0 || tabIndex === 1)
+    ) {
+      keyToUpdate = "supported_designation";
+    } else if (tabIndex === 0) {
       keyToUpdate = inputsRef.current.column_section ? "column_section" : (inputsRef.current.section_designation ? "section_designation" : "member_designation");
     } else if (tabIndex === 1) {
       keyToUpdate = inputsRef.current.beam_section ? "beam_section" : (inputsRef.current.section_designation ? "section_designation" : "member_designation");
