@@ -1,6 +1,6 @@
 {
   "source": "frontend-defaults:columnColumnEndPlateConfig.js",
-  "notes": "Run of columnColumnEndPlateConfig.buildSubmissionParams on defaultInputs; every customizable list set to \"All\" (the UI default; full option lists sent). Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "notes": "Run of columnColumnEndPlateConfig.buildSubmissionParams on defaultInputs; every customizable list set to \"All\" (the UI default; full option lists sent). Connectivity \"Flush End Plate\" (extraState.selectedOption). Option lists come from osdag_core SQLite plus the constants in the backend options views.",
   "inputs": {
     "Member.Designation": "WPB 900 X 300 X 291.46",
     "Member.Material": "E 250 (Fe 410 W)A",
@@ -43,7 +43,7 @@
     "Bolt.Slip_Factor": "0.3",
     "Bolt.TensionType": "Non pre-tensioned",
     "Bolt.Type": "Bearing Bolt",
-    "Connectivity": "Coplanar Tension-Compression Flange",
+    "Connectivity": "Flush End Plate",
     "Connector.Plate.Thickness_List": [
       "8",
       "10",

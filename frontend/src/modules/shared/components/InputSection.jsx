@@ -428,7 +428,9 @@ export const InputSection = ({
 
         const isMaterialField = field.key?.includes('material');
 
-        const value = options.find(opt => String(opt.value) === String(safeInputs[field.key]));
+        // Same comparison as the option check above, so a value it accepts is also shown.
+        const normalizeOption = (v) => String(v).trim().toLowerCase().replace(/\s+/g, '');
+        const value = options.find(opt => normalizeOption(opt.value) === normalizeOption(safeInputs[field.key]));
 
         return (
           <Select

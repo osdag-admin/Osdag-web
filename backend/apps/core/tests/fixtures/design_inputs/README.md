@@ -27,7 +27,7 @@ The directory name is the adapter's path under `apps/modules/`, without `submodu
 `defaults-all` (every customizable list on "All", the UI default, so the full option
 lists are sent) and `defaults-customized` (explicit selections). Modules with a
 connectivity choice get one `defaults-all__<connectivity>` per option (fin plate,
-cleat angle, header plate, seated angle, base plate). Option lists come from
+cleat angle, header plate, seated angle, base plate, column end plate). Option lists come from
 `apps.core.catalog` plus the constants in the `apps/modules/*/views.py` options
 endpoints. Defaults that are empty but required are filled with catalog values, and
 each fixture's `notes` says which:

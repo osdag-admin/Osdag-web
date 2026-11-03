@@ -9,22 +9,23 @@ import json as json_module
 from typing import Dict, List, Any, Optional
 
 
-# Sections mapping for each module/submodule
+# Sections to build for each module/submodule. Every name here must be one the module's
+# create_cad_model accepts and can build.
 SECTION_MAPPINGS = {
     'shear-connection': {
         'fin-plate': ['Model', 'Beam', 'Column', 'Plate', 'Bolt', 'Weld'],
-        'cleat-angle': ['Model', 'Beam', 'Column', 'cleatAngle', 'Bolt', 'Weld'],
-        'end-plate': ['Model', 'Beam', 'Column', 'Plate', 'Bolt', 'Weld'],
-        'seated-angle': ['Model', 'Beam', 'Column', 'SeatedAngle', 'Bolt', 'Weld'],
+        'cleat-angle': ['Model', 'Beam', 'Column', 'cleatAngle', 'Bolt'],
+        'header-plate': ['Model', 'Beam', 'Column', 'Plate', 'Bolt', 'Weld'],
+        'seated-angle': ['Model', 'Beam', 'Column', 'SeatedAngle', 'Bolt'],
     },
     'moment-connection': {
         'beam-beam-cover-plate-bolted': ['Model', 'Beam', 'CoverPlate', 'Bolt'],
-        'beam-beam-cover-plate-welded': ['Model', 'Beam', 'Connector', 'Weld'],
+        'beam-beam-cover-plate-welded': ['Model', 'Beam', 'Weld'],
         'beam-beam-end-plate': ['Model', 'Beam', 'Connector', 'Bolt', 'Weld'],
         'beam-column-end-plate': ['Model', 'Beam', 'Column', 'Connector', 'Bolt', 'Weld'],
         'column-column-cover-plate-bolted': ['Model', 'Column', 'CoverPlate', 'Bolt'],
         'column-column-cover-plate-welded': ['Model', 'Column', 'CoverPlate', 'Weld'],
-        'column-column-end-plate': ['Model', 'Column', 'Connector', 'Bolt', 'Weld'],
+        'column-column-end-plate': ['Model', 'Column', 'Connector'],
     },
     'simple-connection': {
         'lap-joint-bolted': ['Model', 'Plate 1', 'Plate 2', 'Bolts'],
@@ -33,8 +34,8 @@ SECTION_MAPPINGS = {
         'butt-joint-welded': ['Model', 'Plate 1', 'Plate 2', 'Cover Plate', 'Welds'],
     },
     'tension-member': {
-        'bolted': ['Model', 'Member', 'Plate', 'Endplate'],
-        'welded': ['Model', 'Member', 'Plate', 'Endplate'],
+        'bolted': ['Model', 'Member', 'Plate'],
+        'welded': ['Model', 'Member', 'Plate'],
     },
     'flexure-member': {
         'simply-supported-beam': ['Model', 'Beam'],
@@ -47,7 +48,7 @@ SECTION_MAPPINGS = {
     },
     'compression-member': {
         'struts-bolted': ['Model', 'Member'],
-        'struts-welded': ['Model', 'Member', 'Plate', 'Endplate'],
+        'struts-welded': ['Model', 'Member', 'Plate'],
         'axially-loaded-column': ['Model'],
     },
 }

@@ -125,7 +125,16 @@ export const basePlateConfig = {
       fields: [
         { key: "connectivity", label: "Connectivity", type: "select", options: "connectivityList" },
         { key: "end_condition", label: "End Condition (Major Axis z-z axis)", type: "text", disabled: true },
-        { key: "member_designation", label: "Column Section", type: "select", options: "sectionDesignation" },
+        {
+          key: "member_designation",
+          label: "Column Section",
+          type: "select",
+          // A hollow column base takes only hollow sections.
+          getOptions: (inputs, lists) =>
+            (inputs.connectivity === "Hollow/Tubular Column Base"
+              ? lists.hollowSectionDesignation
+              : lists.sectionDesignation) ?? [],
+        },
         { key: "material", label: "Material", type: "select", options: "materialList" },
       ],
     },
@@ -136,8 +145,8 @@ export const basePlateConfig = {
         { key: "load_axial_tension", label: "Axial Tension/Uplift (kN)", type: "number", required: false, conditionalDisplay: (extraState, inputs) => inputs?.connectivity === "Moment Base Plate" },
         { key: "load_shear_major", label: "Shear Force (kN) - Along major axis (z-z)", type: "number", required: true },
         { key: "load_shear_minor", label: "Shear Force (kN) - Along minor axis (y-y)", type: "number", required: true },
-        { key: "load_moment_major", label: "Bending Moment (kNm) - Major axis (M\u2082-z)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
-        { key: "load_moment_minor", label: "Bending Moment (kNm) - Minor axis (My-y)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity !== "Welded Column Base", required: true },
+        { key: "load_moment_major", label: "Bending Moment (kNm) - Major axis (M\u2082-z)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity === "Moment Base Plate", required: true },
+        { key: "load_moment_minor", label: "Bending Moment (kNm) - Minor axis (My-y)", type: "number", conditionalDisplay: (extraState, inputs) => inputs?.connectivity === "Moment Base Plate", required: true },
       ],
     },
     {

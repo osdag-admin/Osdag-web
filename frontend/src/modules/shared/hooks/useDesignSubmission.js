@@ -102,6 +102,11 @@ export const useDesignSubmission = (service, moduleConfig) => {
             continue;
           }
 
+          // Shown without a required mark, so it may be left blank.
+          if (field.required === false) {
+            continue;
+          }
+
           const effectiveType = typeof field.conditionalType === 'function'
             ? field.conditionalType(inputs)
             : field.type;

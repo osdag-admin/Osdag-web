@@ -151,7 +151,7 @@ export function loadStateFromOsi(payload, {
 
       if (inputKey === "bolt_hole_type") {
         if (/oversized/i.test(finalVal) || /over-sized/i.test(finalVal)) {
-          finalVal = "Over-Sized";
+          finalVal = "Over-sized";
         } else if (/standard/i.test(finalVal)) {
           finalVal = "Standard";
         }

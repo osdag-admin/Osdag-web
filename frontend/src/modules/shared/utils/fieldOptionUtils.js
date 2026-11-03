@@ -10,7 +10,7 @@ import { INPUT_KEY_TO_LIST } from '../constants/moduleDataKeys';
 export function getOptionsForField(field, contextData = {}, inputs = {}) {
   if (!field) return [];
   if (Array.isArray(field.options)) return field.options;
-  if (typeof field.getOptions === 'function') return field.getOptions(inputs) || [];
+  if (typeof field.getOptions === 'function') return field.getOptions(inputs, contextData) || [];
   if (typeof field.options === 'string') return contextData[field.options] ?? [];
   if (field.type === 'sectionProfileList') return contextData[field.type] ?? contextData.sectionProfileList ?? [];
   return [];

@@ -2,6 +2,7 @@
 Base Plate Adapter
 Maps web API payload to osdag_core BasePlateConnection keys and back.
 """
+from apps.core import catalog
 from apps.core.utils import (
     validate_arr, validate_num, validate_string,
     MissingKeyError, InvalidInputTypeError,
@@ -19,6 +20,9 @@ import os
 from typing import Dict, Any, List
 import traceback
 import json
+
+HOLLOW_CONNECTIVITY = 'Hollow/Tubular Column Base'
+HOLLOW_SECTION_TABLES = ('RHS', 'SHS', 'CHS')
 
 # Core expects these key names (from osdag_core.Common / base_plate_connection.set_input_values)
 KEY_CONN = 'Connectivity'
@@ -160,6 +164,25 @@ def _first_or_str(val):
     return str(val) if val is not None else "Select Section"
 
 
+def hollow_section_designations() -> List[str]:
+    """Hollow column sections for the dropdown, in the desktop app's order, without the catalog's leading space."""
+    return [
+        name.strip()
+        for table in HOLLOW_SECTION_TABLES
+        for name in catalog.designations(table)
+    ]
+
+
+def _catalog_hollow_designation(name: str) -> str:
+    """The catalog's spelling of a hollow section; osdag_core needs its leading space."""
+    wanted = str(name).strip()
+    for table in HOLLOW_SECTION_TABLES:
+        for candidate in catalog.designations(table):
+            if candidate.strip() == wanted:
+                return candidate
+    return name
+
+
 def create_from_input(input_values: Dict[str, Any]) -> BasePlateConnection:
     """Create BasePlateConnection from web input and run set_input_values with full design_dict."""
     module = create_module()
@@ -180,6 +203,8 @@ def create_from_input(input_values: Dict[str, Any]) -> BasePlateConnection:
 
     # Single section string for core (core expects one section per design run)
     section_str = _first_or_str(member_designation) if member_designation else "Select Section"
+    if input_values.get("Connectivity") == HOLLOW_CONNECTIVITY:
+        section_str = _catalog_hollow_designation(section_str)
 
     material = input_values.get("Material", "E 250 (Fe 410 W)A")
     if isinstance(material, dict):
@@ -207,7 +232,9 @@ def create_from_input(input_values: Dict[str, Any]) -> BasePlateConnection:
     moment_major = input_values.get("Load.Moment.Major", moment)
     moment_minor = input_values.get("Load.Moment.Minor", "0")
     axial_tension = input_values.get("Load.Axial_Tension", "0")
-    if connectivity == "Welded Column Base":
+    # Only a moment base plate takes moments; the form can still hold a value typed before
+    # the connectivity changed.
+    if connectivity != "Moment Base Plate":
         moment_major = "Disabled"
         moment_minor = "Disabled"
     if connectivity != "Moment Base Plate" or axial_tension == "":

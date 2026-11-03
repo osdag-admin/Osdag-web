@@ -84,7 +84,7 @@ class TensionMemberViewSet(viewsets.ViewSet):
             '56', '63', '75', '80', '90', '100', '110', '120'
         ]
         section_profiles = ["Angles", "Back to Back Angles", "Star Angles", "Channels"]
-        bolt_hole_type_list = ["Standard", "Oversized", "Short Slotted", "Long Slotted"]
+        bolt_hole_type_list = ["Standard", "Over-sized"]
         bolt_type_list = ["Bearing Bolt", "Friction Grip Bolt"]
         bolt_slip_factor_list = ["0.3", "0.5"]
         design_method_list = ["Limit State Design", "Working Stress Design"]

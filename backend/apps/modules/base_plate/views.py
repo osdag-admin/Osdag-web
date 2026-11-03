@@ -17,7 +17,7 @@ from apps.core.utils.module_helpers import (
 
 from . import MODULE_ID
 from .service import BasePlateService
-from .adapter import create_from_input
+from .adapter import create_from_input, hollow_section_designations
 from apps.sections.options_merge import merge_user_sections_into_options
 from apps.core.utils.api_errors import error_response
 
@@ -69,6 +69,7 @@ class BasePlateViewSet(viewsets.ViewSet):
         try:
             data = {
                 'sectionDesignation': section_designation(),
+                'hollowSectionDesignation': hollow_section_designations(),
                 'profileList': ['Columns', 'Beams'],
                 'materialList': material_list(),
                 'anchorDiameterList': ANCHOR_DIAMETER_LIST,

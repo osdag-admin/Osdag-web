@@ -54,7 +54,7 @@ The Additional Inputs modal displays configuration controls divided into tabs ba
 | **Connector** | Material grade selectors for plates, cleats, or splice components. |
 | **Cleat Angle** | Specific designation selector and material grades for cleat connectors. |
 | **Seated Angle Connection** | Detailing configurations for seated angle dimensions and mechanical properties (elastic modulus, Poisson's ratio). |
-| **Bolt** | Bolt hole types (Standard, Over-Sized), slip factor, and bolt tension types (Pre-tensioned, Non pre-tensioned). |
+| **Bolt** | Bolt hole types (Standard, Over-sized), slip factor, and bolt tension types (Pre-tensioned, Non pre-tensioned). |
 | **Base Plate** | Specific base plate steel grades and thickness list entries. |
 | **Stiffener/Shear Key** | Weld configurations and material selections for base plate stiffener sections. |
 | **Anchor Bolt** | Visual configurations for Anchor Bolts (Outer Column Flange - OCF, Inner Column Flange - ICF) including length, galvanization, and material grade. |

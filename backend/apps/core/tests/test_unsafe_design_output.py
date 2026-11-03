@@ -25,7 +25,7 @@ UNSAFE_DESIGNS = [
     ("tension_member__bolted", "defaults-customized"),
     ("moment_connection__column_column_cover_plate_bolted", "defaults-customized"),
     ("moment_connection__column_column_cover_plate_welded", "defaults-customized"),
-    ("moment_connection__column_column_end_plate", "defaults-customized"),
+    ("moment_connection__column_column_end_plate", "defaults-customized__flush-end-plate"),
     ("moment_connection__beam_column_end_plate", "defaults-customized"),
     ("shear_connection__cleat_angle", "defaults-customized__column-flange-beam-web"),
     ("compression_member__struts_bolted", "defaults-customized"),

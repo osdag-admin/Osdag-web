@@ -66,7 +66,7 @@ const BoltSectionModal = ({
           }
         >
           <Option value="Standard">Standard</Option>
-          <Option value="Over-Sized">Over-Sized</Option>
+          <Option value="Over-sized">Over-sized</Option>
         </Select>
       </div>
       <div className="input-cont">

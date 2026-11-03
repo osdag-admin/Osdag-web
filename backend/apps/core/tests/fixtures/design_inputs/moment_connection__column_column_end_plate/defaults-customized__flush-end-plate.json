@@ -1,0 +1,41 @@
+{
+  "source": "frontend-defaults:columnColumnEndPlateConfig.js",
+  "notes": "Run of columnColumnEndPlateConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"bolt_diameter\":[\"16\",\"20\"],\"bolt_grade\":[\"8.8\",\"10.9\"],\"plate_thickness\":[\"10\",\"12\",\"16\"]}. Connectivity \"Flush End Plate\" (extraState.selectedOption). Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Member.Designation": "WPB 900 X 300 X 291.46",
+    "Member.Material": "E 250 (Fe 410 W)A",
+    "Bolt.Bolt_Hole_Type": "Standard",
+    "Bolt.Diameter": [
+      "16",
+      "20"
+    ],
+    "Bolt.Grade": [
+      "8.8",
+      "10.9"
+    ],
+    "Bolt.Slip_Factor": "0.3",
+    "Bolt.TensionType": "Non pre-tensioned",
+    "Bolt.Type": "Bearing Bolt",
+    "Connectivity": "Flush End Plate",
+    "Connector.Plate.Thickness_List": [
+      "10",
+      "12",
+      "16"
+    ],
+    "Connector.Material": "E 250 (Fe 410 W)A",
+    "Design.Design_Method": "Limit State Design",
+    "Detailing.Corrosive_Influences": "No",
+    "Detailing.Edge_type": "Sheared or hand flame cut",
+    "Detailing.Gap": "0",
+    "Load.Axial": "100",
+    "Load.Moment": "100",
+    "Load.Shear": "100",
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Supported_Section.Designation": "WPB 900 X 300 X 291.46",
+    "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+    "Weld.Fab": "Shop Weld",
+    "Weld.Material_Grade_OverWrite": "410",
+    "Weld.Type": "Groove Weld",
+    "Module": "Column-to-Column End Plate Connection"
+  }
+}

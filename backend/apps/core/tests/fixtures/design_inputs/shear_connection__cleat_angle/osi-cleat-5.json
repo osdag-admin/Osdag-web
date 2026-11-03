@@ -2,7 +2,7 @@
   "source": "osi:cleat_5.osi",
   "notes": "Desktop example cleat_5.osi (Module: \"Cleat Angle Connection\") parsed by parse_osi(), loaded by the frontend osiLoader into cleatAngleConfig's form state, then cleatAngleConfig.buildSubmissionParams (All-selected flags as the loader sets them).",
   "inputs": {
-    "Bolt.Bolt_Hole_Type": "Over-Sized",
+    "Bolt.Bolt_Hole_Type": "Over-sized",
     "Bolt.Diameter": [
       "10",
       "12",

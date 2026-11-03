@@ -164,7 +164,7 @@ const MODULES = [
   { slug: 'moment_connection__column_column_cover_plate_welded', cfg: 'ccCoverWelded', lists: 'momentColumnWelded', custom: { flange_plate_thickness: ['10', '12'], web_plate_thickness: ['8', '10'] } },
   { slug: 'moment_connection__beam_beam_end_plate', cfg: 'beamBeamEndPlateConfig', lists: 'momentBeamBolted', custom: BOLT_CUSTOM },
   { slug: 'moment_connection__beam_column_end_plate', cfg: 'beamToColumnEndPlateConfig', lists: 'bcEndPlate', custom: BOLT_CUSTOM },
-  { slug: 'moment_connection__column_column_end_plate', cfg: 'columnColumnEndPlateConfig', lists: 'ccEndPlate', custom: BOLT_CUSTOM },
+  { slug: 'moment_connection__column_column_end_plate', cfg: 'columnColumnEndPlateConfig', lists: 'ccEndPlate', connectivities: ['Flush End Plate', 'Extended Both Ways'], custom: BOLT_CUSTOM },
   // ----- tension member -----
   { slug: 'tension_member__bolted', cfg: 'boltedToEndConfig', lists: 'tensionBolted', custom: { ...BOLT_CUSTOM, section_designation: ['50 x 50 x 6', '60 x 60 x 6'] } },
   { slug: 'tension_member__welded', cfg: 'weldedToEndConfig', lists: 'tensionWelded', custom: { plate_thickness: ['10', '12', '16'], section_designation: ['50 x 50 x 6', '60 x 60 x 6'] } },
@@ -172,9 +172,12 @@ const MODULES = [
   {
     slug: 'base_plate', cfg: 'basePlateConfig', lists: 'basePlate',
     fill: { member_designation: 'HB 200', load_axial: '200', load_axial_tension: '50', load_shear_major: '50', load_shear_minor: '30', load_moment_major: '40', load_moment_minor: '20' },
-    connectivities: ['Welded Column Base', 'Moment Base Plate'], connectivityKey: 'connectivity',
+    connectivities: ['Welded Column Base', 'Moment Base Plate', 'Hollow/Tubular Column Base'], connectivityKey: 'connectivity',
     // Tension and moments are hidden (left blank) for a welded column base.
-    connectivityFill: { 'Welded Column Base': { load_axial_tension: '', load_moment_major: '', load_moment_minor: '' } },
+    connectivityFill: {
+      'Welded Column Base': { load_axial_tension: '', load_moment_major: '', load_moment_minor: '' },
+      'Hollow/Tubular Column Base': { member_designation: 'CHS 355.6 x 12' },
+    },
     custom: { anchor_diameter_ocf: ['M20', 'M24'], anchor_grade_ocf: ['8.8'], anchor_diameter_icf: ['M20'], anchor_grade_icf: ['8.8'] },
   },
   // ----- simple connection -----
