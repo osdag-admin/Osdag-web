@@ -411,6 +411,7 @@ function UnifiedDropdownMenu({
                       return;
                     }
                     handleClick(option);
+                    setIsOpen(false);
                   }}
                 >
                   {option.name}

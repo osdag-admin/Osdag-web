@@ -1200,7 +1200,7 @@ export const EngineeringModule = ({
 
         {/* EDGE BAR (always visible) */}
         <div
-          className={`absolute top-0 h-screen w-[40px] z-[1000] hidden xl:block ${docks.input ? "left-[400px]" : "left-[30px]"
+          className={`absolute top-0 h-screen w-[40px] z-[55] hidden xl:block ${docks.input ? "left-[400px]" : "left-[30px]"
             }`}
         >
           {/* GREEN LINE */}
