@@ -269,13 +269,11 @@ class CustomizeReport(APIView):
             # Compile LaTeX to PDF
             pdf_path = custom_tex_path.replace('.tex', '.pdf')
             
-            # Change to temp directory for compilation
-            original_cwd = os.getcwd()
-            os.chdir(safe_temp_dir)
-            
+            # Compile inside the temp directory by passing it as the child's cwd. The process
+            # working directory is shared by every request thread, so it must not be changed here.
             try:
-                print(f'[report_customization_api] CustomizeReport:compiling in {os.getcwd()}')
-                print(f'[report_customization_api] CustomizeReport:tex file exists: {os.path.exists("filtered_report.tex")}')
+                print(f'[report_customization_api] CustomizeReport:compiling in {safe_temp_dir}')
+                print(f'[report_customization_api] CustomizeReport:tex file exists: {os.path.exists(custom_tex_path)}')
                 
                 pdflatex_exe = PDFLATEX or shutil.which('pdflatex')
                 print(f'[report_customization_api] CustomizeReport:using pdflatex at {pdflatex_exe!r}')
@@ -296,7 +294,7 @@ class CustomizeReport(APIView):
                         result = subprocess.run([
                             pdflatex_exe, '-interaction=nonstopmode', '-no-shell-escape',
                             'filtered_report.tex'
-                        ], capture_output=True, text=True, timeout=60)
+                        ], capture_output=True, text=True, timeout=60, cwd=safe_temp_dir)
                         print(f'[report_customization_api] CustomizeReport:pdflatex pass {pass_num} result: {result.returncode}')
                 except subprocess.TimeoutExpired as e:
                     print(f'[report_customization_api] CustomizeReport:pdflatex timeout: {e}')
@@ -346,8 +344,7 @@ class CustomizeReport(APIView):
             except FileNotFoundError:
                 return error_response('internal_error', "LaTeX (pdflatex) not found. Please install a LaTeX distribution.", status.HTTP_500_INTERNAL_SERVER_ERROR)
             finally:
-                # Restore original working directory
-                os.chdir(original_cwd)
+                shutil.rmtree(safe_temp_dir, ignore_errors=True)
                 
         except Exception as e:
             return error_response('internal_error', f"Failed to customize report: {str(e)}", status.HTTP_500_INTERNAL_SERVER_ERROR)
