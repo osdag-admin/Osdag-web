@@ -13,7 +13,7 @@ from osdag_core.cad.common_logic import CommonDesignLogic
 from apps.core.utils import write_stl
 
 
-def create_cad_model(module, key_disp, section: str, session: str, get_shapes, no_shapes_message: str = "No components returned") -> str:
+def create_cad_model(module, key_disp, section: str, session: str, get_shapes, no_shapes_message: str = "No components returned", export_formats=None) -> str:
     """Shared CAD-generation logic for flexure member submodules
     (on_cantilever, simply_supported_beam, purlin).
 
@@ -79,5 +79,17 @@ def create_cad_model(module, key_disp, section: str, session: str, get_shapes, n
         write_stl(model, stl_path)
     except Exception as stle:
         print("STL write warning:", stle)
+
+    # Write STEP / IGES when requested (non-critical for the BREP/STL outputs)
+    export_formats_lc = {f.lower() for f in export_formats} if export_formats else set()
+    try:
+        from apps.core.utils.cad_export import export_step, export_iges
+
+        if "step" in export_formats_lc:
+            export_step(model, full_path.replace(".brep", ".step"))
+        if "iges" in export_formats_lc:
+            export_iges(model, full_path.replace(".brep", ".iges"))
+    except Exception as e:
+        print(f"Warning: Optional step/iges export failed: {e}")
 
     return file_path

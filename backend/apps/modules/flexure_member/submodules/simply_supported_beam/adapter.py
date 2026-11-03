@@ -207,4 +207,5 @@ def create_cad_model(input_values: Dict[str, Any], section: str, session: str, e
     return fm_shared.create_cad_model(
         module, KEY_DISP_FLEXURE, section, session, _get_shapes,
         no_shapes_message="No components returned from createSimplySupportedBeam()",
+        export_formats=export_formats,
     )
