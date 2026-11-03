@@ -131,7 +131,6 @@ export const useDesignSubmission = (service, moduleConfig) => {
                 message: errMsg,
                 error: new Error(errMsg)
               });
-              message.error(errMsg);
               return;
             }
           } else {
@@ -148,7 +147,6 @@ export const useDesignSubmission = (service, moduleConfig) => {
                 message: errMsg,
                 error: new Error(errMsg)
               });
-              message.error(errMsg);
               return;
             }
           }
@@ -169,7 +167,6 @@ export const useDesignSubmission = (service, moduleConfig) => {
         message: validationResult.message || 'Validation failed',
         error: new Error(validationResult.message)
       });
-      message.error(validationResult.message || 'Validation failed');
       return;
     }
 

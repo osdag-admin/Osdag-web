@@ -1200,7 +1200,7 @@ export const EngineeringModule = ({
 
         {/* EDGE BAR (always visible) */}
         <div
-          className={`absolute top-0 h-screen w-[40px] z-[55] hidden xl:block ${docks.input ? "left-[400px]" : "left-[30px]"
+          className={`absolute top-0 h-full w-[40px] z-[55] hidden xl:block ${docks.input ? "left-[400px]" : "left-[30px]"
             }`}
         >
           {/* GREEN LINE */}
@@ -1407,7 +1407,7 @@ ${!isMobile ? (docks.output ? 'pr-0' : 'pr-[40px]') : ''}
           /* COLLAPSED STRIP */
           <div
             className="
-            fixed right-0 top-0 h-screen w-[40px]
+            fixed right-0 top-[52px] h-[calc(100vh-52px)] w-[40px]
             z-10 bg-white hidden xl:block
             ">
             {/* GREEN LINE */}

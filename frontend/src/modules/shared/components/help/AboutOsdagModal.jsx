@@ -93,7 +93,7 @@ export const AboutOsdagModal = ({ open, onClose, initialTab = "About" }) => {
             </button>
           ))}
         </div>
-        <div className="max-h-[60vh] overflow-y-auto pr-1">{tabContent}</div>
+        <div className="h-[60vh] overflow-y-auto pr-1">{tabContent}</div>
       </div>
     </HelpDialogShell>
   );

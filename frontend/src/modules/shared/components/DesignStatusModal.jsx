@@ -105,7 +105,9 @@ export const DesignStatusModal = ({ status, isMobile, onClose }) => {
           ),
           title: 'Error',
           message: status.message || 'An error occurred',
-          subMessage: status.error?.message || 'Please check your inputs and try again',
+          subMessage: status.error?.message && status.error.message !== status.message
+            ? status.error.message
+            : 'Please check your inputs and try again',
           showRetry: true
         };
 

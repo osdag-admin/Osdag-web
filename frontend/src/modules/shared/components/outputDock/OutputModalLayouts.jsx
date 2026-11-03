@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import LabelText from "./LabelText";
 import SpacingDiagram from "../diagrams/SpacingDiagram";
 import BasePlateSketch from "../diagrams/BasePlateSketch";
 import CapacityDiagram from "../diagrams/CapacityDiagram";
@@ -24,7 +25,7 @@ function TwoColumnLayout({ config, fields, output, getOutputValue, ValueBox, get
         <div className="spacing-left-body">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="spacing-left-body-align">
-              <h4 dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 ><LabelText>{label}</LabelText></h4>
 
               <ValueBox value={getOutputValue(key, output)} />
             </div>
@@ -74,7 +75,7 @@ function CapacityComplexLayout({
               <div className="Capacity-left-body">
                 {sectionFields.map(({ key, label }, idx) => (
                   <div key={idx} className="Capacity-left-body-align">
-                    <p>{label}</p>
+                    <p><LabelText>{label}</LabelText></p>
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>
                 ))}
@@ -129,7 +130,7 @@ function SpacingDiagramLayout({ config, fields, diagram, output, getOutputValue,
         <div className="flex w-full flex-col gap-3 px-4 md:w-1/2">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-              <h4 className="font-medium text-gray-700" dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 className="font-medium text-gray-700" ><LabelText>{label}</LabelText></h4>
 
               <div className="w-[100px] flex-shrink-0">
                 <ValueBox value={getOutputValue(key, output)} />
@@ -170,7 +171,7 @@ function SingleColumnLayout({ fields, output, getOutputValue, ValueBox }) {
                   </h3>
                 )}
                 <div className="flex w-full justify-between items-center mb-3 px-2">
-                  <h4 className="w-[55%] text-sm font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+                  <h4 className="w-[55%] text-sm font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
                   <ValueBox value={getOutputValue(key, output)} />
                 </div>
               </Fragment>
@@ -195,7 +196,7 @@ function BasePlateSketchLayout({ config, fields, diagram, output, getOutputValue
         <div className="flex w-full flex-col gap-3 px-4 md:w-1/2">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-              <h4 className="font-medium text-gray-700" dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 className="font-medium text-gray-700" ><LabelText>{label}</LabelText></h4>
 
               <div className="w-[100px] flex-shrink-0">
                 <ValueBox value={getOutputValue(key, output)} />
@@ -228,7 +229,7 @@ function WeldDiagramLayout({ config, fields, diagram, output, getOutputValue, re
         <div className="flex w-full flex-col gap-3 px-4 md:w-1/2">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-              <h4 className="font-medium text-gray-700" dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 className="font-medium text-gray-700" ><LabelText>{label}</LabelText></h4>
               <div className="w-[100px] flex-shrink-0">
                 <ValueBox value={getOutputValue(key, output)} />
               </div>
@@ -280,7 +281,7 @@ function CleatBoltCapacityLayout({
               </h3>
               {sectionFields.map(({ key, label }, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-                  <h4 className="font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+                  <h4 className="font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
                   <div className="w-[100px] flex-shrink-0">
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>
@@ -344,7 +345,7 @@ function CleatSectionCapacityLayout({
               </h3>
               {sectionFields.map(({ key, label }, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-                  <h4 className="font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+                  <h4 className="font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
                   <div className="w-[100px] flex-shrink-0">
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>
@@ -399,7 +400,7 @@ function SeatedSectionCapacityLayout({
               </h3>
               {sectionFields.map(({ key, label }, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-                  <h4 className="font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+                  <h4 className="font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
                   <div className="w-[100px] flex-shrink-0">
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>
@@ -433,7 +434,7 @@ function EndPlateDetailingLayout({ config, fields, diagram, output, getOutputVal
         <div className="flex w-full flex-col gap-3 px-4 md:w-[45%]">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-              <h4 className="font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 className="font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
               <div className="w-[100px] flex-shrink-0">
                 <ValueBox value={getOutputValue(key, output)} />
               </div>
@@ -465,7 +466,7 @@ function ColumnEndPlateDiagramLayout({ config, fields, diagram, output, getOutpu
         <div className="flex w-full flex-col gap-3 px-4 md:w-[40%]">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-              <h4 className="font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 className="font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
               <div className="w-[100px] flex-shrink-0">
                 <ValueBox value={getOutputValue(key, output)} />
               </div>
@@ -497,7 +498,7 @@ function BeamColumnEndPlateDiagramLayout({ config, fields, diagram, output, getO
         <div className="flex w-full flex-col gap-3 px-4 md:w-[40%]">
           {fields.map(({ key, label }, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-              <h4 className="font-medium text-gray-700 dark:text-gray-300" dangerouslySetInnerHTML={{ __html: label }} />
+              <h4 className="font-medium text-gray-700 dark:text-gray-300" ><LabelText>{label}</LabelText></h4>
               <div className="w-[100px] flex-shrink-0">
                 <ValueBox value={getOutputValue(key, output)} />
               </div>
@@ -552,7 +553,7 @@ function EndPlateCapacityLayout({
               <div className="Capacity-left-body">
                 {sectionFields.map(({ key, label }, idx) => (
                   <div key={idx} className="Capacity-left-body-align">
-                    <p>{label}</p>
+                    <p><LabelText>{label}</LabelText></p>
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>
                 ))}
@@ -615,7 +616,7 @@ function SeatedAngleCapacityLayout({
               <div className="Capacity-left-body">
                 {sectionFields.map(({ key, label }, idx) => (
                   <div key={idx} className="Capacity-left-body-align">
-                    <p>{label}</p>
+                    <p><LabelText>{label}</LabelText></p>
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>
                 ))}
@@ -671,7 +672,7 @@ function PlateFractureCardsLayout({
               <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200">{`Failure Pattern ${pattern} – Tension in ${subject}`}</h4>
               {fields.map(({ key, label }, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3 text-sm">
-                  <p className="text-gray-700 dark:text-gray-300">{label}</p>
+                  <p className="text-gray-700 dark:text-gray-300"><LabelText>{label}</LabelText></p>
                   <div className="w-[100px] flex-shrink-0">
                     <ValueBox value={getOutputValue(key, output)} />
                   </div>

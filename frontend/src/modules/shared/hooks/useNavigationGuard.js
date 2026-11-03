@@ -14,6 +14,8 @@ export const useNavigationGuard = (hasUnsavedWork, moduleId) => {
 
   // Navigation Lock
   const allowNavigationRef = useRef(false);
+  // History entries this guard added to trap the back button.
+  const trapEntriesRef = useRef(0);
   const [navigationSource, setNavigationSource] = useState(null); // 'home' | 'back'
 
   const hasUnsaved = typeof hasUnsavedWork === "function" ? hasUnsavedWork() : !!hasUnsavedWork;
@@ -35,6 +37,7 @@ export const useNavigationGuard = (hasUnsavedWork, moduleId) => {
           // Preserve the full current path (including projectId) so we don't
           // lose the project context when trapping the back button.
           const currentPath = window.location.pathname;
+          // The back press consumed one trap entry and this push restores it.
           window.history.pushState(null, "", currentPath);
         } catch (e) {
           // pushState can throw "The operation is insecure" in some contexts (e.g. post-login redirect, iframe)
@@ -62,6 +65,7 @@ export const useNavigationGuard = (hasUnsavedWork, moduleId) => {
       const path = window.location.pathname;
       if (path && window.location.origin) {
         window.history.pushState(null, "", path);
+        trapEntriesRef.current += 1;
       }
     } catch (e) {
       // pushState can throw "The operation is insecure" (e.g. post-login, iframe, or restricted context)
@@ -83,7 +87,9 @@ export const useNavigationGuard = (hasUnsavedWork, moduleId) => {
     if (navigationSource === "home") {
       navigate("/home");
     } else if (navigationSource === "back") {
-      navigate(-1);
+      // Step over the trap entries as well as the module's own entry.
+      navigate(-(trapEntriesRef.current + 1));
+      trapEntriesRef.current = 0;
     }
     setNavigationSource(null);
   };

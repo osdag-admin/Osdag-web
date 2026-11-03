@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 import { getOutputImage } from "../config/outputImageMap";
 import { OUTPUT_LAYOUTS } from "./outputDock/OutputModalLayouts";
+import LabelText from "./outputDock/LabelText";
 import { useViewport } from "../hooks/useViewport";
 
 // Read-only value box styled like input (transparent bg, grey border).
@@ -233,7 +234,7 @@ export const BaseOutputDock = React.memo(({
     return (
       <div key={index} className="flex w-full justify-between items-center mb-3">
         <h4 className="w-[55%] text-sm font-medium text-osdag-text-primary dark:text-white">
-          {field.label}
+          <LabelText>{field.label}</LabelText>
         </h4>
         {isModalTrigger ? (
           <div className="w-[45%]">
