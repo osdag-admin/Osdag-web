@@ -38,6 +38,7 @@ const GenericSectionView = ({
   displayConfig,      // Configuration for fields and image
   onClearSection,     // Callback to clear parent state if needed
   onDesignationChange,// Callback when designation changes
+  syncReady = true,// False until the dialog's first sync has finished
 }) => {
   const {
     manageDesignPreferences,
@@ -85,13 +86,14 @@ const GenericSectionView = ({
   }, [safeSectionData]);
 
   useEffect(() => {
+    // A tab's own key comes first, and only angle tabs may use the connection's angle.
+    const isAngleTab = displayConfig.designationKey === "Designation";
     const resolved =
+      inputs?.[displayConfig.designationKey] ||
       inputs?.section_designation ||
       inputs?.member_designation ||
-      inputs?.cleat_section ||
-      inputs?.seated_section ||
-      inputs?.[displayConfig.designationKey] ||
       inputs?.supported_designation ||
+      (isAngleTab ? inputs?.cleat_section || inputs?.seated_section : "") ||
       "";
 
     let desigStr;
@@ -105,9 +107,11 @@ const GenericSectionView = ({
       const opts = getDropdownOptions();
       if (opts.length > 0) {
         desigStr = opts[0];
-        if (!defaultAppliedRef.current) {
+        // Wait for the first sync, which would otherwise cancel this request. The default is only
+        // shown: it must not replace an "All" selection in the design inputs.
+        if (syncReady && !defaultAppliedRef.current) {
           defaultAppliedRef.current = true;
-          onDesignationChange?.(desigStr);
+          onDesignationChange?.(desigStr, { preview: true });
         }
       }
     }
@@ -116,7 +120,7 @@ const GenericSectionView = ({
       setDesignationStr(desigStr);
       setLastPropDesignation(desigStr);
     }
-  }, [inputs, displayConfig.designationKey, beamList, columnList, angleList, channelList, getDropdownOptions, onDesignationChange, lastPropDesignation]);
+  }, [inputs, displayConfig.designationKey, beamList, columnList, angleList, channelList, getDropdownOptions, onDesignationChange, lastPropDesignation, syncReady]);
 
 
   const materialKey = sectionType === 'supporting' ? 'supporting_material' : 'supported_material';

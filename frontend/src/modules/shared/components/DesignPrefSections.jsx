@@ -62,6 +62,7 @@ const DesignPrefSections = ({
 
   const syncAbortRef = useRef(null);
   const syncReqIdRef = useRef(0);
+  const previewAbortRef = useRef(null);
   const inputsRef = useRef(inputs);
   inputsRef.current = inputs;
   const prefOverridesRef = useRef(designPrefOverrides);
@@ -162,7 +163,39 @@ const DesignPrefSections = ({
     },
     [applySyncResponse, module, rollBackSync, buildMergedInputsForSync]
   );
-  const handleDesignationChange = useCallback(async (tabIndex, newDesignation) => {
+
+  // Shows one section's properties without changing what the design will use.
+  const previewSection = useCallback(
+    async (key, value) => {
+      previewAbortRef.current?.abort();
+      const ac = new AbortController();
+      previewAbortRef.current = ac;
+      const res = await fetchDesignPrefSync(
+        {
+          module_session_name: module,
+          inputs: buildMergedInputsForSync(),
+          operation: "open",
+          design_pref_draft: { [key]: value },
+        },
+        ac.signal
+      );
+      if (!res.success) {
+        if (!res.aborted) message.error(res.error || "Could not load the section's properties.");
+        return;
+      }
+      const details = res.data.section_details || {};
+      setSectionDetails((prev) => {
+        const next = { ...prev };
+        for (const [role, row] of Object.entries(details)) {
+          if (row && Object.keys(row).length > 0) next[role] = row;
+        }
+        return next;
+      });
+    },
+    [module, buildMergedInputsForSync]
+  );
+
+  const handleDesignationChange = useCallback(async (tabIndex, newDesignation, { preview = false } = {}) => {
     let keyToUpdate = null;
     // End plate splices keep their one section here. Opening an .osi can also set this key on
     // modules that use column_section and beam_section, so those keys take priority.
@@ -186,8 +219,16 @@ const DesignPrefSections = ({
     }
 
     if (keyToUpdate) {
-      const updatedValue = Array.isArray(inputsRef.current[keyToUpdate]) ? [newDesignation] : newDesignation;
-      
+      const current = inputsRef.current[keyToUpdate];
+      const isList = Array.isArray(current);
+      const updatedValue = isList ? [newDesignation] : newDesignation;
+
+      // Looking at one section of an "All" or multi-section list must not narrow that list.
+      if (preview || (isList && current.length !== 1)) {
+        await previewSection(keyToUpdate, updatedValue);
+        return;
+      }
+
       setDesignPrefOverrides?.((prev) => ({
         ...prev,
         [keyToUpdate]: updatedValue
@@ -195,7 +236,7 @@ const DesignPrefSections = ({
       
       await runSync("open", { [keyToUpdate]: updatedValue });
     }
-  }, [runSync, setDesignPrefOverrides]);
+  }, [previewSection, runSync, setDesignPrefOverrides]);
 
   const runDefaults = useCallback(async () => {
     syncAbortRef.current?.abort();
@@ -249,6 +290,7 @@ const DesignPrefSections = ({
     return () => {
       cancelled = true;
       syncAbortRef.current?.abort();
+      previewAbortRef.current?.abort();
     };
   }, [runSync, setDesignPrefOverrides, toStoredPrefOverrides]);
 
@@ -405,7 +447,8 @@ const DesignPrefSections = ({
                   supporting: {},
                 }))
               }
-              onDesignationChange={(val) => handleDesignationChange(0, val)}
+              syncReady={syncReady}
+              onDesignationChange={(val, options) => handleDesignationChange(0, val, options)}
               {...modalCommon}
             />
           )}
@@ -430,18 +473,19 @@ const DesignPrefSections = ({
                   supported: {},
                 }))
               }
-              onDesignationChange={(val) => handleDesignationChange(1, val)}
+              syncReady={syncReady}
+              onDesignationChange={(val, options) => handleDesignationChange(1, val, options)}
               {...modalCommon}
             />
           )}
           {activeTab === 2 && (
             <GenericSectionView
-              sectionType="supporting"
+              sectionType="supported"
               sectionTableName={getDynamicSectionTableName("Angles")}
               displayConfig={ANGLE_DISPLAY_CONFIG}
               module={module}
               inputs={inputs}
-              sectionData={safeSectionDetails.supporting}
+              sectionData={safeSectionDetails.supported}
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
@@ -452,10 +496,11 @@ const DesignPrefSections = ({
               onClearSection={() =>
                 setSectionDetails((prev) => ({
                   ...prev,
-                  supporting: {},
+                  supported: {},
                 }))
               }
-              onDesignationChange={(val) => handleDesignationChange(2, val)}
+              syncReady={syncReady}
+              onDesignationChange={(val, options) => handleDesignationChange(2, val, options)}
               {...modalCommon}
             />
           )}
@@ -492,7 +537,8 @@ const DesignPrefSections = ({
               moduleLists={moduleLists}
               isGuest={isGuest}
               onRefetchModuleOptions={onRefetchModuleOptions}
-              onDesignationChange={(val) => handleDesignationChange(4, val)}
+              syncReady={syncReady}
+              onDesignationChange={(val, options) => handleDesignationChange(4, val, options)}
               {...modalCommon}
             />
           )}
@@ -504,7 +550,7 @@ const DesignPrefSections = ({
               displayConfig={ANGLE_DISPLAY_CONFIG}
               module={module}
               inputs={inputs}
-              sectionData={safeSectionDetails.supported}
+              sectionData={safeSectionDetails.connector || safeSectionDetails.supported}
               designPrefInputs={designPrefInputs}
               setDesignPrefInputs={setDesignPrefInputs}
               isInputLocked={isInputLocked}
@@ -516,9 +562,11 @@ const DesignPrefSections = ({
                 setSectionDetails((prev) => ({
                   ...prev,
                   supported: {},
+                  connector: {},
                 }))
               }
-              onDesignationChange={(val) => handleDesignationChange(5, val)}
+              syncReady={syncReady}
+              onDesignationChange={(val, options) => handleDesignationChange(5, val, options)}
               {...modalCommon}
             />
           )}

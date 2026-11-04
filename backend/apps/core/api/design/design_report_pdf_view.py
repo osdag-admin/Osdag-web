@@ -81,7 +81,7 @@ def filter_latex_content(latex_content: str, selected_sections):
     section_started = False
 
     for line in lines:
-        section_match = re.search(r'\\section\{([^}]+)\}', line)
+        section_match = re.search(r'\\section\{((?:[^{}]|\{[^{}]*\})+)\}', line)
         if section_match:
             current_section = section_match.group(1).strip()
             current_subsection = None
@@ -91,7 +91,7 @@ def filter_latex_content(latex_content: str, selected_sections):
                 any(sel.startswith(f"{current_section}/") for sel in selected_sections)
             )
 
-        subsection_match = re.search(r'\\subsection\{([^}]+)\}', line)
+        subsection_match = re.search(r'\\subsection\{((?:[^{}]|\{[^{}]*\})+)\}', line)
         if subsection_match and current_section:
             current_subsection = subsection_match.group(1).strip()
             subsection_key = f"{current_section}/{current_subsection}"
@@ -198,6 +198,16 @@ class CreateDesignReport(APIView):
             traceback.print_exc()
             raise
 
+        # A report opened outside the design page, such as from Recent Projects, has no logs or
+        # 3D views to send. The module was solved above, so take them from it.
+        if not logs:
+            try:
+                run_logs = module.logger.get_logs()
+                metadata_final['logger_messages'] = format_report_logs(run_logs) or "No logs available"
+                metadata_final['does_design_exist'] = bool(getattr(module, 'design_status', design_status))
+            except Exception as log_exc:
+                logger.warning("[ReportLogs] could not read logs from the module: %s", log_exc)
+
         try:
             raw_logs = metadata_final.get('logs')
             if isinstance(raw_logs, list):
@@ -257,6 +267,13 @@ class CreateDesignReport(APIView):
                         logger.exception(f"[ReportImages] failed to save key {key}: {img_exc}")
         except Exception as outer_img_exc:
             logger.exception(f"[ReportImages] unexpected error: {outer_img_exc}")
+
+        if not images and getattr(module, 'design_status', False):
+            try:
+                from apps.core.utils.report_image_generator import generate_cad_images_for_report
+                generate_cad_images_for_report(module, input_values, module_id, report_base_dir)
+            except Exception as generate_exc:
+                logger.warning("[ReportImages] could not render 3D views: %s", generate_exc)
         
         try:
             resultBoolean = module.save_design(metadata_final)

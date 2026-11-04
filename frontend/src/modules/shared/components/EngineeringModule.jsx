@@ -1146,7 +1146,7 @@ export const EngineeringModule = ({
         {!docks.output && output && !isMobile && (
           <button
             onClick={toggleOutputDock}
-            className="hidden xl:flex absolute right-0 top-0 h-full w-10 bg-white dark:bg-osdag-dark-color border-l border-gray-300 dark:border-gray-700 items-center justify-center z-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+            className="hidden xl:flex absolute right-0 top-0 h-full w-10 bg-transparent border-l border-gray-300 dark:border-gray-700 items-center justify-center z-50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
             title="Open Output Dock"
             type="button"
           >

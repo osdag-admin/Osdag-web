@@ -30,6 +30,9 @@ from apps.core.utils.api_errors import error_response
 
 # Report ids are 16-char alphanumerics from get_random_string; anything else could escape file_storage.
 _REPORT_ID_RE = re.compile(r'^[A-Za-z0-9]{16}$')
+# Titles can hold one level of braces, such as \subsection{Bolt Design {- Web}}.
+SECTION_PATTERN = r'\\section\{((?:[^{}]|\{[^{}]*\})+)\}'
+SUBSECTION_PATTERN = r'\\subsection\{((?:[^{}]|\{[^{}]*\})+)\}'
 
 
 def _is_valid_report_id(report_id):
@@ -60,13 +63,13 @@ class LaTeXParser:
         # Process each line to find LaTeX section commands
         for line in latex_content.split('\n'):
             # Look for \section{Section Name} patterns
-            section_match = re.search(r'\\section\{([^}]+)\}', line)
+            section_match = re.search(SECTION_PATTERN, line)
             if section_match:
                 current_section = section_match.group(1).strip()
                 sections[current_section] = []  # Initialize subsection list
                 
             # Look for \subsection{Subsection Name} patterns
-            subsection_match = re.search(r'\\subsection\{([^}]+)\}', line)
+            subsection_match = re.search(SUBSECTION_PATTERN, line)
             if subsection_match and current_section:
                 subsection = subsection_match.group(1).strip()
                 sections[current_section].append(subsection)
@@ -102,7 +105,7 @@ class LaTeXFilter:
         
         for line in lines:
             # Check for new section
-            section_match = re.search(r'\\section\{([^}]+)\}', line)
+            section_match = re.search(SECTION_PATTERN, line)
             if section_match:
                 current_section = section_match.group(1).strip()
                 current_subsection = None
@@ -112,7 +115,7 @@ class LaTeXFilter:
                                  any(sel.startswith(f"{current_section}/") for sel in selected_sections))
                 
             # Check for subsection
-            subsection_match = re.search(r'\\subsection\{([^}]+)\}', line)
+            subsection_match = re.search(SUBSECTION_PATTERN, line)
             if subsection_match and current_section:
                 current_subsection = subsection_match.group(1).strip()
                 subsection_key = f"{current_section}/{current_subsection}"

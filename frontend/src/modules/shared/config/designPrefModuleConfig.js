@@ -124,7 +124,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [0, 3, 6, 11, 13],
     initialTabIndex: 0,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       bolt_tension_type: inputs.bolt_tension_type,
       bolt_hole_type: inputs.bolt_hole_type,
@@ -140,7 +140,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [1, 3, 6, 11, 13],
     initialTabIndex: 1,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       bolt_tension_type: inputs.bolt_tension_type,
       bolt_hole_type: inputs.bolt_hole_type,
@@ -156,7 +156,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [0, 3, 10, 11, 13],
     initialTabIndex: 0,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       weld_fab: inputs.weld_fab ?? "Shop Weld",
       weld_material_grade: inputs.weld_material_grade || inputs.weld_material_grade_overwrite || "290",
@@ -171,7 +171,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [1, 3, 10, 11, 13],
     initialTabIndex: 1,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       weld_fab: inputs.weld_fab ?? "Shop Weld",
       weld_material_grade: inputs.weld_material_grade || inputs.weld_material_grade_overwrite || "290",
@@ -186,7 +186,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [0, 3, 6, 10, 11, 13],
     initialTabIndex: 0,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       bolt_tension_type: inputs.bolt_tension_type,
       bolt_hole_type: inputs.bolt_hole_type,
@@ -358,7 +358,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [2, 3, 6, 11, 13],
     initialTabIndex: 2,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       bolt_tension_type: inputs.bolt_tension_type,
       bolt_hole_type: inputs.bolt_hole_type,
@@ -374,10 +374,10 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [2, 3, 10, 11, 13],
     initialTabIndex: 2,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       weld_fab: inputs.weld_fab,
-      weld_material_grade: inputs.weld_material_grade,
+      weld_material_grade: inputs.weld_material_grade || "290",
       detailing_edge_type: inputs.detailing_edge_type,
       detailing_gap: inputs.detailing_gap,
       detailing_corr_status: inputs.detailing_corr_status,
@@ -409,7 +409,7 @@ const DESIGN_PREF_CONFIG = {
     tabIds: [2, 3, 6, 11, 13],
     initialTabIndex: 2,
     getInitialPrefs: (inputs) => ({
-      supported_material: inputs.member_material,
+      supported_material: inputs.member_material ?? inputs.material,
       connector_material: inputs.connector_material,
       bolt_tension_type: inputs.bolt_tension_type,
       bolt_hole_type: inputs.bolt_hole_type,
@@ -418,6 +418,21 @@ const DESIGN_PREF_CONFIG = {
       detailing_gap: inputs.detailing_gap,
       detailing_corr_status: inputs.detailing_corr_status,
       design_method: inputs.design_method,
+    }),
+    getDefaultPrefs: (_inputs, _module, contextDefaults) => contextDefaults || {},
+  },
+  "Struts Welded to End Gusset":{
+    tabIds: [2, 3, 10, 11, 13],
+    initialTabIndex: 2,
+    getInitialPrefs: (inputs) => ({
+      supported_material: inputs.member_material ?? inputs.material,
+      connector_material: inputs.connector_material,
+      weld_fab: inputs.weld_fab ?? "Shop weld",
+      weld_material_grade: inputs.weld_material_grade || "290",
+      detailing_edge_type: inputs.detailing_edge_type ?? "Sheared or hand flame cut",
+      detailing_gap: inputs.detailing_gap ?? "0",
+      detailing_corr_status: inputs.detailing_corr_status ?? "No",
+      design_method: inputs.design_method ?? "Limited State Design",
     }),
     getDefaultPrefs: (_inputs, _module, contextDefaults) => contextDefaults || {},
   },

@@ -146,15 +146,15 @@ class DesignPrefCustomRowsTests(TestCase):
 
     def test_owner_gets_custom_rows(self):
         _resolved, _meta, material_details, section_details = self.merge(self.user)
-        self.assertEqual(section_details["supported"]["Designation"], "MY 200")
-        self.assertEqual(float(section_details["supported"]["Mass"]), 30.0)
+        self.assertEqual(section_details["supporting"]["Designation"], "MY 200")
+        self.assertEqual(float(section_details["supporting"]["Mass"]), 30.0)
         self.assertEqual(material_details["connector"][0]["Grade"], "My Steel")
         self.assertEqual(material_details["connector"][0]["Ultimate_Tensile_Stress"], 450)
 
     def test_other_user_and_guest_get_nothing(self):
         for user in (self.other, None):
             _resolved, _meta, material_details, section_details = self.merge(user)
-            self.assertEqual(section_details["supported"], {})
+            self.assertEqual(section_details["supporting"], {})
             self.assertEqual(material_details["connector"], [])
 
     def test_sync_api_returns_custom_details(self):
@@ -163,7 +163,7 @@ class DesignPrefCustomRowsTests(TestCase):
             r = self.client.post("/api/design-preferences/sync/", data=body, content_type="application/json")
         self.assertEqual(r.status_code, 200)
         data = r.json()
-        self.assertEqual(data["section_details"]["supported"]["Designation"], "MY 200")
+        self.assertEqual(data["section_details"]["supporting"]["Designation"], "MY 200")
         self.assertEqual(data["material_details"]["connector"][0]["Grade"], "My Steel")
 
     def test_defaults_api_returns_custom_details(self):
@@ -172,7 +172,7 @@ class DesignPrefCustomRowsTests(TestCase):
             r = self.client.post("/api/design-preferences/defaults/", data=body, content_type="application/json")
         self.assertEqual(r.status_code, 200)
         data = r.json()
-        self.assertEqual(data["section_details"]["supported"]["Designation"], "MY 200")
+        self.assertEqual(data["section_details"]["supporting"]["Designation"], "MY 200")
         self.assertEqual(data["material_details"]["connector"][0]["Grade"], "My Steel")
 
 
@@ -191,20 +191,20 @@ class DesignPrefCatalogTests(TestCase):
 
     def test_guest_gets_catalog_rows(self):
         _resolved, _meta, material_details, section_details = self.merge(None)
-        self.assertEqual(section_details["supported"]["Designation"], "MB 300")
-        self.assertAlmostEqual(section_details["supported"]["Mass"], 46.02)
+        self.assertEqual(section_details["supporting"]["Designation"], "MB 300")
+        self.assertAlmostEqual(section_details["supporting"]["Mass"], 46.02)
         self.assertEqual(material_details["connector"][0]["Grade"], "E 250 (Fe 410 W)A")
         self.assertEqual(material_details["connector"][0]["Yield_Stress_less_than_20"], 250)
 
     def test_custom_row_wins_over_catalog_row_of_the_same_designation(self):
         make_beam(self.user, designation="MB 300", mass=99.0)
         _resolved, _meta, _md, section_details = self.merge(self.user)
-        self.assertEqual(float(section_details["supported"]["Mass"]), 99.0)
+        self.assertEqual(float(section_details["supporting"]["Mass"]), 99.0)
 
     def test_catalog_row_is_found_after_the_users_rows(self):
         make_beam(self.user, designation="MY 200")
         _resolved, _meta, _md, section_details = self.merge(self.user)
-        self.assertAlmostEqual(section_details["supported"]["Mass"], 46.02)
+        self.assertAlmostEqual(section_details["supporting"]["Mass"], 46.02)
 
     def test_design_preferences_api_returns_catalog_row(self):
         r = self.client.get("/api/design-preferences/", {"section_type": "angles", "supported_section": "20 x 20 x 3"})

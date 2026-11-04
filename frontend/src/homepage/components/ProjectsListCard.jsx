@@ -5,7 +5,8 @@ import { isGuestUser } from '../../utils/auth';
 import { getProjectById } from "../../datasources/projectsDataSource";
 import ProjectActionButtons from './ProjectActionButtons';
 import { loadModuleConfigs } from '../../modules/registry';
-import { KEY_DISP_FINPLATE, CONN_CFBW } from '../../constants/generated/coreKeys';
+import { loadProjectReportContext } from '../utils/projectReportContext';
+import { KEY_DISP_FINPLATE } from '../../constants/generated/coreKeys';
 
 const ProjectsListCard = ({ projects: projectsProp = [], loading: loadingProp = false, onDeleteProject }) => {
   const [projects, setProjects] = React.useState(projectsProp);
@@ -27,6 +28,7 @@ const ProjectsListCard = ({ projects: projectsProp = [], loading: loadingProp = 
   const [reportModuleId, setReportModuleId] = React.useState(null);
   const [reportModuleConfig, setReportModuleConfig] = React.useState(null);
   const [reportAllSelected, setReportAllSelected] = React.useState({});
+  const [reportLists, setReportLists] = React.useState({});
   const [reportExtraState, setReportExtraState] = React.useState({});
 
 
@@ -64,16 +66,10 @@ const ProjectsListCard = ({ projects: projectsProp = [], loading: loadingProp = 
       const cfg = loaded?.moduleConfig || null;
       setReportModuleConfig(cfg);
       // allSelected: set all to false so saved arrays are used as-is
-      if (cfg && Array.isArray(cfg.selectionConfig)) {
-        const initSel = cfg.selectionConfig.reduce((acc, s) => { acc[s.inputKey] = false; return acc; }, {});
-        setReportAllSelected(initSel);
-      } else {
-        setReportAllSelected({});
-      }
-      // extraState: carry connectivity for FinPlate (or default)
-      const defaultConnectivity = CONN_CFBW;
-      const selectedOption = (detail?.inputs_json && detail.inputs_json.connectivity) || defaultConnectivity;
-      setReportExtraState({ selectedOption });
+      const context = await loadProjectReportContext(detail?.inputs_json, modId, cfg);
+      setReportAllSelected(context.allSelected);
+      setReportLists(context.lists);
+      setReportExtraState(context.extraState);
       setReportModalOpen(true);
     } catch (e) {
       toast.error(e.message || 'Failed to load project');
@@ -177,6 +173,7 @@ const ProjectsListCard = ({ projects: projectsProp = [], loading: loadingProp = 
         logs={[]}
         moduleConfig={reportModuleConfig}
         allSelected={reportAllSelected}
+        lists={reportLists}
         extraState={reportExtraState}
       />
     </>

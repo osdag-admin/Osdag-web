@@ -193,18 +193,18 @@ _SECTION_KEY_MAP: Dict[str, Tuple[Optional[str], Optional[str], Optional[str], O
     KEY_DISP_CLEATANGLE: ("column_section", "columns", "beam_section", "beams", "cleat_section", "angles"),
     KEY_DISP_SEATED_ANGLE: ("column_section", "columns", "beam_section", "beams", "seated_section", "angles"),
     "Beam to Column End Plate Connection": ("column_section", "columns", "beam_section", "beams", None, None),
-    "Beam Beam End Plate Connection": ("primary_beam", "beams", "secondary_beam", "beams", None, None),
+    "Beam Beam End Plate Connection": (None, None, "supported_designation", "beams", None, None),
     "Column Cover Plate Bolted Connection": ("member_designation", "columns", None, None, None, None),
     "Beam Cover Plate Bolted Connection": (None, None, "member_designation", "beams", None, None),
     "Column Cover Plate Welded Connection": ("member_designation", "columns", None, None, None, None),
     "Beam Cover Plate Welded Connection": (None, None, "member_designation", "beams", None, None),
-    "Column Column End Plate Connection": ("member_designation", "columns", None, None, None, None),
+    "Column Column End Plate Connection": ("supported_designation", "columns", None, None, None, None),
     "Base Plate": ("member_designation", "columns", None, None, None, None),
-    "Simply Supported Beam Design": (None, None, "section_designation", "beams", None, None),
-    "On Cantilever Beam Design": (None, None, "section_designation", "beams", None, None),
+    "Simply Supported Beam Design": ("section_designation", "beams_columns", None, None, None, None),
+    "On Cantilever Beam Design": ("section_designation", "beams_columns", None, None, None, None),
     "Purlin Design": (None, None, "section_designation", "beams", None, None),
     "Compression Member Design": (None, None, "section_designation", "angles", None, None),
-    "Axially Loaded Column": ("section_designation", "columns", None, None, None, None),
+    "Axially Loaded Column": ("section_designation", "columns_beams", None, None, None, None),
     "Struts Bolted to End Gusset": (None, None, "section_designation", "angles_channels", None, None),
     "Struts Welded to End Gusset": (None, None, "section_designation", "angles_channels", None, None),
     "Tension Member Bolted Design": (None, None, "section_designation", "angles_channels", None, None),
@@ -242,6 +242,10 @@ def _resolve_section_details(
             return angles_model
         elif source_str == "channels":
             return channels_model
+        elif source_str == "beams_columns":
+            return [*(beams_model or []), *(columns_model or [])]
+        elif source_str == "columns_beams":
+            return [*(columns_model or []), *(beams_model or [])]
         elif source_str == "angles_channels":
             profile = str(inputs.get("section_profile") or "").lower()
             if "channel" in profile:

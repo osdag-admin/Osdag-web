@@ -2,7 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from "react-router";
 import { toast } from 'react-toastify';
 import { findModule, getModuleRoute, loadModuleConfigs, MENU_GROUPS, getMenuSections } from '../../modules/registry';
-import { KEY_DISP_FINPLATE, CONN_CFBW } from '../../constants/generated/coreKeys';
+import { loadProjectReportContext } from '../utils/projectReportContext';
+import { KEY_DISP_FINPLATE } from '../../constants/generated/coreKeys';
 import { isGuestUser } from '../../utils/auth';
 import { useAuth } from '../../context/AuthContext';
 import { searchProjects, getProjectById, deleteProject } from '../../datasources/projectsDataSource';
@@ -70,6 +71,7 @@ const Header = ({ setshowSideBar, active }) => {
   const [reportModuleId, setReportModuleId] = useState(null);
   const [reportModuleConfig, setReportModuleConfig] = useState(null);
   const [reportAllSelected, setReportAllSelected] = useState({});
+  const [reportLists, setReportLists] = useState({});
   const [reportExtraState, setReportExtraState] = useState({});
 
   const handleDeleteProject = async (projectId) => {
@@ -98,15 +100,10 @@ const Header = ({ setshowSideBar, active }) => {
       const loaded = await loadModuleConfigs(modId);
       const cfg = loaded?.moduleConfig || null;
       setReportModuleConfig(cfg);
-      if (cfg && Array.isArray(cfg.selectionConfig)) {
-        const initSel = cfg.selectionConfig.reduce((acc, s) => { acc[s.inputKey] = false; return acc; }, {});
-        setReportAllSelected(initSel);
-      } else {
-        setReportAllSelected({});
-      }
-      const defaultConnectivity = CONN_CFBW;
-      const selectedOption = (detail?.inputs_json && detail.inputs_json.connectivity) || defaultConnectivity;
-      setReportExtraState({ selectedOption });
+      const context = await loadProjectReportContext(detail?.inputs_json, modId, cfg);
+      setReportAllSelected(context.allSelected);
+      setReportLists(context.lists);
+      setReportExtraState(context.extraState);
       setReportModalOpen(true);
     } catch (e) {
       toast.error(e.message || 'Failed to load project');
@@ -1356,6 +1353,7 @@ const Header = ({ setshowSideBar, active }) => {
         logs={[]}
         moduleConfig={reportModuleConfig}
         allSelected={reportAllSelected}
+        lists={reportLists}
         extraState={reportExtraState}
       />
     </div>

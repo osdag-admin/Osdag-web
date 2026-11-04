@@ -165,6 +165,8 @@ When a user clicks the **Defaults** button, Osdag-Web executes a two-phase reset
 
 The tabs displayed inside the Additional Inputs panel are mapped dynamically based on the active module name. This is driven by [designPrefModuleConfig.js](../frontend/src/modules/shared/config/designPrefModuleConfig.js):
 
+The section tabs show the selected section's properties. If the module's list is on "All" or holds several sections, the tab previews the first one, and picking another only changes what the tab shows. The design's list changes only from the input dock. The backend's `_SECTION_KEY_MAP` in `sync_merge.py` must return each module's section under the role its tab reads: tab 2 and the beam sections read `supported`, tab 0 reads `supporting`, and the cleat and seated angle tabs read `connector`.
+
 | Module Name | Tab IDs List | Displayed Tabs | Initial Tab |
 | :--- | :--- | :--- | :--- |
 | **Butt Joint Bolted** | `[6, 11]` | Bolt, Detailing | Bolt (6) |

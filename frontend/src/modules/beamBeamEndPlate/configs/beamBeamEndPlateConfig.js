@@ -103,9 +103,9 @@ export const beamBeamEndPlateConfig = {
           label: "Connectivity",
           type: "select",
           options: [
-            { value: "Coplanar Tension-Compression Flange", label: "Coplanner Tension-Compression Flange" },
-            { value: "Coplanar Tension Flange", label: "Coplanner Tension Flange", disabled: true },
-            { value: "Coplanar Compression Flange", label: "Coplanner Compression Flange", disabled: true }
+            { value: "Coplanar Tension-Compression Flange", label: "Coplanar Tension-Compression Flange" },
+            { value: "Coplanar Tension Flange", label: "Coplanar Tension Flange" },
+            { value: "Coplanar Compression Flange", label: "Coplanar Compression Flange" }
           ]
         },
         {
