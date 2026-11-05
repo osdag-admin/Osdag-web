@@ -42,18 +42,17 @@ def save_to_project(
     project_id: int,
     user_email: str,
     inputs: Dict[str, Any],
-    submodule_slug: str,
-    module_name: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Save design inputs to a project in the database.
+
+    The project's module was set when it was created, and Recent Projects opens it by that
+    module id, so saving inputs must not change it.
     
     Args:
         project_id: ID of the project to update
         user_email: Email of the project owner (for verification)
         inputs: Design input parameters (JSON-serializable dict)
-        submodule_slug: URL slug of the sub-module (e.g., 'fin-plate')
-        module_name: Optional parent module name (e.g., 'shear-connection')
         
     Returns:
         dict: Result dictionary with 'saved', 'project_id', and optional 'error' keys
@@ -63,13 +62,7 @@ def save_to_project(
         
         # Update project with latest inputs
         project.inputs_json = inputs
-        project.submodule = submodule_slug.replace('-', '_')  # Store slug (e.g., 'fin_plate')
-        
-        # Optionally update parent module name
-        if module_name:
-            project.module = module_name.replace('-', '_')  # Store module (e.g., 'shear_connection')
-        
-        project.save()
+        project.save(update_fields=['inputs_json', 'updated_at'])
         
         return {
             'saved': True,
@@ -135,8 +128,6 @@ def handle_design_request(
                 project_id=project_id,
                 user_email=user_email,
                 inputs=inputs,
-                submodule_slug=submodule_slug,
-                module_name=module_name
             )
         else:
             context['project_result'] = {

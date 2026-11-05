@@ -2,6 +2,8 @@
 // All user-facing UI strings for FinPlate connection (and can be extended for other modules)
 
 export const UI_STRINGS = {
+  // A saved project whose module id is not in the module registry, e.g. from an older version.
+  UNKNOWN_PROJECT_MODULE: "This project was saved by an older version of Osdag-Web and can't be opened. Please create it again.",
   // Section Titles
   INPUT_DOCK: "Input Dock",
   CONNECTING_MEMBERS: "Connecting Members",

@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { apiClient } from "../../utils/apiClient";
 import { AUTH, PROJECTS, MATERIALS, SECTIONS } from "../../datasources/endpoints";
 import { getModuleRoute } from "../../modules/registry";
+import { UI_STRINGS } from "../../constants/UIStrings";
 import { getErrorMessage } from "../../utils/apiError";
 
 /** ── DEBUG: catches render crashes in each section and logs which one ── */
@@ -356,7 +357,7 @@ const MyDataPage = () => {
     if (route) {
       navigate(`${route}/${project.id}`);
     } else {
-      toast.error("Design module route not found");
+      toast.error(UI_STRINGS.UNKNOWN_PROJECT_MODULE);
     }
   };
 

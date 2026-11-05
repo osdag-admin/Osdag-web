@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { getProjectById } from "../../datasources/projectsDataSource";
 import { saveOsiFromInputs } from "../../datasources/osiDataSource";
 import { getModuleRoute } from "../../modules/registry";
+import { UI_STRINGS } from "../../constants/UIStrings";
 
 const btnBase =
   "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-osdag-green hover:text-osdag-green transition-all active:scale-95";
@@ -22,7 +23,7 @@ const ProjectActionButtons = ({
       navigate(`${route}/${project.id}`);
       if (onActionComplete) onActionComplete();
     } else {
-      toast.error('Module route not found');
+      toast.error(UI_STRINGS.UNKNOWN_PROJECT_MODULE);
     }
   };
 
@@ -38,7 +39,7 @@ const ProjectActionButtons = ({
       navigate(`${route}/${project.id}?action=report`);
       if (onActionComplete) onActionComplete();
     } else {
-      toast.error('Module route not found');
+      toast.error(UI_STRINGS.UNKNOWN_PROJECT_MODULE);
     }
   };
 

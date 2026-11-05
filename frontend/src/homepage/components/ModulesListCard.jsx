@@ -1,12 +1,17 @@
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import { getModuleRoute } from "../../modules/registry";
+import { UI_STRINGS } from "../../constants/UIStrings";
 
 const ModulesListCard = ({ items = [], loading = false }) => {
   const navigate = useNavigate();
 
   const handleModuleClick = (item) => {
     const route = getModuleRoute(item.submodule);
-    if (!route) return;
+    if (!route) {
+      toast.error(UI_STRINGS.UNKNOWN_PROJECT_MODULE);
+      return;
+    }
     navigate(route);
   };
 
