@@ -1,0 +1,25 @@
+# Code owners are requested as reviewers automatically on pull requests that
+# touch the matching paths. The last matching pattern wins, so the catch-all
+# at the top is overridden by the specific sections below.
+#
+# For now every path is owned by @sogalabhi. When a team is set up on the
+# osdag-admin organization, replace the handle with a team, for example
+# @osdag-admin/osdag-web-maintainers. Teams need write access to the repository.
+
+# Default owner for everything not listed below
+*                   @sogalabhi
+
+# Engineering library (desktop engine code shared with Osdag Desktop)
+/osdag_core/        @sogalabhi
+
+# Django backend: API, Celery tasks, models, settings
+/backend/           @sogalabhi
+
+# React/Vite frontend
+/frontend/          @sogalabhi
+
+# CI/CD workflows, issue and PR templates, Dependabot
+/.github/           @sogalabhi
+
+# Developer and user documentation
+/documentation/     @sogalabhi

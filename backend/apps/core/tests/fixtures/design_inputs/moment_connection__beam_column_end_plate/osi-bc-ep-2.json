@@ -1,0 +1,45 @@
+{
+  "source": "osi:bc_ep_2.osi",
+  "notes": "Desktop example bc_ep_2.osi (Module: \"Beam-to-Column End Plate Connection\") parsed by parse_osi(), loaded by the frontend osiLoader into beamToColumnEndPlateConfig's form state, then beamToColumnEndPlateConfig.buildSubmissionParams (All-selected flags as the loader sets them).",
+  "inputs": {
+    "Bolt.Bolt_Hole_Type": "Standard",
+    "Bolt.Diameter": [
+      "20",
+      "24",
+      "30"
+    ],
+    "Bolt.Grade": [
+      "6.8",
+      "8.8",
+      "9.8"
+    ],
+    "Bolt.Slip_Factor": "0.3",
+    "Bolt.TensionType": "Non Pre-tensioned",
+    "Bolt.Type": "Bearing Bolt",
+    "Connectivity": "Column Flange-Beam Web",
+    "EndPlateType": "Extended One Way - Irreversible Moment",
+    "Connector.Plate.Thickness_List": [
+      "16",
+      "18",
+      "20",
+      "22"
+    ],
+    "Connector.Material": "E 250 (Fe 410 W)A",
+    "Design.Design_Method": "Limit State Design",
+    "Detailing.Corrosive_Influences": "No",
+    "Detailing.Edge_type": "Sheared or hand flame cut",
+    "Detailing.Gap": "0",
+    "Load.Axial": "15",
+    "Load.Moment": "210",
+    "Load.Shear": "40",
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Supported_Section.Designation": "WB 450",
+    "Member.Supported_Section.Material": "E 250 (Fe 410 W)A",
+    "Member.Supporting_Section.Designation": "HB 450",
+    "Member.Supporting_Section.Material": "E 250 (Fe 410 W)A",
+    "Weld.Fab": "Shop Weld",
+    "Weld.Material_Grade_OverWrite": "410",
+    "Weld.Type": "Groove Weld",
+    "Module": "Beam-to-Column End Plate Connection"
+  }
+}

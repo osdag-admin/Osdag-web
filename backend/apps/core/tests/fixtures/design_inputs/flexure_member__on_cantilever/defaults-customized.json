@@ -1,0 +1,26 @@
+{
+  "source": "frontend-defaults:onCantileverConfig.js",
+  "notes": "Run of onCantileverConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"section_designation\":[\"MB 300\",\"MB 350\"]}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Flexural Members - Cantilever",
+    "Member.Profile": "Beams and Columns",
+    "Member.Designation": [
+      "MB 300",
+      "MB 350"
+    ],
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Material": "E 250 (Fe 410 W)A",
+    "Flexure.Type": "Major Laterally Supported",
+    "Cantilever.Support": "Continuous, with lateral restraint to top flange",
+    "Cantilever.Top": "Free",
+    "Member.Length": "5000",
+    "Load.Shear": "50",
+    "Load.Moment": "100",
+    "Design.Design_Method": "Limit State Design",
+    "Optimum.Class": "Yes",
+    "Effective.Area_Para": "1.0",
+    "Length.Overwrite": "NA",
+    "Bearing.Length": "NA",
+    "Loading.Condition": "Normal"
+  }
+}

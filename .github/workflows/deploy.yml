@@ -1,0 +1,128 @@
+name: Deploy
+
+# Reusable deploy steps, shared by CD (every merge) and Rollback (manual).
+# Deploys a specific commit SHA that is already pushed to GHCR.
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: "Full 40-char commit SHA whose images should be deployed"
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    # `production` is a GitHub Environment: add required reviewers (and limit
+    # deployment branches) in Settings -> Environments to gate every deploy,
+    # including rollbacks.
+    environment:
+      name: production
+    # Server is on a private IP reachable only via VPN, so a GitHub-hosted
+    # runner can't SSH in. This job runs on a self-hosted runner installed
+    # directly on the deploy target (self-hosted runners connect outbound
+    # to GitHub to poll for jobs, so no inbound network access is needed).
+    runs-on: self-hosted
+    # One production deploy at a time; queue rather than cancel, so a deploy
+    # is never killed half way through (e.g. between migrate and up).
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: read
+    env:
+      DEPLOY_DIR: /opt/osdag-web
+      # Read by docker-compose.prod.yml to pick the backend/frontend image tags.
+      IMAGE_TAG: ${{ inputs.image_tag }}
+      # Also read by `docker compose` itself, so no -f flag is needed below.
+      COMPOSE_FILE: docker-compose.prod.yml
+    steps:
+      - name: Validate image tag
+        # Passed via env (never interpolated into the script) and must be a
+        # full SHA, so a typo or a mutable tag like "latest" can't slip in.
+        run: |
+          if ! [[ "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::image_tag must be a full 40-character commit SHA, got '$IMAGE_TAG'"
+            exit 1
+          fi
+
+      # The compose file is taken from the commit being deployed (not from
+      # whatever is already on the server), so the file and the images always
+      # match. This also makes a rollback restore the old compose file.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.image_tag }}
+          persist-credentials: false
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check images exist and compose file supports pinning
+        run: |
+          set -e
+          IMAGE_REPO=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
+          for svc in backend frontend; do
+            docker manifest inspect "ghcr.io/${IMAGE_REPO}/${svc}:${IMAGE_TAG}" > /dev/null \
+              || { echo "::error::Image ghcr.io/${IMAGE_REPO}/${svc}:${IMAGE_TAG} not found"; exit 1; }
+          done
+          # Commits from before tag pinning would silently deploy :latest.
+          grep -q 'IMAGE_TAG' "$COMPOSE_FILE" \
+            || { echo "::error::$COMPOSE_FILE at this commit does not use IMAGE_TAG; refusing to deploy"; exit 1; }
+          docker compose version
+
+      - name: Sync compose file to server
+        run: install -m 644 "$COMPOSE_FILE" "$DEPLOY_DIR/$COMPOSE_FILE"
+
+      - name: Pull images
+        working-directory: /opt/osdag-web
+        run: docker compose pull
+
+      - name: Start database and Redis
+        working-directory: /opt/osdag-web
+        # Migrations need them up and healthy; they are unchanged between
+        # deploys so this is a no-op after the first run.
+        run: docker compose up -d --wait --wait-timeout 120 db redis
+
+      - name: Run migrations
+        working-directory: /opt/osdag-web
+        # Runs once per deploy (not on every container start). Old containers
+        # keep serving during this, so migrations must be backward compatible
+        # with the previous release (add before remove). Rollback does not
+        # reverse migrations.
+        run: docker compose run --rm --no-deps backend /opt/conda/envs/osdag_env/bin/python manage.py migrate --noinput
+
+      - name: Start services
+        working-directory: /opt/osdag-web
+        # --wait blocks until every service with a healthcheck is healthy and
+        # fails the step on timeout or if a container exits.
+        run: docker compose up -d --remove-orphans --wait --wait-timeout 300
+
+      - name: Smoke test through nginx
+        run: |
+          set -e
+          # Same path users hit: nginx -> /api/ proxy -> Django -> DB + Redis.
+          curl -fsS --retry 5 --retry-delay 3 --retry-connrefused --max-time 10 \
+            http://localhost/api/health/ | tee /tmp/osdag-health.json
+          echo
+          grep -q '"status": "ok"' /tmp/osdag-health.json
+          # The SPA itself is served.
+          curl -fsS --max-time 10 -o /dev/null http://localhost/
+          echo "Smoke test passed."
+
+      - name: Record deployed tag
+        working-directory: /opt/osdag-web
+        # Handy when running docker compose by hand: IMAGE_TAG=$(cat .deployed-tag)
+        run: |
+          echo "$IMAGE_TAG" > .deployed-tag
+          docker image prune -f > /dev/null
+
+      - name: Show status and logs on failure
+        if: failure()
+        working-directory: /opt/osdag-web
+        run: |
+          docker compose ps -a
+          docker compose logs --tail=100

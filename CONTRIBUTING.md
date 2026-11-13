@@ -1,112 +1,104 @@
+# Contributing to Osdag-Web
 
-## Contributing to Osdag
+Thanks for helping improve Osdag-Web. This guide covers how to get the project running, the checks that CI runs, and how to send a change for review. For architecture details, start with [documentation/INDEX.md](documentation/INDEX.md).
 
-Osdag invites enthusiasts with similar interest(s) to contribute to Osdag development. Your contributions can go a long way in improving the software.
+## Workflow
 
-Take a moment to review this document in order to make the contribution process easy and effective.
+1. **Fork** [osdag-admin/Osdag-web](https://github.com/osdag-admin/Osdag-web) on GitHub, then clone your fork:
 
-Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open source project. In return, they should reciprocate that respect in addressing your issue or assessing patches and features.
+   ```bash
+   git clone https://github.com/<your-username>/Osdag-web.git
+   cd Osdag-web
+   git remote add upstream https://github.com/osdag-admin/Osdag-web.git
+   ```
 
-### Using the issue tracker
+2. **Branch from `25april`**, the default branch. Keep it up to date with upstream:
 
-The issue tracker is the preferred channel for <a href= "#bugs">bug reports</a>, <a href= "#feature">features requests</a> and submitting <a href= "#pull">pull requests</a>, but please follow the below restrictions:
+   ```bash
+   git fetch upstream
+   git checkout -b <short-topic-name> upstream/25april
+   ```
 
-   * Please **do not** use the issue tracker for personal support requests (use Osdag forum or GitHub issue).
+3. **Make focused changes.** One logical change per PR is easier to review. For large changes (new modules, refactors), open an issue first so the approach can be agreed on.
 
-   * Please **do not** derail or troll issues. Keep the discussion on topic and respect the opinions of others.
+4. **Push** the branch to your fork and **open a pull request against `25april`** in `osdag-admin/Osdag-web`. The PR template will guide the description.
 
-   * Please **do not** post comments consisting solely of "+1" or "👍". Use GitHub's "reactions" feature instead. We reserve the right to delete comments which violate this rule.
+Keep your branch current by rebasing onto `upstream/25april` before review, or merge it if you prefer; avoid force-pushing once a reviewer has started looking at the PR.
 
-### <a id="user-content-bugs" class="anchor" href="#bugs" aria-hidden="true"></a> Bug reports
+## Local setup
 
+Setup is documented in one place. Use the one that matches your machine:
 
-A bug is a demonstrable problem that is caused by the code in the repository. Good bug reports are extremely helpful!
+- **Docker Compose** (recommended): see [README.md](README.md#option-a-using-docker-compose-recommended) and [documentation/general/installation_docs_linux.md](documentation/general/installation_docs_linux.md) (also `installation_docs_mac.md` and `installation_docs_windows.md`).
+- **Native development**: see the "Native Local Development" section of [README.md](README.md) and the setup scripts at the repository root: `setup_ubuntu.sh`, `setup_arch.sh`, `setup_mac.sh`, and `setup_windows.ps1`.
 
-Guidelines for bug reports:
+Before running either, create a `.env` file from the template and fill in real values:
 
-   * **Use the GitHub issue search —** check if the issue has already been reported.
+```bash
+cp .env.example .env
+```
 
-   * **Check if the issue has been fixed —** try to reproduce it using the latest master branch in the repository.
+`.env` is git-ignored and must never be committed. The Firebase service account file (`backend/firebase-service-account.json`) is also required; see the Firebase section of the README.
 
-A good bug report shouldn't leave others needing to chase you up for more information. Please try to be as detailed as possible in your report. What is your environment? What steps will reproduce the issue? What browsers and OS experience the problem? What would you expect to be the outcome? All these details will help people to fix any potential bugs.
+## Checks
 
-Example:
+These are the same checks that the CI workflow in `.github/workflows/ci.yml` runs. Run them locally before opening a PR.
 
-    Short and descriptive example bug report title
+**Frontend** (Node 22, see `engines` in `frontend/package.json`):
 
-    A summary of the issue and the browser/OS environment in which it occurs. If suitable, include the steps required to reproduce the bug.
+```bash
+cd frontend
+npm ci
+npm run lint
+npm run build
+```
 
-        This is the first step
-        This is the second step
-        Further steps, etc.
+**Backend tests** (pytest with pytest-django, using the `config.settings` module). CI runs them against Postgres and Redis from Docker Compose:
 
-    <url> - a link to the reduced test case
+```bash
+docker compose up -d db redis
+cd backend
+python -m pytest --ds=config.settings
+```
 
-    Any other information you want to share that is relevant to the issue being reported. This might include the lines of code that you have identified as causing the bug, and potential solutions (and your opinions on their merits).
+Use the database settings from `.env` (or the values shown in `.github/workflows/ci.yml`). On a Linux machine without a display, prefix the pytest command with `xvfb-run`, as CI does.
 
-### <a id="user-content-feature" class="anchor" href="#bugs" aria-hidden="true"></a>Feature requests
+**Python lint** (Ruff, configured in `pyproject.toml` and scoped to `backend/`):
 
-Feature requests are welcome. But take a moment to find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Please provide as much detail and context as possible.
+```bash
+pip install ruff==0.17.2
+ruff check backend --select E9,F63,F7,F82   # must pass: CI fails on these (syntax errors, undefined names)
+ruff check backend                          # full rule set: old code still has findings; don't add new ones
+```
 
-### <a id="user-content-pull" class="anchor" href="#bugs" aria-hidden="true"></a>Pull requests
+**Pre-commit hooks** (optional, but they catch most problems before a push): run ruff, gitleaks, and basic file checks on each commit.
 
-Good pull requests - patches, improvements, new features - are a fantastic help. They should remain focused in scope and avoid containing unrelated commits.
+```bash
+pip install pre-commit
+pre-commit install
+```
 
-Please ask first before embarking on any significant pull request (e.g. implementing features, refactoring code, porting to a different language/OS), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
+## Commit messages
 
-Please adhere to the coding conventions used throughout a project (indentation, accurate comments, etc.).
+- Use an imperative subject line: "Add cover plate weld check", not "Added" or "Adds". Keep it under about 72 characters.
+- Separate the subject from the body with a blank line. In the body, explain *why* the change is needed when that is not obvious from the diff.
+- Reference the issue at the end of the message: `Fixes #123` closes it on merge, and `Refs #123` links it without closing.
 
-Follow this process if you'd like your work considered for inclusion in the project:
+## Documentation
 
-   1. <a href= "https://help.github.com/articles/fork-a-repo/">Fork</a> the project, clone your fork, and configure the remotes:
-      
-       ```bash
-       #Clone your fork of the repo into the current directory
-       git clone https://github.com/<your-username>/<repo-name>
-       #Navigate to the newly cloned directory
-       cd <repo-name>
-       #Assign the original repo to a remote called "upstream"
-       git remote add upstream https://github.com/<upstream-owner>/<repo-name>
-       ```
-      
-   2. If you cloned a while ago, get the latest changes from upstream:
-      
-       ```bash
-       git checkout <dev-branch>
-       git pull upstream <dev-branch>
-       ```
-      
-   3. Create a new topic branch (off the main project development branch) to contain your feature, change, or fix:
-      
-       ```bash
-       git checkout -b <topic-branch-name>
-       ```
-      
-   4. Commit your changes in logical chunks. Please adhere to these <a href= "http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html">git commit message guidelines</a> or your code is unlikely be merged into the main project.
+- Developer documentation lives in [documentation/](documentation/). Start with [documentation/INDEX.md](documentation/INDEX.md) for architecture, the `.osi` format, the form engine, and CAD visualization.
+- Installation guides live in [documentation/general/](documentation/general/).
+- Update the relevant chapter when you change behaviour, setup steps, or an API. The PR checklist asks for this.
 
-   5. Locally merge (or rebase) the upstream development branch into your topic branch:
-       
-       ```bash
-       git pull [--rebase] upstream <dev-branch>
-       ```
-   
-   6. Push your topic branch up to your fork:
-      
-       ```bash
-       git push origin <topic-branch-name>
-       ```
-      
-   7. <a href= "https://help.github.com/articles/about-pull-requests/">Open a Pull Request</a> with a clear title and description.
+## Reporting bugs and requesting features
 
-**IMPORTANT:** By submitting a patch, you agree to allow the project owner to license your work under the same license as that used by the project.
+Use the issue forms. They ask for the information that makes a report reproducible:
 
+- **Bug report**: the module, steps to reproduce, the `.osi` inputs, the expected value (Osdag Desktop) and the actual value (Osdag Web), your browser and OS, and screenshots if relevant.
+- **Feature request**: the problem, the proposed solution, and the area of the app it affects.
 
+Search existing issues first. Do not attach files that contain passwords, API keys, or private project data.
 
+## Security
 
-
-
-
-
-
-
-
+Do not report security vulnerabilities in a public issue. Contact the maintainers privately instead, and never commit credentials. If you find a credential in the repository, report it right away so it can be rotated.

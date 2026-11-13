@@ -1,0 +1,23 @@
+{
+  "source": "frontend-defaults:purlinConfig.js",
+  "notes": "Run of purlinConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"section_designation\":[\"MB 300\",\"MB 350\"]}. Defaults left empty and filled with realistic catalog values: {\"effective_span\":\"6000\",\"bending_moment_yy\":\"2\",\"bending_moment_zz\":\"12\",\"shear_force_yy\":\"3\",\"shear_force_zz\":\"8\"}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Flexural Members - Purlins",
+    "Member.Profile": "Channels",
+    "Member.Designation": [
+      "MB 300",
+      "MB 350"
+    ],
+    "Material": "E 165 (Fe 290)",
+    "Member.Material": "E 165 (Fe 290)",
+    "Cladding.Type": "Brittle Cladding",
+    "Load.Moment.YY": "2",
+    "Load.Moment.ZZ": "12",
+    "Load.Shear.YY": "3",
+    "Load.Shear.ZZ": "8",
+    "Member.Length": "6000",
+    "Torsion.restraint": "Fully Restrained",
+    "Warping.restraint": "Both flanges fully restrained"
+  },
+  "xfail": "Real bug: today's validate_input() rejects the payload the frontend sends (MissingKeyError: Please specify Cladding.type in input values.)"
+}

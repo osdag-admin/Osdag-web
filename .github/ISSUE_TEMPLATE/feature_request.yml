@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest a new capability or an improvement to an existing one
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check that the idea fits the scope of Osdag-Web (structural steel design,
+        CAD models, and reports). For large changes, it helps to discuss the idea here
+        before starting an implementation.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How you would like it to work
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Design module (calculations or inputs)
+        - Outputs, reports, or CSV/PDF export
+        - 3D CAD viewer or CAD export
+        - OSI import/export
+        - Project dashboard or accounts
+        - Load testing or monitoring
+        - Documentation or developer tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you thought about, or workarounds you use today
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Mock-ups, references to design codes, or links to related issues

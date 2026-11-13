@@ -1,0 +1,23 @@
+name: Release Please
+
+# Keeps a "release PR" open on 25april with the next version and CHANGELOG.md,
+# built from conventional commits (feat:, fix:, ...). Merging it creates the
+# vX.Y.Z tag and GitHub release. Commits that aren't conventional are ignored.
+# Requires Settings -> Actions -> General -> "Allow GitHub Actions to create
+# and approve pull requests".
+on:
+  push:
+    branches: [25april]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

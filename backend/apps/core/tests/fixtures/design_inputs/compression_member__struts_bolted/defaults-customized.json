@@ -1,0 +1,42 @@
+{
+  "source": "frontend-defaults:strutsBoltedConfig.js",
+  "notes": "Run of strutsBoltedConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"bolt_diameter\":[\"16\",\"20\"],\"bolt_grade\":[\"8.8\",\"10.9\"],\"plate_thickness\":[\"10\",\"12\",\"16\"],\"section_designation\":[\"50 x 50 x 6\",\"60 x 60 x 6\"]}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Struts Bolted to End Gusset",
+    "Member.Profile": "Angles",
+    "Member.Designation": [
+      "50 x 50 x 6",
+      "60 x 60 x 6"
+    ],
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Material": "E 250 (Fe 410 W)A",
+    "Member.Length": "3000",
+    "Load.Axial": "100",
+    "Conn_Location": "Long Leg",
+    "Member.End_1": "Hinged",
+    "Member.End_2": "Hinged",
+    "is_leg_loaded": "Yes",
+    "Bolt.Diameter": [
+      "16",
+      "20"
+    ],
+    "Bolt.Grade": [
+      "8.8",
+      "10.9"
+    ],
+    "Bolt.Type": "Bearing Bolt",
+    "Bolt.Bolt_Hole_Type": "Standard",
+    "Bolt.Slip_Factor": "0.3",
+    "Bolt.TensionType": "Pre-tensioned",
+    "Connector.Material": "E 250 (Fe 410 W)A",
+    "Connector.Plate.Thickness_List": [
+      "10",
+      "12",
+      "16"
+    ],
+    "Design.Design_Method": "Limit State Design",
+    "Detailing.Corrosive_Influences": "No",
+    "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
+    "Detailing.Gap": "10"
+  }
+}

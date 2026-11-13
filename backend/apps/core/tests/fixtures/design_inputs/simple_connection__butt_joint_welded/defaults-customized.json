@@ -1,0 +1,22 @@
+{
+  "source": "frontend-defaults:buttJointWeldedConfig.js",
+  "notes": "Run of buttJointWeldedConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"weld_size\":[\"6\",\"8\"]}. Defaults left empty and filled with realistic catalog values: {\"plate1_thickness\":\"10\",\"plate2_thickness\":\"12\"}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Butt Joint Welded Connection",
+    "Plate1Thickness": "10",
+    "Plate2Thickness": "12",
+    "PlateWidth": "200",
+    "Material": "E 250 (Fe 410 W)A",
+    "ButtJoint.CoverPlate": "Single-Cover",
+    "Load.Axial": "60",
+    "Weld.Size": [
+      "6",
+      "8"
+    ],
+    "Design.For": "Tension",
+    "Weld.Type": "Shop weld",
+    "Weld.Material_Grade_OverWrite": "290",
+    "Detailing.Edge_type": "Sheared or hand flame cut",
+    "Detailing.Packing_Plate": "No"
+  }
+}

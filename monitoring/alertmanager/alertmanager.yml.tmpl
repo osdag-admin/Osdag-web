@@ -1,0 +1,41 @@
+# Alertmanager config template. Alertmanager cannot read env vars itself, so
+# entrypoint.sh renders this file at container start (see that script).
+# Primary receiver: Telegram (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID in .env).
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: __ROUTE_RECEIVER__
+  group_by: [alertname, queue_name]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+# If the site is down, don't also page for every individual dead target.
+inhibit_rules:
+  - source_matchers: ['alertname="SiteDown"']
+    target_matchers: ['alertname="TargetDown"', 'job="django"']
+
+receivers:
+  # Used until Telegram is configured, so Alertmanager still starts and shows alerts in its UI.
+  - name: blackhole
+
+  - name: telegram
+    telegram_configs:
+      - bot_token_file: /tmp/telegram_bot_token
+        chat_id: __TELEGRAM_CHAT_ID__
+        send_resolved: true
+
+  # Email alternative: add `global.smtp_*` settings, route to this receiver,
+  # and put the password in a file the same way entrypoint.sh does for Telegram.
+  #
+  # global:
+  #   smtp_smarthost: smtp.example.com:587
+  #   smtp_from: alerts@example.com
+  #   smtp_auth_username: alerts@example.com
+  #   smtp_auth_password_file: /tmp/smtp_password
+  # receivers:
+  #   - name: email
+  #     email_configs:
+  #       - to: ops@example.com
+  #         send_resolved: true

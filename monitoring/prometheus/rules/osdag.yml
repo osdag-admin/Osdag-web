@@ -1,0 +1,106 @@
+# Alert rules. Thresholds are starting points; tune after a week of data.
+groups:
+  - name: availability
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 3m
+        labels: {severity: warning}
+        annotations:
+          summary: "Scrape target {{ $labels.job }} is down"
+          description: "{{ $labels.instance }} (job {{ $labels.job }}) has not been scrapable for 3 minutes."
+
+      # No blackbox probe: the backend scrape doubles as the site-down check.
+      - alert: SiteDown
+        expr: up{job="django"} == 0
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: "Osdag backend is down"
+          description: "Prometheus cannot scrape the Django backend; users are likely getting errors."
+
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "postgres-exporter cannot reach the database."
+
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "Redis is down"
+          description: "Redis is both the Celery broker and the channel layer; calculations will stall."
+
+  - name: host
+    rules:
+      - alert: DiskAlmostFull
+        expr: |
+          (1 - node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs|ramfs"}
+             / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs|ramfs"}) * 100 > 85
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Disk {{ $labels.mountpoint }} is {{ $value | printf \"%.0f\" }}% full"
+          description: "Free space on {{ $labels.mountpoint }} ({{ $labels.device }}) is below 15%."
+
+      - alert: HostMemoryHigh
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Host memory usage is {{ $value | printf \"%.0f\" }}%"
+          description: "Above 90% for 10 minutes; Celery workers (~290 MB each) are the usual cause."
+
+      - alert: ContainerOOMKilled
+        expr: increase(container_oom_events_total{name!=""}[5m]) > 0
+        labels: {severity: warning}
+        annotations:
+          summary: "Container {{ $labels.name }} was OOM-killed"
+          description: "The kernel killed a process in {{ $labels.name }} for exceeding its memory limit."
+
+  - name: celery
+    rules:
+      - alert: CeleryQueueBacklog
+        expr: celery_queue_length > 20
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "Celery queue {{ $labels.queue_name }} has {{ $value }} waiting tasks"
+          description: "More than 20 tasks have been queued for 10 minutes; workers are saturated or down."
+
+      - alert: CeleryTaskFailureSpike
+        expr: |
+          sum by (queue_name) (increase(celery_task_failed_total[10m])) > 5
+          and
+          sum by (queue_name) (increase(celery_task_failed_total[10m]))
+            / clamp_min(sum by (queue_name) (increase(celery_task_received_total[10m])), 1) > 0.25
+        labels: {severity: warning}
+        annotations:
+          summary: "Celery tasks failing on queue {{ $labels.queue_name }}"
+          description: "More than 25% of tasks (and more than 5) failed in the last 10 minutes."
+
+      - alert: CeleryNoWorkers
+        expr: sum(celery_worker_up) == 0
+        for: 5m
+        labels: {severity: critical}
+        annotations:
+          summary: "No Celery worker is sending heartbeats"
+          description: "celery-exporter sees no live workers. Check the celery_worker_* containers."
+
+  - name: django
+    rules:
+      - alert: Http5xxRateHigh
+        expr: |
+          sum(rate(django_http_responses_total_by_status_total{status=~"5.."}[5m]))
+            / sum(rate(django_http_responses_total_by_status_total[5m])) > 0.05
+          and
+          sum(rate(django_http_responses_total_by_status_total[5m])) > 0.05
+        for: 10m
+        labels: {severity: critical}
+        annotations:
+          summary: "More than 5% of HTTP responses are 5xx"
+          description: "5xx ratio has been above 5% for 10 minutes (ignored below ~3 requests/min)."

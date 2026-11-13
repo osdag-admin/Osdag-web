@@ -1,0 +1,19 @@
+{
+  "inputs": {
+    "Module": "Axially-Loaded-Column",
+    "Member.Profile": "Beams and Columns",
+    "Member.Designation": [
+      "MB 200",
+      "MB 250",
+      "MB 300"
+    ],
+    "Material": "E 250 (Fe 410 W)A",
+    "Actual.Length_zz": "3000",
+    "Actual.Length_yy": "3000",
+    "End_1": "Fixed",
+    "End_2": "Fixed",
+    "End_1_Y": "Fixed",
+    "End_2_Y": "Fixed",
+    "Load.Axial": "100"
+  }
+}

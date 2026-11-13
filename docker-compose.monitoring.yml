@@ -1,0 +1,229 @@
+# Production monitoring stack. Runs independently of the app:
+#   docker compose -f docker-compose.monitoring.yml up -d
+# so redeploying docker-compose.prod.yml never restarts or wipes monitoring.
+#
+# It reads the same .env as the prod compose file (DATABASE_*), plus
+# GRAFANA_ADMIN_PASSWORD and the alert settings in monitoring/.env.example.
+#
+# Network: services that must reach the app (Prometheus, exporters) also join
+# the app's compose network, which is "<project>_default"; the project name is
+# the directory of docker-compose.prod.yml (e.g. osdag-web_default). Find it
+# with `docker network ls` and set APP_NETWORK in .env if it differs.
+#
+# Exposure: nothing is published on a public port. Only Grafana is bound to
+# 127.0.0.1; reach it over VPN or `ssh -L 3000:127.0.0.1:3000 server`.
+# Prometheus, Alertmanager and Loki have no auth and are reachable only on the
+# internal Docker network.
+#
+# Every service has a memory limit so a monitoring spike (e.g. a heavy Grafana
+# query) is OOM-killed on its own instead of starving the application.
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.15.1
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --storage.tsdb.retention.size=8GB  # hard cap so metrics can't fill the disk
+    environment:
+      GOMEMLIMIT: 800MiB  # make the Go GC aware of the container limit
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus:ro
+      - prometheus_data:/prometheus
+    networks: [monitoring, app]
+    mem_limit: 1g
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - alertmanager
+
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    restart: unless-stopped
+    command:
+      - --path.rootfs=/host
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+|host/(dev|proc|sys|run))($|/)
+    pid: host  # needed for host process/CPU accounting
+    volumes:
+      - /:/host:ro,rslave
+    networks: [monitoring]
+    mem_limit: 64m
+    logging: *default-logging
+
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.6
+    restart: unless-stopped
+    command:
+      - --docker_only=true
+      - --housekeeping_interval=30s
+      - --store_container_labels=false
+      - --whitelisted_container_labels=com.docker.compose.service
+    environment:
+      GOMEMLIMIT: 300MiB
+    privileged: true  # cAdvisor needs cgroup/kmsg access to report OOM events
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks: [monitoring]
+    mem_limit: 384m
+    logging: *default-logging
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.20.1
+    restart: unless-stopped
+    environment:
+      # Split URI/user/pass so special characters in the password are safe.
+      DATA_SOURCE_URI: db:5432/${DATABASE_NAME:-osdagdeveloper}?sslmode=disable
+      DATA_SOURCE_USER: ${DATABASE_USER:-osdagdeveloper}
+      DATA_SOURCE_PASS: ${DATABASE_PASSWORD:?DATABASE_PASSWORD must be set}
+    networks: [monitoring, app]
+    mem_limit: 64m
+    logging: *default-logging
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.96.0
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: ${MONITORING_REDIS_ADDR:-redis://redis:6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    networks: [monitoring, app]
+    mem_limit: 64m
+    logging: *default-logging
+
+  # Reads queue lengths from the Redis broker and task events from the workers
+  # (worker_send_task_events is enabled in backend/config/settings.py).
+  celery-exporter:
+    image: danihodovic/celery-exporter:0.12.2
+    restart: unless-stopped
+    command:
+      - --broker-url=${MONITORING_BROKER_URL:-redis://:${REDIS_PASSWORD:-}@redis:6379/0}
+      - --queues=calculations,reports,celery  # emit queue_length even when idle
+      - --default-queue-name=calculations
+      - --retry-interval=5  # survive Redis restarts instead of exiting
+    networks: [monitoring, app]
+    mem_limit: 192m
+    logging: *default-logging
+
+  loki:
+    image: grafana/loki:3.7.9
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki.yml
+    environment:
+      GOMEMLIMIT: 400MiB
+    volumes:
+      - ./monitoring/loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki_data:/loki
+    networks: [monitoring]
+    mem_limit: 512m
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3100/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # Docker socket is mounted read-only; it still lets Alloy list containers
+  # and read their logs, which is why Alloy is not attached to the app network.
+  alloy:
+    image: grafana/alloy:v1.21.2
+    restart: unless-stopped
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    environment:
+      GOMEMLIMIT: 200MiB
+    volumes:
+      - ./monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy_data:/var/lib/alloy/data
+    networks: [monitoring]
+    mem_limit: 256m
+    logging: *default-logging
+    depends_on:
+      - loki
+
+  alertmanager:
+    image: prom/alertmanager:v0.34.1
+    restart: unless-stopped
+    # entrypoint.sh renders alertmanager.yml from env vars, then execs alertmanager.
+    entrypoint: ["/bin/sh", "/etc/alertmanager/entrypoint.sh"]
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+    volumes:
+      - ./monitoring/alertmanager:/etc/alertmanager:ro
+      - alertmanager_data:/alertmanager
+    networks: [monitoring]
+    mem_limit: 64m
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9093/-/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:13.0.11
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3000}:3000"  # loopback only, see header
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD must be set}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://localhost:3000}
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/osdag/host_containers.json
+      GOMEMLIMIT: 300MiB
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # Only the Prometheus and Loki datasources: InfluxDB is dev/load-test only.
+      - ./monitoring/grafana/provisioning/datasources/prometheus.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml:ro
+      - ./monitoring/grafana/provisioning/datasources/loki.yaml:/etc/grafana/provisioning/datasources/loki.yaml:ro
+      - ./monitoring/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards/osdag:ro
+    networks: [monitoring]
+    mem_limit: 384m
+    logging: *default-logging
+    depends_on:
+      - prometheus
+      - loki
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+networks:
+  monitoring:
+  app:
+    external: true
+    name: ${APP_NETWORK:-osdag-web_default}
+
+volumes:
+  prometheus_data:
+  loki_data:
+  alloy_data:
+  alertmanager_data:
+  grafana_data:

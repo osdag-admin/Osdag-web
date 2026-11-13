@@ -1,0 +1,680 @@
+{
+  "id": null,
+  "uid": "osdag-load-test",
+  "title": "Osdag-web Load Test — Live Monitor",
+  "tags": ["osdag", "load-test", "performance"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {
+    "refresh_intervals": ["1s", "2s", "5s", "10s", "30s", "1m"],
+    "time_options": ["5m", "15m", "30m", "1h", "3h", "6h", "12h"]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "🖥️ CPU per Core (%)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 5 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": { "lineWidth": 1, "fillOpacity": 5 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "total_avg" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#FF6B35", "mode": "fixed" } },
+              { "id": "custom.lineWidth", "value": 3 },
+              { "id": "displayName", "value": "Average CPU %" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_system\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu_percent\")\n  |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)\n  |> yield(name: \"cpu\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "🧠 RAM Usage",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 5 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "custom": { "lineWidth": 2, "fillOpacity": 20 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "ram_percent" },
+            "properties": [
+              { "id": "unit", "value": "percent" },
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ram_used_mb" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } },
+              { "id": "displayName", "value": "Used RAM (MB)" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_system\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"ram\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ram_used_mb\" or r[\"_field\"] == \"ram_available_mb\" or r[\"_field\"] == \"ram_percent\")\n  |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)\n  |> yield(name: \"ram\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "📊 Design Requests / minute",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 5, "w": 8, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqpm",
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"duration_ms\")\n  |> aggregateWindow(every: 1m, fn: count, createEmpty: false)\n  |> map(fn: (r) => ({ r with _field: \"requests_per_min\" }))\n  |> yield(name: \"req_rate\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "⏱️ Request Latency (ms)",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 5, "w": 8, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "p95"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"duration_ms\")\n  |> aggregateWindow(every: 5s, fn: mean, createEmpty: false)\n  |> yield(name: \"latency_mean\")",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"duration_ms\")\n  |> aggregateWindow(every: 5s, fn: (tables=<-) => tables |> quantile(q: 0.95), createEmpty: false)\n  |> yield(name: \"latency_p95\")",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "🗂️ Celery Queue Depth",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 5, "w": 8, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_tasks\")\n  |> filter(fn: (r) => r[\"_field\"] == \"queue_depth\")\n  |> aggregateWindow(every: 1s, fn: last, createEmpty: false)\n  |> yield(name: \"queue_depth\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "✅ Task Success vs ❌ Failure",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "FAILURE" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "SUCCESS" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_tasks\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"status\"] == \"SUCCESS\" or r[\"status\"] == \"FAILURE\")\n  |> aggregateWindow(every: 30s, fn: sum, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"status\"], valueColumn: \"_value\")\n  |> yield(name: \"task_outcomes\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "🏁 Task Execution Duration (ms) by Type",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_tasks\")\n  |> filter(fn: (r) => r[\"_field\"] == \"duration_ms\")\n  |> filter(fn: (r) => r[\"status\"] == \"SUCCESS\" or r[\"status\"] == \"FAILURE\")\n  |> aggregateWindow(every: 5s, fn: mean, createEmpty: false)\n  |> yield(name: \"task_duration\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "📈 Stat — Total Design Requests",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 19, "w": 4, "h": 4 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null }
+          ]}
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["sum"] }, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area" },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> sum()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "📈 Stat — Tasks Completed",
+      "type": "stat",
+      "gridPos": { "x": 4, "y": 19, "w": 4, "h": 4 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null }
+          ]}
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["sum"] }, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area" },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_tasks\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"status\"] == \"SUCCESS\")\n  |> sum()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "🔴 Stat — Task Failures",
+      "type": "stat",
+      "gridPos": { "x": 8, "y": 19, "w": 4, "h": 4 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "short",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "red", "value": 1 }
+          ]}
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["sum"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background", "graphMode": "area" },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_tasks\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"status\"] == \"FAILURE\")\n  |> sum()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "🧮 Stat — Peak RAM Used (MB)",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 19, "w": 4, "h": 4 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "decmbytes", "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 8000 },
+            { "color": "red", "value": 14000 }
+          ]}
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["max"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_system\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"ram\")\n  |> filter(fn: (r) => r[\"_field\"] == \"ram_used_mb\")\n  |> max()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "⚡ Stat — Peak CPU avg (%)",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 19, "w": 4, "h": 4 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 70 },
+            { "color": "red", "value": 90 }
+          ]}
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["max"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_system\")\n  |> filter(fn: (r) => r[\"cpu_core\"] == \"total_avg\")\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu_percent\")\n  |> max()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "🌐 Requests by Module",
+      "type": "barchart",
+      "gridPos": { "x": 20, "y": 19, "w": 4, "h": 4 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      },
+      "options": { "orientation": "horizontal", "groupWidth": 0.7, "barWidth": 0.97 },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"module\"] != \"\" and r[\"module\"] != \"unknown\")\n  |> group(columns: [\"module\"])\n  |> sum()\n  |> group()\n  |> yield(name: \"by_module\")",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 14,
+      "title": "🔌 Active WebSocket Connections",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 23, "w": 8, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "color": { "fixedColor": "#B877D9", "mode": "fixed" },
+          "custom": { "lineWidth": 2, "fillOpacity": 25 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_websockets\")\n  |> filter(fn: (r) => r[\"_field\"] == \"active_connections\")\n  |> aggregateWindow(every: 2s, fn: last, createEmpty: false)\n  |> yield(name: \"ws_active\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "🔗 WebSocket Events (connect / disconnect)",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 23, "w": 8, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "connect" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "disconnect" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_websockets\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> aggregateWindow(every: 10s, fn: sum, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"event\"], valueColumn: \"_value\")\n  |> yield(name: \"ws_events\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "title": "🗄️ Redis: Connected Clients + PubSub Channels",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 23, "w": 8, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "connected_clients" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } },
+              { "id": "displayName", "value": "TCP Clients" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "pubsub_channels" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#FADE2A", "mode": "fixed" } },
+              { "id": "displayName", "value": "PubSub Channels (WS groups)" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_redis\")\n  |> filter(fn: (r) => r[\"_field\"] == \"connected_clients\" or r[\"_field\"] == \"pubsub_channels\")\n  |> aggregateWindow(every: 1s, fn: last, createEmpty: false)\n  |> yield(name: \"redis_clients\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "title": "⚡ Redis Ops/sec + Memory",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 30, "w": 12, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "instantaneous_ops_per_sec" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } },
+              { "id": "displayName", "value": "Ops / sec" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "used_memory_mb" },
+            "properties": [
+              { "id": "unit", "value": "decmbytes" },
+              { "id": "custom.axisPlacement", "value": "right" },
+              { "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } },
+              { "id": "displayName", "value": "Redis Memory (MB)" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_redis\")\n  |> filter(fn: (r) => r[\"_field\"] == \"instantaneous_ops_per_sec\" or r[\"_field\"] == \"used_memory_mb\")\n  |> aggregateWindow(every: 1s, fn: last, createEmpty: false)\n  |> yield(name: \"redis_perf\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "title": "📉 Redis Keyspace Hits vs Misses",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 30, "w": 12, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "keyspace_hits" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "keyspace_misses" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_redis\")\n  |> filter(fn: (r) => r[\"_field\"] == \"keyspace_hits\" or r[\"_field\"] == \"keyspace_misses\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: 5s, fn: mean, createEmpty: false)\n  |> yield(name: \"redis_keyspace\")",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 19,
+      "title": "🧵 Threads by Process Role",
+      "description": "Total OS threads grouped by process role. Gunicorn handles HTTP, Celery workers handle design calculations. A spike here under load shows the thread pool expanding.",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 37, "w": 14, "h": 8 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "custom": { "lineWidth": 2, "fillOpacity": 15, "stacking": { "mode": "normal", "group": "A" } }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "gunicorn" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "celery-worker" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "daphne" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#B877D9", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "celery-beat" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FADE2A", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "python-other" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#8AB8FF", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_threads\")\n  |> filter(fn: (r) => r[\"_field\"] == \"total_threads\")\n  |> filter(fn: (r) => r[\"role\"] != \"all-osdag\")\n  |> aggregateWindow(every: 2s, fn: last, createEmpty: false)\n  |> yield(name: \"threads_by_role\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "🟢 Thread States — All Osdag Processes",
+      "description": "Thread state breakdown across ALL gunicorn + celery + daphne processes combined. 'Other' includes disk-wait (D state) which indicates I/O blocking — a spike here is worth investigating.",
+      "type": "timeseries",
+      "gridPos": { "x": 14, "y": 37, "w": 10, "h": 8 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "threads_running" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } },
+              { "id": "displayName", "value": "Running" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "threads_sleeping" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } },
+              { "id": "displayName", "value": "Sleeping (idle)" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "threads_other" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } },
+              { "id": "displayName", "value": "Other (disk-wait / zombie)" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_threads\")\n  |> filter(fn: (r) => r[\"role\"] == \"all-osdag\")\n  |> filter(fn: (r) => r[\"_field\"] == \"threads_running\" or r[\"_field\"] == \"threads_sleeping\" or r[\"_field\"] == \"threads_other\")\n  |> aggregateWindow(every: 2s, fn: last, createEmpty: false)\n  |> yield(name: \"thread_states\")",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "title": "🌡️ CPU Core Temperature (°C)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 45, "w": 24, "h": 7 },
+      "datasource": { "type": "influxdb", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "custom": { "lineWidth": 1, "fillOpacity": 5 }
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "right", "calcs": ["mean", "max", "last"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "${datasource}" },
+          "query": "from(bucket: \"osdag_metrics\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"osdag_system\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"temperature\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temp_celsius\")\n  |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)\n  |> yield(name: \"temp\")",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "type": "datasource",
+        "pluginId": "influxdb",
+        "query": "influxdb",
+        "refresh": 1,
+        "options": [],
+        "current": { "selected": true, "text": "InfluxDB", "value": "InfluxDB" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data source"
+      }
+    ]
+  },
+  "annotations": { "list": [] }
+}

@@ -1,0 +1,90 @@
+{
+  "Cleat_Angle": [
+    {
+      "label": "Cleat Angle Designation",
+      "val": 0
+    },
+    {
+      "label": "Height (mm)",
+      "val": 0
+    },
+    {
+      "label": "Shear Yielding Capacity (kN)",
+      "val": 0
+    },
+    {
+      "label": "Block Yielding Capacity (kN)",
+      "val": 0
+    },
+    {
+      "label": "Moment Demand(kNm)",
+      "val": 0
+    },
+    {
+      "label": "Moment Capacity(kNm)",
+      "val": 0
+    }
+  ],
+  "Bolt": [
+    {
+      "label": "Diameter (mm)",
+      "val": 0
+    },
+    {
+      "label": "Property Class",
+      "val": 0
+    }
+  ],
+  "Bolts on Supportedd Leg": [
+    {
+      "label": "Bolt Columns (nos) ",
+      "val": 0
+    },
+    {
+      "label": "Bolt Rows (nos) ",
+      "val": 0
+    },
+    {
+      "label": "Bolt Force (kN) ",
+      "val": 0
+    },
+    {
+      "label": "Bolt Value (kN) ",
+      "val": 0
+    },
+    {
+      "label": "Capacity Details",
+      "val": 0
+    },
+    {
+      "label": "Spacing Details",
+      "val": 0
+    }
+  ],
+  "Bolts on Supportedd Leg": [
+    {
+      "label": "Bolt Columns (nos) ",
+      "val": 0
+    },
+    {
+      "label": "Bolt Rows (nos) ",
+      "val": 0
+    },
+    {
+      "label": "Bolt Force (kN) ",
+      "val": 0
+    },
+    {
+      "label": "Bolt Value (kN) ",
+      "val": 0
+    },
+    {
+      "label": "Capacity Details",
+      "val": 0
+    },
+    {
+      "label": "Spacing Details",
+      "val": 0
+    }
+  ]
+}

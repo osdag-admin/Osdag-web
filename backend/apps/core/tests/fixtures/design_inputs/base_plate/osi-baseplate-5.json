@@ -1,0 +1,32 @@
+{
+  "source": "osi:baseplate_5.osi",
+  "notes": "Desktop example baseplate_5.osi (Module: \"Base Plate Connection\") parsed by parse_osi(), loaded by the frontend osiLoader into basePlateConfig's form state, then basePlateConfig.buildSubmissionParams (All-selected flags as the loader sets them).",
+  "inputs": {
+    "Module": "Base Plate Connection",
+    "Member.Designation": "CHS 355.6 x 10",
+    "Material": "E 300 (Fe 440)",
+    "Connectivity": "Hollow/Tubular Column Base",
+    "End Condition": "Fixed",
+    "Load.Axial": "775",
+    "Load.Axial_Tension": "0",
+    "Load.Shear.Major": "45",
+    "Load.Shear.Minor": "10",
+    "Load.Moment.Major": "0",
+    "Load.Moment.Minor": "0",
+    "Anchor Bolt.Type": "End Plate Type",
+    "Footing.Grade": "M35",
+    "Weld.Type": "Groove Weld",
+    "Anchor.Diameter": [
+      "M20"
+    ],
+    "Anchor.Grade": [
+      "8.8"
+    ],
+    "Anchor.Diameter.ICF": [
+      "M20"
+    ],
+    "Anchor.Grade.ICF": [
+      "8.8"
+    ]
+  }
+}

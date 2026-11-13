@@ -1,0 +1,69 @@
+/* UserAccount.css */
+.dashboard-container {
+  display: flex;
+  height: 100vh; /* Adjust the height as needed */
+  width : 1080px;
+  
+}
+
+.side-navigation {
+  width: 250px;
+  background-color: #f0f0f0;
+  padding: 20px;
+
+}
+
+.side-navigation h2 {
+  margin-bottom: 20px;
+}
+
+.side-navigation ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-navigation li {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.side-navigation li:hover {
+  color: #007bff;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.main-content h1 {
+  margin-bottom: 20px;
+}
+
+/* UserAccount.css */
+
+/* Center the component on the page */
+.user-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 1080px; 
+  margin: 4rem;
+  overflow: hidden;
+  min-width: 100vh;
+}
+.dashboard-header{
+  margin: 1rem;
+}
+/* Style the container with a border and padding */
+.user-dashboard {
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+/* Style the files list */
+.file-list {
+  margin-top: 10px;
+}

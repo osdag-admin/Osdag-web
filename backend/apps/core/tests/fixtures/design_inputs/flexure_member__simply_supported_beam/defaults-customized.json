@@ -1,0 +1,27 @@
+{
+  "source": "frontend-defaults:simplySupportedBeamConfig.js",
+  "notes": "Run of simplySupportedBeamConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"section_designation\":[\"MB 300\",\"MB 350\"]}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Flexural Members - Simply Supported",
+    "Member.Profile": "Beams and Columns",
+    "Member.Designation": [
+      "MB 300",
+      "MB 350"
+    ],
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Material": "E 250 (Fe 410 W)A",
+    "Design.Design_Method": "Limit State Design",
+    "Optimum.Class": "Yes",
+    "Effective.Area_Para": "1.0",
+    "Length.Overwrite": "NA",
+    "Bearing.Length": "NA",
+    "Load.Shear": "50",
+    "Load.Moment": "100",
+    "Member.Length": "6000",
+    "Flexure.Type": "Major Laterally Supported",
+    "Flexure.Support": "Simply Supported",
+    "Torsion.restraint": "Fully Restrained",
+    "Warping.restraint": "Both flanges fully restrained",
+    "Loading.Condition": "Normal"
+  }
+}

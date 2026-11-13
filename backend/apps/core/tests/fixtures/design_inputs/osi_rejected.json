@@ -1,0 +1,34 @@
+{
+  "baseplate_1.osi": {
+    "slug": "base_plate",
+    "error": "MissingKeyError: Please specify Load.Axial in input values."
+  },
+  "baseplate_3.osi": {
+    "slug": "base_plate",
+    "error": "MissingKeyError: Please specify Load.Shear.Major in input values."
+  },
+  "beam_bolted1.osi": {
+    "slug": "moment_connection__beam_beam_cover_plate_bolted",
+    "error": "MissingKeyError: Please specify Load.Moment in input values."
+  },
+  "beam_bolted2.osi": {
+    "slug": "moment_connection__beam_beam_cover_plate_bolted",
+    "error": "MissingKeyError: Please specify Load.Moment in input values."
+  },
+  "beam_bolted3.osi": {
+    "slug": "moment_connection__beam_beam_cover_plate_bolted",
+    "error": "MissingKeyError: Please specify Load.Moment in input values."
+  },
+  "column_bolted1.osi": {
+    "slug": "moment_connection__column_column_cover_plate_bolted",
+    "error": "MissingKeyError: Please specify Load.Moment in input values."
+  },
+  "ccep2.osi": {
+    "slug": "moment_connection__column_column_end_plate",
+    "error": "MissingKeyError: Please specify Load.Shear in input values."
+  },
+  "cleat_4.osi": {
+    "slug": "shear_connection__cleat_angle",
+    "error": "MissingKeyError: Please specify Load.Shear in input values."
+  }
+}

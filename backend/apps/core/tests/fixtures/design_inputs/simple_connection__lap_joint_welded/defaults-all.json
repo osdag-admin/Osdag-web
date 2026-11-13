@@ -1,0 +1,24 @@
+{
+  "source": "frontend-defaults:lapJointWeldedConfig.js",
+  "notes": "Run of lapJointWeldedConfig.buildSubmissionParams on defaultInputs; every customizable list set to \"All\" (the UI default; full option lists sent). Defaults left empty and filled with realistic catalog values: {\"plate1_thickness\":\"10\",\"plate2_thickness\":\"12\"}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Lap Joint Welded Connection",
+    "Plate1Thickness": "10",
+    "Plate2Thickness": "12",
+    "PlateWidth": "200",
+    "Material": "E 250 (Fe 410 W)A",
+    "Load.Axial": "60",
+    "Weld.Size": [
+      "4",
+      "5",
+      "6",
+      "8",
+      "10",
+      "12"
+    ],
+    "Design.For": "Tension",
+    "Weld.Type": "Shop weld",
+    "Weld.Material_Grade_OverWrite": "290",
+    "Detailing.Edge_type": "Sheared or hand flame cut"
+  }
+}

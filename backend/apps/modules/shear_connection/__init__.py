@@ -1,0 +1,2 @@
+# Shear Connection module package
+
