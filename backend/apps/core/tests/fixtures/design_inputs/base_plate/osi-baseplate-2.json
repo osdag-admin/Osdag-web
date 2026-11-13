@@ -1,0 +1,66 @@
+{
+  "source": "osi:baseplate_2.osi",
+  "notes": "Desktop example baseplate_2.osi (Module: \"Base Plate Connection\") parsed by parse_osi(), loaded by the frontend osiLoader into basePlateConfig's form state, then basePlateConfig.buildSubmissionParams (All-selected flags as the loader sets them).",
+  "inputs": {
+    "Module": "Base Plate Connection",
+    "Member.Designation": "CHS 355.6 x 12",
+    "Material": "E 250 (Fe 410 W)A",
+    "Connectivity": "Hollow/Tubular Column Base",
+    "End Condition": "Fixed",
+    "Load.Axial": "100",
+    "Load.Axial_Tension": "0",
+    "Load.Shear.Major": "200",
+    "Load.Shear.Minor": "100",
+    "Load.Moment.Major": "0",
+    "Load.Moment.Minor": "0",
+    "Anchor Bolt.Type": "End Plate Type",
+    "Footing.Grade": "M25",
+    "Weld.Type": "Groove Weld",
+    "Anchor.Diameter": [
+      "M20",
+      "M24",
+      "M30",
+      "M36",
+      "M42",
+      "M48",
+      "M56",
+      "M64",
+      "M72"
+    ],
+    "Anchor.Grade": [
+      "3.6",
+      "4.6",
+      "4.8",
+      "5.6",
+      "5.8",
+      "6.8",
+      "8.8",
+      "9.8",
+      "10.9",
+      "12.9"
+    ],
+    "Anchor.Diameter.ICF": [
+      "M20",
+      "M24",
+      "M30",
+      "M36",
+      "M42",
+      "M48",
+      "M56",
+      "M64",
+      "M72"
+    ],
+    "Anchor.Grade.ICF": [
+      "3.6",
+      "4.6",
+      "4.8",
+      "5.6",
+      "5.8",
+      "6.8",
+      "8.8",
+      "9.8",
+      "10.9",
+      "12.9"
+    ]
+  }
+}

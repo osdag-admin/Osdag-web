@@ -1,0 +1,29 @@
+name: Rollback
+
+# Redeploy an already-built commit (images are kept in GHCR under their SHA tag).
+# Run from the Actions tab: pick branch 25april and paste the full commit SHA of
+# a previously deployed release. It goes through the same approval gate, health
+# waits and smoke test as a normal deploy.
+#
+# Caveats: database migrations are not reversed, and the next merge to 25april
+# deploys new code again.
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Full 40-character commit SHA to deploy (must already be in GHCR)"
+        required: true
+        type: string
+
+run-name: Rollback to ${{ inputs.sha }}
+
+jobs:
+  rollback:
+    # Only trust this workflow file as it exists on the deploy branch.
+    if: github.ref == 'refs/heads/25april'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      image_tag: ${{ inputs.sha }}
+    permissions:
+      contents: read
+      packages: read

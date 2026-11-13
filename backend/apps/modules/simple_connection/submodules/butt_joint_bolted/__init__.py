@@ -1,0 +1,1 @@
+from .service import MODULE_ID, Service

@@ -1,0 +1,33 @@
+{
+  "source": "frontend-defaults:basePlateConfig.js",
+  "notes": "Run of basePlateConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"anchor_diameter_ocf\":[\"M20\",\"M24\"],\"anchor_grade_ocf\":[\"8.8\"],\"anchor_diameter_icf\":[\"M20\"],\"anchor_grade_icf\":[\"8.8\"]}. Connectivity \"Welded Column Base\" (extraState.selectedOption). Defaults left empty and filled with realistic catalog values: {\"member_designation\":\"HB 200\",\"load_axial\":\"200\",\"load_axial_tension\":\"50\",\"load_shear_major\":\"50\",\"load_shear_minor\":\"30\",\"load_moment_major\":\"40\",\"load_moment_minor\":\"20\"}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Base Plate Connection",
+    "Member.Designation": "HB 200",
+    "Material": "E 250 (Fe 410 W)A",
+    "Connectivity": "Welded Column Base",
+    "End Condition": "Pinned",
+    "Load.Axial": "200",
+    "Load.Axial_Tension": "0",
+    "Load.Shear.Major": "50",
+    "Load.Shear.Minor": "30",
+    "Load.Moment.Major": "0",
+    "Load.Moment.Minor": "0",
+    "Anchor Bolt.Type": "End Plate Type",
+    "Footing.Grade": "M20",
+    "Weld.Type": "Fillet Weld",
+    "Anchor.Diameter": [
+      "M20",
+      "M24"
+    ],
+    "Anchor.Grade": [
+      "8.8"
+    ],
+    "Anchor.Diameter.ICF": [
+      "M20"
+    ],
+    "Anchor.Grade.ICF": [
+      "8.8"
+    ]
+  }
+}

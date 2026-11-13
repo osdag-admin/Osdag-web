@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributing guide
+    url: https://github.com/osdag-admin/Osdag-web/blob/25april/CONTRIBUTING.md
+    about: How to set up the project, run checks, and open a pull request.

@@ -1,0 +1,40 @@
+{
+  "source": "frontend-defaults:seatedAngleConfig.js",
+  "notes": "Run of seatedAngleConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"bolt_diameter\":[\"16\",\"20\"],\"bolt_grade\":[\"8.8\",\"10.9\"],\"angle_list\":[\"ISA 100x100x10\"],\"topangle_list\":[\"ISA 100x100x10\"]}. Connectivity \"Column Flange-Beam Web\" (extraState.selectedOption). Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Bolt.Bolt_Hole_Type": "Standard",
+    "Bolt.Diameter": [
+      "16",
+      "20"
+    ],
+    "Bolt.Grade": [
+      "8.8",
+      "10.9"
+    ],
+    "Bolt.Slip_Factor": "0.3",
+    "Bolt.TensionType": "Pre-tensioned",
+    "Bolt.Type": "Bearing Bolt",
+    "Connectivity": "Column Flange-Beam Web",
+    "Connector.Material": "E 250 (Fe 410 W)A",
+    "Design.Design_Method": "Limit State Design",
+    "Detailing.Corrosive_Influences": "No",
+    "Detailing.Edge_type": "Rolled, machine-flame cut, sawn and planed",
+    "Detailing.Gap": "10",
+    "Load.Axial": "0",
+    "Load.Shear": "70",
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Supported_Section.Designation": "MB 300",
+    "Member.Supported_Section.Material": "E 165 (Fe 290)",
+    "Member.Supporting_Section.Designation": "HB 150",
+    "Member.Supporting_Section.Material": "E 165 (Fe 290)",
+    "Module": "Seated Angle Connection",
+    "Weld.Fab": "Shop Weld",
+    "Weld.Material_Grade_OverWrite": "410",
+    "Connector.Angle_List": [
+      "ISA 100x100x10"
+    ],
+    "Connector.Top_Angle": [
+      "ISA 100x100x10"
+    ]
+  }
+}

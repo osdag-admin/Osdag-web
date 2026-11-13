@@ -1,0 +1,58 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.3.4",
+    "@geo-mpy/viewcube-react": "^1.0.2",
+    "@react-three/drei": "^10.7.3",
+    "@react-three/fiber": "^9.3.0",
+    "@sentry/react": "^11.9.0",
+    "antd": "^6.6.4",
+    "firebase": "^12.6.0",
+    "plotly.js-dist-min": "^4.1.1",
+    "react": "~19.2.1",
+    "react-dom": "~19.2.1",
+    "react-plotly.js": "^4.0.0",
+    "react-router": "^8.4.0",
+    "react-select": "^5.10.1",
+    "react-toastify": "^11.1.0",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@eslint-react/eslint-plugin": "^5.19.1",
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^10.10.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.12.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "vite": "^8.3.0"
+  },
+  "overrides": {
+    "tar": "7.5.16",
+    "@grpc/grpc-js": "1.14.6",
+    "probe-image-size": "7.4.0",
+    "source-map-js": "1.2.2"
+  },
+  "allowScripts": {
+    "@firebase/util@1.13.0": true,
+    "protobufjs@7.6.4": true,
+    "esbuild@0.25.12": true
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}

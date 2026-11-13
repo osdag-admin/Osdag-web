@@ -1,1 +1,52 @@
+# Dev Tools & Repositories
+.git/
+.github/
+.cursor/
+.vscode/
+.idea/
+
+# Node/Frontend Dependencies (Internal catchalls)
+node_modules/
+**/node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Python Runtime Artifacts
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Testing & Linting Caches
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Python Virtual Environments
+.venv/
+.venv-check/
+venv/
+ENV/
+
+# Production Build Targets
+dist/
+build/
+
+# Local Database Files
+*.sqlite3
+*.db
+
+# Crucial Safety Additions: Environmental Secrets & Infrastructure
+.env
+.env.*
+
+# Crucial Space Additions: Local Data Volumes & Generated Assets
+volumes/
+postgres_data*/
+media/
+backend/file_storage/
+frontend/
 osdagclient/
+*.log
+logs/

@@ -1,0 +1,144 @@
+name: Bug report
+description: Report a calculation, UI, or CAD problem in a design module
+title: "[Bug] "
+labels: ["bug", "needs-repro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. The more specific the report, the faster it can be reproduced.
+        Please do not attach files containing real credentials or private project data.
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      description: The design module where the problem happens
+      options:
+        - Fin Plate (Shear Connection)
+        - Cleat Angle (Shear Connection)
+        - Header Plate (Shear Connection)
+        - Seated Angle (Shear Connection)
+        - Lap Joint - Bolted (Simple Connection)
+        - Lap Joint - Welded (Simple Connection)
+        - Butt Joint - Bolted (Simple Connection)
+        - Butt Joint - Welded (Simple Connection)
+        - Column Splice - Cover Plate Bolted (Moment Connection)
+        - Column Splice - Cover Plate Welded (Moment Connection)
+        - Column Splice - End Plate (Moment Connection)
+        - Beam Splice - Cover Plate Bolted (Moment Connection)
+        - Beam Splice - Cover Plate Welded (Moment Connection)
+        - Beam Splice - End Plate (Moment Connection)
+        - Beam to Column - End Plate (Moment Connection)
+        - Base Plate (Slab and Gusseted Bases)
+        - Tension Member - Bolted to End Gusset
+        - Tension Member - Welded to End Gusset
+        - Compression Member - Struts Bolted to End Gusset
+        - Compression Member - Struts Welded to End Gusset
+        - Compression Member - Axially Loaded Column
+        - Flexure Member - Simply Supported Beam
+        - Flexure Member - Cantilever Beam
+        - Flexure Member - Plate Girder
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary
+      description: One sentence describing the problem
+      placeholder: "Fin plate weld size is ignored when bolts are set to M20"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps, starting from opening the module
+      placeholder: |
+        1. Open Fin Plate from the module list
+        2. Set Bolt Diameter to 20 mm
+        3. Click Design
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: inputs
+    attributes:
+      label: Inputs
+      description: >-
+        Attach the `.osi` file (drag it into this box), or list the input values
+        that were used. Exporting an `.osi` from the web app and attaching it is the
+        fastest way to reproduce a problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result (Osdag Desktop)
+      description: >-
+        The value or behaviour you expect. If you have the same design in Osdag Desktop,
+        paste its output values here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result (Osdag Web)
+      description: The value or behaviour you see in the web app. Include any error messages.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: session
+    attributes:
+      label: Session type
+      options:
+        - Guest (not logged in)
+        - Logged in
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: "Firefox 130.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04, Windows 11, macOS 15"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or recordings
+      description: Drag and drop images or short clips into this box. Optional, but very helpful for UI and CAD problems.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console or server errors
+      description: Browser console output or backend/Celery log lines, if any
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this is not a duplicate
+          required: true
+        - label: My attachments do not contain passwords, API keys, or private project data
+          required: true

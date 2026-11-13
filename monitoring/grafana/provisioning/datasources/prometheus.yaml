@@ -1,0 +1,13 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    # InfluxDB stays the default in the dev stack; dashboards pick this by uid.
+    isDefault: false
+    editable: false
+    jsonData:
+      timeInterval: 30s

@@ -1,0 +1,65 @@
+# Prometheus config for the production monitoring stack
+# (docker-compose.monitoring.yml). Hostnames are Docker service names:
+# monitoring services share the "monitoring" network; backend/db/redis names
+# resolve through the app network the stack joins (APP_NETWORK).
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Django via django-prometheus; /metrics is internal-only (nginx 404s it).
+  # Change the target if your backend service is not called "backend".
+  - job_name: django
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['backend:8000']
+
+  - job_name: node
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: postgres
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  - job_name: redis
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # Task events arrive in bursts and queue length is cheap, so scrape faster.
+  - job_name: celery
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['celery-exporter:9808']
+
+  - job_name: alertmanager
+    static_configs:
+      - targets: ['alertmanager:9093']
+
+  - job_name: loki
+    static_configs:
+      - targets: ['loki:3100']
+
+  - job_name: alloy
+    static_configs:
+      - targets: ['alloy:12345']
+
+  - job_name: grafana
+    static_configs:
+      - targets: ['grafana:3000']

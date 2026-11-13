@@ -1,0 +1,417 @@
+import { useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { ModuleContext } from "../../../context/ModuleState";
+import { Input, Select } from "antd";
+import { STEEL_CONSTANTS, UNIT_LABELS } from "../constants/engineering";
+import CustomMaterialModal from "./CustomMaterialModal";
+import SectionTabToolbar from "./SectionTabToolbar";
+import { notifyCustomSectionAdded } from "../hooks/useModuleData";
+import { addCustomSection } from "../../../datasources/sectionsDataSource";
+
+const { Option } = Select;
+
+const EMPTY_LIST = [];
+const EMPTY_LISTS = {};
+
+const readOnlyFontStyle = {
+  color: "rgb(0 0 0 / 67%)",
+  fontSize: "12px",
+  fontWeight: "600",
+};
+
+/**
+ * GenericSectionView - A unified view for section details (Beam, Column, Angle, etc.)
+ * This replaces the redundant *SectionModal.jsx components in the shared directory.
+ */
+const GenericSectionView = ({
+  sectionData,        // supportingSectionData or supportedSectionData
+  designPrefInputs,
+  setDesignPrefInputs,
+  isInputLocked,
+  inputs,             // Base inputs from parent
+  materialList = [],
+  moduleLists = EMPTY_LISTS,
+  isGuest,
+  onRefetchModuleOptions,
+  suppressInitialMaterialDispatch = false,
+  sectionType,        // 'supporting' or 'supported'
+  sectionTableName,   // 'Beams', 'Columns', 'Angles', etc.
+  displayConfig,      // Configuration for fields and image
+  onClearSection,     // Callback to clear parent state if needed
+  onDesignationChange,// Callback when designation changes
+  syncReady = true,// False until the dialog's first sync has finished
+}) => {
+  const {
+    manageDesignPreferences,
+    [sectionType === 'supporting' ? 'supporting_material_details' : 'supported_material_details']: materialDetails,
+  } = useContext(ModuleContext);
+  const {
+    beamList = EMPTY_LIST,
+    columnList = EMPTY_LIST,
+    angleList = EMPTY_LIST,
+    channelList = EMPTY_LIST,
+    sectionDesignation = EMPTY_LIST,
+  } = moduleLists;
+  const [showModal, setShowModal] = useState(false);
+  const [editableData, setEditableData] = useState({});
+  const [designationStr, setDesignationStr] = useState("");
+  const [newDesignation, setNewDesignation] = useState("");
+  const [detailsFromDb, setDetailsFromDb] = useState(true);
+  const [lastPropDesignation, setLastPropDesignation] = useState("");
+  const defaultAppliedRef = useRef(false);
+
+  const getDropdownOptions = useCallback(() => {
+    const fullList =
+      sectionTableName === "Beams"
+        ? beamList
+        : sectionTableName === "Columns"
+        ? columnList
+        : sectionTableName === "Angles"
+        ? angleList
+        : sectionTableName === "Channels"
+        ? channelList
+        : [];
+
+    return fullList.map((item) =>
+      typeof item === "object"
+        ? item.Designation || item.value || item.Grade || String(item)
+        : String(item)
+    );
+  }, [sectionTableName, beamList, columnList, angleList, channelList]);
+
+  // Safety check for sectionData
+  const safeSectionData = useMemo(() => sectionData || {}, [sectionData]);
+
+  useEffect(() => {
+    setEditableData(safeSectionData);
+  }, [safeSectionData]);
+
+  useEffect(() => {
+    // A tab's own key comes first, and only angle tabs may use the connection's angle.
+    const isAngleTab = displayConfig.designationKey === "Designation";
+    const resolved =
+      inputs?.[displayConfig.designationKey] ||
+      inputs?.section_designation ||
+      inputs?.member_designation ||
+      inputs?.supported_designation ||
+      (isAngleTab ? inputs?.cleat_section || inputs?.seated_section : "") ||
+      "";
+
+    let desigStr;
+    if (Array.isArray(resolved)) {
+      desigStr = resolved.find((item) => item !== "All") || resolved[0] || "";
+    } else {
+      desigStr = String(resolved || "");
+    }
+
+    if (!desigStr) {
+      const opts = getDropdownOptions();
+      if (opts.length > 0) {
+        desigStr = opts[0];
+        // Wait for the first sync, which would otherwise cancel this request. The default is only
+        // shown: it must not replace an "All" selection in the design inputs.
+        if (syncReady && !defaultAppliedRef.current) {
+          defaultAppliedRef.current = true;
+          onDesignationChange?.(desigStr, { preview: true });
+        }
+      }
+    }
+
+    if (desigStr !== lastPropDesignation) {
+      setDesignationStr(desigStr);
+      setLastPropDesignation(desigStr);
+    }
+  }, [inputs, displayConfig.designationKey, beamList, columnList, angleList, channelList, getDropdownOptions, onDesignationChange, lastPropDesignation, syncReady]);
+
+
+  const materialKey = sectionType === 'supporting' ? 'supporting_material' : 'supported_material';
+  const targetMaterial = designPrefInputs[materialKey];
+
+  useEffect(() => {
+    if (suppressInitialMaterialDispatch) return;
+    const material = materialList.find((v) => v.Grade === targetMaterial);
+    if (material) {
+      manageDesignPreferences("material_update", {
+        materialType: sectionType,
+        materialData: material,
+      });
+    }
+  }, [suppressInitialMaterialDispatch, targetMaterial, materialList, sectionType, manageDesignPreferences]);
+
+  const handleMaterialChange = (value) => {
+    if (value === -1) {
+      setShowModal(true);
+      return;
+    }
+    const material = materialList.find((item) => item.Grade === value);
+    if (!material) return;
+
+    setDesignPrefInputs({
+      ...designPrefInputs,
+      [materialKey]: material.Grade,
+    });
+
+    manageDesignPreferences("material_update", {
+      materialType: sectionType,
+      materialData: material,
+    });
+  };
+
+  const handleClearSectionTab = () => {
+    onClearSection?.();
+    setDesignationStr("");
+    setNewDesignation("");
+    setDetailsFromDb(false);
+    setDesignPrefInputs((prev) => ({
+      ...prev,
+      [materialKey]:
+        inputs?.[materialKey] ??
+        inputs?.connector_material ??
+        inputs?.material ??
+        prev[materialKey],
+    }));
+  };
+
+  const handleAddSection = async () => {
+    const designationToAdd = newDesignation.trim();
+    if (!designationToAdd) {
+      alert("Please fill all the missing parameters!");
+      return;
+    }
+    const requiredKeys = [
+      ...(displayConfig.dimensions || []).map(f => f.key),
+      ...(displayConfig.properties?.middle || []).map(f => f.key),
+      ...(displayConfig.properties?.right || []).map(f => f.key)
+    ];
+
+    for (const key of requiredKeys) {
+      if (editableData[key] === undefined || editableData[key] === null || editableData[key] === "") {
+        alert("Please fill all the missing parameters!");
+        return;
+      }
+    }
+
+    const payload = { ...editableData, Designation: designationToAdd };
+    try {
+      await addCustomSection(sectionTableName, payload);
+      notifyCustomSectionAdded({ table: sectionTableName, designation: designationToAdd });
+      await onRefetchModuleOptions?.();
+      const listMap = {
+        Columns: [...columnList, ...sectionDesignation],
+        Beams: [...beamList, ...sectionDesignation],
+        Angles: angleList,
+        Channels: channelList,
+      };
+      const visible = (listMap[sectionTableName] || []).some(
+        (item) => String(item) === String(designationToAdd)
+      );
+      setDesignationStr(designationToAdd);
+      setNewDesignation("");
+      setDetailsFromDb(true);
+      onDesignationChange?.(designationToAdd);
+      if (visible) {
+        alert("Data is added successfully to the database!");
+      } else {
+        alert("Section saved. Dropdown sync is in progress, please reopen the list.");
+      }
+    } catch (e) {
+      const msg = e?.message || "";
+      if (msg.includes("400") || msg.toLowerCase().includes("duplicate") || msg.toLowerCase().includes("unique")) {
+        alert("Designation already exists in the database!");
+      } else {
+        alert(msg || "Failed to add section.");
+      }
+    }
+  };
+
+  const renderField = (label, value, unit = "", options = null, dbKey = null) => {
+    const isAlwaysDisabled = dbKey === "Source";
+    const fieldDisabled = isAlwaysDisabled || isInputLocked;
+
+    return (
+      <div className="input-cont" key={dbKey || label}>
+        <h5>{label}{unit ? `, ${unit}` : ""}</h5>
+        {options ? (
+          <Select
+            disabled={fieldDisabled}
+            style={{ width: "132px", height: "25px", fontSize: "12px" }}
+            value={value}
+            onSelect={options.onSelect}
+          >
+            {options.items.map((opt, idx) => (
+              <Option key={idx} value={opt}>{opt}</Option>
+            ))}
+          </Select>
+        ) : (
+          <Input
+            type="text"
+            className="input-design-pref"
+            value={value ?? ""}
+            disabled={fieldDisabled}
+            style={fieldDisabled ? readOnlyFontStyle : { fontSize: "12px", color: "#000" }}
+            onChange={(e) => {
+              if (dbKey && !isAlwaysDisabled) {
+                setEditableData(prev => ({
+                  ...prev,
+                  [dbKey]: e.target.value,
+                  ...(dbKey !== 'Type' ? { Source: 'Custom' } : {})
+                }));
+              }
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
+  const materialInfo = materialDetails?.[0] || {};
+
+  return (
+    <>
+      <div className="col-beam-cont">
+        {/* Left Section: Mechanical Properties */}
+        <div className="col-left">
+          <div className="input-cont">
+            <h5>Designation</h5>
+            {isInputLocked ? (
+              <Input
+                type="text"
+                className="input-design-pref text-[#808080] bg-[#f5f5f5]"
+                value={designationStr}
+                disabled={true}
+              />
+            ) : (
+              <div className="flex flex-col gap-[5px]">
+                <Select
+                  value={designationStr || undefined}
+                  placeholder="Select designation"
+                  onChange={(val) => {
+                    setDesignationStr(val);
+                    setDetailsFromDb(true);
+                    onDesignationChange?.(val);
+                  }}
+                  className="input-design-pref"
+                  popupMatchSelectWidth={false}
+                >
+                  {getDropdownOptions().map((opt) => (
+                    <Option key={opt} value={opt}>
+                      {opt}
+                    </Option>
+                  ))}
+                </Select>
+                <Input
+                  type="text"
+                  placeholder={isGuest ? "Sign in to add a new designation" : "New designation..."}
+                  disabled={isGuest}
+                  value={newDesignation}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (detailsFromDb && value !== "") {
+                      onClearSection?.();
+                      setEditableData({ Source: "Custom" });
+                      setDetailsFromDb(false);
+                    }
+                    setNewDesignation(value);
+                  }}
+                  className="input-design-pref text-black"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="sub-container">
+            <h4>Mechanical Properties</h4>
+            <div className="input-cont">
+              <h5>Material *</h5>
+              <Select
+                disabled={isInputLocked}
+                style={{ width: "134px", height: "25px", fontSize: "12px" }}
+                value={designPrefInputs[materialKey] || ""}
+                onSelect={handleMaterialChange}
+              >
+                {materialList.map((item, index) => (
+                  <Option key={index} value={item.Grade}>{item.Grade}</Option>
+                ))}
+              </Select>
+            </div>
+
+            {renderField("Ultimate Strength", materialInfo.Ultimate_Tensile_Stress, UNIT_LABELS.FU)}
+            {renderField("Yield Strength", materialInfo.Yield_Stress_greater_than_40, UNIT_LABELS.FY)}
+            {renderField("Modulus of Elasticity", STEEL_CONSTANTS.E, UNIT_LABELS.E)}
+            {renderField("Modulus of Rigidity", STEEL_CONSTANTS.G, UNIT_LABELS.G)}
+            {renderField("Poisson's Ratio", STEEL_CONSTANTS.POISSON_RATIO)}
+            {renderField(`Thermal Expansion Coefficient (x10^-6 / C)`, STEEL_CONSTANTS.THERMAL_EXPANSION)}
+
+            {displayConfig.showType && renderField("Type", editableData.Type || "Rolled", "", {
+              items: ["Rolled", "Welded"],
+              onSelect: (val) => setEditableData(prev => ({ ...prev, Type: val }))
+            })}
+
+            {renderField("Source", editableData.Source || "IS808 Rev", "", null, "Source")}
+          </div>
+        </div>
+
+        {/* Middle Section: Dimensions & Section Properties */}
+        <div className="col-middle">
+          <div className="sub-container">
+            <h4>Dimensions</h4>
+            {displayConfig.dimensions.map(field =>
+              renderField(field.label, editableData[field.key], field.unit || UNIT_LABELS.DIMENSION, null, field.key)
+            )}
+
+            <h4>Section Properties</h4>
+            {displayConfig.properties.middle.map(field =>
+              renderField(field.label, editableData[field.key], field.unit, null, field.key)
+            )}
+          </div>
+        </div>
+
+        {/* Right Section: Image & More Section Properties */}
+        <div className="col-right">
+          <div className="section-image">
+            <img
+              src={displayConfig.image}
+              alt="Section Diagram"
+              style={{ width: "100%", maxWidth: "320px" }}
+            />
+          </div>
+
+          <div className="sub-container" style={{ width: "310px" }}>
+            <h4>Section Properties</h4>
+            {displayConfig.properties.right.map(field =>
+              renderField(field.label, editableData[field.key], field.unit, null, field.key)
+            )}
+          </div>
+        </div>
+      </div>
+
+      <SectionTabToolbar
+        sectionTable={sectionTableName}
+        isInputLocked={isInputLocked}
+        isGuest={isGuest}
+        onRefetchModuleOptions={onRefetchModuleOptions}
+        dropdownLists={{
+          beamList,
+          columnList,
+          angleList,
+          topAngleList: angleList,
+          channelList,
+          sectionDesignation,
+        }}
+        onClearTab={handleClearSectionTab}
+        onAddSection={handleAddSection}
+      />
+
+      <CustomMaterialModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        setInputValues={setDesignPrefInputs}
+        inputValues={designPrefInputs}
+        type={sectionType}
+        materialList={materialList}
+        onRefetchModuleOptions={onRefetchModuleOptions}
+      />
+    </>
+  );
+};
+
+export default GenericSectionView;

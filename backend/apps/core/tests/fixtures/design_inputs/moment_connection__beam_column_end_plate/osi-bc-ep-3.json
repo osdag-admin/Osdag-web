@@ -1,0 +1,44 @@
+{
+  "source": "osi:bc_ep_3.osi",
+  "notes": "Desktop example bc_ep_3.osi (Module: \"Beam-to-Column End Plate Connection\") parsed by parse_osi(), loaded by the frontend osiLoader into beamToColumnEndPlateConfig's form state, then beamToColumnEndPlateConfig.buildSubmissionParams (All-selected flags as the loader sets them).",
+  "inputs": {
+    "Bolt.Bolt_Hole_Type": "Standard",
+    "Bolt.Diameter": [
+      "20",
+      "24",
+      "30"
+    ],
+    "Bolt.Grade": [
+      "6.8",
+      "8.8",
+      "9.8"
+    ],
+    "Bolt.Slip_Factor": "0.3",
+    "Bolt.TensionType": "Non Pre-tensioned",
+    "Bolt.Type": "Bearing Bolt",
+    "Connectivity": "Column Flange-Beam Web",
+    "EndPlateType": "Extended Both Ways - Reversible Moment",
+    "Connector.Plate.Thickness_List": [
+      "16",
+      "20",
+      "22"
+    ],
+    "Connector.Material": "E 250 (Fe 410 W)A",
+    "Design.Design_Method": "Limit State Design",
+    "Detailing.Corrosive_Influences": "Yes",
+    "Detailing.Edge_type": "Sheared or hand flame cut",
+    "Detailing.Gap": "0",
+    "Load.Axial": "0",
+    "Load.Moment": "180",
+    "Load.Shear": "100",
+    "Material": "E 350 (Fe 490)",
+    "Member.Supported_Section.Designation": "MB 500",
+    "Member.Supported_Section.Material": "E 300 (Fe 440)",
+    "Member.Supporting_Section.Designation": "PBP 400 X 158.1",
+    "Member.Supporting_Section.Material": "E 350 (Fe 490)",
+    "Weld.Fab": "Shop Weld",
+    "Weld.Material_Grade_OverWrite": "590",
+    "Weld.Type": "Groove Weld",
+    "Module": "Beam-to-Column End Plate Connection"
+  }
+}

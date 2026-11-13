@@ -1,0 +1,24 @@
+{
+  "source": "frontend-defaults:axiallyLoadedColumnConfig.js",
+  "notes": "Run of axiallyLoadedColumnConfig.buildSubmissionParams on defaultInputs; customizable lists set to explicit selections {\"section_designation\":[\"MB 300\",\"MB 350\"]}. Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "Columns with known support conditions",
+    "Member.Profile": "Beams and Columns",
+    "Member.Designation": [
+      "MB 300",
+      "MB 350"
+    ],
+    "Material": "E 250 (Fe 410 W)A",
+    "Actual.Length_zz": "3000",
+    "Actual.Length_yy": "3000",
+    "End_1": "Fixed",
+    "End_2": "Fixed",
+    "End_1_Y": "Fixed",
+    "End_2_Y": "Fixed",
+    "Load.Axial": "100",
+    "Design.Design_Method": "Limit State Design",
+    "Optimum.AllowUR": "1.0",
+    "Effective.Area_Para": "1.0",
+    "Optimum.Para": "Utilization Ratio"
+  }
+}

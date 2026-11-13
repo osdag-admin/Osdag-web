@@ -1,0 +1,46 @@
+{
+  "source": "frontend-defaults:plateGirderConfig.js",
+  "notes": "Run of plateGirderConfig.buildSubmissionParams on defaultInputs; every customizable list set to \"All\" (the UI default; full option lists sent). Option lists come from osdag_core SQLite plus the constants in the backend options views.",
+  "inputs": {
+    "Module": "PLATE GIRDER",
+    "Material": "E 250 (Fe 410 W)A",
+    "Member.Length": "20000",
+    "Loading.Condition": "Normal",
+    "Load.Shear": "877.5",
+    "Load.Moment": "4275",
+    "Loading.Bending_Moment_Shape": "Uniform Loading with pinned-pinned support",
+    "Total.Design_Type": "Customized",
+    "Web.Thickness": [
+      "20"
+    ],
+    "TopFlange.Thickness": [
+      "40"
+    ],
+    "BottomFlange.Thickness": [
+      "40"
+    ],
+    "Design.Design_Type_Flexure": "Major Laterally Supported",
+    "Design.Torsional_Restraint": "Fully Restrained",
+    "Design.Warping_Restraint": "Both flanges fully restrained",
+    "Design.Max_Deflection": "Span/600",
+    "Design.Load": "Live load",
+    "Member.Options": "Simple Span",
+    "Supporting.Options": "Not Applicable",
+    "Design.Allow_Class": "Plastic",
+    "Design.Web_Philosophy": "Thick Web without ITS",
+    "Design.Support_Width": "300",
+    "Design.Design_Method": "Limit State Design",
+    "Design.Effective_Area_Parameter": "1.0",
+    "Design.Length_Overwrite": "NA",
+    "Design.ShearBucklingOption": "Simple Post Critical",
+    "Design.IntermediateStiffener": "No",
+    "Design.IntermediateStiffener.Spacing": "NA",
+    "Design.IntermediateStiffener.Thickness": "Standard",
+    "Design.LongitudnalStiffener": "No",
+    "Design.LongitudnalStiffener.Thickness": "Standard",
+    "Symmetry": "Symmetrical",
+    "Total.Depth": "1300",
+    "Topflange.Width": "350",
+    "Bottomflange.Width": "350"
+  }
+}

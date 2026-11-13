@@ -1,0 +1,96 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [25april]
+
+concurrency:
+  group: cd-${{ github.event.workflow_run.head_branch || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    # Repo is public, and this workflow deploys to a self-hosted runner on
+    # prod infra. Guard against a fork PR whose branch happens to be named
+    # "main" from satisfying the `branches: [main]` filter above and
+    # triggering a build/deploy from fork-controlled code.
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_repository.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set lowercase image repo
+        run: echo "IMAGE_REPO=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Needed for the GitHub Actions layer cache backend.
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ env.IMAGE_REPO }}/backend:latest
+            ghcr.io/${{ env.IMAGE_REPO }}/backend:${{ github.event.workflow_run.head_sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.prod
+          push: true
+          tags: |
+            ghcr.io/${{ env.IMAGE_REPO }}/frontend:latest
+            ghcr.io/${{ env.IMAGE_REPO }}/frontend:${{ github.event.workflow_run.head_sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      # Report-only for now (exit-code 0): review findings in the job log
+      # before deciding to make HIGH/CRITICAL block the deploy.
+      - name: Scan backend image (Trivy)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ghcr.io/${{ env.IMAGE_REPO }}/backend:${{ github.event.workflow_run.head_sha }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '0'
+
+      - name: Scan frontend image (Trivy)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ghcr.io/${{ env.IMAGE_REPO }}/frontend:${{ github.event.workflow_run.head_sha }}
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '0'
+
+  deploy:
+    needs: build-and-push
+    # Deploy steps live in deploy.yml so Rollback can reuse them. The
+    # `production` environment (approvals) is attached inside that workflow.
+    uses: ./.github/workflows/deploy.yml
+    with:
+      image_tag: ${{ github.event.workflow_run.head_sha }}
+    permissions:
+      contents: read
+      packages: read

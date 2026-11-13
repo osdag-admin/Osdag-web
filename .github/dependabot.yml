@@ -1,0 +1,55 @@
+version: 2
+updates:
+  # Frontend (React/Vite) dependencies
+  - package-ecosystem: npm
+    directory: /frontend
+    target-branch: "25april"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - frontend
+
+  # Backend and engine Python dependencies (requirements.txt is at the repo root)
+  - package-ecosystem: pip
+    directory: /
+    target-branch: "25april"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - backend
+
+  # Base images in the Dockerfiles (backend at the root, frontend in /frontend)
+  - package-ecosystem: docker
+    directory: /
+    target-branch: "25april"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - docker
+
+  - package-ecosystem: docker
+    directory: /frontend
+    target-branch: "25april"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - docker
+
+  # GitHub Actions versions used in .github/workflows/
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: "25april"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - ci
